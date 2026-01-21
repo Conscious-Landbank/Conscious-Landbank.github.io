@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Factor Authentication - UNERA</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Enhanced Auth CSS -->
+    <link rel="stylesheet" href="auth-enhanced.css">
+    
+    <style>
+        .code-input-group {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .code-digit {
+            width: 56px;
+            height: 64px;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            font-family: 'Courier New', monospace;
+            transition: all var(--transition-base);
+        }
+        
+        .code-digit:focus {
+            border-color: var(--primary-green);
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+        
+        .code-digit.filled {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: var(--primary-green);
+        }
+        
+        @media (max-width: 640px) {
+            .code-digit {
+                width: 48px;
+                height: 56px;
+                font-size: 1.5rem;
+            }
+            .code-input-group {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <svg class="logo-icon" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="70" cy="70" r="60" fill="#14B8A6"/>
+                <circle cx="70" cy="70" r="45" fill="#2DD4BF"/>
+                <circle cx="70" cy="70" r="30" fill="#5EEAD4"/>
+                <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+            </svg>
+            <span class="logo-text">UNERA</span>
+        </div>
+        <a href="login_2.html" class="back-btn">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <rect x="5" y="11" width="14" height="10" rx="2"/>
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Two-Factor Authentication</h1>
+                <p class="auth-subtitle">Enter the code from your <span id="methodText">authenticator app</span></p>
+            </div>
+
+            <!-- Code Input -->
+            <div class="code-input-group">
+                <input type="text" maxlength="1" class="code-digit" id="digit1" inputmode="numeric" autocomplete="off">
+                <input type="text" maxlength="1" class="code-digit" id="digit2" inputmode="numeric" autocomplete="off">
+                <input type="text" maxlength="1" class="code-digit" id="digit3" inputmode="numeric" autocomplete="off">
+                <input type="text" maxlength="1" class="code-digit" id="digit4" inputmode="numeric" autocomplete="off">
+                <input type="text" maxlength="1" class="code-digit" id="digit5" inputmode="numeric" autocomplete="off">
+                <input type="text" maxlength="1" class="code-digit" id="digit6" inputmode="numeric" autocomplete="off">
+            </div>
+
+            <!-- Trust This Device -->
+            <div class="checkbox-group" style="margin-bottom: 1.5rem; justify-content: center;">
+                <input type="checkbox" id="trustDevice" class="checkbox-input">
+                <label for="trustDevice" class="checkbox-label">Trust this device for 30 days</label>
+            </div>
+
+            <button class="submit-btn" id="verifyBtn" onclick="verify2FA()">
+                Verify & Continue
+            </button>
+
+            <!-- Help Links -->
+            <div style="text-align: center; margin-top: 2rem; font-size: 0.875rem;">
+                <p style="color: var(--text-secondary); margin-bottom: 0.75rem;">Having trouble?</p>
+                <div style="display: flex; justify-content: center; gap: 1.5rem;">
+                    <a href="#" class="auth-link" onclick="useBackupCode(); return false;">Use backup code</a>
+                    <a href="#" class="auth-link" onclick="alert('Contact support at support@unera.io'); return false;">Contact support</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth Flow Manager -->
+    <script src="auth-flow.js"></script>
+
+    <!-- JavaScript -->
+    <script>
+        // Get 2FA method from localStorage
+        const twoFAMethod = localStorage.getItem('2faMethod') || 'app';
+        const methodTexts = {
+            sms: 'SMS text message',
+            email: 'email',
+            app: 'authenticator app'
+        };
+        document.getElementById('methodText').textContent = methodTexts[twoFAMethod];
+
+        // Auto-focus and auto-advance
+        const digits = document.querySelectorAll('.code-digit');
+        digits[0].focus();
+
+        digits.forEach((digit, index) => {
+            digit.addEventListener('input', (e) => {
+                const value = e.target.value;
+                
+                // Only allow numbers
+                if (!/^\d*$/.test(value)) {
+                    e.target.value = '';
+                    return;
+                }
+                
+                if (value) {
+                    e.target.classList.add('filled');
+                    if (index < 5) {
+                        digits[index + 1].focus();
+                    } else {
+                        // Auto-submit when last digit entered
+                        setTimeout(() => verify2FA(), 100);
+                    }
+                } else {
+                    e.target.classList.remove('filled');
+                }
+            });
+            
+            digit.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    digits[index - 1].focus();
+                }
+            });
+        });
+
+        // Handle paste
+        document.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pastedData = e.clipboardData.getData('text').replace(/\D/g, '');
+            
+            if (pastedData.length === 6) {
+                pastedData.split('').forEach((char, index) => {
+                    digits[index].value = char;
+                    digits[index].classList.add('filled');
+                });
+                setTimeout(() => verify2FA(), 100);
+            }
+        });
+
+        // Verify 2FA code
+        async function verify2FA() {
+            const code = Array.from(digits).map(d => d.value).join('');
+            
+            if (code.length !== 6) {
+                alert('Please enter all 6 digits');
+                return;
+            }
+            
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.classList.add('loading');
+            verifyBtn.disabled = true;
+            
+            try {
+                // Simulate API verification
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Success!
+                verifyBtn.classList.remove('loading');
+                verifyBtn.classList.add('success');
+                verifyBtn.textContent = 'Verified!';
+                
+                // Store trust device setting
+                const trustDevice = document.getElementById('trustDevice').checked;
+                if (trustDevice) {
+                    localStorage.setItem('deviceTrusted', 'true');
+                    localStorage.setItem('deviceTrustedUntil', Date.now() + (30 * 24 * 60 * 60 * 1000)); // 30 days
+                }
+                
+                // Haptic feedback
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate([10, 50, 10]);
+                }
+                
+                console.log('✅ 2FA verified successfully');
+                
+                // Check KYC status and redirect
+                setTimeout(() => {
+                    const kycStatus = localStorage.getItem('kycStatus');
+                    if (kycStatus === 'completed') {
+                        window.location.href = 'dashboard-enhanced.html';
+                    } else {
+                        // Show KYC reminder then go to dashboard
+                        window.location.href = 'dashboard-enhanced.html?kyc=reminder';
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                verifyBtn.classList.remove('loading');
+                verifyBtn.disabled = false;
+                alert('Invalid code. Please try again.');
+                
+                // Clear codes
+                digits.forEach(d => {
+                    d.value = '';
+                    d.classList.remove('filled');
+                });
+                digits[0].focus();
+                
+                // Error haptic
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate([10, 100, 10, 100, 10]);
+                }
+            }
+        }
+
+        // Use backup code
+        function useBackupCode() {
+            const backupCode = prompt('Enter your backup code (format: XXXX-XXXX-XXXX):');
+            if (backupCode && backupCode.length > 0) {
+                // Simulate verification
+                alert('Backup code verified! Logging you in...');
+                window.location.href = 'dashboard-enhanced.html';
+            }
+        }
+    </script>
+</body>
+</html>

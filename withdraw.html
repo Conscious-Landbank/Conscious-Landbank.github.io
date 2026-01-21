@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw - UNERA | One Flow. Many Lives.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* UNERA Brand Colors */
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-700: #4B5563;
+            --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            /* Accessibility - WCAG AAA */
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
+        .nav {
+            background: #FFFFFF;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2.75rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-link:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* Progress Stepper - Same as onramp */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-subtle);
+            z-index: 0;
+        }
+
+        .stepper-progress {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.4s ease;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: var(--font-display);
+            transition: all 0.3s;
+        }
+
+        .step.active .step-circle {
+            background: var(--gradient-primary);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: var(--primary-green);
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+        }
+
+        /* Payout Destination Cards */
+        .payout-methods {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .payout-card {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .payout-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);
+        }
+
+        .payout-card:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .payout-card.selected {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .payout-card.verified::after {
+            content: '✔️ Verified';
+            position: absolute;
+            top: -10px;
+            right: 1rem;
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
+            font-size: 0.688rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .payout-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .payout-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .payout-info {
+            flex: 1;
+        }
+
+        .payout-name {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .payout-detail {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        .payout-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .payout-card.selected .payout-check {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        .add-account-btn {
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            border: 2px dashed var(--border-subtle);
+            border-radius: 1rem;
+            font-weight: 600;
+            color: var(--primary-green);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: var(--font-body);
+        }
+
+        .add-account-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        /* Balance Display */
+        .balance-display {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .balance-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-amount {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .balance-fiat {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Amount Section - Same styling as onramp */
+        .amount-section {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            font-size: 0.938rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 1.25rem 5rem 1.25rem 1.25rem;
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            background: var(--neutral-100);
+        }
+
+        .amount-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .amount-input.error {
+            border-color: var(--error);
+        }
+
+        .input-error {
+            display: none;
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .input-error.show {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .presets {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .conversion-summary {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-value {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+        }
+
+        .summary-row:last-child .summary-value {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+
+        .info-icon {
+            width: 18px;
+            height: 18px;
+            background: rgba(14, 165, 233, 0.15);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 0.688rem;
+            font-weight: 700;
+            cursor: help;
+            position: relative;
+        }
+
+        .info-icon::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.75rem 1rem;
+            background: var(--neutral-900);
+            color: white;
+            font-size: 0.813rem;
+            font-weight: 400;
+            border-radius: 0.5rem;
+            white-space: nowrap;
+            max-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .info-icon:hover::after,
+        .info-icon:focus::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 980px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border: 2px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        .btn-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .loading {
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 3px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Confirmation Card */
+        .confirmation-card {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .confirm-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .confirm-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .confirm-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .confirm-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .confirm-details {
+            background: var(--neutral-100);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+        }
+
+        .detail-value {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        /* Processing Screen */
+        .processing-screen {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .processing-spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            border: 4px solid var(--neutral-200);
+            border-top-color: var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Success Screen */
+        .success-screen {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .success-desc {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .success-amount {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .transaction-id {
+            background: var(--neutral-100);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .transaction-id-label {
+            color: var(--text-secondary);
+            font-size: 0.813rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .transaction-id-value {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem 1rem 3rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .step-label {
+                display: none;
+            }
+
+            .amount-input {
+                font-size: 1.5rem;
+                padding: 1rem 4rem 1rem 1rem;
+            }
+
+            .btn-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* High Contrast */
+        @media (prefers-contrast: high) {
+            .payout-card,
+            .amount-section {
+                border-width: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+                <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+                <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+                <li><a href="withdraw.html" class="nav-link" aria-current="page">WITHDRAW</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main id="main-content" class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Withdraw</h1>
+            <p class="page-subtitle">Transfer money from your wallet to your bank</p>
+        </div>
+
+        <!-- Progress Stepper -->
+        <div class="stepper" role="progressbar" aria-label="Withdrawal progress" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
+            <div class="stepper-progress" id="stepperProgress" style="width: 0%"></div>
+            
+            <div class="step active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Destination</div>
+            </div>
+            
+            <div class="step" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Amount</div>
+            </div>
+            
+            <div class="step" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Confirm</div>
+            </div>
+            
+            <div class="step" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Complete</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Payout Destination -->
+        <div id="step1" class="step-content active">
+            <div class="section-header">
+                <h2 class="section-title">Select Payout Destination</h2>
+                <p class="section-desc">Where would you like to receive your funds?</p>
+            </div>
+
+            <div class="payout-methods" role="radiogroup" aria-label="Payout methods">
+                <div class="payout-card verified" 
+                     role="radio" 
+                     aria-checked="false" 
+                     tabindex="0" 
+                     data-method="bank-td"
+                     onclick="selectPayout('bank-td')"
+                     onkeypress="handleCardKeypress(event, 'bank-td')">
+                    <div class="payout-header">
+                        <div class="payout-icon">🏦</div>
+                        <div class="payout-info">
+                            <div class="payout-name">TD Bank</div>
+                            <div class="payout-detail">****1234</div>
+                        </div>
+                        <div class="payout-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payout-card verified" 
+                     role="radio" 
+                     aria-checked="false" 
+                     tabindex="0" 
+                     data-method="interac"
+                     onclick="selectPayout('interac')"
+                     onkeypress="handleCardKeypress(event, 'interac')">
+                    <div class="payout-header">
+                        <div class="payout-icon">📧</div>
+                        <div class="payout-info">
+                            <div class="payout-name">Interac e-Transfer</div>
+                            <div class="payout-detail">jane@example.com</div>
+                        </div>
+                        <div class="payout-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="add-account-btn" onclick="alert('Add new bank account feature coming soon!')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                Add New Bank Account
+            </button>
+
+            <div class="btn-actions">
+                <button class="btn btn-primary" id="step1Continue" disabled onclick="goToStep(2)">
+                    Continue
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Amount -->
+        <div id="step2" class="step-content">
+            <div class="section-header">
+                <h2 class="section-title">Enter Withdrawal Amount</h2>
+                <p class="section-desc">How much HUMA would you like to withdraw?</p>
+            </div>
+
+            <!-- Balance Display -->
+            <div class="balance-display">
+                <div class="balance-label">Available Balance</div>
+                <div class="balance-amount" id="availableBalance">3,500.00 hCAD</div>
+                <div class="balance-fiat">≈ $3,500 CAD</div>
+            </div>
+
+            <div class="amount-section">
+                <div class="input-group">
+                    <label for="amountInput" class="input-label">Amount to Withdraw</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="number" 
+                            id="amountInput" 
+                            class="amount-input" 
+                            placeholder="0.00"
+                            value="100"
+                            min="10"
+                            max="3500"
+                            step="0.01"
+                            oninput="calculateConversion()"
+                            aria-describedby="amountError amountHint">
+                        <div class="input-suffix" id="currencySuffix">hCAD</div>
+                    </div>
+                    <div id="amountError" class="input-error">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12" stroke="white" stroke-width="2"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16" stroke="white" stroke-width="2"/>
+                        </svg>
+                        <span id="amountErrorText"></span>
+                    </div>
+                </div>
+
+                <div class="presets">
+                    <button class="preset-btn" onclick="setAmount(100)">100</button>
+                    <button class="preset-btn" onclick="setAmount(500)">500</button>
+                    <button class="preset-btn" onclick="setAmount(1000)">1,000</button>
+                    <button class="preset-btn" onclick="setAmount(3500)">All</button>
+                </div>
+
+                <div class="conversion-summary" role="status" aria-live="polite">
+                    <div class="summary-row">
+                        <span class="summary-label">
+                            You're Withdrawing
+                        </span>
+                        <span class="summary-value" id="summaryWithdraw">100.00 hCAD</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">
+                            Network Fee
+                            <span class="info-icon" 
+                                  tabindex="0" 
+                                  role="tooltip" 
+                                  data-tooltip="Small fee to cover blockchain costs"
+                                  aria-label="Fee information">i</span>
+                        </span>
+                        <span class="summary-value" id="summaryFee">1.00 hCAD</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">
+                            Exchange Rate
+                            <span class="info-icon" 
+                                  tabindex="0" 
+                                  role="tooltip" 
+                                  data-tooltip="1:1 backed by reserves"
+                                  aria-label="Rate information">i</span>
+                        </span>
+                        <span class="summary-value" id="summaryRate">1 hCAD = $1.00 CAD</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">You Will Receive</span>
+                        <span class="summary-value" id="summaryReceive">$99.00 CAD</span>
+                    </div>
+
+                    <div class="rate-timer" style="margin-top: 0.75rem; font-size: 0.813rem; color: var(--text-secondary);">
+                        💡 Transfers typically arrive within 1 business day
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-actions">
+                <button class="btn btn-secondary" onclick="goToStep(1)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back
+                </button>
+                <button class="btn btn-primary" onclick="goToStep(3)">
+                    Continue
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Confirmation -->
+        <div id="step3" class="step-content">
+            <div class="confirmation-card">
+                <div class="confirm-header">
+                    <div class="confirm-icon">💸</div>
+                    <h2 class="confirm-title">Review Withdrawal</h2>
+                    <p class="confirm-desc">Please review the details before confirming</p>
+                </div>
+
+                <div class="confirm-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Destination</span>
+                        <span class="detail-value" id="confirmDestination">TD Bank ****1234</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Withdrawal Amount</span>
+                        <span class="detail-value" id="confirmAmount">100.00 hCAD</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Fee</span>
+                        <span class="detail-value" id="confirmFee">1.00 hCAD</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">You Will Receive</span>
+                        <span class="detail-value" id="confirmReceive" style="color: var(--primary-green); font-size: 1.5rem;">$99.00 CAD</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Estimated Arrival</span>
+                        <span class="detail-value">1 Business Day</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-actions">
+                <button class="btn btn-secondary" onclick="goToStep(2)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back
+                </button>
+                <button class="btn btn-primary" onclick="confirmWithdrawal()">
+                    Confirm Withdrawal
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Processing/Success -->
+        <div id="step4" class="step-content">
+            <div id="processingState" class="processing-screen">
+                <div class="processing-spinner"></div>
+                <h2 class="confirm-title">Processing Withdrawal...</h2>
+                <p class="confirm-desc">Your withdrawal is being processed. This may take a moment.</p>
+            </div>
+
+            <div id="successState" class="success-screen" style="display: none;">
+                <div class="success-icon">✅</div>
+                <h2 class="success-title">Withdrawal Complete!</h2>
+                <p class="success-desc">Your funds are on the way to your account</p>
+                
+                <div class="success-amount" id="successAmount">$99.00 CAD</div>
+                <div class="success-subtitle">Being sent to TD Bank ****1234</div>
+
+                <div class="transaction-id">
+                    <div class="transaction-id-label">Transaction ID</div>
+                    <div class="transaction-id-value" id="transactionId">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</div>
+                </div>
+
+                <button class="btn btn-primary" onclick="window.location.href='wallet-enhanced.html'" style="max-width: 320px; margin: 0 auto;">
+                    Back to Wallet
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+
+                <p style="margin-top: 2rem; color: var(--text-secondary); font-size: 0.938rem;">
+                    💚 Thank you for using UNERA. We hope to see you supporting more Humanity Centres soon!
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // State
+        let currentStep = 1;
+        let selectedPayout = null;
+        let amount = 100;
+        const availableBalance = 3500;
+
+        // Payout Selection
+        function selectPayout(method) {
+            selectedPayout = method;
+            
+            // Update UI
+            document.querySelectorAll('.payout-card').forEach(card => {
+                card.classList.remove('selected');
+                card.setAttribute('aria-checked', 'false');
+            });
+            
+            const selectedCard = document.querySelector(`[data-method="${method}"]`);
+            selectedCard.classList.add('selected');
+            selectedCard.setAttribute('aria-checked', 'true');
+            
+            // Enable continue button
+            document.getElementById('step1Continue').disabled = false;
+            
+            // Announce to screen readers
+            announceToScreenReader(`${method} selected as payout destination`);
+        }
+
+        // Step Navigation
+        function goToStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show target step
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            // Update stepper
+            document.querySelectorAll('.step').forEach((stepEl, index) => {
+                stepEl.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    stepEl.classList.add('completed');
+                } else if (index + 1 === step) {
+                    stepEl.classList.add('active');
+                }
+            });
+            
+            // Update progress bar
+            const progress = ((step - 1) / 3) * 100;
+            document.getElementById('stepperProgress').style.width = `${progress}%`;
+            
+            // Update aria
+            document.querySelector('.stepper').setAttribute('aria-valuenow', step);
+            
+            currentStep = step;
+            
+            // Calculate on step 2
+            if (step === 2) {
+                calculateConversion();
+            }
+            
+            // Update confirmation on step 3
+            if (step === 3) {
+                updateConfirmation();
+            }
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            announceToScreenReader(`Step ${step} of 4`);
+        }
+
+        // Amount Functions
+        function setAmount(value) {
+            document.getElementById('amountInput').value = value;
+            calculateConversion();
+        }
+
+        function calculateConversion() {
+            const input = document.getElementById('amountInput');
+            let value = parseFloat(input.value) || 0;
+            
+            // Validation
+            const errorEl = document.getElementById('amountError');
+            const errorText = document.getElementById('amountErrorText');
+            
+            if (value < 10 && value > 0) {
+                input.classList.add('error');
+                errorEl.classList.add('show');
+                errorText.textContent = 'Minimum withdrawal is 10 hCAD';
+                return;
+            } else if (value > availableBalance) {
+                input.classList.add('error');
+                errorEl.classList.add('show');
+                errorText.textContent = 'Insufficient balance';
+                return;
+            } else {
+                input.classList.remove('error');
+                errorEl.classList.remove('show');
+            }
+            
+            amount = value;
+            
+            // Calculate fees (1 hCAD network fee)
+            const fee = 1;
+            const receive = value - fee;
+            
+            // Update summary
+            document.getElementById('summaryWithdraw').textContent = `${value.toFixed(2)} hCAD`;
+            document.getElementById('summaryFee').textContent = `${fee.toFixed(2)} hCAD`;
+            document.getElementById('summaryRate').textContent = `1 hCAD = $1.00 CAD`;
+            document.getElementById('summaryReceive').textContent = `$${receive.toFixed(2)} CAD`;
+        }
+
+        // Update Confirmation
+        function updateConfirmation() {
+            const payoutMap = {
+                'bank-td': 'TD Bank ****1234',
+                'interac': 'Interac e-Transfer (jane@example.com)'
+            };
+            
+            const fee = 1;
+            const receive = amount - fee;
+            
+            document.getElementById('confirmDestination').textContent = payoutMap[selectedPayout];
+            document.getElementById('confirmAmount').textContent = `${amount.toFixed(2)} hCAD`;
+            document.getElementById('confirmFee').textContent = `${fee.toFixed(2)} hCAD`;
+            document.getElementById('confirmReceive').textContent = `$${receive.toFixed(2)} CAD`;
+        }
+
+        // Confirm Withdrawal
+        function confirmWithdrawal() {
+            const btn = event.target;
+            btn.classList.add('loading');
+            btn.textContent = 'Processing...';
+            
+            // Go to processing state
+            goToStep(4);
+            
+            // Simulate processing
+            setTimeout(() => {
+                // Hide processing, show success
+                document.getElementById('processingState').style.display = 'none';
+                document.getElementById('successState').style.display = 'block';
+                
+                // Update success details
+                const fee = 1;
+                const receive = amount - fee;
+                document.getElementById('successAmount').textContent = `$${receive.toFixed(2)} CAD`;
+                document.getElementById('transactionId').textContent = `0x${Math.random().toString(16).substr(2, 40)}`;
+                
+                btn.classList.remove('loading');
+                announceToScreenReader('Withdrawal completed successfully!');
+            }, 2500);
+        }
+
+        // Keyboard Navigation
+        function handleCardKeypress(event, value) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectPayout(value);
+            }
+        }
+
+        // Screen Reader Announcements
+        function announceToScreenReader(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('role', 'status');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.style.position = 'absolute';
+            announcement.style.left = '-10000px';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            setTimeout(() => announcement.remove(), 1000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pre-select bank
+            selectPayout('bank-td');
+            
+            // Initialize conversion
+            calculateConversion();
+            
+            // Announce page load
+            announceToScreenReader('Withdraw page loaded. Step 1 of 4: Select payout destination.');
+        });
+    </script>
+</body>
+</html>
