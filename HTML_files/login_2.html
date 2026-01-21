@@ -316,7 +316,7 @@
             try {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                // Success
+                // Success - credentials valid
                 loginBtn.classList.remove('loading');
                 loginBtn.classList.add('success');
                 loginBtn.textContent = 'Success!';
@@ -326,9 +326,26 @@
                     window.navigator.vibrate([10, 50, 10]);
                 }
                 
-                // Redirect
+                // Store login state
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('loginTimestamp', new Date().toISOString());
+                localStorage.setItem('signupEmail', emailInput.value.trim());
+                
+                // Check if 2FA is enabled
                 setTimeout(() => {
-                    window.location.href = 'dashboard-enhanced.html';
+                    const twoFAEnabled = localStorage.getItem('2faEnabled') === 'true';
+                    const deviceTrusted = localStorage.getItem('deviceTrusted') === 'true';
+                    const trustExpiry = parseInt(localStorage.getItem('deviceTrustedUntil')) || 0;
+                    
+                    if (twoFAEnabled && (!deviceTrusted || Date.now() > trustExpiry)) {
+                        // Redirect to 2FA verification
+                        console.log('🔒 2FA required - redirecting to verification');
+                        window.location.href = 'verify-2fa.html';
+                    } else {
+                        // No 2FA or device trusted - go to dashboard
+                        console.log('✅ Login successful - going to dashboard');
+                        window.location.href = 'dashboard-enhanced.html';
+                    }
                 }, 1000);
                 
             } catch (error) {
@@ -394,5 +411,8 @@
             }
         }
     </script>
+    
+    <!-- Auth Flow Manager -->
+    <script src="auth-flow.js"></script>
 </body>
 </html>
