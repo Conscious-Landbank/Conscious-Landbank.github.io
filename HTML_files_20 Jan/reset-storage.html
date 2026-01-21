@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Storage - Testing Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6B7280;
+            margin-bottom: 2rem;
+            font-size: 0.938rem;
+        }
+
+        .storage-info {
+            background: #F3F4F6;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .storage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .storage-item:last-child {
+            border-bottom: none;
+        }
+
+        .storage-key {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .storage-value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.813rem;
+            color: #6B7280;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #9CA3AF;
+            padding: 2rem;
+            font-size: 0.938rem;
+        }
+
+        .actions {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #6B7280;
+            border: 2px solid #E5E7EB;
+        }
+
+        .btn-secondary:hover {
+            background: #F3F4F6;
+            border-color: #D1D5DB;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+
+        .quick-tests {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+            border: 1.5px solid rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-tests-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .quick-test-btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            background: white;
+            border: 1px solid #E5E7EB;
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-test-btn:hover {
+            background: #F9FAFB;
+            border-color: #10B981;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: #991B1B;
+        }
+
+        .count-badge {
+            background: #10B981;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.813rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Storage Reset Tool</h1>
+        <p class="subtitle">Testing tool for wallet creation entry points</p>
+
+        <div class="storage-info" id="storageInfo">
+            <div class="empty-state">Loading storage data...</div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-danger" onclick="clearAll()">
+                🗑️ Clear All Storage
+            </button>
+            <button class="btn btn-warning" onclick="clearWalletOnly()">
+                💳 Clear Wallet Only
+            </button>
+            <button class="btn btn-secondary" onclick="refreshDisplay()">
+                🔄 Refresh Display
+            </button>
+        </div>
+
+        <div class="quick-tests">
+            <div class="quick-tests-title">🚀 Quick Test Scenarios</div>
+            <button class="quick-test-btn" onclick="testFirstTimeConvert()">
+                Test: First-time Convert User →
+            </button>
+            <button class="quick-test-btn" onclick="testFirstTimeDonate()">
+                Test: First-time Donate User →
+            </button>
+            <button class="quick-test-btn" onclick="testFirstTimeSend()">
+                Test: First-time Send User →
+            </button>
+            <button class="quick-test-btn" onclick="testDashboardBanner()">
+                Test: Dashboard Banner →
+            </button>
+            <button class="quick-test-btn" onclick="testReturningUser()">
+                Test: Returning User (no banners) →
+            </button>
+        </div>
+
+        <div class="warning-box">
+            ⚠️ <strong>Note:</strong> This will clear all localStorage data including any saved preferences. Use this for testing purposes only.
+        </div>
+
+        <button class="btn btn-success" onclick="window.location.href='dashboard.html'">
+            ← Back to Dashboard
+        </button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Display current storage
+        function refreshDisplay() {
+            const container = document.getElementById('storageInfo');
+            const keys = Object.keys(localStorage);
+            
+            if (keys.length === 0) {
+                container.innerHTML = '<div class="empty-state">✨ Storage is empty - ready for testing!</div>';
+                return;
+            }
+
+            let html = '';
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                html += `
+                    <div class="storage-item">
+                        <span class="storage-key">${key}</span>
+                        <span class="storage-value" title="${value}">${value}</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Clear all storage
+        function clearAll() {
+            if (confirm('Clear ALL localStorage and sessionStorage?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                showToast('✓ All storage cleared!');
+                refreshDisplay();
+            }
+        }
+
+        // Clear wallet-related items only
+        function clearWalletOnly() {
+            const walletKeys = [
+                'walletAddress',
+                'walletCreated',
+                'walletCreatedDate',
+                'walletCreationReturn',
+                'visited_convert',
+                'visited_donate',
+                'visited_send',
+                'walletBannerDismissed'
+            ];
+            
+            walletKeys.forEach(key => localStorage.removeItem(key));
+            showToast('✓ Wallet data cleared!');
+            refreshDisplay();
+        }
+
+        // Test scenarios
+        function testFirstTimeConvert() {
+            clearWalletOnly();
+            showToast('✓ Ready for first-time convert test!');
+            setTimeout(() => {
+                window.location.href = 'convert.html';
+            }, 1500);
+        }
+
+        function testFirstTimeDonate() {
+            clearWalletOnly();
+            showToast('✓ Ready for first-time donate test!');
+            setTimeout(() => {
+                window.location.href = 'donate.html';
+            }, 1500);
+        }
+
+        function testFirstTimeSend() {
+            clearWalletOnly();
+            showToast('✓ Ready for first-time send test!');
+            setTimeout(() => {
+                window.location.href = 'send.html';
+            }, 1500);
+        }
+
+        function testDashboardBanner() {
+            clearWalletOnly();
+            showToast('✓ Ready for dashboard banner test!');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+
+        function testReturningUser() {
+            // Set all visited flags but no wallet
+            localStorage.setItem('visited_convert', 'true');
+            localStorage.setItem('visited_donate', 'true');
+            localStorage.setItem('visited_send', 'true');
+            showToast('✓ Ready for returning user test (no banners)!');
+            refreshDisplay();
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    toast.style.animation = 'slideIn 0.3s ease-out';
+                }, 300);
+            }, 3000);
+        }
+
+        // Add slideOut animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', refreshDisplay);
+
+        // Auto-refresh every 2 seconds
+        setInterval(refreshDisplay, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Stablecoins - UNERA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --earth-deep: #2C5F2D;
+            --earth-rich: #4A7C59;
+            --earth-fresh: #7FA99B;
+            --sky-vibrant: #0EA5E9;
+            --sun-warm: #F59E0B;
+            --bloom-hope: #EC4899;
+            --stone-dark: #1F2937;
+            --stone-medium: #6B7280;
+            --stone-light: #F3F4F6;
+            --stone-white: #FFFFFF;
+            --impact-green: #10B981;
+            --alert-orange: #F97316;
+            --trust-blue: #3B82F6;
+            --gradient-earth: linear-gradient(135deg, #2C5F2D 0%, #7FA99B 100%);
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-impact: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            padding: 1.375rem 2.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.688rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+            letter-spacing: -0.02em;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.688rem 1.375rem;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.75rem;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--stone-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--stone-light);
+            transform: translateX(-2px);
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.75rem;
+        }
+
+        .convert-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 700px;
+        }
+
+        /* ===== FORM SECTION ===== */
+        .form-section {
+            padding: 3.5rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .form-section::-webkit-scrollbar {
+            display: none;
+        }
+
+        .form-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .form-subtitle {
+            font-size: 1rem;
+            color: var(--stone-medium);
+            line-height: 1.5;
+            margin-bottom: 2.75rem;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CURRENCY SELECTOR ===== */
+        .currency-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2.75rem;
+        }
+
+        .currency-option {
+            padding: 1.375rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .currency-option:hover {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.02);
+            transform: translateY(-2px);
+        }
+
+        .currency-option.selected {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.05);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+        }
+
+        .currency-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .currency-flag {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-impact);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .currency-details h3 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .currency-details p {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+        }
+
+        .currency-check {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            min-height: 24px;
+            max-width: 24px;
+            max-height: 24px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            aspect-ratio: 1/1;
+        }
+
+        .currency-option.selected .currency-check {
+            background: var(--impact-green);
+            border-color: var(--impact-green);
+        }
+
+        .currency-check svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            stroke-width: 3;
+            display: none;
+        }
+
+        .currency-option.selected .currency-check svg {
+            display: block;
+        }
+
+        /* ===== AMOUNT INPUT ===== */
+        .amount-container {
+            margin-bottom: 2.75rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.375rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--stone-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--stone-medium);
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.5rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .amount-input:focus {
+            outline: none;
+            border-color: var(--impact-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .amount-presets {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .preset-btn {
+            padding: 0.688rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.5rem;
+            background: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--stone-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .conversion-preview {
+            padding: 1.375rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            margin-bottom: 1.375rem;
+        }
+
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .preview-row:last-child {
+            margin-bottom: 0;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-label {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+        }
+
+        .preview-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+        }
+
+        .preview-value.highlight {
+            font-size: 1.125rem;
+            background: var(--gradient-impact);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== PAYMENT METHOD ===== */
+        .payment-methods {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2.75rem;
+        }
+
+        .payment-option {
+            padding: 1.375rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .payment-option:hover {
+            border-color: var(--sky-vibrant);
+            background: rgba(14, 165, 233, 0.02);
+            transform: translateY(-2px);
+        }
+
+        .payment-option.selected {
+            border-color: var(--sky-vibrant);
+            background: rgba(14, 165, 233, 0.05);
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+        }
+
+        /* Wallet Payment Specific Styles */
+        .payment-option-wallet {
+            position: relative;
+            border: 2px solid rgba(16, 185, 129, 0.3) !important;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%) !important;
+        }
+
+        .payment-option-wallet:hover {
+            border-color: rgba(16, 185, 129, 0.5) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+        }
+
+        .payment-option-wallet.selected {
+            border-color: var(--impact-green) !important;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%) !important;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25) !important;
+        }
+
+        .payment-recommended-badge {
+            position: absolute;
+            top: -12px;
+            right: 1rem;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            color: white;
+            padding: 0.375rem 0.875rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .payment-benefits {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+        }
+
+        .benefit-item {
+            font-size: 0.813rem;
+            color: var(--impact-green);
+            font-weight: 600;
+        }
+
+        .payment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .payment-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+        }
+
+        .payment-name {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+        }
+
+        .payment-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .payment-option.selected .payment-radio {
+            border-color: var(--sky-vibrant);
+            background: var(--sky-vibrant);
+        }
+
+        .payment-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .payment-option.selected .payment-radio::after {
+            opacity: 1;
+        }
+
+        .payment-description {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+            line-height: 1.5;
+        }
+
+        .payment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--impact-green);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== CARD PAYMENT FORM ===== */
+        .payment-form {
+            display: none;
+            margin-top: 1.375rem;
+            padding-top: 1.375rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .payment-option.selected .payment-form {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.5rem;
+            font-size: 0.938rem;
+            color: var(--stone-dark);
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--sky-vibrant);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        .security-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 0.5rem;
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+            line-height: 1.5;
+        }
+
+        .security-note svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ===== E-TRANSFER FORM ===== */
+        .etransfer-info {
+            display: none;
+            margin-top: 1.375rem;
+            padding-top: 1.375rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .payment-option.selected .etransfer-info {
+            display: block;
+        }
+
+        .info-box {
+            padding: 1.375rem;
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 0.75rem;
+            margin-bottom: 1.375rem;
+        }
+
+        .info-box h4 {
+            font-family: var(--font-display);
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .info-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .info-steps li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+            line-height: 1.5;
+            counter-increment: step-counter;
+        }
+
+        .info-steps li:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--gradient-impact);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 0.938rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--gradient-impact);
+            color: white;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.02);
+            color: var(--stone-dark);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.75rem;
+        }
+
+        /* ===== ILLUSTRATION SECTION ===== */
+        .illustration-section {
+            padding: 3.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        /* Gradient overlay for all steps */
+        .illustration-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.55) 0%, rgba(14, 165, 233, 0.6) 100%);
+            z-index: 0;
+        }
+
+        /* Ensure content is above overlay */
+        .illustration-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Step-specific backgrounds with darker images */
+        .illustration-section.step-1-bg {
+            background-image: url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800&q=80&fit=crop');
+        }
+
+        .illustration-section.step-2-bg {
+            background-image: url('https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&q=80&fit=crop');
+        }
+
+        .illustration-section.step-3-bg {
+            background-image: url('https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&q=80&fit=crop');
+        }
+
+        .illustration-section.step-success-bg {
+            background-image: url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80&fit=crop');
+        }
+
+        .step-indicator {
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .step-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.375rem;
+        }
+
+        .step-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .step-badge.active {
+            background: white;
+            color: var(--impact-green);
+            border-color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.688rem;
+        }
+
+        .step-heading {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.98);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ===== ANIMATED ICON (Flow Style) ===== */
+        .icon-wrapper {
+            width: 140px;
+            height: 140px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.28, 0.11, 0.32, 1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            margin-top: 1rem;
+        }
+
+        /* Step-specific gradients */
+        .icon-wrapper.step-1 {
+            background: linear-gradient(135deg, #06B6D4 0%, #0EA5E9 100%);
+        }
+
+        .icon-wrapper.step-2 {
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+        }
+
+        .icon-wrapper.step-3 {
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+        }
+
+        .icon-wrapper.step-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        .icon-wrapper:hover {
+            transform: scale(1.12) rotate(-5deg);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .icon-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 32px;
+            background: inherit;
+            filter: blur(10px);
+            opacity: 0.5;
+            z-index: -1;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.95); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        .icon-wrapper svg {
+            width: 70px;
+            height: 70px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2.5;
+            transition: all 0.3s;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .icon-wrapper:hover svg {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        /* ===== FLOATING SHAPES ===== */
+        .floating-shape {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.12;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            top: 60%;
+            left: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-shape:nth-child(3) {
+            top: 30%;
+            right: 15%;
+            animation-delay: 4s;
+        }
+
+        .floating-shape:nth-child(4) {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) translateX(10px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(-10px) translateX(20px) rotate(180deg);
+            }
+            75% {
+                transform: translateY(-30px) translateX(5px) rotate(270deg);
+            }
+        }
+
+        /* ===== SUCCESS STATE ===== */
+        .success-state {
+            text-align: center;
+            padding: 3.5rem 2rem;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            background: var(--gradient-impact);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-icon svg {
+            width: 60px;
+            height: 60px;
+            stroke: white;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            animation: checkDraw 0.5s ease-in-out 0.3s both;
+        }
+
+        @keyframes checkDraw {
+            0% { stroke-dasharray: 0, 100; }
+            100% { stroke-dasharray: 100, 0; }
+        }
+
+        .success-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--stone-dark);
+            margin-bottom: 1rem;
+        }
+
+        .success-message {
+            font-size: 1rem;
+            color: var(--stone-medium);
+            line-height: 1.6;
+            margin-bottom: 2.75rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .convert-card {
+                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .illustration-section {
+                padding: 2.75rem;
+                min-height: auto;
+                order: 1;
+                justify-content: center;
+            }
+
+            .form-section {
+                padding: 2.75rem;
+                order: 2;
+            }
+
+            /* Hide full illustration content on narrow screens, show only badges */
+            .step-heading,
+            .step-description,
+            .icon-wrapper,
+            .floating-shape {
+                display: none;
+            }
+
+            .step-indicator {
+                width: 100%;
+            }
+
+            .step-badges {
+                justify-content: center;
+            }
+
+            .step-title {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.375rem;
+            }
+
+            .form-section,
+            .illustration-section {
+                padding: 2rem;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+
+            .step-heading {
+                font-size: 1.5rem;
+            }
+
+            .amount-presets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .icon-wrapper {
+                width: 120px;
+                height: 120px;
+                border-radius: 24px;
+            }
+
+            .icon-wrapper::after {
+                border-radius: 28px;
+            }
+
+            .icon-wrapper svg {
+                width: 56px;
+                height: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <svg class="logo-icon" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+            </svg>
+            <span class="logo-text">UNERA</span>
+        </div>
+        <a href="dashboard.html" class="back-btn">
+            <svg fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="convert-card">
+            <!-- Form Section -->
+            <div class="form-section">
+                <!-- Wallet Balance Banner -->
+                <div id="walletBalanceBanner" style="display: none; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; padding: 1.25rem; margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 0.875rem; color: var(--stone-medium); margin-bottom: 0.25rem; font-weight: 500;">💰 Total Wallet Balance</div>
+                            <div id="totalBalanceDisplay" style="font-size: 1.75rem; font-weight: 700; color: var(--impact-green); font-family: 'Space Grotesk', sans-serif;">0.00 hCAD</div>
+                        </div>
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--stone-medium); margin-bottom: 0.25rem;">🍁 hCAD</div>
+                                <div id="balanceCAD" style="font-size: 1rem; font-weight: 600; color: var(--stone-dark);">0.00</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--stone-medium); margin-bottom: 0.25rem;">🇺🇸 hUSD</div>
+                                <div id="balanceUSD" style="font-size: 1rem; font-weight: 600; color: var(--stone-dark);">0.00</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--stone-medium); margin-bottom: 0.25rem;">🇪🇺 hEUR</div>
+                                <div id="balanceEUR" style="font-size: 1rem; font-weight: 600; color: var(--stone-dark);">0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Choose Stablecoin to Send -->
+                <div class="step-content active" id="step1">
+                    <h1 class="form-title">Send Stablecoins</h1>
+                    <p class="form-subtitle">Transfer your stablecoins to another wallet instantly and securely.</p>
+
+                    <div class="currency-grid">
+                        <div class="currency-option" onclick="selectCurrency('CAD')">
+                            <div class="currency-info">
+                                <div class="currency-flag">🍁</div>
+                                <div class="currency-details">
+                                    <h3>hCAD - Canadian Dollar</h3>
+                                    <p>Available: <span id="currencyBalanceCAD">0.00</span> hCAD</p>
+                                </div>
+                            </div>
+                            <div class="currency-check">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 13l4 4L19 7" stroke="currentColor"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="currency-option" onclick="selectCurrency('USD')">
+                            <div class="currency-info">
+                                <div class="currency-flag">🇺🇸</div>
+                                <div class="currency-details">
+                                    <h3>hUSD - US Dollar</h3>
+                                    <p>Available: <span id="currencyBalanceUSD">0.00</span> hUSD</p>
+                                </div>
+                            </div>
+                            <div class="currency-check">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 13l4 4L19 7" stroke="currentColor"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="currency-option" onclick="selectCurrency('EUR')">
+                            <div class="currency-info">
+                                <div class="currency-flag">🇪🇺</div>
+                                <div class="currency-details">
+                                    <h3>hEUR - Euro</h3>
+                                    <p>Available: <span id="currencyBalanceEUR">0.00</span> hEUR</p>
+                                </div>
+                            </div>
+                            <div class="currency-check">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 13l4 4L19 7" stroke="currentColor"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="step1NextBtn" onclick="proceedToSend()" disabled>
+                            Continue
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Recipient Address -->
+                <div class="step-content" id="step2">
+                    <h1 class="form-title">Recipient Address</h1>
+                    <p class="form-subtitle">Enter the wallet address you want to send to.</p>
+                    
+                    <div class="input-group" style="margin-bottom: 1.5rem;">
+                        <label class="input-label" for="recipientAddress">Recipient Wallet Address</label>
+                        <input type="text" class="form-input" id="recipientAddress" placeholder="0x... or ENS name (e.g., vitalik.eth)" aria-label="Enter recipient wallet address" style="font-family: monospace; font-size: 0.938rem;">
+                        <div style="margin-top: 0.5rem; font-size: 0.813rem; color: var(--impact-green); display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Supports Ethereum addresses and ENS names
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.875rem;">
+                            <label class="input-label" style="margin: 0;">Recent Recipients</label>
+                            <button style="background: none; border: none; color: var(--impact-green); font-size: 0.813rem; font-weight: 600; cursor: pointer; padding: 0;">View All</button>
+                        </div>
+                        <div style="border: 2px solid var(--stone-light); border-radius: 0.875rem; overflow: hidden;">
+                            <div style="display: flex; align-items: center; gap: 0.875rem; padding: 1rem; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid var(--stone-light);" onmouseover="this.style.background='var(--stone-light)'" onmouseout="this.style.background='transparent'" onclick="document.getElementById('recipientAddress').value='0x742d...3a8f'">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-impact); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.938rem; flex-shrink: 0;">MS</div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-weight: 600; font-size: 0.938rem; color: var(--stone-dark);">Mark Smith</div>
+                                    <div style="font-size: 0.813rem; color: var(--stone-medium); font-family: monospace; margin-top: 0.125rem;">0x742d...3a8f</div>
+                                </div>
+                                <div style="color: var(--stone-medium); font-size: 0.75rem;">Last sent: 2 days ago</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.875rem; padding: 1rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--stone-light)'" onmouseout="this.style.background='transparent'" onclick="document.getElementById('recipientAddress').value='sarah.eth'">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.938rem; flex-shrink: 0;">SJ</div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-weight: 600; font-size: 0.938rem; color: var(--stone-dark);">sarah.eth</div>
+                                    <div style="font-size: 0.813rem; color: var(--stone-medium); font-family: monospace; margin-top: 0.125rem;">ENS Name</div>
+                                </div>
+                                <div style="color: var(--stone-medium); font-size: 0.75rem;">Last sent: 1 week ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="prevStep(1)">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back
+                        </button>
+                        <button class="btn btn-primary" onclick="nextStep(3)">
+                            Continue
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Amount Input & Gas Fees -->
+                <div class="step-content" id="step3">
+                    <h1 class="form-title">Enter Amount</h1>
+                    <p class="form-subtitle">How much would you like to send?</p>
+
+                    <div class="amount-container">
+                        <div class="input-group">
+                            <label class="input-label" for="amountInput">Amount to Send</label>
+                            <div class="input-wrapper">
+                                <span class="input-prefix" id="currencySymbol" aria-hidden="true">$</span>
+                                <input type="number" class="amount-input" id="amountInput" placeholder="0.00" min="0.01" step="0.01" oninput="updateConversionPreview()" aria-label="Amount to send" aria-describedby="sendPreview">
+                            </div>
+                            <div style="margin-top: 0.5rem; font-size: 0.813rem; color: var(--stone-medium);">
+                                Available: <strong style="color: var(--stone-dark);" id="availableBalanceDisplay">0.00 hCAD</strong>
+                            </div>
+                            <div id="balanceWarning" style="display: none; margin-top: 0.5rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.5rem; font-size: 0.813rem; color: #DC2626;">
+                                ⚠️ <strong>Insufficient funds.</strong> <span id="balanceWarningText"></span>
+                            </div>
+                        </div>
+
+                        <div class="amount-presets">
+                            <button class="preset-btn" onclick="setAmount(50)">$50</button>
+                            <button class="preset-btn" onclick="setAmount(100)">$100</button>
+                            <button class="preset-btn" onclick="setAmount(500)">$500</button>
+                            <button class="preset-btn" onclick="setAmount(1000)">$1,000</button>
+                        </div>
+                    </div>
+
+                    <div class="conversion-preview" id="conversionPreview" style="display: none;">
+                        <div style="background: var(--stone-light); border-radius: 0.875rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid rgba(0,0,0,0.06);">
+                                <div>
+                                    <div style="font-size: 0.813rem; color: var(--stone-medium); margin-bottom: 0.25rem;">You're Sending</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--stone-dark);" id="previewSend">100.00 hCAD</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 0.813rem; color: var(--stone-medium); margin-bottom: 0.25rem;">To</div>
+                                    <div style="font-size: 0.875rem; font-weight: 600; font-family: monospace; color: var(--stone-dark);">0x742d...3a8f</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span style="color: var(--stone-medium); font-size: 0.938rem;">Network Fee (Gas)</span>
+                                <span style="font-weight: 600; color: var(--stone-dark);" id="previewFee">~$2.50</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span style="color: var(--stone-medium); font-size: 0.938rem;">Estimated Time</span>
+                                <span style="font-weight: 600; color: var(--impact-green);">~30 seconds</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid rgba(0,0,0,0.06);">
+                                <span style="font-weight: 700; font-size: 1rem;">Total Cost</span>
+                                <span style="font-weight: 700; font-size: 1rem; color: var(--impact-green);" id="previewReceive">$102.50</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%); border-radius: 0.875rem; padding: 1rem; display: flex; align-items: start; gap: 0.75rem;">
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink: 0; margin-top: 0.125rem;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div style="font-size: 0.875rem; line-height: 1.5; color: var(--stone-dark);">
+                                <strong>Blockchain Transfer:</strong> This transaction will be processed on the Ethereum network. Network fees vary based on current network congestion.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="prevStep(2)">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back
+                        </button>
+                        <button class="btn btn-primary" id="step2NextBtn" onclick="nextStep(4)" disabled>
+                            Review & Send
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Choose Payment Method -->
+                <div class="step-content" id="step4">
+                    <h1 class="form-title">Choose Payment Method</h1>
+                    <p class="form-subtitle">How would you like to complete this transaction?</p>
+
+                    <div class="payment-methods">
+                        <!-- Wallet Balance Payment -->
+                        <div class="payment-option payment-option-wallet" id="walletPayment" onclick="selectPayment('wallet')" style="display: none;">
+                            <div class="payment-recommended-badge">⭐ RECOMMENDED</div>
+                            <div class="payment-header">
+                                <div class="payment-info">
+                                    <span class="payment-icon">💰</span>
+                                    <span class="payment-name">Wallet Balance</span>
+                                </div>
+                                <div class="payment-radio"></div>
+                            </div>
+                            <p class="payment-description">
+                                Use your existing hCAD balance to send instantly. No fees, instant processing.
+                            </p>
+                            
+                            <!-- Transaction Preview for Wallet -->
+                            <div style="background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                    <span style="color: var(--stone-medium);">To:</span>
+                                    <span style="font-weight: 600; font-family: monospace; color: var(--stone-dark); font-size: 0.813rem;" id="walletPreviewRecipient">0x...</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                    <span style="color: var(--stone-medium);">Send Amount:</span>
+                                    <span style="font-weight: 600; color: var(--stone-dark);" id="walletPreviewAmount">0.00 hCAD</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                    <span style="color: var(--stone-medium);">Network Fee (1%):</span>
+                                    <span style="font-weight: 600; color: var(--stone-medium);" id="walletPreviewFee">0.00 hCAD</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                                    <span style="font-weight: 600; color: var(--stone-dark);">Total Deducted:</span>
+                                    <span style="font-weight: 700; color: var(--alert-orange);" id="walletPreviewTotal">0.00 hCAD</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                                    <span style="font-weight: 600; color: var(--stone-dark);">New Balance:</span>
+                                    <span style="font-weight: 700; font-size: 1.125rem; color: var(--impact-green);" id="walletPreviewNewBalance">0.00 hCAD</span>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-benefits">
+                                <span class="benefit-item">✓ Instant send</span>
+                                <span class="benefit-item">✓ Low fees (1%)</span>
+                                <span class="benefit-item">✓ Direct from wallet</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Payment -->
+                        <div class="payment-option" id="cardPayment" onclick="selectPayment('card')">
+                            <div class="payment-header">
+                                <div class="payment-info">
+                                    <span class="payment-icon">💳</span>
+                                    <span class="payment-name">Credit or Debit Card</span>
+                                </div>
+                                <div class="payment-radio"></div>
+                            </div>
+                            <p class="payment-description">
+                                Pay instantly with your Visa, Mastercard, or American Express card. Your stablecoins will be available immediately after payment confirmation.
+                            </p>
+                            <div class="payment-badge">
+                                <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Instant
+                            </div>
+
+                            <!-- Card Payment Form -->
+                            <div class="payment-form">
+                                <div class="input-group">
+                                    <label class="input-label" for="cardNumber">Card Number</label>
+                                    <input type="text" class="form-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" aria-label="Enter your card number" autocomplete="cc-number">
+                                </div>
+                                <div class="form-row">
+                                    <div class="input-group">
+                                        <label class="input-label" for="cardExpiry">Expiry Date</label>
+                                        <input type="text" class="form-input" id="cardExpiry" placeholder="MM/YY" maxlength="5" aria-label="Card expiry date in MM/YY format" autocomplete="cc-exp">
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="input-label" for="cardCVV">CVV</label>
+                                        <input type="text" class="form-input" id="cardCVV" placeholder="123" maxlength="4" aria-label="Card security code (CVV)" autocomplete="cc-csc">
+                                    </div>
+                                </div>
+                                <div class="security-note">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                    <span>All card transactions are processed securely through our payment processor. Your card information is encrypted and never stored on our servers.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interac e-Transfer -->
+                        <div class="payment-option" id="etransferPayment" onclick="selectPayment('etransfer')">
+                            <div class="payment-header">
+                                <div class="payment-info">
+                                    <span class="payment-icon">📧</span>
+                                    <span class="payment-name">Interac e-Transfer</span>
+                                </div>
+                                <div class="payment-radio"></div>
+                            </div>
+                            <p class="payment-description">
+                                Pay using Interac e-Transfer from your Canadian bank account. Secure, trusted, and convenient for Canadian customers.
+                            </p>
+                            <div class="payment-badge">
+                                🇨🇦 Canada Only
+                            </div>
+
+                            <!-- e-Transfer Info -->
+                            <div class="etransfer-info">
+                                <div class="input-group">
+                                    <label class="input-label" for="etransferEmail">Your Email Address</label>
+                                    <input type="email" class="form-input" id="etransferEmail" placeholder="your@email.com" aria-label="Email address for Interac e-Transfer" aria-describedby="etransferInstructions" autocomplete="email">
+                                </div>
+
+                                <div class="info-box" id="etransferInstructions">
+                                    <h4>How Interac e-Transfer Works:</h4>
+                                    <ol class="info-steps" aria-label="Interac e-Transfer process steps">
+                                        <li>We'll send you an Interac Request Money to your email</li>
+                                        <li>Open the email and click "Send Money"</li>
+                                        <li>Log in to your online banking and complete the transfer</li>
+                                        <li>Once we receive your payment (usually within minutes), your stablecoins will be issued to your wallet</li>
+                                        <li>You'll receive a confirmation email with your transaction details</li>
+                                    </ol>
+                                </div>
+
+                                <div class="security-note">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                    <span>Interac e-Transfer is powered by VoPay, a trusted Canadian payment processor. All transactions are monitored and secured in compliance with FINTRAC regulations.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="prevStep(3)">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back
+                        </button>
+                        <button class="btn btn-primary" id="step4ConfirmBtn" onclick="processPayment()">
+                            Confirm & Send Transaction
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Success State -->
+                <div class="step-content" id="success">
+                    <div class="success-state">
+                        <div class="success-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <h2 class="success-title">Purchase Successful!</h2>
+                        <p class="success-message" id="successMessage">
+                            Your stablecoins have been added to your wallet. You can now use them to support Humanity Centres and create endless impact.
+                        </p>
+                        <div class="button-group" style="justify-content: center;">
+                            <a href="dashboard.html" class="btn btn-primary">Go to Dashboard</a>
+                            <button class="btn btn-secondary" onclick="resetForm()">Make Another Purchase</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Illustration Section -->
+            <div class="illustration-section step-1-bg" id="illustrationSection">
+                <!-- Floating shapes -->
+                <svg class="floating-shape" width="40" height="40" viewBox="0 0 140 140">
+                    <circle cx="70" cy="70" r="60" fill="white"/>
+                    <circle cx="70" cy="70" r="45" fill="white" opacity="0.7"/>
+                    <circle cx="70" cy="70" r="30" fill="white" opacity="0.5"/>
+                </svg>
+                <svg class="floating-shape" width="50" height="50" viewBox="0 0 24 24" fill="none">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="white"/>
+                </svg>
+                <svg class="floating-shape" width="35" height="35" viewBox="0 0 24 24" fill="none">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="white"/>
+                </svg>
+                <svg class="floating-shape" width="45" height="45" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="8" stroke="white" stroke-width="2"/>
+                    <path d="M12 8v4l3 3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+
+                <!-- Step Indicator (at top) -->
+                <div class="step-indicator">
+                    <div class="step-badges">
+                        <div class="step-badge active" id="badge1">1</div>
+                        <div class="step-badge" id="badge2">2</div>
+                        <div class="step-badge" id="badge3">3</div>
+                    </div>
+
+                    <div class="step-title" id="illustrationTitle">Step 1: Choose Currency</div>
+                    <h2 class="step-heading" id="illustrationHeading">Select Your Stablecoin</h2>
+                    <p class="step-description" id="illustrationDescription">
+                        Choose from our range of fiat-backed stablecoins. Each stablecoin is 1:1 backed by reserves held in regulated financial institutions, ensuring stability and trust.
+                    </p>
+                </div>
+
+                <!-- Animated Icon (in the middle) -->
+                <div class="icon-wrapper step-1" id="iconWrapper" role="img" aria-label="Step illustration icon">
+                    <svg id="illustrationIcon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCurrency = '';
+        let selectedPaymentMethod = '';
+        let currentStep = 1;
+        let amount = 0;
+        let walletBalances = {
+            CAD: 0,
+            USD: 0,
+            EUR: 0
+        };
+
+        // Wallet Balance Management
+        function loadWalletBalances() {
+            // Load balances from localStorage
+            walletBalances.CAD = parseFloat(localStorage.getItem('walletBalance') || '0');
+            walletBalances.USD = parseFloat(localStorage.getItem('walletBalanceUSD') || '0');
+            walletBalances.EUR = parseFloat(localStorage.getItem('walletBalanceEUR') || '0');
+            
+            // Update all balance displays
+            updateBalanceDisplays();
+        }
+
+        function updateBalanceDisplays() {
+            const hasWallet = !!localStorage.getItem('walletAddress');
+            
+            if (!hasWallet) {
+                return;
+            }
+            
+            // Show balance banner
+            document.getElementById('walletBalanceBanner').style.display = 'block';
+            
+            // Update total balance (show in CAD for simplicity)
+            document.getElementById('totalBalanceDisplay').textContent = `${walletBalances.CAD.toFixed(2)} hCAD`;
+            
+            // Update individual currency displays in banner
+            document.getElementById('balanceCAD').textContent = walletBalances.CAD.toFixed(2);
+            document.getElementById('balanceUSD').textContent = walletBalances.USD.toFixed(2);
+            document.getElementById('balanceEUR').textContent = walletBalances.EUR.toFixed(2);
+            
+            // Update currency option displays
+            document.getElementById('currencyBalanceCAD').textContent = walletBalances.CAD.toFixed(2);
+            document.getElementById('currencyBalanceUSD').textContent = walletBalances.USD.toFixed(2);
+            document.getElementById('currencyBalanceEUR').textContent = walletBalances.EUR.toFixed(2);
+            
+            // Update available balance in amount step (if currency is selected)
+            if (selectedCurrency) {
+                const balance = walletBalances[selectedCurrency];
+                document.getElementById('availableBalanceDisplay').textContent = `${balance.toFixed(2)} h${selectedCurrency}`;
+            }
+        }
+
+        function validateSufficientBalance() {
+            if (!selectedCurrency || amount <= 0) {
+                return true;
+            }
+            
+            const balance = walletBalances[selectedCurrency];
+            const warningDiv = document.getElementById('balanceWarning');
+            const warningText = document.getElementById('balanceWarningText');
+            
+            if (amount > balance) {
+                warningDiv.style.display = 'block';
+                warningText.textContent = `You need ${amount.toFixed(2)} h${selectedCurrency} but only have ${balance.toFixed(2)} h${selectedCurrency}. Please reduce the amount or load your wallet.`;
+                return false;
+            } else {
+                warningDiv.style.display = 'none';
+                return true;
+            }
+        }
+
+        function deductFromWallet(currency, amount) {
+            walletBalances[currency] -= amount;
+            
+            // Save to localStorage
+            if (currency === 'CAD') {
+                localStorage.setItem('walletBalance', walletBalances.CAD.toString());
+            } else if (currency === 'USD') {
+                localStorage.setItem('walletBalanceUSD', walletBalances.USD.toString());
+            } else if (currency === 'EUR') {
+                localStorage.setItem('walletBalanceEUR', walletBalances.EUR.toString());
+            }
+            
+            // Update displays
+            updateBalanceDisplays();
+        }
+
+        // Currency Selection
+        function selectCurrency(currency) {
+            selectedCurrency = currency;
+            
+            // Update UI
+            document.querySelectorAll('.currency-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Update available balance display for this currency
+            updateBalanceDisplays();
+            
+            // Enable next button
+            document.getElementById('step1NextBtn').disabled = false;
+        }
+
+        // Populate transaction review
+        function populateTransactionReview() {
+            const hasWallet = !!localStorage.getItem('walletAddress');
+            const walletPaymentOption = document.getElementById('walletPayment');
+            const recipientAddress = document.getElementById('recipientAddress').value || '0x...';
+            const balance = walletBalances[selectedCurrency];
+            const fee = amount * 0.01;
+            const totalDeducted = amount + fee;
+            const newBalance = balance - totalDeducted;
+            
+            // Show/hide wallet payment option
+            if (hasWallet && balance > 0) {
+                walletPaymentOption.style.display = 'block';
+                
+                // Populate wallet payment preview
+                const truncatedRecipient = recipientAddress.length > 12 ? 
+                    recipientAddress.substring(0, 6) + '...' + recipientAddress.substring(recipientAddress.length - 4) : 
+                    recipientAddress;
+                    
+                document.getElementById('walletPreviewRecipient').textContent = truncatedRecipient;
+                document.getElementById('walletPreviewAmount').textContent = `${amount.toFixed(2)} h${selectedCurrency}`;
+                document.getElementById('walletPreviewFee').textContent = `${fee.toFixed(2)} h${selectedCurrency}`;
+                document.getElementById('walletPreviewTotal').textContent = `${totalDeducted.toFixed(2)} h${selectedCurrency}`;
+                document.getElementById('walletPreviewNewBalance').textContent = `${newBalance.toFixed(2)} h${selectedCurrency}`;
+                
+                // Update color based on balance
+                const newBalanceEl = document.getElementById('walletPreviewNewBalance');
+                if (newBalance < 0) {
+                    newBalanceEl.style.color = '#DC2626'; // Red - insufficient
+                } else if (newBalance < 100) {
+                    newBalanceEl.style.color = '#F59E0B'; // Orange - low
+                } else {
+                    newBalanceEl.style.color = 'var(--impact-green)'; // Green - good
+                }
+            } else {
+                walletPaymentOption.style.display = 'none';
+            }
+        }
+
+        // Step Navigation
+        function nextStep(step) {
+            // Hide current step
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            // Show next step
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+            
+            // Update illustration
+            updateIllustration(step);
+            
+            // If moving to amount step (3), update balance display
+            if (step === 3) {
+                updateBalanceDisplays();
+            }
+            
+            // If moving to review step (4), populate transaction review
+            if (step === 4) {
+                populateTransactionReview();
+            }
+            
+            // Scroll to top
+            document.querySelector('.form-section').scrollTop = 0;
+        }
+
+        function prevStep(step) {
+            nextStep(step);
+        }
+
+        // Amount Input
+        function setAmount(value) {
+            document.getElementById('amountInput').value = value;
+            updateConversionPreview();
+        }
+
+        function updateConversionPreview() {
+            const input = document.getElementById('amountInput');
+            amount = parseFloat(input.value) || 0;
+            
+            if (amount > 0) {
+                const fee = amount * 0.01; // 1% network fee for sends
+                const totalDeducted = amount + fee;
+                
+                // Validate sufficient balance
+                const hasSufficientBalance = validateSufficientBalance();
+                
+                document.getElementById('conversionPreview').style.display = 'block';
+                document.getElementById('previewSend').textContent = `${getCurrencySymbol()}${amount.toFixed(2)}`;
+                document.getElementById('previewFee').textContent = `${getCurrencySymbol()}${fee.toFixed(2)}`;
+                document.getElementById('previewReceive').textContent = `${amount.toFixed(2)} h${selectedCurrency}`;
+                
+                // Enable/disable button based on balance
+                document.getElementById('step2NextBtn').disabled = !hasSufficientBalance || amount <= 0;
+            } else {
+                document.getElementById('conversionPreview').style.display = 'none';
+                document.getElementById('step2NextBtn').disabled = true;
+                document.getElementById('balanceWarning').style.display = 'none';
+            }
+        }
+
+        function getCurrencySymbol() {
+            switch(selectedCurrency) {
+                case 'CAD': return '$';
+                case 'USD': return '$';
+                case 'EUR': return '€';
+                default: return '$';
+            }
+        }
+
+        // Payment Method Selection
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+            
+            // If wallet payment, check balance
+            if (method === 'wallet') {
+                const balance = walletBalances[selectedCurrency];
+                const totalNeeded = amount + (amount * 0.01); // amount + fee
+                if (balance < totalNeeded) {
+                    alert(`Insufficient wallet balance. You have ${balance.toFixed(2)} h${selectedCurrency} but need ${totalNeeded.toFixed(2)} h${selectedCurrency}.\n\nPlease use credit card or e-transfer to complete this transaction.`);
+                    return;
+                }
+            }
+            
+            // Update UI
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            if (method === 'card') {
+                document.getElementById('cardPayment').classList.add('selected');
+            } else if (method === 'etransfer') {
+                document.getElementById('etransferPayment').classList.add('selected');
+            } else if (method === 'wallet') {
+                document.getElementById('walletPayment').classList.add('selected');
+            }
+            
+            // Enable button after brief delay to ensure form is visible
+            setTimeout(() => {
+                validatePaymentForm();
+            }, 100);
+        }
+
+        function validatePaymentForm() {
+            let isValid = false;
+            
+            if (selectedPaymentMethod === 'card') {
+                const cardNumber = document.getElementById('cardNumber').value;
+                const cardExpiry = document.getElementById('cardExpiry').value;
+                const cardCVV = document.getElementById('cardCVV').value;
+                isValid = cardNumber.length >= 15 && cardExpiry.length === 5 && cardCVV.length >= 3;
+            } else if (selectedPaymentMethod === 'etransfer') {
+                const email = document.getElementById('etransferEmail').value;
+                isValid = email.includes('@') && email.includes('.');
+            } else if (selectedPaymentMethod === 'wallet') {
+                // Wallet payment is always valid if sufficient balance
+                const balance = walletBalances[selectedCurrency];
+                const totalNeeded = amount + (amount * 0.01);
+                isValid = balance >= totalNeeded;
+            }
+            
+            document.getElementById('step4ConfirmBtn').disabled = !isValid;
+        }
+
+        // Add event listeners for payment form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('cardNumber').addEventListener('input', validatePaymentForm);
+            document.getElementById('cardExpiry').addEventListener('input', validatePaymentForm);
+            document.getElementById('cardCVV').addEventListener('input', validatePaymentForm);
+            document.getElementById('etransferEmail').addEventListener('input', validatePaymentForm);
+            
+            // Initialize wallet balances
+            loadWalletBalances();
+            
+            // Initialize mock balances for testing (if wallet exists but no balance set)
+            if (localStorage.getItem('walletAddress')) {
+                if (!localStorage.getItem('walletBalance')) {
+                    localStorage.setItem('walletBalance', '5234.50'); // Mock CAD balance
+                }
+                if (!localStorage.getItem('walletBalanceUSD')) {
+                    localStorage.setItem('walletBalanceUSD', '1840.00'); // Mock USD balance
+                }
+                if (!localStorage.getItem('walletBalanceEUR')) {
+                    localStorage.setItem('walletBalanceEUR', '890.25'); // Mock EUR balance
+                }
+                // Reload balances after setting mock data
+                loadWalletBalances();
+            }
+        });
+
+        // Process Payment
+        function processPayment() {
+            // Disable button
+            const btn = document.getElementById('step4ConfirmBtn');
+            btn.disabled = true;
+            
+            const recipientAddress = document.getElementById('recipientAddress').value || '0x742d...3a8f';
+            
+            // WALLET PAYMENT: Instant send from existing balance
+            if (selectedPaymentMethod === 'wallet') {
+                btn.innerHTML = '<span>Sending from Wallet...</span>';
+                
+                // Validate balance one more time
+                const balance = walletBalances[selectedCurrency];
+                const fee = amount * 0.01; // 1% network fee
+                const totalNeeded = amount + fee;
+                
+                if (balance < totalNeeded) {
+                    alert(`Insufficient funds. You need ${totalNeeded.toFixed(2)} h${selectedCurrency} (including ${fee.toFixed(2)} network fee) but only have ${balance.toFixed(2)} h${selectedCurrency}.`);
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Confirm & Send Transaction</span>';
+                    return;
+                }
+                
+                // Simulate blockchain transaction (instant)
+                setTimeout(() => {
+                    // Deduct from wallet (amount + fee)
+                    deductFromWallet(selectedCurrency, totalNeeded);
+                    
+                    // Success message
+                    const successMsg = `✓ Transaction successful!\n\n` +
+                        `Sent ${amount.toFixed(2)} h${selectedCurrency} to ${recipientAddress}\n` +
+                        `Network fee: ${fee.toFixed(2)} h${selectedCurrency}\n\n` +
+                        `Your new balance: ${walletBalances[selectedCurrency].toFixed(2)} h${selectedCurrency}\n\n` +
+                        `Transaction will be confirmed on the blockchain within a few seconds.`;
+                    
+                    document.getElementById('successMessage').textContent = successMsg;
+                    
+                    // Show success
+                    document.getElementById('step4').classList.remove('active');
+                    document.getElementById('success').classList.add('active');
+                    currentStep = 5;
+                    
+                    updateIllustration(5);
+                }, 1500); // Faster for wallet
+                return;
+            }
+            
+            // TRADITIONAL PAYMENT: Buy stablecoins + send in one flow
+            btn.innerHTML = '<span>Processing Payment & Sending...</span>';
+            
+            setTimeout(() => {
+                const purchaseFee = amount * 0.025; // 2.5% purchase fee
+                const networkFee = amount * 0.01; // 1% network fee
+                const totalFees = purchaseFee + networkFee;
+                
+                let successMsg = '';
+                
+                if (selectedPaymentMethod === 'card') {
+                    successMsg = `✓ Purchase & Send Successful!\n\n` +
+                        `Purchased ${amount.toFixed(2)} h${selectedCurrency} with your card\n` +
+                        `Purchase fee: ${purchaseFee.toFixed(2)} h${selectedCurrency}\n` +
+                        `Sent ${amount.toFixed(2)} h${selectedCurrency} to ${recipientAddress}\n` +
+                        `Network fee: ${networkFee.toFixed(2)} h${selectedCurrency}\n\n` +
+                        `Total paid: $${(amount + purchaseFee + networkFee).toFixed(2)}\n` +
+                        `Transaction will be confirmed shortly.`;
+                } else if (selectedPaymentMethod === 'etransfer') {
+                    const email = document.getElementById('etransferEmail').value;
+                    successMsg = `✓ Payment Request Sent!\n\n` +
+                        `We've sent an Interac Request Money to ${email}\n` +
+                        `Amount: $${(amount + purchaseFee + networkFee).toFixed(2)}\n\n` +
+                        `Once you complete the transfer:\n` +
+                        `• ${amount.toFixed(2)} h${selectedCurrency} will be sent to ${recipientAddress}\n` +
+                        `• You'll receive a confirmation email\n\n` +
+                        `This usually takes a few minutes.`;
+                }
+                
+                document.getElementById('successMessage').textContent = successMsg;
+                
+                // Show success
+                document.getElementById('step4').classList.remove('active');
+                document.getElementById('success').classList.add('active');
+                currentStep = 5;
+                
+                updateIllustration(5);
+            }, 2500); // Longer for traditional payments
+        }
+
+        // Update Illustration
+        function updateIllustration(step) {
+            const title = document.getElementById('illustrationTitle');
+            const heading = document.getElementById('illustrationHeading');
+            const description = document.getElementById('illustrationDescription');
+            const icon = document.getElementById('illustrationIcon');
+            const iconWrapper = document.getElementById('iconWrapper');
+            const illustrationSection = document.getElementById('illustrationSection');
+            
+            // Update step badges
+            document.querySelectorAll('.step-badge').forEach((badge, index) => {
+                if (index + 1 === step && step <= 3) {
+                    badge.classList.add('active');
+                } else {
+                    badge.classList.remove('active');
+                }
+            });
+            
+            // Update icon wrapper class for different gradients
+            iconWrapper.className = 'icon-wrapper';
+            
+            // Update background image class
+            illustrationSection.className = 'illustration-section';
+            
+            switch(step) {
+                case 1:
+                    iconWrapper.classList.add('step-1');
+                    illustrationSection.classList.add('step-1-bg');
+                    title.textContent = 'Step 1: Choose Currency';
+                    heading.textContent = 'Select Your Stablecoin';
+                    description.textContent = 'Choose from our range of fiat-backed stablecoins. Each stablecoin is 1:1 backed by reserves held in regulated financial institutions, ensuring stability and trust.';
+                    icon.innerHTML = `<path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>`;
+                    break;
+                case 2:
+                    iconWrapper.classList.add('step-2');
+                    illustrationSection.classList.add('step-2-bg');
+                    title.textContent = 'Step 2: Enter Amount';
+                    heading.textContent = 'Choose Your Amount';
+                    description.textContent = 'Enter the amount you wish to convert. A small processing fee of 2.5% helps maintain our secure infrastructure and ensures instant delivery of your stablecoins.';
+                    icon.innerHTML = `
+                        <rect x="3" y="4" width="18" height="18" rx="2" fill="none"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                        <path d="M8 14h8M8 18h5"/>
+                    `;
+                    break;
+                case 3:
+                    iconWrapper.classList.add('step-3');
+                    illustrationSection.classList.add('step-3-bg');
+                    title.textContent = 'Step 3: Enter Amount';
+                    heading.textContent = 'How Much to Send';
+                    description.textContent = 'Enter the amount you want to send. A small 1% network fee helps maintain the blockchain infrastructure and ensures secure, instant transactions globally.';
+                    icon.innerHTML = `
+                        <rect x="3" y="4" width="18" height="18" rx="2" fill="none"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                        <path d="M8 14h8M8 18h5"/>
+                    `;
+                    break;
+                case 4:
+                    iconWrapper.classList.add('step-4');
+                    illustrationSection.classList.add('step-4-bg');
+                    title.textContent = 'Step 4: Payment Method';
+                    heading.textContent = 'Choose Payment';
+                    description.textContent = 'Use your wallet balance for instant sending with low fees, or purchase stablecoins with card/e-transfer to send in one convenient flow.';
+                    icon.innerHTML = `
+                        <rect x="2" y="5" width="20" height="14" rx="2" fill="none"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                        <path d="M6 15h4M14 15h2"/>
+                    `;
+                    break;
+                case 5:
+                    iconWrapper.classList.add('step-success');
+                    illustrationSection.classList.add('step-success-bg');
+                    title.textContent = 'Success!';
+                    heading.textContent = 'Transaction Complete';
+                    description.textContent = 'Your stablecoins have been sent successfully. The transaction will be confirmed on the blockchain within seconds.';
+                    icon.innerHTML = `
+                        <circle cx="12" cy="12" r="10" fill="none"/>
+                        <path d="M8 12l2 2 4-4"/>
+                    `;
+                    break;
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            selectedCurrency = '';
+            selectedPaymentMethod = '';
+            amount = 0;
+            currentStep = 1;
+            
+            document.getElementById('success').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            
+            document.querySelectorAll('.currency-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+            
+            document.getElementById('amountInput').value = '';
+            document.getElementById('conversionPreview').style.display = 'none';
+            document.getElementById('cardNumber').value = '';
+            document.getElementById('cardExpiry').value = '';
+            document.getElementById('cardCVV').value = '';
+            document.getElementById('etransferEmail').value = '';
+            
+            updateIllustration(1);
+        }
+
+        // KYC Check before proceeding to send
+        function proceedToSend() {
+            // STEP 1: Check KYC status first (REQUIRED - compliance)
+            const canProceed = KYCModal.checkAndProceed('send', amount, () => {
+                // STEP 2: Suggest wallet creation (OPTIONAL - recommended for sending)
+                // Users can use other transfer methods without a wallet
+                const hasWallet = localStorage.getItem('walletAddress');
+                
+                if (!hasWallet) {
+                    // Show wallet suggestion but allow proceeding
+                    const walletDismissed = sessionStorage.getItem('walletPromptDismissed_send');
+                    if (!walletDismissed) {
+                        WalletPrompt.checkAndPrompt({
+                            page: 'send',
+                            title: '💳 Create Wallet for Easy Transfers? (Optional)',
+                            message: 'You can use other methods now, or create a wallet for instant peer-to-peer transfers.',
+                            benefits: [
+                                'Send hCAD globally in seconds',
+                                'Ultra-low transaction fees',
+                                'Secure peer-to-peer transfers',
+                                'Full transaction history',
+                                'No intermediaries - direct transfers'
+                            ]
+                        });
+                        // Don't block - they can proceed without wallet
+                        sessionStorage.setItem('walletPromptDismissed_send', 'true');
+                    }
+                }
+
+                // STEP 3: KYC verified, proceed to transfer method selection (wallet optional)
+                nextStep(2);
+            });
+        }
+
+        // Check wallet on page load and show state-specific messages
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasWallet = WalletPrompt.hasWallet();
+            const isFirstVisit = WalletPrompt.isFirstVisit('send');
+
+            if (!hasWallet) {
+                // Add visual indicator that wallet is needed
+                const form = document.querySelector('.form-section');
+                if (form && isFirstVisit) {
+                    const notice = document.createElement('div');
+                    notice.style.cssText = `
+                        background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+                        border: 1.5px solid rgba(59, 130, 246, 0.3);
+                        border-radius: 1rem;
+                        padding: 1.25rem;
+                        margin-bottom: 2rem;
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 1rem;
+                    `;
+                    notice.innerHTML = `
+                        <div style="font-size: 1.5rem; flex-shrink: 0;">💸</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: #1F2937; margin-bottom: 0.25rem; font-size: 0.938rem;">Send funds globally?</div>
+                            <div style="color: #6B7280; font-size: 0.875rem; line-height: 1.6; margin-bottom: 0.75rem;">
+                                You'll need a wallet to securely send stablecoins. It's quick to set up and gives you full control!
+                            </div>
+                            <button onclick="window.location.href='wallet-creation.html?return=send'" style="background: linear-gradient(135deg, #3B82F6 0%, #0EA5E9 100%); color: white; border: none; border-radius: 0.5rem; padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.35)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(59, 130, 246, 0.25)';">
+                                Create Wallet
+                            </button>
+                        </div>
+                    `;
+                    form.insertBefore(notice, form.firstChild);
+                }
+            }
+        });
+    </script>
+
+    <!-- Wallet Prompt Component -->
+    <script src="../wallet-prompt.js"></script>
+
+    <!-- KYC Modal Component -->
+    <script src="../kyc-modal.js"></script>
+</body>
+</html>

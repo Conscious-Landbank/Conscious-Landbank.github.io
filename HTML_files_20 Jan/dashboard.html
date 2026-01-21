@@ -1,0 +1,3119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - UNERA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --earth-deep: #2C5F2D;
+            --earth-rich: #4A7C59;
+            --earth-fresh: #7FA99B;
+            --sky-vibrant: #0EA5E9;
+            --sun-warm: #F59E0B;
+            --bloom-hope: #EC4899;
+            --stone-dark: #1F2937;
+            --stone-medium: #6B7280;
+            --stone-light: #F3F4F6;
+            --stone-white: #FFFFFF;
+            --impact-green: #10B981;
+            --alert-orange: #F97316;
+            --trust-blue: #3B82F6;
+            --gradient-earth: linear-gradient(135deg, #2C5F2D 0%, #7FA99B 100%);
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-impact: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: var(--font-body);
+            color: var(--stone-dark);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Navigation */
+        .nav {
+            background: #FFFFFF;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2.75rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--stone-dark);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--impact-green);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.375rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.688rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .user-profile:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        /* User Dropdown Menu */
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 280px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .dropdown-user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .dropdown-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gradient-impact);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .dropdown-user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-user-name {
+            font-family: var(--font-display);
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: var(--stone-dark);
+            margin-bottom: 0.125rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-user-email {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-wallet-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--impact-green);
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            /* Hide scrollbar but keep functionality */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .dropdown-menu::-webkit-scrollbar {
+            display: none;
+        }
+
+        .dropdown-section {
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-section:not(:last-child) {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .dropdown-section-title {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--stone-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--stone-dark);
+            transition: all 0.15s;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: var(--impact-green);
+        }
+
+        .dropdown-item.logout:hover {
+            background: rgba(239, 68, 68, 0.08);
+            color: #EF4444;
+        }
+
+        .dropdown-item-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .dropdown-item-content {
+            flex: 1;
+        }
+
+        .dropdown-item-title {
+            font-weight: 500;
+            margin-bottom: 0.125rem;
+        }
+
+        .dropdown-item-description {
+            font-size: 0.75rem;
+            color: var(--stone-medium);
+            line-height: 1.3;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gradient-impact);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 0.813rem;
+            font-weight: 500;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.75rem 1.375rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.92) 0%, rgba(14, 165, 233, 0.88) 100%),
+                        url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1920&q=80') center/cover;
+            border-radius: 1.5rem;
+            padding: 2.75rem;
+            margin-bottom: 2.75rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-welcome {
+            font-size: 0.938rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 2.75rem;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .balance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.375rem;
+        }
+
+        .balance-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .balance-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .balance-label {
+            font-size: 0.813rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .balance-value {
+            font-family: var(--font-display);
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .balance-usd {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.375rem;
+            margin-bottom: 2.75rem;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid var(--stone-light);
+            border-radius: 1rem;
+            padding: 1.375rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-btn:hover {
+            border-color: var(--impact-green);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-impact);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.875rem;
+        }
+
+        .action-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .action-title {
+            font-weight: 600;
+            font-size: 0.938rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-desc {
+            font-size: 0.75rem;
+            color: var(--stone-medium);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.375rem;
+            color: var(--stone-dark);
+        }
+
+        /* Impact Stats Grid */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.375rem;
+            margin-bottom: 2.75rem;
+        }
+
+        .impact-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--stone-light);
+            transition: all 0.3s ease;
+        }
+
+        .impact-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .impact-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .impact-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: url(#iconGradient);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .impact-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-impact);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-label {
+            font-size: 0.938rem;
+            color: var(--stone-medium);
+        }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1.375rem;
+            margin-bottom: 2.75rem;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--stone-light);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.375rem;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .card-action {
+            font-size: 0.813rem;
+            color: var(--impact-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .card-action:hover {
+            text-decoration: underline;
+        }
+
+        /* Activity Item */
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            transition: background 0.2s;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-item:hover {
+            background: var(--stone-light);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--impact-green);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-desc {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--stone-medium);
+            white-space: nowrap;
+        }
+
+        /* Centre Card */
+        .centre-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--stone-light);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .centre-card:hover {
+            border-color: var(--impact-green);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+
+        .centre-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.75rem;
+            background: var(--stone-light);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .centre-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .centre-content {
+            flex: 1;
+        }
+
+        .centre-name {
+            font-weight: 600;
+            font-size: 0.938rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .centre-location {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+            margin-bottom: 0.5rem;
+        }
+
+        .centre-stat {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--impact-green);
+            font-weight: 500;
+        }
+
+        /* Button */
+        .btn {
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: var(--font-body);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient-impact);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--stone-light);
+            color: var(--stone-dark);
+            border: 2px solid transparent;
+        }
+
+        .btn-secondary:hover {
+            background: var(--stone-medium);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.375rem;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-scroll {
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .modal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .modal-header {
+            padding: 2.75rem 2.75rem 2.75rem;
+            border-bottom: 1px solid var(--stone-light);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-icon {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: 0 0 0 10px rgba(16, 185, 129, 0.08),
+                        0 0 0 20px rgba(16, 185, 129, 0.04),
+                        0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-icon::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-header:hover .modal-icon {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 0 0 12px rgba(16, 185, 129, 0.12),
+                        0 0 0 24px rgba(16, 185, 129, 0.06),
+                        0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .modal-header:hover .modal-icon::before {
+            opacity: 0.1;
+        }
+
+        .modal-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: url(#iconGradient);
+            fill: none;
+            stroke-width: 2.5;
+            transition: all 0.3s;
+        }
+
+        .modal-header:hover .modal-icon svg {
+            transform: scale(1.1);
+        }
+
+        .modal-header-text {
+            flex: 1;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--stone-dark);
+        }
+
+        .modal-subtitle {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+            line-height: 1.4;
+        }
+
+        .modal-body {
+            padding: 2.75rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.375rem;
+            right: 1.375rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 1.125rem;
+            color: var(--stone-medium);
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: rotate(90deg);
+            color: var(--stone-dark);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--stone-light);
+            padding: 0.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2.75rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border-radius: 0.625rem;
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: var(--stone-medium);
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--stone-dark);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transform: scale(1.02);
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.375rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--stone-dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--stone-light);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+            background: var(--stone-white);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--impact-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-input:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: var(--stone-medium);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--stone-medium);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .input-with-icon .form-input {
+            padding-left: 2.5rem;
+        }
+
+        .form-hint {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+            margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(16, 185, 129, 0.03) 100%);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            border-radius: 0.75rem;
+            padding: 1.125rem;
+            margin-bottom: 1.375rem;
+            font-size: 0.813rem;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: var(--impact-green);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1.375rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .balance-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== NEW MODAL STYLES ===== */
+        
+        /* Send/Donation Step Management */
+        .send-step, .donation-step {
+            display: none;
+        }
+
+        .send-step.active, .donation-step.active {
+            display: block;
+        }
+
+        /* Currency Grid */
+        .currency-grid, .donation-type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.375rem;
+        }
+
+        .currency-card, .donation-type-card {
+            padding: 1.375rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .currency-card:hover, .donation-type-card:hover {
+            border-color: var(--impact-green);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        .currency-card.selected, .donation-type-card.selected {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .currency-icon, .donation-type-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .currency-name, .donation-type-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .currency-balance, .donation-type-desc {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+        }
+
+        /* Input with Suffix */
+        .input-suffix {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: var(--stone-medium);
+        }
+
+        /* Preset Amounts */
+        .preset-amounts {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            background: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        /* Recipient List */
+        .recipient-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .recipient-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .recipient-item:hover {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.03);
+        }
+
+        .recipient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-impact);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .recipient-info {
+            flex: 1;
+        }
+
+        .recipient-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.125rem;
+        }
+
+        .recipient-address {
+            font-size: 0.75rem;
+            color: var(--stone-medium);
+            font-family: monospace;
+        }
+
+        /* Review Card */
+        .review-card {
+            background: var(--stone-light);
+            border-radius: 1rem;
+            padding: 1.375rem;
+            margin-bottom: 1.375rem;
+        }
+
+        .review-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-label {
+            color: var(--stone-medium);
+            font-size: 0.875rem;
+        }
+
+        .review-value {
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-align: right;
+        }
+
+        .review-arrow {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--impact-green);
+            margin: 0.5rem 0;
+        }
+
+        .review-divider {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.08);
+            margin: 0.75rem 0;
+        }
+
+        /* Allocation Options */
+        .allocation-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.125rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .allocation-option:hover {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.03);
+        }
+
+        .allocation-option input[type="radio"]:checked ~ div {
+            color: var(--impact-green);
+        }
+
+        .allocation-title {
+            font-weight: 600;
+            font-size: 0.938rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .allocation-desc {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+        }
+
+        /* Impact Calculator */
+        .impact-calculator {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+            border-radius: 1rem;
+            padding: 1.375rem;
+            margin-top: 1.5rem;
+        }
+
+        .impact-calc-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--stone-dark);
+        }
+
+        .impact-calc-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .impact-calc-item:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .impact-calc-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .impact-calc-label {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+            margin-bottom: 0.25rem;
+        }
+
+        .impact-calc-value {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--impact-green);
+            margin-bottom: 0.125rem;
+        }
+
+        .impact-calc-desc {
+            font-size: 0.75rem;
+            color: var(--stone-medium);
+        }
+
+        .impact-calc-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* Balance List */
+        .balance-list {
+            background: var(--stone-light);
+            border-radius: 0.75rem;
+            padding: 1.125rem;
+            margin-bottom: 1.375rem;
+        }
+
+        .balance-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .balance-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* Filter Chips */
+        .filter-chip {
+            padding: 0.5rem 1rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 2rem;
+            background: white;
+            font-size: 0.813rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .filter-chip.active {
+            background: var(--gradient-impact);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Explore Centre Card */
+        .explore-centre-card {
+            background: white;
+            border: 1px solid var(--stone-light);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .explore-centre-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .explore-centre-image {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .explore-centre-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .explore-centre-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--impact-green);
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .explore-centre-content {
+            padding: 1.375rem;
+        }
+
+        .explore-centre-name {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .explore-centre-location {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+            margin-bottom: 0.875rem;
+        }
+
+        .explore-centre-description {
+            font-size: 0.875rem;
+            color: var(--stone-dark);
+            line-height: 1.6;
+            margin-bottom: 1.125rem;
+        }
+
+        .explore-centre-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.125rem 0;
+            margin-bottom: 1.125rem;
+            border-top: 1px solid var(--stone-light);
+            border-bottom: 1px solid var(--stone-light);
+        }
+
+        .explore-stat {
+            text-align: center;
+        }
+
+        .explore-stat-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--impact-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .explore-stat-label {
+            font-size: 0.75rem;
+            color: var(--stone-medium);
+        }
+
+        .explore-centre-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--gradient-impact);
+            color: white;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .currency-grid, .donation-type-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .centres-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .preset-amounts {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .explore-centre-stats {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+
+            .explore-stat {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Gradient Definition -->
+    <svg width="0" height="0" style="position: absolute;">
+        <defs>
+            <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#0EA5E9;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard.html" class="nav-link">DASHBOARD</a></li>
+                <li><a href="wallet.html" class="nav-link">WALLET</a></li>
+                <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+                <li><a href="index.html#centres" class="nav-link">CENTRES</a></li>
+                <li><a href="#" class="nav-link">PORTFOLIO</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="user-profile" onclick="toggleUserDropdown()" id="userProfile">
+                <div class="user-avatar">JS</div>
+                <div class="user-name">Jane Smith</div>
+                
+                <!-- User Dropdown Menu -->
+                <div class="user-dropdown" id="userDropdown" onclick="event.stopPropagation()">
+                    <!-- Header with User Info -->
+                    <div class="dropdown-header">
+                        <div class="dropdown-user-info">
+                            <div class="dropdown-avatar">JS</div>
+                            <div class="dropdown-user-details">
+                                <div class="dropdown-user-name">Jane Smith</div>
+                                <div class="dropdown-user-email">jane@example.com</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-wallet-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            0x742d...3a8f
+                        </div>
+                    </div>
+
+                    <!-- Menu Items -->
+                    <div class="dropdown-menu">
+                        <!-- Account Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Account</div>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">My Profile</div>
+                                    <div class="dropdown-item-description">View and edit personal info</div>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Account Settings</div>
+                                    <div class="dropdown-item-description">Preferences and notifications</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Financial Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Financial</div>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                    <path d="M6 10h.01M10 10h.01M14 10h.01"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Wallet Settings</div>
+                                    <div class="dropdown-item-description">Manage connected wallets</div>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Transaction History</div>
+                                    <div class="dropdown-item-description">View all transactions</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Impact Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Impact</div>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">My Donations</div>
+                                    <div class="dropdown-item-description">View donation history</div>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Supported Centres</div>
+                                    <div class="dropdown-item-description">View centres you support</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Support Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Support</div>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                    <path d="M12 17h.01"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Help & Support</div>
+                                    <div class="dropdown-item-description">FAQ and contact support</div>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2z"/>
+                                    <path d="M12 15V9m0 0V5.5A2.5 2.5 0 0 1 14.5 3H20"/>
+                                    <circle cx="12" cy="9" r="1"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Security Settings</div>
+                                    <div class="dropdown-item-description">2FA and password</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Logout Section -->
+                        <div class="dropdown-section">
+                            <button class="dropdown-item logout" onclick="logout()">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Logout</div>
+                                    <div class="dropdown-item-description">Sign out of your account</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="hero-welcome">Welcome back,</div>
+                <h1 class="hero-title">Your Impact Dashboard</h1>
+                <div id="kycStatusBadge" style="margin: 1rem 0;"></div>
+                
+                <div class="balance-cards">
+                    <div class="balance-card">
+                        <div class="balance-label">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            hCAD Balance
+                        </div>
+                        <div class="balance-value">5,234.50</div>
+                        <div class="balance-usd">≈ $5,234.50 CAD</div>
+                    </div>
+
+                    <div class="balance-card">
+                        <div class="balance-label">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            HUMA Tokens
+                        </div>
+                        <div class="balance-value">1,240</div>
+                        <div class="balance-usd">Governance tokens</div>
+                    </div>
+
+                    <div class="balance-card">
+                        <div class="balance-label">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Total Impact
+                        </div>
+                        <div class="balance-value">∞</div>
+                        <div class="balance-usd">Lives touched forever</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="wallet.html" class="action-btn" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%); border: 2px solid #10B981;">
+                <div class="action-icon" style="background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%); color: white;">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>
+                    </svg>
+                </div>
+                <div class="action-title" style="color: #10B981;">My Wallet</div>
+                <div class="action-desc">View balances & transactions</div>
+            </a>
+
+            <a href="convert.html" class="action-btn">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+                <div class="action-title">Buy Stablecoins</div>
+                <div class="action-desc">hCAD, hUSD, hEUR via card or e-transfer</div>
+            </a>
+
+            <a href="donate.html" class="action-btn">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
+                <div class="action-title">Make a Donation</div>
+                <div class="action-desc">Support Humanity Centres</div>
+            </a>
+
+            <a href="send.html" class="action-btn">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </div>
+                <div class="action-title">Send Stablecoins</div>
+                <div class="action-desc">Transfer hCAD, hUSD, or hEUR</div>
+            </a>
+
+            <a href="explore-centres.html" class="action-btn">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="action-title">Explore Centres</div>
+                <div class="action-desc">Find Humanity Centres</div>
+            </a>
+        </div>
+
+        <!-- Impact Stats -->
+        <h2 class="section-title">Your Impact</h2>
+        <div class="impact-grid">
+            <div class="impact-card">
+                <div class="impact-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
+                <div class="impact-value">$2,450</div>
+                <div class="impact-label">Total Donations</div>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="impact-value">$185.40</div>
+                <div class="impact-label">Yield Generated</div>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div class="impact-value">5</div>
+                <div class="impact-label">Centres Supported</div>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="impact-value">1,240+</div>
+                <div class="impact-label">Lives Impacted</div>
+            </div>
+        </div>
+
+        <!-- Two Column Section -->
+        <div class="two-col">
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Activity</h3>
+                    <a href="#" class="card-action">View All →</a>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Donation to Toronto HC</div>
+                        <div class="activity-desc">500 hCAD donated</div>
+                    </div>
+                    <div class="activity-time">2h ago</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Yield Earned</div>
+                        <div class="activity-desc">12.50 hCAD from donations</div>
+                    </div>
+                    <div class="activity-time">1d ago</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Converted to hCAD</div>
+                        <div class="activity-desc">1,000 CAD via e-transfer</div>
+                    </div>
+                    <div class="activity-time">3d ago</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <svg viewBox="0 0 24 24">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">HUMA Tokens Earned</div>
+                        <div class="activity-desc">50 HUMA for your contributions</div>
+                    </div>
+                    <div class="activity-time">5d ago</div>
+                </div>
+            </div>
+
+            <!-- Supported Centres -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Your Centres</h3>
+                    <a href="#" class="card-action">View All →</a>
+                </div>
+
+                <div class="centre-card">
+                    <div class="centre-image">
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&q=80" alt="Toronto HC">
+                    </div>
+                    <div class="centre-content">
+                        <div class="centre-name">Toronto Humanity Centre</div>
+                        <div class="centre-location">📍 Toronto, Canada</div>
+                        <div class="centre-stat">
+                            <svg viewBox="0 0 24 24" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            $1,200 donated
+                        </div>
+                    </div>
+                </div>
+
+                <div class="centre-card">
+                    <div class="centre-image">
+                        <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&q=80" alt="Vancouver HC">
+                    </div>
+                    <div class="centre-content">
+                        <div class="centre-name">Vancouver Humanity Centre</div>
+                        <div class="centre-location">📍 Vancouver, Canada</div>
+                        <div class="centre-stat">
+                            <svg viewBox="0 0 24 24" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            $800 donated
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Convert Modal -->
+    <div class="modal" id="convertModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeConvertModal()">✕</button>
+            
+            <div class="modal-scroll">
+                <div class="modal-header">
+                    <div class="modal-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="modal-header-text">
+                        <h2 class="modal-title">Buy Stablecoins</h2>
+                        <p class="modal-subtitle">Convert fiat to hCAD, hUSD, or hEUR via card or e-transfer</p>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                <!-- Currency Selector -->
+                <div class="form-group">
+                    <label class="form-label">Select Stablecoin</label>
+                    <select class="form-input" id="currencySelect" onchange="updateCurrency()">
+                        <option value="CAD" selected>hCAD - Canadian Dollar</option>
+                        <option value="USD">hUSD - US Dollar</option>
+                        <option value="EUR">hEUR - Euro</option>
+                    </select>
+                    <div class="form-hint">1:1 backed by reserves in regulated financial institutions</div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('card')">💳 Card Payment</button>
+                    <button class="tab" onclick="switchTab('etransfer')">📧 E-Transfer</button>
+                </div>
+
+                <!-- Card Payment Tab -->
+                <div class="tab-content active" id="cardTab">
+                    <div class="form-group">
+                        <label class="form-label">Amount <span id="amountCurrency">(CAD)</span></label>
+                        <div class="input-with-icon">
+                            <span class="input-icon" id="currencySymbol">$</span>
+                            <input type="number" class="form-input" id="amountInput" placeholder="100.00" value="100" oninput="updateReceiveAmount()">
+                        </div>
+                        <div class="form-hint" id="receiveHint">You will receive approximately 100 <span id="receiveCurrency">hCAD</span> (1:1 ratio)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Card Number</label>
+                        <input type="text" class="form-input" placeholder="1234 5678 9012 3456">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Expiry</label>
+                            <input type="text" class="form-input" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CVV</label>
+                            <input type="text" class="form-input" placeholder="123">
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Secure Payment:</strong> All card transactions are processed securely through our payment partner. Your card information is encrypted and never stored.
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%;">Convert Now</button>
+                </div>
+
+                <!-- E-Transfer Tab -->
+                <div class="tab-content" id="etransferTab">
+                    <div class="form-group">
+                        <label class="form-label">Amount <span id="etransferAmountCurrency">(CAD)</span></label>
+                        <div class="input-with-icon">
+                            <span class="input-icon" id="etransferCurrencySymbol">$</span>
+                            <input type="number" class="form-input" id="etransferAmountInput" placeholder="100.00" value="100" oninput="updateETransferReceiveAmount()">
+                        </div>
+                        <div class="form-hint" id="etransferLimits">Minimum: $10 | Maximum: $10,000 per transaction</div>
+                        <div class="form-hint" id="etransferReceiveHint" style="margin-top: 0.5rem; color: var(--impact-green); font-weight: 500;">You will receive approximately 100 <span id="etransferReceiveCurrency">hCAD</span></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Your Email (for Interac notification)</label>
+                        <input type="email" class="form-input" placeholder="you@example.com" value="jane.smith@example.com">
+                    </div>
+
+                    <div class="info-box">
+                        <strong>How it works:</strong><br>
+                        1. Click "Request E-Transfer" below<br>
+                        2. You'll receive an Interac Request Money notification to your email<br>
+                        3. Accept the request through your banking app<br>
+                        4. Your hCAD will be credited within 15-30 minutes<br><br>
+                        <strong>Note:</strong> Make sure your email is registered with your bank for Interac e-Transfer.
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%;" onclick="requestETransfer()">Request E-Transfer</button>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 0.688rem;">I've Already Sent E-Transfer</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Stablecoins Modal -->
+    <div class="modal" id="sendModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeSendModal()">✕</button>
+            <div class="modal-scroll">
+                <!-- Step 1: Select Currency -->
+                <div class="send-step active" id="sendStep1">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <defs>
+                                    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#0EA5E9;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Send Stablecoins</h3>
+                            <p class="modal-subtitle">Transfer your stablecoins to another wallet instantly</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Select Stablecoin to Send</label>
+                            <div class="currency-grid">
+                                <div class="currency-card" onclick="selectSendCurrency('hCAD')">
+                                    <div class="currency-icon">🇨🇦</div>
+                                    <div class="currency-name">hCAD</div>
+                                    <div class="currency-balance">Balance: 5,234.50</div>
+                                </div>
+                                <div class="currency-card" onclick="selectSendCurrency('hUSD')">
+                                    <div class="currency-icon">🇺🇸</div>
+                                    <div class="currency-name">hUSD</div>
+                                    <div class="currency-balance">Balance: 0.00</div>
+                                </div>
+                                <div class="currency-card" onclick="selectSendCurrency('hEUR')">
+                                    <div class="currency-icon">🇪🇺</div>
+                                    <div class="currency-name">hEUR</div>
+                                    <div class="currency-balance">Balance: 0.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Enter Recipient -->
+                <div class="send-step" id="sendStep2">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Recipient Address</h3>
+                            <p class="modal-subtitle">Enter wallet address or select from contacts</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Recipient Wallet Address</label>
+                            <input type="text" class="form-input" id="sendRecipientAddress" placeholder="0x... or ENS name" aria-label="Recipient wallet address">
+                            <div class="form-hint">✓ Supports Ethereum addresses, ENS names, and Unstoppable Domains</div>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.75rem;" onclick="scanQRCode()">
+                                <svg style="width: 20px; height: 20px; margin-right: 0.5rem; display: inline; vertical-align: middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                                </svg>
+                                Scan QR Code
+                            </button>
+                        </div>
+
+                        <div class="info-box" style="margin-bottom: 1.375rem;">
+                            <strong>Recent Recipients</strong>
+                            <div class="recipient-list" style="margin-top: 0.75rem;">
+                                <div class="recipient-item" onclick="selectRecipient('0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f')">
+                                    <div class="recipient-avatar">MS</div>
+                                    <div class="recipient-info">
+                                        <div class="recipient-name">Mark Smith</div>
+                                        <div class="recipient-address">0x742d...3a8f</div>
+                                    </div>
+                                </div>
+                                <div class="recipient-item" onclick="selectRecipient('0x89ab15C7694C0542925b3b844Bc9e8695g4b9g')">
+                                    <div class="recipient-avatar">LD</div>
+                                    <div class="recipient-info">
+                                        <div class="recipient-name">Lisa Davis</div>
+                                        <div class="recipient-address">0x89ab...4b9g</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="goToSendStep(3)">Continue</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="goToSendStep(1)">Back</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Enter Amount -->
+                <div class="send-step" id="sendStep3">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Enter Amount</h3>
+                            <p class="modal-subtitle">How much <span id="sendCurrencyName">hCAD</span> do you want to send?</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Amount</label>
+                            <div class="input-with-icon">
+                                <input type="number" class="form-input" id="sendAmountInput" placeholder="0.00" aria-label="Amount to send">
+                                <span class="input-suffix" id="sendCurrencySuffix">hCAD</span>
+                            </div>
+                            <div class="form-hint">Available: <strong id="sendAvailableBalance">5,234.50 hCAD</strong></div>
+                        </div>
+
+                        <div class="preset-amounts">
+                            <button class="preset-btn" onclick="setSendAmount(10)">10</button>
+                            <button class="preset-btn" onclick="setSendAmount(50)">50</button>
+                            <button class="preset-btn" onclick="setSendAmount(100)">100</button>
+                            <button class="preset-btn" onclick="setSendAmount(500)">500</button>
+                            <button class="preset-btn" onclick="setSendAmountMax()">Max</button>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 1.375rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Network Fee (Gas):</span>
+                                <span><strong>~$2.50</strong></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Estimated Time:</span>
+                                <span><strong>~30 seconds</strong></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.08);">
+                                <span><strong>Total Cost:</strong></span>
+                                <span><strong id="sendTotalCost">$0.00</strong></span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="goToSendStep(4)">Review Transaction</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="goToSendStep(2)">Back</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review & Confirm -->
+                <div class="send-step" id="sendStep4">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Review Transaction</h3>
+                            <p class="modal-subtitle">Please review before confirming</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="review-card">
+                            <div class="review-item">
+                                <span class="review-label">From:</span>
+                                <span class="review-value">0x...3a8f (You)</span>
+                            </div>
+                            <div class="review-arrow">↓</div>
+                            <div class="review-item">
+                                <span class="review-label">To:</span>
+                                <span class="review-value" id="sendReviewRecipient">0x...</span>
+                            </div>
+                            <div class="review-divider"></div>
+                            <div class="review-item">
+                                <span class="review-label">Amount:</span>
+                                <span class="review-value" id="sendReviewAmount">0 hCAD</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">Network Fee:</span>
+                                <span class="review-value">~$2.50</span>
+                            </div>
+                            <div class="review-divider"></div>
+                            <div class="review-item" style="font-weight: 600;">
+                                <span class="review-label">Total Cost:</span>
+                                <span class="review-value" id="sendReviewTotal">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="info-box" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2);">
+                            <strong style="color: #EF4444;">⚠️ Important:</strong><br>
+                            • Double-check the recipient address - transactions cannot be reversed<br>
+                            • Ensure you're sending to the correct network (Ethereum)<br>
+                            • Keep enough balance for future transactions
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="confirmSendTransaction()">Confirm & Send</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="goToSendStep(3)">Back</button>
+                    </div>
+                </div>
+
+                <!-- Success Step -->
+                <div class="send-step" id="sendSuccess">
+                    <div class="modal-body" style="text-align: center; padding: 3.5rem 2.75rem;">
+                        <div style="width: 100px; height: 100px; margin: 0 auto 1.5rem; background: var(--gradient-impact); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; stroke: white; fill: none; stroke-width: 3;">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <h2 style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem;">Transaction Sent!</h2>
+                        <p style="color: var(--stone-medium); margin-bottom: 2rem;">Your stablecoins are on their way</p>
+                        
+                        <div class="info-box" style="text-align: left; margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Transaction Hash:</span>
+                                <span style="font-family: monospace; font-size: 0.75rem;">0xabc...def</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Status:</span>
+                                <span style="color: var(--impact-green); font-weight: 600;">⏳ Pending</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.75rem;" onclick="window.open('https://etherscan.io', '_blank')">View on Etherscan</button>
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="closeSendModal()">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div class="modal" id="donationModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeDonationModal()">✕</button>
+            <div class="modal-scroll">
+                <!-- Step 1: Donation Type -->
+                <div class="donation-step active" id="donationStep1">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Make a Donation</h3>
+                            <p class="modal-subtitle">Create endless impact that helps forever</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Choose Donation Type</label>
+                            <div class="donation-type-grid">
+                                <div class="donation-type-card" onclick="selectDonationType('onetime')">
+                                    <div class="donation-type-icon">🎁</div>
+                                    <div class="donation-type-title">One-Time</div>
+                                    <div class="donation-type-desc">Make a single contribution</div>
+                                </div>
+                                <div class="donation-type-card" onclick="selectDonationType('recurring')">
+                                    <div class="donation-type-icon">🔄</div>
+                                    <div class="donation-type-title">Recurring</div>
+                                    <div class="donation-type-desc">Monthly impact that compounds</div>
+                                    <div class="badge-pill" style="margin-top: 0.5rem;">2x Impact</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <strong>🌟 Why Recurring Donations?</strong><br>
+                            • <strong>2x matching</strong> from our impact fund<br>
+                            • Predictable funding helps centres plan long-term<br>
+                            • Your principal stays intact, only yield is used<br>
+                            • Cancel anytime with no penalties
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Select Centre (continued below) -->
+                <div class="donation-step" id="donationStep2">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Choose Where to Help</h3>
+                            <p class="modal-subtitle">Select a specific centre or let us allocate based on need</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="allocation-option" onclick="selectAllocation('auto')">
+                                <input type="radio" name="allocation" value="auto" style="margin-right: 0.75rem;">
+                                <div>
+                                    <div class="allocation-title">🌍 Greatest Need (Recommended)</div>
+                                    <div class="allocation-desc">Our algorithm allocates to centres with highest impact potential</div>
+                                </div>
+                            </div>
+                            <div class="allocation-option" onclick="selectAllocation('specific')">
+                                <input type="radio" name="allocation" value="specific" style="margin-right: 0.75rem;">
+                                <div>
+                                    <div class="allocation-title">🎯 Specific Centre</div>
+                                    <div class="allocation-desc">Choose a centre you want to support directly</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="centreSelection" style="display: none; margin-top: 1.375rem;">
+                            <input type="text" class="form-input" placeholder="Search centres by name or location..." style="margin-bottom: 1rem;">
+                            <div class="centre-card" onclick="selectCentre('kenya')">
+                                <div class="centre-image">
+                                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&q=80" alt="Nairobi Hope Centre">
+                                </div>
+                                <div class="centre-content">
+                                    <div class="centre-name">Nairobi Hope Centre</div>
+                                    <div class="centre-location">📍 Nairobi, Kenya</div>
+                                    <div class="centre-stat">💚 342 lives impacted this month</div>
+                                </div>
+                            </div>
+                            <div class="centre-card" onclick="selectCentre('india')">
+                                <div class="centre-image">
+                                    <img src="https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=400&q=80" alt="Mumbai Education Hub">
+                                </div>
+                                <div class="centre-content">
+                                    <div class="centre-name">Mumbai Education Hub</div>
+                                    <div class="centre-location">📍 Mumbai, India</div>
+                                    <div class="centre-stat">💚 567 lives impacted this month</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 1.375rem;" onclick="goToDonationStep(3)">Continue</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="goToDonationStep(1)">Back</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Amount & Impact Calculator -->
+                <div class="donation-step" id="donationStep3">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Enter Amount</h3>
+                            <p class="modal-subtitle">See your endless impact potential</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Donation Amount</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon">$</span>
+                                <input type="number" class="form-input" id="donationAmountInput" placeholder="100" value="100" oninput="updateImpactCalculator()">
+                            </div>
+                        </div>
+
+                        <div class="preset-amounts">
+                            <button class="preset-btn" onclick="setDonationAmount(25)">$25</button>
+                            <button class="preset-btn" onclick="setDonationAmount(100)">$100</button>
+                            <button class="preset-btn" onclick="setDonationAmount(500)">$500</button>
+                            <button class="preset-btn" onclick="setDonationAmount(1000)">$1,000</button>
+                        </div>
+
+                        <div class="impact-calculator">
+                            <div class="impact-calc-title">💫 Your Endless Impact</div>
+                            <div class="impact-calc-item">
+                                <span class="impact-calc-icon">📚</span>
+                                <div>
+                                    <div class="impact-calc-label">Education</div>
+                                    <div class="impact-calc-value" id="educationImpact">12 students</div>
+                                    <div class="impact-calc-desc">per month, forever</div>
+                                </div>
+                            </div>
+                            <div class="impact-calc-item">
+                                <span class="impact-calc-icon">🏥</span>
+                                <div>
+                                    <div class="impact-calc-label">Healthcare</div>
+                                    <div class="impact-calc-value" id="healthcareImpact">8 checkups</div>
+                                    <div class="impact-calc-desc">per month, forever</div>
+                                </div>
+                            </div>
+                            <div class="impact-calc-item">
+                                <span class="impact-calc-icon">🍽️</span>
+                                <div>
+                                    <div class="impact-calc-label">Nutrition</div>
+                                    <div class="impact-calc-value" id="nutritionImpact">240 meals</div>
+                                    <div class="impact-calc-desc">per month, forever</div>
+                                </div>
+                            </div>
+                            <div class="impact-calc-total">
+                                <strong>Year 1 Impact:</strong> <span id="yearOneImpact">$150</span> in support<br>
+                                <strong>10-Year Impact:</strong> <span id="tenYearImpact">$1,500</span> in support<br>
+                                <small>From your one-time $100 donation, through yield generation</small>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="goToDonationStep(4)">Continue to Payment</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="goToDonationStep(2)">Back</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment Method -->
+                <div class="donation-step" id="donationStep4">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Payment Method</h3>
+                            <p class="modal-subtitle">Choose how you want to donate</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="tabs">
+                            <button class="tab active" onclick="switchDonationPayment('balance')">Use Balance</button>
+                            <button class="tab" onclick="switchDonationPayment('card')">Card</button>
+                            <button class="tab" onclick="switchDonationPayment('etransfer')">E-Transfer</button>
+                        </div>
+
+                        <div class="tab-content active" id="balancePayment">
+                            <div class="balance-list">
+                                <div class="balance-item">
+                                    <span>hCAD Balance:</span>
+                                    <strong>5,234.50 hCAD</strong>
+                                </div>
+                                <div class="balance-item">
+                                    <span>hUSD Balance:</span>
+                                    <strong>0.00 hUSD</strong>
+                                </div>
+                            </div>
+                            <div class="info-box" style="margin-top: 1rem;">
+                                ✓ No fees when using your stablecoin balance<br>
+                                ✓ Instant confirmation<br>
+                                ✓ Your donation starts generating impact immediately
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="cardPayment" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Card Number</label>
+                                <input type="text" class="form-input" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Expiry</label>
+                                    <input type="text" class="form-input" placeholder="MM/YY">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-input" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="etransferPayment" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Your Email</label>
+                                <input type="email" class="form-input" placeholder="you@example.com" value="jane.smith@example.com">
+                            </div>
+                            <div class="info-box">
+                                You'll receive an Interac Request Money notification. Accept it through your banking app to complete your donation.
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="goToDonationStep(5)">Continue</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="goToDonationStep(3)">Back</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Add Message (Optional) -->
+                <div class="donation-step" id="donationStep5">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                            </svg>
+                        </div>
+                        <div class="modal-header-text">
+                            <h3 class="modal-title">Add a Message (Optional)</h3>
+                            <p class="modal-subtitle">Share why you're giving</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">Your Message</label>
+                            <textarea class="form-input" rows="4" placeholder="Share your story or dedicate this donation..." style="resize: vertical;"></textarea>
+                            <div class="form-hint">This message will be shared with the centre (optional)</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" style="margin-right: 0.75rem; cursor: pointer;">
+                                <span>Make my donation anonymous</span>
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="confirmDonation()">Complete Donation</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="goToDonationStep(4)">Back</button>
+                    </div>
+                </div>
+
+                <!-- Success Step -->
+                <div class="donation-step" id="donationSuccess">
+                    <div class="modal-body" style="text-align: center; padding: 3.5rem 2.75rem;">
+                        <div style="width: 100px; height: 100px; margin: 0 auto 1.5rem; background: var(--gradient-impact); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; stroke: white; fill: none; stroke-width: 3;">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </div>
+                        <h2 style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem;">Thank You! 🎉</h2>
+                        <p style="color: var(--stone-medium); margin-bottom: 2rem;">Your donation will create endless impact</p>
+                        
+                        <div class="info-box" style="text-align: left; margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span>Donation Amount:</span>
+                                <strong>$100</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span>Monthly Impact:</span>
+                                <strong>~$15/month forever</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.08);">
+                                <span>Lives Touched:</span>
+                                <strong style="color: var(--impact-green);">∞ Endless</strong>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.75rem;" onclick="downloadReceipt()">Download Tax Receipt</button>
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="closeDonationModal()">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explore Centres Modal -->
+    <div class="modal" id="exploreCentresModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <button class="modal-close" onclick="closeExploreCentresModal()">✕</button>
+            <div class="modal-scroll">
+                <div class="modal-header">
+                    <div class="modal-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="modal-header-text">
+                        <h3 class="modal-title">Explore Humanity Centres</h3>
+                        <p class="modal-subtitle">Discover impactful projects around the world</p>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Search and Filters -->
+                    <div class="search-filters">
+                        <input type="text" class="form-input" placeholder="🔍 Search by name, location, or focus area..." style="margin-bottom: 1rem;">
+                        
+                        <div class="filter-chips" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                            <button class="filter-chip active">All</button>
+                            <button class="filter-chip">📚 Education</button>
+                            <button class="filter-chip">🏥 Healthcare</button>
+                            <button class="filter-chip">🍽️ Nutrition</button>
+                            <button class="filter-chip">💼 Skills Training</button>
+                            <button class="filter-chip">🌍 Environment</button>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                            <select class="form-input" style="flex: 1;">
+                                <option>🌍 All Regions</option>
+                                <option>🌍 Africa</option>
+                                <option>🌏 Asia</option>
+                                <option>🌎 Americas</option>
+                                <option>🌍 Europe</option>
+                            </select>
+                            <select class="form-input" style="flex: 1;">
+                                <option>Sort: Highest Impact</option>
+                                <option>Sort: Newest</option>
+                                <option>Sort: Most Supported</option>
+                                <option>Sort: A-Z</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Centre Grid -->
+                    <div class="centres-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1.375rem;">
+                        <!-- Centre Card 1 -->
+                        <div class="explore-centre-card">
+                            <div class="explore-centre-image">
+                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80" alt="Nairobi Hope Centre">
+                                <div class="explore-centre-badge">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    Verified
+                                </div>
+                            </div>
+                            <div class="explore-centre-content">
+                                <h4 class="explore-centre-name">Nairobi Hope Centre</h4>
+                                <div class="explore-centre-location">📍 Nairobi, Kenya • 🎯 Education & Healthcare</div>
+                                <p class="explore-centre-description">
+                                    Providing quality education and essential healthcare to 500+ children in Kibera. Our holistic approach includes nutrition programs, mental health support, and family counseling.
+                                </p>
+                                <div class="explore-centre-stats">
+                                    <div class="explore-stat">
+                                        <div class="explore-stat-value">342</div>
+                                        <div class="explore-stat-label">Lives Impacted</div>
+                                    </div>
+                                    <div class="explore-stat">
+                                        <div class="explore-stat-value">89%</div>
+                                        <div class="explore-stat-label">Transparency</div>
+                                    </div>
+                                    <div class="explore-stat">
+                                        <div class="explore-stat-value">$45k</div>
+                                        <div class="explore-stat-label">Monthly Impact</div>
+                                    </div>
+                                </div>
+                                <div class="explore-centre-actions">
+                                    <button class="btn btn-primary" style="flex: 1;" onclick="viewCentreDetails('nairobi')">View Details</button>
+                                    <button class="btn btn-secondary" style="flex: 1;" onclick="donateToCentre('nairobi')">Donate</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Centre Card 2 -->
+                        <div class="explore-centre-card">
+                            <div class="explore-centre-image">
+                                <img src="https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=800&q=80" alt="Mumbai Education Hub">
+                                <div class="explore-centre-badge">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    Verified
+                                </div>
+                            </div>
+                            <div class="explore-centre-content">
+                                <h4 class="explore-centre-name">Mumbai Education Hub</h4>
+                                <div class="explore-centre-location">📍 Mumbai, India • 🎯 Skills & Technology</div>
+                                <p class="explore-centre-description">
+                                    Empowering youth through technology education and vocational training. Our programs focus on digital literacy, coding, and entrepreneurship skills for sustainable futures.
+                                </p>
+                                <div class="explore-centre-stats">
+                                    <div class="explore-stat">
+                                        <div class="explore-stat-value">567</div>
+                                        <div class="explore-stat-label">Lives Impacted</div>
+                                    </div>
+                                    <div class="explore-stat">
+                                        <div class="explore-stat-value">92%</div>
+                                        <div class="explore-stat-label">Transparency</div>
+                                    </div>
+                                    <div class="explore-stat">
+                                        <div class="explore-stat-value">$62k</div>
+                                        <div class="explore-stat-label">Monthly Impact</div>
+                                    </div>
+                                </div>
+                                <div class="explore-centre-actions">
+                                    <button class="btn btn-primary" style="flex: 1;" onclick="viewCentreDetails('mumbai')">View Details</button>
+                                    <button class="btn btn-secondary" style="flex: 1;" onclick="donateToCentre('mumbai')">Donate</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="btn btn-secondary">Load More Centres</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User Dropdown Toggle
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (!userProfile.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Logout function
+        function logout() {
+            // Show confirmation (optional)
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear login state
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userInitials');
+                localStorage.removeItem('walletAddress');
+                localStorage.removeItem('authToken');
+                sessionStorage.clear();
+                
+                // Redirect to landing page
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Keyboard accessibility for dropdown
+        document.getElementById('userProfile').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleUserDropdown();
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+        });
+
+        // Currency data
+        const currencies = {
+            CAD: { symbol: '$', name: 'CAD', stablecoin: 'hCAD', limits: { min: 10, max: 10000 } },
+            USD: { symbol: '$', name: 'USD', stablecoin: 'hUSD', limits: { min: 10, max: 10000 } },
+            EUR: { symbol: '€', name: 'EUR', stablecoin: 'hEUR', limits: { min: 10, max: 10000 } }
+        };
+
+        let currentCurrency = 'CAD';
+
+        // Update currency across all form elements
+        function updateCurrency() {
+            currentCurrency = document.getElementById('currencySelect').value;
+            const curr = currencies[currentCurrency];
+
+            // Update all currency symbols and labels
+            document.getElementById('currencySymbol').textContent = curr.symbol;
+            document.getElementById('amountCurrency').textContent = `(${curr.name})`;
+            document.getElementById('receiveCurrency').textContent = curr.stablecoin;
+            
+            document.getElementById('etransferCurrencySymbol').textContent = curr.symbol;
+            document.getElementById('etransferAmountCurrency').textContent = `(${curr.name})`;
+            document.getElementById('etransferReceiveCurrency').textContent = curr.stablecoin;
+            document.getElementById('etransferLimits').textContent = 
+                `Minimum: ${curr.symbol}${curr.limits.min} | Maximum: ${curr.symbol}${curr.limits.max} per transaction`;
+
+            // Update receive amounts
+            updateReceiveAmount();
+            updateETransferReceiveAmount();
+        }
+
+        // Update receive amount for card tab
+        function updateReceiveAmount() {
+            const amount = document.getElementById('amountInput').value || 0;
+            const curr = currencies[currentCurrency];
+            document.getElementById('receiveHint').innerHTML = 
+                `You will receive approximately <strong>${amount} ${curr.stablecoin}</strong> (1:1 ratio)`;
+        }
+
+        // Update receive amount for e-transfer tab
+        function updateETransferReceiveAmount() {
+            const amount = document.getElementById('etransferAmountInput').value || 0;
+            const curr = currencies[currentCurrency];
+            document.getElementById('etransferReceiveHint').innerHTML = 
+                `You will receive approximately <strong>${amount} ${curr.stablecoin}</strong>`;
+        }
+
+        // Modal Functions
+        function showConvertModal() {
+            document.getElementById('convertModal').classList.add('show');
+            document.body.classList.add('modal-open');
+            updateCurrency(); // Initialize currency display
+        }
+
+        function closeConvertModal() {
+            document.getElementById('convertModal').classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            if (tabName === 'card') {
+                document.getElementById('cardTab').classList.add('active');
+            } else {
+                document.getElementById('etransferTab').classList.add('active');
+            }
+        }
+
+        // E-Transfer Request
+        function requestETransfer() {
+            const amount = document.getElementById('etransferAmountInput').value;
+            const email = document.querySelector('#etransferTab input[type="email"]').value;
+            const curr = currencies[currentCurrency];
+
+            // Validation
+            if (amount < curr.limits.min || amount > curr.limits.max) {
+                alert(`Amount must be between ${curr.symbol}${curr.limits.min} and ${curr.symbol}${curr.limits.max}`);
+                return;
+            }
+
+            // In production, this would call the Interac Request Money API via VoPay
+            alert(`E-Transfer Request Sent!\n\nAmount: ${curr.symbol}${amount} ${curr.name}\nStablecoin: ${curr.stablecoin}\nEmail: ${email}\n\nYou will receive an Interac Request Money notification shortly. Please accept it through your banking app to complete the transfer.\n\nYour ${curr.stablecoin} will be credited within 15-30 minutes.`);
+            
+            closeConvertModal();
+        }
+
+        // Close modal on outside click
+        document.getElementById('convertModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConvertModal();
+                document.body.classList.remove('modal-open');
+            }
+        });
+
+        // ===== SEND STABLECOINS FLOW =====
+        let selectedSendCurrency = '';
+        let currentSendStep = 1;
+
+        function showSendModal() {
+            document.getElementById('sendModal').classList.add('show');
+            document.body.classList.add('modal-open');
+            goToSendStep(1);
+        }
+
+        function closeSendModal() {
+            document.getElementById('sendModal').classList.remove('show');
+            document.body.classList.remove('modal-open');
+            currentSendStep = 1;
+            selectedSendCurrency = '';
+        }
+
+        function goToSendStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.send-step').forEach(s => s.classList.remove('active'));
+            
+            // Show target step
+            document.getElementById('sendStep' + step).classList.add('active');
+            currentSendStep = step;
+        }
+
+        function selectSendCurrency(currency) {
+            selectedSendCurrency = currency;
+            document.getElementById('sendCurrencyName').textContent = currency;
+            document.getElementById('sendCurrencySuffix').textContent = currency;
+            
+            const balances = {
+                'hCAD': '5,234.50',
+                'hUSD': '0.00',
+                'hEUR': '0.00'
+            };
+            document.getElementById('sendAvailableBalance').textContent = balances[currency] + ' ' + currency;
+            
+            // Highlight selected currency
+            document.querySelectorAll('.currency-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.currency-card').classList.add('selected');
+            
+            // Auto-advance after short delay
+            setTimeout(() => goToSendStep(2), 300);
+        }
+
+        function scanQRCode() {
+            alert('QR Scanner would open here.\nIn production, this would use the device camera to scan a wallet address QR code.');
+        }
+
+        function selectRecipient(address) {
+            document.getElementById('sendRecipientAddress').value = address;
+        }
+
+        function setSendAmount(amount) {
+            document.getElementById('sendAmountInput').value = amount;
+            updateSendTotalCost();
+        }
+
+        function setSendAmountMax() {
+            document.getElementById('sendAmountInput').value = '5234.50';
+            updateSendTotalCost();
+        }
+
+        function updateSendTotalCost() {
+            const amount = parseFloat(document.getElementById('sendAmountInput').value) || 0;
+            const gasFee = 2.50;
+            const total = amount + gasFee;
+            document.getElementById('sendTotalCost').textContent = '$' + total.toFixed(2);
+        }
+
+        function confirmSendTransaction() {
+            const amount = document.getElementById('sendAmountInput').value;
+            const recipient = document.getElementById('sendRecipientAddress').value;
+            
+            // Update review screen
+            document.getElementById('sendReviewRecipient').textContent = recipient.substring(0, 6) + '...' + recipient.substring(recipient.length - 4);
+            document.getElementById('sendReviewAmount').textContent = amount + ' ' + selectedSendCurrency;
+            document.getElementById('sendReviewTotal').textContent = '$' + (parseFloat(amount) + 2.50).toFixed(2);
+            
+            // Show loading state
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            
+            // Simulate blockchain transaction
+            setTimeout(() => {
+                goToSendStep('Success');
+                btn.disabled = false;
+                btn.textContent = 'Confirm & Send';
+            }, 2000);
+        }
+
+        // Close send modal on outside click
+        document.getElementById('sendModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSendModal();
+            }
+        });
+
+        // ===== DONATION FLOW =====
+        let selectedDonationType = '';
+        let selectedAllocation = '';
+        let currentDonationStep = 1;
+
+        function showDonationModal() {
+            document.getElementById('donationModal').classList.add('show');
+            document.body.classList.add('modal-open');
+            goToDonationStep(1);
+        }
+
+        function closeDonationModal() {
+            document.getElementById('donationModal').classList.remove('show');
+            document.body.classList.remove('modal-open');
+            currentDonationStep = 1;
+        }
+
+        function goToDonationStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.donation-step').forEach(s => s.classList.remove('active'));
+            
+            // Show target step
+            document.getElementById('donationStep' + step).classList.add('active');
+            currentDonationStep = step;
+        }
+
+        function selectDonationType(type) {
+            selectedDonationType = type;
+            
+            // Highlight selected type
+            document.querySelectorAll('.donation-type-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.donation-type-card').classList.add('selected');
+            
+            // Auto-advance after short delay
+            setTimeout(() => goToDonationStep(2), 300);
+        }
+
+        function selectAllocation(type) {
+            selectedAllocation = type;
+            
+            // Update radio button
+            document.querySelectorAll('[name="allocation"]').forEach(radio => {
+                radio.checked = radio.value === type;
+            });
+            
+            // Show/hide centre selection
+            const centreSelection = document.getElementById('centreSelection');
+            if (type === 'specific') {
+                centreSelection.style.display = 'block';
+            } else {
+                centreSelection.style.display = 'none';
+            }
+        }
+
+        function selectCentre(centreId) {
+            // Highlight selected centre
+            document.querySelectorAll('.centre-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.centre-card').classList.add('selected');
+        }
+
+        function setDonationAmount(amount) {
+            document.getElementById('donationAmountInput').value = amount;
+            updateImpactCalculator();
+        }
+
+        function updateImpactCalculator() {
+            const amount = parseFloat(document.getElementById('donationAmountInput').value) || 0;
+            const yieldRate = 0.15; // 15% annual yield
+            const monthlyImpact = (amount * yieldRate) / 12;
+            
+            // Update impact metrics
+            document.getElementById('educationImpact').textContent = Math.floor(monthlyImpact * 1.2) + ' students';
+            document.getElementById('healthcareImpact').textContent = Math.floor(monthlyImpact * 0.8) + ' checkups';
+            document.getElementById('nutritionImpact').textContent = Math.floor(monthlyImpact * 24) + ' meals';
+            
+            // Update totals
+            document.getElementById('yearOneImpact').textContent = '$' + (monthlyImpact * 12).toFixed(0);
+            document.getElementById('tenYearImpact').textContent = '$' + (monthlyImpact * 120).toFixed(0);
+        }
+
+        function switchDonationPayment(method) {
+            // Update tabs
+            document.querySelectorAll('.tabs .tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update panels
+            document.querySelectorAll('.tab-content').forEach(panel => panel.style.display = 'none');
+            document.getElementById(method + 'Payment').style.display = 'block';
+        }
+
+        function confirmDonation() {
+            // Show loading state
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            
+            // Simulate donation processing
+            setTimeout(() => {
+                goToDonationStep('Success');
+                btn.disabled = false;
+                btn.textContent = 'Complete Donation';
+            }, 2000);
+        }
+
+        function downloadReceipt() {
+            alert('Tax receipt would be downloaded here.\nIn production, this would generate a PDF receipt for tax purposes.');
+        }
+
+        // Close donation modal on outside click
+        document.getElementById('donationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDonationModal();
+            }
+        });
+
+        // ===== EXPLORE CENTRES FLOW =====
+        function showExploreCentresModal() {
+            document.getElementById('exploreCentresModal').classList.add('show');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeExploreCentresModal() {
+            document.getElementById('exploreCentresModal').classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
+
+        function viewCentreDetails(centreId) {
+            alert('Centre Details Modal would open here.\nIn production, this would show:\n\n• Full story and mission\n• Detailed impact metrics\n• Transparency reports\n• Photo gallery\n• Recent updates\n• Financial breakdown');
+        }
+
+        function donateToCentre(centreId) {
+            // Close explore modal and open donation modal with pre-selected centre
+            closeExploreCentresModal();
+            setTimeout(() => {
+                showDonationModal();
+                goToDonationStep(2);
+                selectAllocation('specific');
+            }, 300);
+        }
+
+        // Close explore modal on outside click
+        document.getElementById('exploreCentresModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeExploreCentresModal();
+            }
+        });
+
+        // Initialize impact calculator on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('donationAmountInput')) {
+                updateImpactCalculator();
+            }
+
+            // Initialize KYC status badge
+            KYCModal.showStatusBadge('kycStatusBadge');
+
+            // Add click handler to status badge to show details or start verification
+            const badge = document.querySelector('.kyc-status-badge');
+            if (badge && !KYCModal.isVerified()) {
+                badge.style.cursor = 'pointer';
+                badge.addEventListener('click', () => {
+                    if (KYCModal.getStatus() === 'not_started') {
+                        window.location.href = 'kyc-verify.html';
+                    }
+                });
+            }
+
+            // Initialize banners (KYC first, then wallet)
+            // Priority: KYC banner shows first if not verified
+            // Once KYC is verified, wallet banner shows if no wallet
+            KYCModal.showDashboardBanner();
+            WalletPrompt.showDashboardBanner();
+        });
+    </script>
+
+    <!-- Wallet Prompt Component -->
+    <script src="../wallet-prompt.js"></script>
+
+    <!-- KYC Modal Component -->
+    <script src="../kyc-modal.js"></script>
+</body>
+</html>

@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identity Verification (KYC) - UNERA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --earth-deep: #2C5F2D;
+            --earth-rich: #4A7C59;
+            --earth-fresh: #7FA99B;
+            --sky-vibrant: #0EA5E9;
+            --sun-warm: #F59E0B;
+            --bloom-hope: #EC4899;
+            --stone-dark: #1F2937;
+            --stone-medium: #6B7280;
+            --stone-light: #F3F4F6;
+            --stone-white: #FFFFFF;
+            --impact-green: #10B981;
+            --alert-orange: #F97316;
+            --trust-blue: #3B82F6;
+            --gradient-earth: linear-gradient(135deg, #2C5F2D 0%, #7FA99B 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: var(--font-body);
+            color: var(--stone-dark);
+            min-height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+        }
+
+        .kyc-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .kyc-header {
+            text-align: center;
+            margin-bottom: 2.75rem;
+            border-radius: 1.5rem;
+            padding: 2.75rem 2.75rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background image */
+        .kyc-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1920&q=80') center/cover;
+            z-index: 0;
+        }
+
+        /* Gradient overlay */
+        .kyc-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.92) 0%, rgba(14, 165, 233, 0.88) 100%);
+            z-index: 1;
+        }
+
+        /* Floating shapes in header */
+        .kyc-floating-shape {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            animation: floatShape 10s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes floatShape {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg) scale(0.8);
+                opacity: 0.15;
+            }
+            25% {
+                transform: translate(30px, -40px) rotate(90deg) scale(1);
+                opacity: 0.25;
+            }
+            50% {
+                transform: translate(-20px, -80px) rotate(180deg) scale(1.1);
+                opacity: 0.2;
+            }
+            75% {
+                transform: translate(-40px, -40px) rotate(270deg) scale(0.9);
+                opacity: 0.15;
+            }
+        }
+
+        .shape-logo {
+            width: 24px;
+            height: 24px;
+        }
+
+        .shape-heart {
+            width: 14px;
+            height: 14px;
+        }
+
+        .shape-star {
+            width: 10px;
+            height: 10px;
+        }
+
+        .logo {
+            display: none;
+        }
+
+        .header-icon-wrapper {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 0 12px rgba(255, 255, 255, 0.15),
+                        0 0 0 24px rgba(255, 255, 255, 0.08),
+                        0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-icon-wrapper:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 0 16px rgba(255, 255, 255, 0.15),
+                        0 0 0 32px rgba(255, 255, 255, 0.08),
+                        0 12px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-icon-wrapper svg {
+            width: 44px;
+            height: 44px;
+            stroke: url(#iconGradient);
+            fill: none;
+            stroke-width: 2.5;
+            transition: all 0.4s ease;
+        }
+
+        .header-icon-wrapper:hover svg {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.3));
+        }
+
+        .kyc-title {
+            font-family: var(--font-display);
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .kyc-subtitle {
+            color: #FFFFFF;
+            font-size: 0.938rem;
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.25);
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            background: var(--stone-light);
+            height: 8px;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-sky);
+            transition: width 0.4s ease;
+        }
+
+        .kyc-card {
+            background: var(--stone-white);
+            border-radius: 1.5rem;
+            padding: 2.75rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2.75rem;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-impact);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .step-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--earth-deep);
+        }
+
+        .step-description {
+            text-align: center;
+            color: var(--stone-medium);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .document-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .document-card {
+            border: 2px solid var(--stone-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .document-card:hover {
+            border-color: var(--earth-fresh);
+            background: rgba(127, 169, 155, 0.05);
+        }
+
+        .document-card.selected {
+            border-color: var(--earth-deep);
+            background: rgba(44, 95, 45, 0.05);
+        }
+
+        .document-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .document-card-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--stone-dark);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--stone-light);
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 2rem 0;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--earth-fresh);
+            background: rgba(127, 169, 155, 0.03);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--earth-deep);
+            background: rgba(44, 95, 45, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: var(--stone-medium);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+        }
+
+        .uploaded-preview {
+            display: none;
+            border: 2px solid var(--impact-green);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.05);
+            margin: 2rem 0;
+        }
+
+        .uploaded-preview.show {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .preview-icon {
+            font-size: 2.5rem;
+        }
+
+        .preview-info {
+            flex: 1;
+        }
+
+        .preview-filename {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-size {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+        }
+
+        .camera-frame {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 2rem auto;
+            aspect-ratio: 3/4;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: var(--stone-dark);
+        }
+
+        .camera-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(44, 95, 45, 0.9) 0%, rgba(127, 169, 155, 0.8) 100%);
+            color: var(--stone-white);
+            font-size: 4rem;
+        }
+
+        .face-outline {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 240px;
+            border: 3px solid var(--stone-white);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0.5;
+        }
+
+        .camera-instructions {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--stone-medium);
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: var(--font-body);
+        }
+
+        .btn-primary {
+            background: var(--gradient-sky);
+            color: var(--stone-white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--stone-light);
+            color: var(--stone-dark);
+            margin-top: 0.75rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--stone-medium);
+            color: var(--stone-white);
+        }
+
+        .btn-group {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .checklist {
+            background: rgba(14, 165, 233, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .checklist-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--earth-deep);
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--stone-medium);
+            line-height: 1.6;
+        }
+
+        .checklist-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-icon {
+            color: var(--impact-green);
+            font-weight: bold;
+        }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--sun-warm);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin: 2rem 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .warning-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .warning-content {
+            font-size: 0.875rem;
+            color: var(--stone-dark);
+            line-height: 1.6;
+        }
+
+        .verification-loading {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--stone-light);
+            border-top-color: var(--earth-deep);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-animation {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            background: var(--impact-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .kyc-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .document-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="kyc-container">
+        <div class="kyc-header">
+            <!-- Floating shapes -->
+            <div class="kyc-floating-shape" style="top: 10%; left: 8%; animation-delay: 0s;">
+                <svg class="shape-logo" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="#99F6E4"/><circle cx="70" cy="70" r="45" fill="#14B8A6"/><circle cx="70" cy="70" r="30" fill="#0F766E"/></svg>
+            </div>
+            <div class="kyc-floating-shape" style="top: 60%; left: 85%; animation-delay: 1.5s;">
+                <svg class="shape-heart" viewBox="0 0 24 24" fill="rgba(236, 72, 153, 0.6)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+            <div class="kyc-floating-shape" style="top: 15%; left: 80%; animation-delay: 3s;">
+                <svg class="shape-star" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.6)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="kyc-floating-shape" style="top: 70%; left: 12%; animation-delay: 2.5s;">
+                <svg class="shape-star" viewBox="0 0 24 24" fill="rgba(59, 130, 246, 0.6)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="kyc-floating-shape" style="top: 40%; left: 5%; animation-delay: 4s;">
+                <svg class="shape-heart" viewBox="0 0 24 24" fill="rgba(16, 185, 129, 0.6)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+            <div class="kyc-floating-shape" style="top: 25%; left: 50%; animation-delay: 1s;">
+                <svg class="shape-logo" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="#99F6E4"/><circle cx="70" cy="70" r="45" fill="#14B8A6"/><circle cx="70" cy="70" r="30" fill="#0F766E"/></svg>
+            </div>
+
+            <svg width="0" height="0" style="position: absolute;">
+                <defs>
+                    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#0EA5E9;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <div class="logo">UNERA</div>
+            <div class="header-icon-wrapper">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </div>
+            <h1 class="kyc-title">Verify Your Identity</h1>
+            <p class="kyc-subtitle">Complete a quick and secure verification process to protect our community and comply with financial regulations. Your data is encrypted and private.</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+
+        <div class="kyc-card">
+            <!-- Step 1: Welcome & Instructions -->
+            <div class="step-content active" id="step1">
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h2 class="step-title">Let's Verify Your Identity</h2>
+                <p class="step-description">
+                    We use Sumsub, a trusted third-party verification service, to ensure your information 
+                    stays secure while meeting regulatory requirements.
+                </p>
+
+                <div class="checklist">
+                    <div class="checklist-title">What we'll need:</div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>A government-issued photo ID (passport, driver's license, or national ID card)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>A clear selfie for face matching</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>2-3 minutes of your time</span>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <div class="warning-icon">🔒</div>
+                    <div class="warning-content">
+                        <strong>Your privacy is protected:</strong> All data is encrypted end-to-end. 
+                        We never store your documents—they're processed securely by Sumsub and immediately 
+                        deleted after verification. You can read our full privacy policy.
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="goToStep(2)">Begin Verification</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='signup.html'">Back to Sign Up</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Document Type Selection -->
+            <div class="step-content" id="step2">
+                <div class="step-icon" style="background: var(--gradient-sky);">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <h2 class="step-title">Choose Your Document Type</h2>
+                <p class="step-description">
+                    Select the type of government-issued ID you'd like to use for verification.
+                </p>
+
+                <div class="document-options">
+                    <div class="document-card" onclick="selectDocument('passport')" id="doc-passport">
+                        <div class="document-card-icon">
+                            <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: var(--sky-vibrant); fill: none; stroke-width: 2;">
+                                <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                        </div>
+                        <div class="document-card-title">Passport</div>
+                    </div>
+                    <div class="document-card" onclick="selectDocument('license')" id="doc-license">
+                        <div class="document-card-icon">
+                            <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: var(--impact-green); fill: none; stroke-width: 2;">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </div>
+                        <div class="document-card-title">Driver's License</div>
+                    </div>
+                    <div class="document-card" onclick="selectDocument('id-card')" id="doc-id-card">
+                        <div class="document-card-icon">
+                            <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: var(--sun-warm); fill: none; stroke-width: 2;">
+                                <rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 9h3M15 13h3M13 17H7c0-1.5 1-3 3-3s3 1.5 3 3z"/></svg>
+                        </div>
+                        <div class="document-card-title">National ID</div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="continueDocBtn" disabled onclick="goToStep(3)">Continue</button>
+                    <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Document Upload -->
+            <div class="step-content" id="step3">
+                <div class="step-icon" style="background: var(--gradient-warm);">
+                    <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+                <h2 class="step-title">Upload Your Document</h2>
+                <p class="step-description">
+                    Take a clear photo of your <span id="selectedDocType">document</span>. 
+                    Make sure all text is readable and all corners are visible.
+                </p>
+
+                <div class="checklist">
+                    <div class="checklist-title">Photo requirements:</div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>Document is in focus and well-lit</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>All four corners are visible</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>No glare or shadows covering text</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>Document is original (not a photocopy or screenshot)</span>
+                    </div>
+                </div>
+
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; stroke: var(--sky-vibrant); fill: none; stroke-width: 2;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="upload-hint">JPG, PNG or PDF up to 10MB</div>
+                    <input type="file" id="fileInput" accept="image/*,.pdf" style="display: none;" onchange="handleFileUpload(this)">
+                </div>
+
+                <div class="uploaded-preview" id="uploadedPreview">
+                    <div class="preview-icon">
+                        <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: var(--impact-green); fill: none; stroke-width: 2;">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                    </div>
+                    <div class="preview-info">
+                        <div class="preview-filename" id="previewFilename">document.jpg</div>
+                        <div class="preview-size" id="previewSize">2.4 MB</div>
+                    </div>
+                    <button onclick="removeFile()" style="background: none; border: none; cursor: pointer; font-size: 1.5rem;">🗑️</button>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="continueUploadBtn" disabled onclick="goToStep(4)">Continue</button>
+                    <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Selfie Verification -->
+            <div class="step-content" id="step4">
+                <div class="step-icon" style="background: var(--gradient-impact);">
+                    <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                </div>
+                <h2 class="step-title">Take a Selfie</h2>
+                <p class="step-description">
+                    We'll compare your selfie with the photo on your ID to verify your identity. 
+                    This is a quick and secure process.
+                </p>
+
+                <div class="camera-frame">
+                    <div class="camera-overlay">
+                        <svg viewBox="0 0 24 24" style="width: 80px; height: 80px; stroke: white; fill: none; stroke-width: 1.5;">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </div>
+                    <div class="face-outline"></div>
+                </div>
+
+                <div class="camera-instructions">
+                    Position your face within the outline • Remove glasses or hats • Ensure good lighting
+                </div>
+
+                <div class="checklist" style="margin-top: 2rem;">
+                    <div class="checklist-title">Selfie tips:</div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>Look directly at the camera</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>Make sure your face is well-lit</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>Remove sunglasses or hats</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>Ensure your entire face is visible</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="takeSelfie()">Take Selfie</button>
+                    <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Processing -->
+            <div class="step-content" id="step5">
+                <div class="verification-loading">
+                    <div class="spinner"></div>
+                    <h2 class="step-title">Verifying Your Identity...</h2>
+                    <p class="step-description">
+                        This usually takes just a few seconds. We're securely processing your documents 
+                        and comparing your information.
+                    </p>
+                    <p style="text-align: center; color: var(--stone-medium); font-size: 0.875rem; margin-top: 1.5rem;">
+                        Please don't close this window
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 6: Success -->
+            <div class="step-content" id="step6">
+                <div class="success-animation">
+                    <div class="success-checkmark">✓</div>
+                    <h2 class="step-title">Verification Complete!</h2>
+                    <p class="step-description">
+                        Your identity has been successfully verified. You're now ready to create 
+                        your wallet and start making an impact.
+                    </p>
+
+                    <div style="background: rgba(16, 185, 129, 0.1); border-radius: 1rem; padding: 1.5rem; margin: 2rem 0; text-align: left;">
+                        <h4 style="font-weight: 600; margin-bottom: 1rem; color: var(--impact-green);">✓ Verified Information:</h4>
+                        <div style="color: var(--stone-dark); line-height: 1.8;">
+                            <p><strong>Name:</strong> Jane Smith</p>
+                            <p><strong>Date of Birth:</strong> January 15, 1990</p>
+                            <p><strong>Country:</strong> Canada 🇨🇦</p>
+                            <p><strong>Document:</strong> Driver's License</p>
+                            <p style="font-size: 0.875rem; color: var(--stone-medium); margin-top: 0.75rem;">
+                                Verified on: January 6, 2026 at 11:45 AM
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="window.location.href='wallet-creation.html'">
+                            Create Your Wallet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; color: var(--stone-medium); font-size: 0.875rem; margin-top: 2rem;">
+            <p>🔒 Powered by Sumsub • <a href="#" style="color: var(--earth-deep); text-decoration: none;">Privacy Policy</a> • <a href="#" style="color: var(--earth-deep); text-decoration: none;">Support</a></p>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedDocument = null;
+        let uploadedFile = null;
+
+        function goToStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Show target step
+            document.getElementById('step' + step).classList.add('active');
+
+            // Update progress
+            const progress = ((step - 1) / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            currentStep = step;
+
+            // Auto-process if on step 5
+            if (step === 5) {
+                setTimeout(() => {
+                    goToStep(6);
+                }, 3000); // Simulate processing time
+            }
+        }
+
+        function selectDocument(type) {
+            // Remove selection from all cards
+            document.querySelectorAll('.document-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Select clicked card
+            document.getElementById('doc-' + type).classList.add('selected');
+            selectedDocument = type;
+
+            // Enable continue button
+            document.getElementById('continueDocBtn').disabled = false;
+
+            // Update text in next step
+            const docNames = {
+                'passport': 'passport',
+                'license': 'driver\'s license',
+                'id-card': 'national ID card'
+            };
+            document.getElementById('selectedDocType').textContent = docNames[type];
+        }
+
+        function handleFileUpload(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                uploadedFile = file;
+
+                // Show preview
+                document.getElementById('uploadZone').style.display = 'none';
+                document.getElementById('uploadedPreview').classList.add('show');
+                document.getElementById('previewFilename').textContent = file.name;
+                document.getElementById('previewSize').textContent = formatFileSize(file.size);
+
+                // Enable continue button
+                document.getElementById('continueUploadBtn').disabled = false;
+            }
+        }
+
+        function removeFile() {
+            uploadedFile = null;
+            document.getElementById('uploadZone').style.display = 'block';
+            document.getElementById('uploadedPreview').classList.remove('show');
+            document.getElementById('continueUploadBtn').disabled = true;
+            document.getElementById('fileInput').value = '';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        function takeSelfie() {
+            // In a real implementation, this would open the camera
+            // For demo purposes, we'll just proceed to processing
+            goToStep(5);
+        }
+
+        // Drag and drop handling
+        const uploadZone = document.getElementById('uploadZone');
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                handleFileUpload(document.getElementById('fileInput'));
+            }
+        });
+    </script>
+</body>
+</html>
+

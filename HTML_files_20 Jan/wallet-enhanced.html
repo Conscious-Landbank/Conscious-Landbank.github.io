@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet & Transactions - UNERA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* UNERA Brand Colors */
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-700: #4B5563;
+            --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            /* Accessibility - AAA Contrast */
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--neutral-100);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Skip to Main Content Link (Accessibility) */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
+        .nav {
+            background: #FFFFFF;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2.75rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-brand:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-link:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2.75rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            line-height: 1.6;
+        }
+
+        /* Wallet Section */
+        .wallet-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Enhanced Privacy Toggle with Icon State */
+        .privacy-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            font-family: var(--font-body);
+        }
+
+        .privacy-toggle:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .privacy-toggle:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .privacy-toggle-icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            transition: all 0.2s;
+        }
+
+        /* Enhanced Total Balance Card - More Prominent */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .balance-card {
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+            transform: translateY(-4px);
+        }
+
+        /* Total Balance - Hero Card */
+        .balance-card.total {
+            background: var(--gradient-primary);
+            border: none;
+            color: var(--neutral-50);
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card.total::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, -20px); }
+        }
+
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .currency-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Currency Icons with Flags */
+        .currency-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+        }
+
+        .balance-card.total .currency-icon {
+            background: rgba(255, 255, 255, 0.25);
+            color: var(--neutral-50);
+        }
+
+        .balance-card:not(.total) .currency-icon {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .currency-name {
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .balance-card:not(.total) .currency-name {
+            color: var(--text-secondary);
+        }
+
+        /* Prominent Total Balance Amount */
+        .balance-amount {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--neutral-50);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .balance-card:not(.total) .balance-amount {
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .balance-amount.hidden {
+            filter: blur(12px);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .balance-fiat {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            position: relative;
+            z-index: 1;
+        }
+
+        .balance-card:not(.total) .balance-fiat {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Enhanced Balance Change - Color-Blind Friendly */
+        .balance-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.813rem;
+            font-weight: 700;
+            cursor: help;
+            position: relative;
+        }
+
+        .balance-change.positive {
+            background: rgba(5, 150, 105, 0.15);
+            color: #047857;
+            border: 1px solid rgba(5, 150, 105, 0.3);
+        }
+
+        .balance-change.negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: #DC2626;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Tooltip for Balance Change */
+        .balance-change::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 0.75rem;
+            background: var(--neutral-900);
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 0.5rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .balance-change:hover::after,
+        .balance-change:focus::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Info Icon for HUMA */
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--primary-blue);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: help;
+            margin-left: 0.375rem;
+            position: relative;
+        }
+
+        .info-icon::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.75rem 1rem;
+            background: var(--neutral-900);
+            color: white;
+            font-size: 0.813rem;
+            font-weight: 400;
+            border-radius: 0.75rem;
+            white-space: nowrap;
+            max-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            line-height: 1.5;
+        }
+
+        .info-icon:hover::after,
+        .info-icon:focus::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Quick Actions - Enhanced with Primary CTA */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 4rem;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.5rem 1rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+        }
+
+        .action-btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .action-btn:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        /* Primary CTA - Donate Button */
+        .action-btn.primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: var(--neutral-50);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .action-btn.primary:hover {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+            transform: translateY(-6px) scale(1.02);
+        }
+
+        .action-btn.primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .action-btn.primary:hover::before {
+            opacity: 1;
+        }
+
+        .action-btn-icon {
+            width: 28px;
+            height: 28px;
+            stroke: currentColor;
+        }
+
+        /* Loading State for Buttons */
+        .action-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .action-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Transaction History Section */
+        .history-section {
+            margin-top: 4rem;
+        }
+
+        .history-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-bar {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem 0.875rem 3.5rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--neutral-500);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--neutral-500);
+            pointer-events: none;
+        }
+
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .filter-btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Active Filters Chips */
+        .active-filters {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--primary-green);
+            border-radius: 980px;
+            font-size: 0.875rem;
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        .filter-chip button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .filter-chip button:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        /* Transaction List - Enhanced with Avatars */
+        .transaction-list {
+            background: var(--neutral-50);
+            border-radius: 1.25rem;
+            border: 2px solid var(--border-subtle);
+            overflow: hidden;
+        }
+
+        .date-group {
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .date-group:last-child {
+            border-bottom: none;
+        }
+
+        .date-header {
+            padding: 1rem 1.5rem;
+            background: var(--neutral-100);
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 44px;
+            z-index: 10;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .transaction-item:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: -3px;
+        }
+
+        /* Transaction Icon with Avatar/Logo */
+        .transaction-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .transaction-icon.in {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            color: var(--success);
+            border: 2px solid rgba(5, 150, 105, 0.3);
+        }
+
+        .transaction-icon.out {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
+            color: var(--error);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .transaction-icon.pending {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%);
+            color: var(--warning);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .transaction-icon.donation {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            color: var(--accent-pink);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.375rem;
+            font-size: 1rem;
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .transaction-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .transaction-status.completed {
+            background: rgba(5, 150, 105, 0.15);
+            color: #047857;
+        }
+
+        .transaction-status.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #D97706;
+        }
+
+        .transaction-amount {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .amount-primary {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .amount-primary.positive {
+            color: var(--success);
+        }
+
+        .amount-primary.negative {
+            color: var(--error);
+        }
+
+        .amount-secondary {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        .empty-icon {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 2rem;
+            opacity: 0.2;
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-text {
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto 2rem;
+            font-size: 1.063rem;
+            line-height: 1.6;
+        }
+
+        .empty-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 980px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+        }
+
+        .empty-action:hover {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Modal - Enhanced with ARIA */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--neutral-50);
+            border-radius: 1.5rem;
+            max-width: 640px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 2px solid var(--border-subtle);
+            position: relative;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--neutral-200);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-300);
+            transform: rotate(90deg);
+        }
+
+        .modal-close:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            gap: 2rem;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 700;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            text-align: right;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        /* Responsive Grid */
+        @media (max-width: 1200px) {
+            .balance-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .balance-card.total {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .balance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .balance-amount {
+                font-size: 2rem !important;
+            }
+
+            .history-controls {
+                flex-direction: column;
+            }
+
+            .transaction-item {
+                flex-wrap: wrap;
+            }
+
+            .transaction-amount {
+                width: 100%;
+                text-align: left;
+                margin-top: 0.75rem;
+            }
+        }
+
+        /* Trust & Security Indicators */
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(5, 150, 105, 0.1);
+            border-radius: 0.5rem;
+            font-size: 0.813rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* High Contrast Mode Support */
+        @media (prefers-contrast: high) {
+            .balance-card {
+                border-width: 3px;
+            }
+            .action-btn {
+                border-width: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to Main Content Link (Accessibility) -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard.html" class="nav-link">DASHBOARD</a></li>
+                <li><a href="wallet.html" class="nav-link" aria-current="page">WALLET</a></li>
+                <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+                <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container">
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1 class="page-title">Your Wallet</h1>
+            <p class="page-subtitle">One Flow. Many Lives. - Manage your digital assets and track your impact</p>
+        </header>
+
+        <!-- Wallet Balances Section -->
+        <section class="wallet-section" aria-labelledby="balances-title">
+            <div class="section-header">
+                <h2 id="balances-title" class="section-title">Balances</h2>
+                <button 
+                    class="privacy-toggle" 
+                    onclick="toggleBalancePrivacy()" 
+                    aria-label="Toggle balance visibility"
+                    aria-pressed="false"
+                    id="privacyToggle">
+                    <svg class="privacy-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span id="privacyToggleText">Hide Balances</span>
+                </button>
+            </div>
+
+            <div class="balance-grid">
+                <!-- Total Balance Card - Enhanced & Prominent -->
+                <div class="balance-card total">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon" aria-hidden="true">Σ</div>
+                            <span class="currency-name">Total Balance</span>
+                        </div>
+                    </div>
+                    <div class="balance-amount" id="totalBalance" aria-live="polite">$8,250.00</div>
+                    <div class="balance-fiat">Combined value • All currencies</div>
+                    <div class="security-badge" role="status">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        100% Backed by Reserves
+                    </div>
+                </div>
+
+                <!-- hCAD Balance with Flag -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon" aria-label="Canadian Dollar">🇨🇦</div>
+                            <span class="currency-name">hCAD</span>
+                        </div>
+                        <span class="balance-change positive" data-tooltip="Change in the past 7 days" role="status">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                                <path d="M18 15l-6-6-6 6"/>
+                            </svg>
+                            +2.5%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="hcadBalance">3,500.00</div>
+                    <div class="balance-fiat">≈ $3,500 CAD</div>
+                </div>
+
+                <!-- hUSD Balance with Flag -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon" aria-label="US Dollar">🇺🇸</div>
+                            <span class="currency-name">hUSD</span>
+                        </div>
+                        <span class="balance-change positive" data-tooltip="Change in the past 7 days" role="status">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                                <path d="M18 15l-6-6-6 6"/>
+                            </svg>
+                            +1.2%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="husdBalance">2,500.00</div>
+                    <div class="balance-fiat">≈ $2,500 USD</div>
+                </div>
+
+                <!-- hEUR Balance with Symbol -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon" aria-label="Euro">€</div>
+                            <span class="currency-name">hEUR</span>
+                        </div>
+                        <span class="balance-change negative" data-tooltip="Change in the past 7 days" role="status">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                            -0.5%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="heurBalance">1,250.00</div>
+                    <div class="balance-fiat">≈ $1,400 USD</div>
+                </div>
+
+                <!-- HUMA Tokens with Info Tooltip -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon" aria-label="HUMA Governance Token">H</div>
+                            <div>
+                                <span class="currency-name">HUMA</span>
+                                <span class="info-icon" 
+                                      tabindex="0" 
+                                      role="tooltip" 
+                                      data-tooltip="Governance tokens earned through donations. Vote on community decisions."
+                                      aria-label="Information about HUMA tokens">i</span>
+                            </div>
+                        </div>
+                        <span class="balance-change positive" data-tooltip="Change in the past 7 days" role="status">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                                <path d="M18 15l-6-6-6 6"/>
+                            </svg>
+                            +5.2%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="humaBalance">425.50</div>
+                    <div class="balance-fiat">Governance tokens</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions - Enhanced with Primary CTA -->
+            <div class="quick-actions" role="group" aria-label="Wallet actions">
+                <button class="action-btn" onclick="handleAction('add')" aria-label="Add funds to wallet">
+                    <svg class="action-btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    <span>Add Funds</span>
+                </button>
+
+                <button class="action-btn" onclick="handleAction('send')" aria-label="Send money to someone">
+                    <svg class="action-btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                    <span>Send</span>
+                </button>
+
+                <button class="action-btn primary" onclick="handleAction('donate')" aria-label="Donate to a Humanity Centre">
+                    <svg class="action-btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                    <span>Donate</span>
+                </button>
+
+                <button class="action-btn" onclick="handleAction('export')" aria-label="Export transaction history">
+                    <svg class="action-btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span>Export</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Transaction History Section -->
+        <section class="history-section" aria-labelledby="history-title">
+            <div class="section-header">
+                <h2 id="history-title" class="section-title">Transaction History</h2>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="history-controls">
+                <div class="search-bar">
+                    <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input 
+                        type="search" 
+                        class="search-input" 
+                        placeholder="Search transactions..." 
+                        id="searchInput"
+                        aria-label="Search transactions"
+                        oninput="searchTransactions()">
+                </div>
+                <button 
+                    class="filter-btn" 
+                    onclick="toggleFilterPanel()" 
+                    id="filterBtn"
+                    aria-label="Open filter panel"
+                    aria-expanded="false">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                    <span>Filters</span>
+                </button>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div class="active-filters" id="activeFilters" style="display: none;" role="region" aria-label="Active filters">
+                <!-- Filter chips populated by JavaScript -->
+            </div>
+
+            <!-- Transaction List -->
+            <div class="transaction-list" role="list" aria-label="Transactions" id="transactionList">
+                <!-- Today -->
+                <div class="date-group">
+                    <div class="date-header">Today</div>
+                    
+                    <div class="transaction-item" 
+                         onclick="showTransactionDetail('tx001')" 
+                         role="button" 
+                         tabindex="0"
+                         onkeypress="if(event.key==='Enter') showTransactionDetail('tx001')"
+                         aria-label="Received $500.00 from Alice Johnson">
+                        <div class="transaction-icon in" aria-hidden="true">
+                            👤
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Received from Alice Johnson</div>
+                            <div class="transaction-meta">
+                                <span>10:32 AM</span>
+                                <span aria-hidden="true">•</span>
+                                <span class="transaction-status completed" role="status">Completed</span>
+                                <span aria-hidden="true">•</span>
+                                <span>hUSD</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary positive">+ $500.00</div>
+                            <div class="amount-secondary">hUSD</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" 
+                         onclick="showTransactionDetail('tx002')" 
+                         role="button" 
+                         tabindex="0"
+                         onkeypress="if(event.key==='Enter') showTransactionDetail('tx002')"
+                         aria-label="Donated $250.00 to Nairobi Humanity Centre">
+                        <div class="transaction-icon donation" aria-hidden="true">
+                            ❤️
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Donation to Nairobi Humanity Centre</div>
+                            <div class="transaction-meta">
+                                <span>09:15 AM</span>
+                                <span aria-hidden="true">•</span>
+                                <span class="transaction-status completed" role="status">Completed</span>
+                                <span aria-hidden="true">•</span>
+                                <span>hCAD</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary negative">- $250.00</div>
+                            <div class="amount-secondary">Earned 25 HUMA</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" 
+                         onclick="showTransactionDetail('tx003')" 
+                         role="button" 
+                         tabindex="0"
+                         onkeypress="if(event.key==='Enter') showTransactionDetail('tx003')"
+                         aria-label="Pending bank transfer of $1,000.00">
+                        <div class="transaction-icon pending" aria-hidden="true">
+                            🏦
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Bank Transfer In</div>
+                            <div class="transaction-meta">
+                                <span>08:45 AM</span>
+                                <span aria-hidden="true">•</span>
+                                <span class="transaction-status pending" role="status">Pending</span>
+                                <span aria-hidden="true">•</span>
+                                <span>hCAD</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary positive">+ $1,000.00</div>
+                            <div class="amount-secondary">Est. 2-3 days</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State (initially hidden) -->
+            <div class="empty-state" id="emptyState" style="display: none;" role="status">
+                <svg class="empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <h3 class="empty-title">No transactions found</h3>
+                <p class="empty-text">Try adjusting your filters or search terms, or start by adding funds to your wallet.</p>
+                <button class="empty-action" onclick="window.location.href='convert.html'">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Add Funds Now
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Transaction Detail Modal -->
+    <div class="modal-overlay" 
+         id="detailModal" 
+         role="dialog" 
+         aria-modal="true" 
+         aria-labelledby="modalTitle"
+         onclick="closeDetailModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" 
+                    onclick="closeDetailModal()" 
+                    aria-label="Close transaction details"
+                    id="modalCloseBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Transaction Details</h3>
+            </div>
+            <div class="modal-body" id="detailContent">
+                <!-- Content populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock transaction data
+        const mockTransactions = {
+            'tx001': {
+                id: 'TX-2026-001-5A3F',
+                type: 'received',
+                from: 'Alice Johnson (alice@example.com)',
+                to: 'Your hUSD Wallet',
+                amount: 500.00,
+                currency: 'hUSD',
+                status: 'completed',
+                date: 'Jan 16, 2026 10:32 AM',
+                fee: 0.00,
+                reference: 'Payment for consulting services',
+                confirmations: 12,
+                impact: 'This transaction supports community financial inclusion.'
+            },
+            'tx002': {
+                id: 'TX-2026-002-8B9D',
+                type: 'donation',
+                from: 'Your hCAD Wallet',
+                to: 'Nairobi Humanity Centre',
+                amount: 250.00,
+                currency: 'hCAD',
+                status: 'completed',
+                date: 'Jan 16, 2026 09:15 AM',
+                fee: 0.50,
+                reference: 'Monthly donation',
+                humaEarned: 25.00,
+                impact: 'Your donation helps provide education and resources to 50+ families in Nairobi.'
+            },
+            'tx003': {
+                id: 'TX-2026-003-2C4E',
+                type: 'deposit',
+                from: 'TD Bank •••• 1234',
+                to: 'Your hCAD Wallet',
+                amount: 1000.00,
+                currency: 'hCAD',
+                status: 'pending',
+                date: 'Jan 16, 2026 08:45 AM',
+                fee: 0.00,
+                reference: 'Bank transfer',
+                estimatedCompletion: '2-3 business days',
+                impact: 'Processing securely through our banking partners.'
+            }
+        };
+
+        // Toggle balance privacy with state management
+        let balancesHidden = false;
+        function toggleBalancePrivacy() {
+            balancesHidden = !balancesHidden;
+            const amounts = document.querySelectorAll('.balance-amount');
+            const btn = document.getElementById('privacyToggle');
+            const icon = btn.querySelector('.privacy-toggle-icon');
+            const text = document.getElementById('privacyToggleText');
+            
+            amounts.forEach(amount => {
+                amount.classList.toggle('hidden', balancesHidden);
+            });
+
+            btn.setAttribute('aria-pressed', balancesHidden);
+            
+            if (balancesHidden) {
+                icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.988 18.988 0 015.125-5.172M9.879 9.879a3 3 0 004.242 4.242M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M2 2l20 20"/>';
+                text.textContent = 'Show Balances';
+            } else {
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+                text.textContent = 'Hide Balances';
+            }
+        }
+
+        // Handle action buttons with loading state
+        function handleAction(action) {
+            const button = event.currentTarget;
+            button.classList.add('loading');
+            button.setAttribute('aria-busy', 'true');
+            
+            // Simulate action delay
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.setAttribute('aria-busy', 'false');
+                
+                // Navigate based on action
+                const routes = {
+                    'add': 'convert.html',
+                    'send': 'send.html',
+                    'donate': 'donate.html',
+                    'export': null
+                };
+                
+                if (routes[action]) {
+                    window.location.href = routes[action];
+                } else if (action === 'export') {
+                    alert('Export functionality will generate a CSV/PDF file with your transaction history.');
+                }
+            }, 800);
+        }
+
+        // Show transaction detail modal with enhanced context
+        function showTransactionDetail(txId) {
+            const tx = mockTransactions[txId];
+            if (!tx) return;
+
+            const content = `
+                <div class="detail-row">
+                    <span class="detail-label">Transaction ID</span>
+                    <span class="detail-value">
+                        ${tx.id}
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date & Time</span>
+                    <span class="detail-value">${tx.date}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">
+                        <span class="transaction-status ${tx.status}">${tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">From</span>
+                    <span class="detail-value">${tx.from}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">To</span>
+                    <span class="detail-value">${tx.to}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount</span>
+                    <span class="detail-value" style="font-weight: 700; font-size: 1.125rem;">${tx.amount.toFixed(2)} ${tx.currency}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Network Fee</span>
+                    <span class="detail-value">${tx.fee.toFixed(2)} ${tx.currency}</span>
+                </div>
+                ${tx.humaEarned ? `<div class="detail-row">
+                    <span class="detail-label">HUMA Earned</span>
+                    <span class="detail-value" style="color: var(--success); font-weight: 700;">${tx.humaEarned} HUMA</span>
+                </div>` : ''}
+                ${tx.reference ? `<div class="detail-row">
+                    <span class="detail-label">Reference</span>
+                    <span class="detail-value">${tx.reference}</span>
+                </div>` : ''}
+                ${tx.confirmations ? `<div class="detail-row">
+                    <span class="detail-label">Confirmations</span>
+                    <span class="detail-value">${tx.confirmations}/12</span>
+                </div>` : ''}
+                ${tx.estimatedCompletion ? `<div class="detail-row">
+                    <span class="detail-label">Est. Completion</span>
+                    <span class="detail-value">${tx.estimatedCompletion}</span>
+                </div>` : ''}
+                ${tx.impact ? `<div class="detail-row">
+                    <span class="detail-label">Impact</span>
+                    <span class="detail-value" style="font-style: italic;">${tx.impact}</span>
+                </div>` : ''}
+            `;
+
+            document.getElementById('detailContent').innerHTML = content;
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('active');
+            
+            // Focus trap
+            setTimeout(() => {
+                document.getElementById('modalCloseBtn').focus();
+            }, 100);
+        }
+
+        function closeDetailModal(event) {
+            if (!event || event.target.id === 'detailModal') {
+                document.getElementById('detailModal').classList.remove('active');
+            }
+        }
+
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('detailModal');
+            if (modal.classList.contains('active') && e.key === 'Escape') {
+                closeDetailModal();
+            }
+        });
+
+        // Search transactions
+        function searchTransactions() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            // In production, filter transactions
+            console.log('Searching for:', query);
+            
+            // Show empty state if no results (demo)
+            if (query && query.length > 3 && query.includes('xyz')) {
+                document.getElementById('transactionList').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            } else {
+                document.getElementById('transactionList').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+            }
+        }
+
+        // Filter panel (placeholder)
+        function toggleFilterPanel() {
+            alert('Filter panel would open here with advanced filtering options.');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('UNERA Wallet Enhanced - Loaded');
+            
+            // Announce page load to screen readers
+            const announcement = document.createElement('div');
+            announcement.setAttribute('role', 'status');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.style.position = 'absolute';
+            announcement.style.left = '-10000px';
+            announcement.textContent = 'Wallet page loaded. Your total balance is $8,250.00';
+            document.body.appendChild(announcement);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet & Transactions - UNERA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-700: #4B5563;
+            --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-secondary: linear-gradient(135deg, #EC4899 0%, #10B981 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--neutral-100);
+            color: var(--neutral-900);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            background: #FFFFFF;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2.75rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--neutral-900);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--neutral-900);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.375rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.688rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .user-profile:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 0.813rem;
+            font-weight: 500;
+        }
+
+        /* User Dropdown Menu */
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 280px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .dropdown-user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .dropdown-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .dropdown-user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-user-name {
+            font-family: var(--font-display);
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: 0.125rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-user-email {
+            font-size: 0.813rem;
+            color: var(--neutral-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-wallet-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .dropdown-menu::-webkit-scrollbar {
+            display: none;
+        }
+
+        .dropdown-section {
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-section:not(:last-child) {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .dropdown-section-title {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--neutral-900);
+            transition: all 0.15s;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: var(--primary-green);
+        }
+
+        .dropdown-item.logout:hover {
+            background: rgba(239, 68, 68, 0.08);
+            color: #EF4444;
+        }
+
+        .dropdown-item-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .dropdown-item-content {
+            flex: 1;
+        }
+
+        .dropdown-item-title {
+            font-weight: 500;
+            margin-bottom: 0.125rem;
+        }
+
+        .dropdown-item-description {
+            font-size: 0.75rem;
+            color: var(--neutral-600);
+            line-height: 1.3;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--neutral-600);
+            font-size: 1.125rem;
+        }
+
+        /* Wallet Balances Section */
+        .wallet-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .privacy-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-700);
+            transition: all 0.2s;
+        }
+
+        .privacy-toggle:hover {
+            background: var(--neutral-300);
+        }
+
+        /* Balance Cards */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+            border: 1.5px solid var(--neutral-300);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .balance-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .balance-card.total {
+            background: var(--gradient-primary);
+            border: none;
+            color: var(--neutral-50);
+        }
+
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .currency-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .currency-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--neutral-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .balance-card.total .currency-icon {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--neutral-50);
+        }
+
+        .currency-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-card.total .currency-name {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .balance-amount {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .balance-card.total .balance-amount {
+            color: var(--neutral-50);
+        }
+
+        .balance-amount.hidden {
+            filter: blur(8px);
+            user-select: none;
+        }
+
+        .balance-fiat {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+        }
+
+        .balance-card.total .balance-fiat {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .balance-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .balance-change.positive {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+        }
+
+        .balance-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--neutral-300);
+            border-radius: 0.75rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--primary-green);
+            transform: translateY(-2px);
+        }
+
+        .action-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+        }
+
+        /* Transaction History Section */
+        .history-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid var(--neutral-300);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--neutral-500);
+        }
+
+        .filter-btn, .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--neutral-300);
+            border-radius: 0.75rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--neutral-700);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .export-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .filter-btn.active {
+            border-color: var(--primary-green);
+            background: var(--primary-green);
+            color: var(--neutral-50);
+        }
+
+        /* Active Filters Display */
+        .active-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--primary-green);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            color: var(--primary-green);
+            font-weight: 500;
+        }
+
+        .filter-chip button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Transaction List */
+        .transaction-list {
+            background: var(--neutral-50);
+            border-radius: 1rem;
+            border: 1px solid var(--neutral-300);
+            overflow: hidden;
+        }
+
+        .date-group {
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .date-group:last-child {
+            border-bottom: none;
+        }
+
+        .date-header {
+            padding: 1rem 1.5rem;
+            background: var(--neutral-100);
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 72px;
+            z-index: 10;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--neutral-200);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: var(--neutral-100);
+        }
+
+        .transaction-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .transaction-icon.in {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+        }
+
+        .transaction-icon.out {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .transaction-icon.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+        }
+
+        .transaction-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .transaction-status.completed {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+        }
+
+        .transaction-status.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .transaction-status.failed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .transaction-amount {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .amount-primary {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.125rem;
+        }
+
+        .amount-primary.positive {
+            color: var(--success);
+        }
+
+        .amount-primary.negative {
+            color: var(--error);
+        }
+
+        .amount-secondary {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: var(--neutral-600);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Load More Button */
+        .load-more {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .load-more-btn {
+            padding: 0.75rem 2rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--neutral-300);
+            border-radius: 0.75rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .load-more-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--primary-green);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--neutral-50);
+            border-radius: 1.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        .modal::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--neutral-200);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-300);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+
+        .detail-value {
+            text-align: right;
+            color: var(--neutral-900);
+        }
+
+        .copy-btn {
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--neutral-300);
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            padding: 1.5rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            display: block;
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-100);
+            border: 2px solid var(--neutral-300);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-option:hover {
+            border-color: var(--primary-green);
+        }
+
+        .filter-option.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: var(--neutral-50);
+        }
+
+        .date-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--neutral-300);
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-apply {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 0.75rem;
+            color: var(--neutral-50);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-clear {
+            padding: 0.75rem 1.5rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.75rem;
+            color: var(--neutral-700);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-clear:hover {
+            background: var(--neutral-300);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .balance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+
+            .history-controls {
+                flex-direction: column;
+            }
+
+            .search-bar {
+                min-width: 100%;
+            }
+
+            .transaction-item {
+                padding: 1rem;
+            }
+
+            .transaction-amount {
+                text-align: left;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard.html" class="nav-link">DASHBOARD</a></li>
+                <li><a href="wallet.html" class="nav-link">WALLET</a></li>
+                <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+                <li><a href="index.html#centres" class="nav-link">CENTRES</a></li>
+                <li><a href="#" class="nav-link">PORTFOLIO</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="user-profile" onclick="toggleUserDropdown()" id="userProfile">
+                <div class="user-avatar">JS</div>
+                <div class="user-name">Jane Smith</div>
+                
+                <!-- User Dropdown Menu -->
+                <div class="user-dropdown" id="userDropdown" onclick="event.stopPropagation()">
+                    <!-- Header with User Info -->
+                    <div class="dropdown-header">
+                        <div class="dropdown-user-info">
+                            <div class="dropdown-avatar">JS</div>
+                            <div class="dropdown-user-details">
+                                <div class="dropdown-user-name">Jane Smith</div>
+                                <div class="dropdown-user-email">jane@example.com</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-wallet-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            0x742d...3a8f
+                        </div>
+                    </div>
+
+                    <!-- Menu Items -->
+                    <div class="dropdown-menu">
+                        <!-- Account Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Account</div>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">My Profile</div>
+                                    <div class="dropdown-item-description">View and edit personal info</div>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Account Settings</div>
+                                    <div class="dropdown-item-description">Preferences and notifications</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Financial Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Financial</div>
+                            <a href="wallet.html" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                    <path d="M6 10h.01M10 10h.01M14 10h.01"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">My Wallet</div>
+                                    <div class="dropdown-item-description">Balances and transactions</div>
+                                </div>
+                            </a>
+                            <a href="wallet-creation.html" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Wallet Settings</div>
+                                    <div class="dropdown-item-description">Manage connected wallets</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Impact Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Impact</div>
+                            <a href="donate.html" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">My Donations</div>
+                                    <div class="dropdown-item-description">View donation history</div>
+                                </div>
+                            </a>
+                            <a href="explore-centres.html" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Supported Centres</div>
+                                    <div class="dropdown-item-description">View centres you support</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Support Section -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Support</div>
+                            <a href="#" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                    <path d="M12 17h.01"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Help & Support</div>
+                                    <div class="dropdown-item-description">FAQ and contact support</div>
+                                </div>
+                            </a>
+                            <a href="instructions.html" class="dropdown-item">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2z"/>
+                                    <path d="M12 15V9m0 0V5.5A2.5 2.5 0 0 1 14.5 3H20"/>
+                                    <circle cx="12" cy="9" r="1"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Quick Start Guide</div>
+                                    <div class="dropdown-item-description">Entry points and features</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Logout Section -->
+                        <div class="dropdown-section">
+                            <button class="dropdown-item logout" onclick="logout()">
+                                <svg class="dropdown-item-icon" viewBox="0 0 24 24">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Logout</div>
+                                    <div class="dropdown-item-description">Sign out of your account</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Wallet & Transactions</h1>
+            <p class="page-subtitle">One Flow. Many Lives. - Manage your balances and review transaction history</p>
+        </div>
+
+        <!-- Wallet Balances Section -->
+        <section class="wallet-section">
+            <div class="section-header">
+                <h2 class="section-title">Your Balances</h2>
+                <button class="privacy-toggle" onclick="toggleBalancePrivacy()">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Hide Balances
+                </button>
+            </div>
+
+            <div class="balance-grid">
+                <!-- Total Balance Card -->
+                <div class="balance-card total">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon">Σ</div>
+                            <span class="currency-name">Total Balance</span>
+                        </div>
+                    </div>
+                    <div class="balance-amount" id="totalBalance">$8,250.00</div>
+                    <div class="balance-fiat">Combined value • All currencies</div>
+                </div>
+
+                <!-- hCAD Balance -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon">$</div>
+                            <span class="currency-name">hCAD</span>
+                        </div>
+                        <span class="balance-change positive">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M18 15l-6-6-6 6"/>
+                            </svg>
+                            2.5%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="hcadBalance">3,500.00</div>
+                    <div class="balance-fiat">≈ $3,500 CAD</div>
+                </div>
+
+                <!-- hUSD Balance -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon">$</div>
+                            <span class="currency-name">hUSD</span>
+                        </div>
+                        <span class="balance-change positive">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M18 15l-6-6-6 6"/>
+                            </svg>
+                            1.2%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="husdBalance">2,500.00</div>
+                    <div class="balance-fiat">≈ $2,500 USD</div>
+                </div>
+
+                <!-- hEUR Balance -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon">€</div>
+                            <span class="currency-name">hEUR</span>
+                        </div>
+                        <span class="balance-change negative">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                            0.5%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="heurBalance">1,250.00</div>
+                    <div class="balance-fiat">≈ $1,400 USD</div>
+                </div>
+
+                <!-- HUMA Tokens Balance -->
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <div class="currency-info">
+                            <div class="currency-icon">H</div>
+                            <span class="currency-name">HUMA Tokens</span>
+                        </div>
+                        <span class="balance-change positive">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M18 15l-6-6-6 6"/>
+                            </svg>
+                            5.2%
+                        </span>
+                    </div>
+                    <div class="balance-amount" id="humaBalance">425.50</div>
+                    <div class="balance-fiat">≈ $850 USD • Governance tokens</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="action-btn" onclick="window.location.href='convert.html'">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Add Funds
+                </button>
+                <button class="action-btn" onclick="window.location.href='send.html'">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                    Send
+                </button>
+                <button class="action-btn" onclick="window.location.href='donate.html'">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                    Donate
+                </button>
+                <button class="action-btn" onclick="exportTransactions()">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Export
+                </button>
+            </div>
+        </section>
+
+        <!-- Transaction History Section -->
+        <section class="history-section">
+            <div class="section-header">
+                <h2 class="section-title">Transaction History</h2>
+            </div>
+
+            <!-- Search and Filter Controls -->
+            <div class="history-controls">
+                <div class="search-bar">
+                    <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Search transactions..." id="searchInput" oninput="searchTransactions()">
+                </div>
+                <button class="filter-btn" onclick="toggleFilterPanel()" id="filterBtn">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                    Filters
+                </button>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div class="active-filters" id="activeFilters" style="display: none;">
+                <!-- Filter chips will be added here dynamically -->
+            </div>
+
+            <!-- Transaction List -->
+            <div class="transaction-list" id="transactionList">
+                <!-- Today's Transactions -->
+                <div class="date-group">
+                    <div class="date-header">Today</div>
+                    
+                    <div class="transaction-item" onclick="showTransactionDetail('tx001')">
+                        <div class="transaction-icon in">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Received from Alice Johnson</div>
+                            <div class="transaction-meta">
+                                <span>10:32 AM</span>
+                                <span>•</span>
+                                <span class="transaction-status completed">Completed</span>
+                                <span>•</span>
+                                <span>hUSD</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary positive">+ $500.00</div>
+                            <div class="amount-secondary">hUSD</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" onclick="showTransactionDetail('tx002')">
+                        <div class="transaction-icon out">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/>
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Donation to Nairobi Humanity Centre</div>
+                            <div class="transaction-meta">
+                                <span>09:15 AM</span>
+                                <span>•</span>
+                                <span class="transaction-status completed">Completed</span>
+                                <span>•</span>
+                                <span>hCAD</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary negative">- $250.00</div>
+                            <div class="amount-secondary">Earned 25 HUMA</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" onclick="showTransactionDetail('tx003')">
+                        <div class="transaction-icon pending">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Bank Transfer In</div>
+                            <div class="transaction-meta">
+                                <span>08:45 AM</span>
+                                <span>•</span>
+                                <span class="transaction-status pending">Pending</span>
+                                <span>•</span>
+                                <span>hCAD</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary positive">+ $1,000.00</div>
+                            <div class="amount-secondary">Est. 2-3 days</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yesterday's Transactions -->
+                <div class="date-group">
+                    <div class="date-header">Yesterday</div>
+                    
+                    <div class="transaction-item" onclick="showTransactionDetail('tx004')">
+                        <div class="transaction-icon out">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/>
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Sent to Bob Chen</div>
+                            <div class="transaction-meta">
+                                <span>Jan 14, 3:22 PM</span>
+                                <span>•</span>
+                                <span class="transaction-status completed">Completed</span>
+                                <span>•</span>
+                                <span>hUSD</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary negative">- $150.00</div>
+                            <div class="amount-secondary">hUSD</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" onclick="showTransactionDetail('tx005')">
+                        <div class="transaction-icon in">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">HUMA Token Reward</div>
+                            <div class="transaction-meta">
+                                <span>Jan 14, 12:00 PM</span>
+                                <span>•</span>
+                                <span class="transaction-status completed">Completed</span>
+                                <span>•</span>
+                                <span>HUMA</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary positive">+ 50 HUMA</div>
+                            <div class="amount-secondary">Monthly reward</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Last 7 Days -->
+                <div class="date-group">
+                    <div class="date-header">Jan 10 - Jan 13, 2026</div>
+                    
+                    <div class="transaction-item" onclick="showTransactionDetail('tx006')">
+                        <div class="transaction-icon out">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/>
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Converted CAD to USD</div>
+                            <div class="transaction-meta">
+                                <span>Jan 12, 2:15 PM</span>
+                                <span>•</span>
+                                <span class="transaction-status completed">Completed</span>
+                                <span>•</span>
+                                <span>Exchange</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary negative">- 500 hCAD</div>
+                            <div class="amount-secondary">+ 375 hUSD</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" onclick="showTransactionDetail('tx007')">
+                        <div class="transaction-icon in">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">Card Purchase</div>
+                            <div class="transaction-meta">
+                                <span>Jan 10, 10:30 AM</span>
+                                <span>•</span>
+                                <span class="transaction-status completed">Completed</span>
+                                <span>•</span>
+                                <span>hEUR</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount-primary positive">+ €1,000.00</div>
+                            <div class="amount-secondary">Visa •••• 4242</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more">
+                <button class="load-more-btn" onclick="loadMoreTransactions()">Load More Transactions</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div class="modal-overlay" id="detailModal" onclick="closeDetailModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeDetailModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <h3 class="modal-title">Transaction Details</h3>
+            </div>
+            <div class="modal-body" id="detailContent">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Panel Modal -->
+    <div class="modal-overlay" id="filterModal" onclick="closeFilterPanel(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeFilterPanel()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <h3 class="modal-title">Filter Transactions</h3>
+            </div>
+            <div class="modal-body">
+                <div class="filter-panel">
+                    <!-- Transaction Type -->
+                    <div class="filter-group">
+                        <label class="filter-label">Transaction Type</label>
+                        <div class="filter-options">
+                            <div class="filter-option" data-filter-type="type" data-value="all" onclick="selectFilter(this)">All</div>
+                            <div class="filter-option" data-filter-type="type" data-value="received" onclick="selectFilter(this)">Received</div>
+                            <div class="filter-option" data-filter-type="type" data-value="sent" onclick="selectFilter(this)">Sent</div>
+                            <div class="filter-option" data-filter-type="type" data-value="donation" onclick="selectFilter(this)">Donations</div>
+                            <div class="filter-option" data-filter-type="type" data-value="exchange" onclick="selectFilter(this)">Exchange</div>
+                        </div>
+                    </div>
+
+                    <!-- Currency -->
+                    <div class="filter-group">
+                        <label class="filter-label">Currency</label>
+                        <div class="filter-options">
+                            <div class="filter-option" data-filter-type="currency" data-value="all" onclick="selectFilter(this)">All</div>
+                            <div class="filter-option" data-filter-type="currency" data-value="hcad" onclick="selectFilter(this)">hCAD</div>
+                            <div class="filter-option" data-filter-type="currency" data-value="husd" onclick="selectFilter(this)">hUSD</div>
+                            <div class="filter-option" data-filter-type="currency" data-value="heur" onclick="selectFilter(this)">hEUR</div>
+                            <div class="filter-option" data-filter-type="currency" data-value="huma" onclick="selectFilter(this)">HUMA</div>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <div class="filter-options">
+                            <div class="filter-option" data-filter-type="status" data-value="all" onclick="selectFilter(this)">All</div>
+                            <div class="filter-option" data-filter-type="status" data-value="completed" onclick="selectFilter(this)">Completed</div>
+                            <div class="filter-option" data-filter-type="status" data-value="pending" onclick="selectFilter(this)">Pending</div>
+                            <div class="filter-option" data-filter-type="status" data-value="failed" onclick="selectFilter(this)">Failed</div>
+                        </div>
+                    </div>
+
+                    <!-- Date Range -->
+                    <div class="filter-group">
+                        <label class="filter-label">Date Range</label>
+                        <div style="display: grid; gap: 0.75rem;">
+                            <input type="date" class="date-input" id="startDate">
+                            <input type="date" class="date-input" id="endDate">
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="filter-actions">
+                        <button class="btn-apply" onclick="applyFilters()">Apply Filters</button>
+                        <button class="btn-clear" onclick="clearFilters()">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock transaction data
+        const mockTransactions = {
+            'tx001': {
+                id: 'TX-2026-001-5A3F',
+                type: 'received',
+                from: 'Alice Johnson (alice@example.com)',
+                to: 'Your hUSD Wallet',
+                amount: 500.00,
+                currency: 'hUSD',
+                status: 'completed',
+                date: 'Jan 15, 2026 10:32 AM',
+                fee: 0.00,
+                reference: 'Payment for consulting services',
+                confirmations: 12
+            },
+            'tx002': {
+                id: 'TX-2026-002-8B9D',
+                type: 'donation',
+                from: 'Your hCAD Wallet',
+                to: 'Nairobi Humanity Centre',
+                amount: 250.00,
+                currency: 'hCAD',
+                status: 'completed',
+                date: 'Jan 15, 2026 09:15 AM',
+                fee: 0.50,
+                reference: 'Monthly donation',
+                humaEarned: 25.00
+            },
+            'tx003': {
+                id: 'TX-2026-003-2C4E',
+                type: 'deposit',
+                from: 'TD Bank •••• 1234',
+                to: 'Your hCAD Wallet',
+                amount: 1000.00,
+                currency: 'hCAD',
+                status: 'pending',
+                date: 'Jan 15, 2026 08:45 AM',
+                fee: 0.00,
+                reference: 'Bank transfer',
+                estimatedCompletion: '2-3 business days'
+            }
+        };
+
+        // Toggle balance privacy
+        let balancesHidden = false;
+        function toggleBalancePrivacy() {
+            balancesHidden = !balancesHidden;
+            const amounts = document.querySelectorAll('.balance-amount');
+            const btn = document.querySelector('.privacy-toggle');
+            
+            amounts.forEach(amount => {
+                if (balancesHidden) {
+                    amount.classList.add('hidden');
+                } else {
+                    amount.classList.remove('hidden');
+                }
+            });
+
+            btn.innerHTML = balancesHidden ? 
+                '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.988 18.988 0 015.125-5.172M9.879 9.879a3 3 0 004.242 4.242M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M2 2l20 20"/></svg> Show Balances' :
+                '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Hide Balances';
+        }
+
+        // Show transaction detail modal
+        function showTransactionDetail(txId) {
+            const tx = mockTransactions[txId];
+            if (!tx) return;
+
+            const content = `
+                <div class="detail-row">
+                    <span class="detail-label">Transaction ID</span>
+                    <span class="detail-value">
+                        ${tx.id}
+                        <button class="copy-btn" onclick="copyToClipboard('${tx.id}')">Copy</button>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date & Time</span>
+                    <span class="detail-value">${tx.date}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">
+                        <span class="transaction-status ${tx.status}">${tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">From</span>
+                    <span class="detail-value">${tx.from}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">To</span>
+                    <span class="detail-value">${tx.to}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount</span>
+                    <span class="detail-value">${tx.amount.toFixed(2)} ${tx.currency}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Fee</span>
+                    <span class="detail-value">${tx.fee.toFixed(2)} ${tx.currency}</span>
+                </div>
+                ${tx.humaEarned ? `<div class="detail-row">
+                    <span class="detail-label">HUMA Earned</span>
+                    <span class="detail-value">${tx.humaEarned} HUMA</span>
+                </div>` : ''}
+                ${tx.reference ? `<div class="detail-row">
+                    <span class="detail-label">Reference</span>
+                    <span class="detail-value">${tx.reference}</span>
+                </div>` : ''}
+                ${tx.confirmations ? `<div class="detail-row">
+                    <span class="detail-label">Confirmations</span>
+                    <span class="detail-value">${tx.confirmations}/12</span>
+                </div>` : ''}
+                ${tx.estimatedCompletion ? `<div class="detail-row">
+                    <span class="detail-label">Est. Completion</span>
+                    <span class="detail-value">${tx.estimatedCompletion}</span>
+                </div>` : ''}
+            `;
+
+            document.getElementById('detailContent').innerHTML = content;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeDetailModal(event) {
+            if (!event || event.target.id === 'detailModal') {
+                document.getElementById('detailModal').classList.remove('active');
+            }
+        }
+
+        // Filter panel
+        function toggleFilterPanel() {
+            document.getElementById('filterModal').classList.toggle('active');
+        }
+
+        function closeFilterPanel(event) {
+            if (!event || event.target.id === 'filterModal') {
+                document.getElementById('filterModal').classList.remove('active');
+            }
+        }
+
+        function selectFilter(element) {
+            const type = element.dataset.filterType;
+            const siblings = document.querySelectorAll(`[data-filter-type="${type}"]`);
+            siblings.forEach(sib => sib.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function applyFilters() {
+            // Get selected filters
+            const typeFilter = document.querySelector('[data-filter-type="type"].active')?.dataset.value || 'all';
+            const currencyFilter = document.querySelector('[data-filter-type="currency"].active')?.dataset.value || 'all';
+            const statusFilter = document.querySelector('[data-filter-type="status"].active')?.dataset.value || 'all';
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            // Update active filters display
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            activeFiltersDiv.innerHTML = '';
+            let hasFilters = false;
+
+            if (typeFilter !== 'all') {
+                hasFilters = true;
+                activeFiltersDiv.innerHTML += `<div class="filter-chip">Type: ${typeFilter} <button onclick="clearTypeFilter()">×</button></div>`;
+            }
+            if (currencyFilter !== 'all') {
+                hasFilters = true;
+                activeFiltersDiv.innerHTML += `<div class="filter-chip">Currency: ${currencyFilter.toUpperCase()} <button onclick="clearCurrencyFilter()">×</button></div>`;
+            }
+            if (statusFilter !== 'all') {
+                hasFilters = true;
+                activeFiltersDiv.innerHTML += `<div class="filter-chip">Status: ${statusFilter} <button onclick="clearStatusFilter()">×</button></div>`;
+            }
+            if (startDate || endDate) {
+                hasFilters = true;
+                const dateText = startDate && endDate ? `${startDate} to ${endDate}` : startDate || endDate;
+                activeFiltersDiv.innerHTML += `<div class="filter-chip">Date: ${dateText} <button onclick="clearDateFilter()">×</button></div>`;
+            }
+
+            activeFiltersDiv.style.display = hasFilters ? 'flex' : 'none';
+            document.getElementById('filterBtn').classList.toggle('active', hasFilters);
+
+            // Apply filtering logic here (would filter the transaction list)
+            alert('Filters applied! In production, this would filter the transaction list.');
+            
+            closeFilterPanel();
+        }
+
+        function clearFilters() {
+            document.querySelectorAll('.filter-option.active').forEach(el => el.classList.remove('active'));
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('activeFilters').style.display = 'none';
+            document.getElementById('filterBtn').classList.remove('active');
+        }
+
+        // Search
+        function searchTransactions() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            // In production, this would filter the visible transactions
+            console.log('Searching for:', query);
+        }
+
+        // Export
+        function exportTransactions() {
+            // In production, this would generate and download a CSV/PDF
+            alert('Export functionality would generate a CSV/PDF file with your transaction history.');
+        }
+
+        // Load more
+        function loadMoreTransactions() {
+            alert('Loading more transactions... In production, this would fetch older transactions.');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+
+        // Initialize - set default filters
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('[data-filter-type="type"][data-value="all"]').classList.add('active');
+            document.querySelector('[data-filter-type="currency"][data-value="all"]').classList.add('active');
+            document.querySelector('[data-filter-type="status"][data-value="all"]').classList.add('active');
+        });
+
+        // User dropdown toggle
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !userProfile.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to log out?')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userInitials');
+                localStorage.removeItem('walletAddress');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
