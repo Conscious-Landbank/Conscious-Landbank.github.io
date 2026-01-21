@@ -7,27 +7,40 @@
 
 ---
 
-## 🎯 **TYPICAL AUTHENTICATION PROCESS**
+## 🎯 **UNERA AUTHENTICATION PROCESS (UPDATED)**
 
-### **COMPLETE AUTHENTICATION FLOW:**
+### **COMPLETE AUTHENTICATION FLOW (Following Coinbase Model):**
 
 ```
-1. SIGN UP
+1. ENTER EMAIL
    ↓
-2. EMAIL VERIFICATION
+2. VERIFY EMAIL VIA CODE (6-digit code sent to email)
    ↓
-3. LOGIN
+3. ENTER NAME (First Name + Last Name)
    ↓
-4. TWO-FACTOR AUTHENTICATION (2FA) [Optional but recommended]
+4. CREATE PASSWORD
    ↓
-5. KYC/IDENTITY VERIFICATION [For financial apps - Required]
+5. TWO-FACTOR AUTHENTICATION (2FA) [Optional - Can Skip]
    ↓
-6. SESSION MANAGEMENT
+6. KYC/IDENTITY VERIFICATION [Optional - Can Skip]
    ↓
-7. PASSWORD RESET/RECOVERY
+7. DASHBOARD ACCESS
+   ├─ If KYC skipped: Limited features + warning banner
+   └─ If KYC complete: Full access
    ↓
-8. ACCOUNT SETTINGS
+8. SESSION MANAGEMENT
+   ↓
+9. PASSWORD RESET/RECOVERY
+   ↓
+10. ACCOUNT SETTINGS
 ```
+
+### **Key Features:**
+- ✅ **Email-first registration** (Coinbase model)
+- ✅ **Email verification before name/password** (security best practice)
+- ✅ **2FA optional** (can skip, set up later)
+- ✅ **KYC optional** (can skip, limited dashboard access)
+- ✅ **Warning system** for unverified users
 
 ---
 
