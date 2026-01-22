@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Identity - UNERA</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Enhanced Auth CSS -->
+    <link rel="stylesheet" href="auth-enhanced.css">
+    
+    <style>
+        /* KYC-specific styles only */
+        .benefits-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .benefit-item {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .benefit-item:hover {
+            border-color: var(--primary-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+        
+        .benefit-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .benefit-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            stroke-width: 2;
+        }
+        
+        .benefit-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .benefit-content p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .warning-box h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .warning-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.75rem 0;
+        }
+        
+        .warning-box li {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            padding: 0.375rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .warning-box li::before {
+            content: '❌';
+            position: absolute;
+            left: 0;
+        }
+        
+        .warning-box .available {
+            color: var(--primary-green);
+            font-weight: 500;
+            margin-top: 0.75rem;
+        }
+        
+        .warning-box .available::before {
+            content: '✓';
+            color: var(--primary-green);
+        }
+        
+        .skip-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+        
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--primary-green);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-text:hover {
+            color: var(--primary-blue);
+        }
+        
+        .skip-note {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-box {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            font-family: var(--font-display);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+        }
+        
+        #sumsub-websdk-container {
+            width: 100%;
+            min-height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <svg class="logo-icon" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="70" cy="70" r="60" fill="#14B8A6"/>
+                <circle cx="70" cy="70" r="45" fill="#2DD4BF"/>
+                <circle cx="70" cy="70" r="30" fill="#5EEAD4"/>
+                <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+            </svg>
+            <span class="logo-text">UNERA</span>
+        </div>
+        <a href="dashboard-enhanced.html" class="back-btn">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Exit
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="auth-container">
+        <div class="auth-card">
+            <!-- Auth Header -->
+            <div class="auth-header">
+                <div class="logo-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Verify Your Identity</h1>
+                <p class="auth-subtitle">Complete verification to unlock all features</p>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-value">2 min</div>
+                    <div class="stat-label">Average time</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">95%</div>
+                    <div class="stat-label">Instant approval</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">🔒</div>
+                    <div class="stat-label">Bank-level security</div>
+                </div>
+            </div>
+
+            <!-- Benefits Grid -->
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>📄 Government-Issued ID</h4>
+                        <p>Driver's license, passport, or national ID card</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>🤳 Selfie Verification</h4>
+                        <p>Quick liveness check to match your ID photo</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>🔒 Secure & Private</h4>
+                        <p>Your data is encrypted and never shared without consent</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Box -->
+            <div class="warning-box">
+                <h4>⚠️ Limited Access Without Verification</h4>
+                <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                    If you skip identity verification, you won't be able to:
+                </p>
+                <ul>
+                    <li>Add funds to your wallet</li>
+                    <li>Make donations to centres</li>
+                    <li>Send money to others</li>
+                    <li>Withdraw to your bank account</li>
+                </ul>
+                <p class="available">
+                    You can still explore centres and browse the platform
+                </p>
+            </div>
+
+            <!-- Start Button -->
+            <button class="submit-btn sticky-cta" id="startVerificationBtn" onclick="startVerification()">
+                Start Verification
+            </button>
+
+            <!-- Skip Section -->
+            <div class="skip-section">
+                <button class="btn-text" onclick="skipKYC()">
+                    Skip - Do This Later →
+                </button>
+                <p class="skip-note">
+                    💡 You can complete verification anytime in Account Settings
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sumsub SDK Container (Hidden initially) -->
+    <div id="sumsub-websdk-container" style="display: none;"></div>
+
+    <!-- Auth Flow Manager -->
+    <script src="auth-flow.js"></script>
+
+    <!-- Sumsub SDK (Production) -->
+    <!-- <script src="https://static.sumsub.com/idensic/static/sns-websdk-builder.js"></script> -->
+
+    <!-- JavaScript -->
+    <script>
+        console.log('🔐 KYC Verification Page Loaded');
+
+        // Check if coming from signup
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromSignup = urlParams.get('from') === 'signup';
+        
+        if (fromSignup) {
+            console.log('👤 New user from signup flow');
+        }
+
+        // Start verification
+        function startVerification() {
+            const startBtn = document.getElementById('startVerificationBtn');
+            
+            // Show loading
+            startBtn.classList.add('loading');
+            startBtn.disabled = true;
+            
+            console.log('🚀 Starting KYC verification...');
+            
+            // Simulate loading Sumsub SDK
+            setTimeout(() => {
+                // In production, this would initialize the Sumsub SDK:
+                /*
+                let snsWebSdkInstance = snsWebSdk
+                    .init(accessToken, () => getNewAccessToken())
+                    .withConf({
+                        lang: 'en',
+                        theme: 'light',
+                        customCss: `
+                            --primary-color: #10B981;
+                            --accent-color: #0EA5E9;
+                        `
+                    })
+                    .withOptions({ addViewportTag: false, adaptIframeHeight: true})
+                    .on('idCheck.onStepCompleted', (payload) => {
+                        console.log('Step completed', payload);
+                    })
+                    .on('idCheck.onApplicantSubmitted', (payload) => {
+                        console.log('Verification submitted', payload);
+                        handleVerificationComplete();
+                    })
+                    .build();
+                
+                snsWebSdkInstance.launch('#sumsub-websdk-container');
+                */
+                
+                // For demo: simulate verification complete
+                simulateVerification();
+            }, 1500);
+        }
+
+        // Simulate verification process
+        function simulateVerification() {
+            console.log('📸 Opening verification interface...');
+            
+            // In demo, auto-complete after 3 seconds
+            setTimeout(() => {
+                handleVerificationComplete();
+            }, 3000);
+        }
+
+        // Handle verification complete
+        function handleVerificationComplete() {
+            console.log('✅ Verification completed successfully');
+            
+            // Store KYC status
+            localStorage.setItem('kycStatus', 'completed');
+            localStorage.setItem('kycCompletedDate', new Date().toISOString());
+            
+            // Success feedback
+            const startBtn = document.getElementById('startVerificationBtn');
+            startBtn.classList.remove('loading');
+            startBtn.classList.add('success');
+            startBtn.textContent = 'Verified!';
+            
+            // Haptic feedback
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate([10, 50, 10, 50, 10]);
+            }
+            
+            // Redirect to dashboard
+            setTimeout(() => {
+                window.location.href = 'dashboard-enhanced.html?kyc=completed&welcome=true';
+            }, 1500);
+        }
+
+        // Skip KYC
+        function skipKYC() {
+            console.log('⏭️ Skipping KYC verification');
+            
+            // Confirm skip
+            const confirmed = confirm('Skip verification?\n\nYou can complete this later, but some features will be limited until you verify your identity.');
+            
+            if (confirmed) {
+                // Store skip status
+                localStorage.setItem('kycStatus', 'skipped');
+                localStorage.setItem('kycSkippedDate', new Date().toISOString());
+                
+                console.log('⚠️ KYC skipped - limited access mode');
+                
+                // Redirect to dashboard with limited access
+                window.location.href = 'dashboard-enhanced.html?kyc=skipped&welcome=true';
+            }
+        }
+
+        // Get new access token for Sumsub (production)
+        async function getNewAccessToken() {
+            // In production, call your backend:
+            // const response = await fetch('/api/kyc/token');
+            // const data = await response.json();
+            // return data.token;
+            
+            // Demo:
+            return 'DEMO_TOKEN_' + Date.now();
+        }
+
+        // Auto-focus start button
+        window.addEventListener('load', () => {
+            const startBtn = document.getElementById('startVerificationBtn');
+            if (startBtn && !window.matchMedia('(max-width: 768px)').matches) {
+                startBtn.focus();
+            }
+        });
+    </script>
+</body>
+</html>

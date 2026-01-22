@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect WalletConnect - UNERA</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Enhanced Auth CSS -->
+    <link rel="stylesheet" href="auth-enhanced.css">
+    
+    <style>
+        .qr-code-container {
+            background: var(--neutral-100);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .qr-placeholder {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 1.5rem auto;
+            background: white;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            border: 2px solid var(--border-subtle);
+        }
+        
+        .qr-instructions {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .connection-steps {
+            background: var(--neutral-100);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .connection-steps h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .connection-steps ol {
+            margin: 0;
+            padding-left: 1.5rem;
+            list-style: decimal;
+        }
+        
+        .connection-steps li {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .connection-steps li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .connection-status {
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            display: none;
+            margin: 1.5rem 0;
+        }
+        
+        .connection-status.connecting {
+            display: block;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        .connection-status.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+        }
+        
+        .connection-status.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .supported-wallets {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .wallet-icon {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            text-align: center;
+            font-size: 2rem;
+            transition: all 0.2s;
+        }
+        
+        .wallet-icon:hover {
+            border-color: var(--primary-green);
+            transform: translateY(-2px);
+        }
+        
+        .wallet-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        @media (max-width: 640px) {
+            .supported-wallets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .qr-placeholder {
+                width: 240px;
+                height: 240px;
+                font-size: 6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <svg class="logo-icon" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="70" cy="70" r="60" fill="#14B8A6"/>
+                <circle cx="70" cy="70" r="45" fill="#2DD4BF"/>
+                <circle cx="70" cy="70" r="30" fill="#5EEAD4"/>
+                <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+            </svg>
+            <span class="logo-text">UNERA</span>
+        </div>
+        <a href="signup_2.html" class="back-btn">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="auth-container">
+        <div class="auth-card">
+            <!-- Auth Header -->
+            <div class="auth-header">
+                <div class="logo-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Connect with WalletConnect</h1>
+                <p class="auth-subtitle">Scan QR code with your mobile wallet</p>
+            </div>
+
+            <!-- Connection Status -->
+            <div class="connection-status" id="connectionStatus"></div>
+
+            <!-- QR Code Container -->
+            <div class="qr-code-container" id="qrContainer" style="display: none;">
+                <div class="qr-placeholder">📱</div>
+                <p class="qr-instructions">
+                    Scan this QR code with your mobile wallet app to connect
+                </p>
+            </div>
+
+            <!-- Connection Steps -->
+            <div class="connection-steps">
+                <h4>How to Connect:</h4>
+                <ol>
+                    <li>Click "Generate QR Code" below</li>
+                    <li>Open your wallet app on your mobile device</li>
+                    <li>Tap the WalletConnect or scan icon</li>
+                    <li>Scan the QR code displayed on this screen</li>
+                    <li>Approve the connection in your wallet app</li>
+                </ol>
+            </div>
+
+            <!-- Supported Wallets -->
+            <div style="margin: 2rem 0;">
+                <h4 style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; text-align: center;">
+                    Supported Wallets
+                </h4>
+                <div class="supported-wallets">
+                    <div class="wallet-icon">
+                        <div>🌈</div>
+                        <div class="wallet-name">Rainbow</div>
+                    </div>
+                    <div class="wallet-icon">
+                        <div>🦄</div>
+                        <div class="wallet-name">Uniswap</div>
+                    </div>
+                    <div class="wallet-icon">
+                        <div>💎</div>
+                        <div class="wallet-name">Trust</div>
+                    </div>
+                    <div class="wallet-icon">
+                        <div>🔷</div>
+                        <div class="wallet-name">Argent</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connect Button -->
+            <button class="submit-btn sticky-cta" id="connectBtn" onclick="initiateConnection()">
+                Generate QR Code
+            </button>
+        </div>
+    </main>
+
+    <!-- Auth Flow Manager -->
+    <script src="auth-flow.js"></script>
+
+    <!-- JavaScript -->
+    <script>
+        console.log('🔗 WalletConnect Page Loaded');
+
+        // Get flow type from URL (signup or login)
+        const urlParams = new URLSearchParams(window.location.search);
+        const flowType = urlParams.get('flow') || 'signup'; // Default to signup
+        
+        console.log(`🔐 Flow type: ${flowType}`);
+
+        // Initiate connection
+        async function initiateConnection() {
+            const btn = document.getElementById('connectBtn');
+            const qrContainer = document.getElementById('qrContainer');
+            
+            // Show connecting state
+            btn.classList.add('loading');
+            btn.disabled = true;
+            showStatus('connecting', '🔄', 'Generating QR Code...', 'Please wait');
+            
+            try {
+                console.log('🔗 Generating WalletConnect QR code...');
+                
+                // Simulate QR code generation (in production, use WalletConnect SDK)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Show QR code
+                qrContainer.style.display = 'block';
+                showStatus('connecting', '📱', 'Scan QR Code', 'Open your wallet app and scan the QR code above');
+                
+                btn.textContent = 'Waiting for Connection...';
+                btn.classList.remove('loading');
+                
+                // Simulate wallet connection (in production, listen for WalletConnect events)
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Simulate successful connection
+                const mockAddress = '0x' + Array.from({length: 40}, () => 
+                    Math.floor(Math.random() * 16).toString(16)).join('');
+                
+                console.log('✅ WalletConnect connected:', mockAddress);
+                
+                // Store connection info
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('emailVerified', 'true');
+                localStorage.setItem('walletAddress', mockAddress);
+                localStorage.setItem('walletType', 'walletconnect');
+                localStorage.setItem('userName', `User ${mockAddress.slice(2, 6)}`);
+                localStorage.setItem('signupMethod', 'walletconnect');
+                
+                // Show success
+                showStatus('success', '✅', 'Connected Successfully!', `Wallet: ${mockAddress.slice(0, 6)}...${mockAddress.slice(-4)}`);
+                
+                btn.classList.add('success');
+                btn.textContent = 'Connected!';
+                btn.disabled = true;
+                
+                // Hide QR code
+                qrContainer.style.display = 'none';
+                
+                // Haptic feedback
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate([10, 50, 10]);
+                }
+                
+                // Redirect based on flow type
+                setTimeout(() => {
+                    if (flowType === 'login') {
+                        // Existing user - check if 2FA is enabled
+                        const has2FA = localStorage.getItem('2faEnabled') === 'true';
+                        if (has2FA) {
+                            console.log('🔐 Redirecting to 2FA verification...');
+                            window.location.href = 'verify-2fa.html?from=walletconnect';
+                        } else {
+                            console.log('📊 Redirecting to dashboard...');
+                            window.location.href = 'dashboard-enhanced.html?welcome=back';
+                        }
+                    } else {
+                        // New user - go to 2FA setup
+                        console.log('🔐 Redirecting to 2FA setup...');
+                        window.location.href = 'setup-2fa.html?from=walletconnect';
+                    }
+                }, 1500);
+                
+            } catch (error) {
+                console.error('❌ WalletConnect error:', error);
+                
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.textContent = 'Generate QR Code';
+                qrContainer.style.display = 'none';
+                
+                showStatus('error', '❌', 'Connection Failed', error.message || 'Please try again');
+            }
+        }
+
+        // Show status message
+        function showStatus(type, icon, title, message) {
+            const status = document.getElementById('connectionStatus');
+            status.className = `connection-status ${type}`;
+            status.innerHTML = `
+                <div class="status-icon">${icon}</div>
+                <div style="font-weight: 600; margin-bottom: 0.5rem;">${title}</div>
+                <div style="font-size: 0.875rem; opacity: 0.9;">${message}</div>
+            `;
+        }
+    </script>
+</body>
+</html>
