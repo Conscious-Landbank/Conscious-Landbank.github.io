@@ -967,7 +967,7 @@
             </div>
 
             <!-- Visual Benefits -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; text-align: center;">
+            <div class="features-grid" style="margin-top: 2rem; text-align: center;">
                 <div style="padding: 1.5rem;">
                     <div style="width: 64px; height: 64px; margin: 0 auto 1rem; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
                         <svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" style="width: 32px; height: 32px;">
@@ -999,14 +999,6 @@
                     <div style="font-size: 0.875rem; color: var(--text-secondary);">256-bit encryption</div>
                 </div>
             </div>
-
-            @media (max-width: 768px) {
-                <style>
-                    .visual-benefits {
-                        grid-template-columns: 1fr !important;
-                    }
-                </style>
-            }
 
             <!-- What You'll Unlock - Visual Grid -->
             <div style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%); border-radius: var(--radius-xl); border: 1px solid rgba(16, 185, 129, 0.1);">
@@ -1841,7 +1833,10 @@
             const container = document.createElement('div');
             container.id = 'kycFlowContainer';
             container.style.cssText = 'display:none;';
-            document.querySelector('.main-container').appendChild(container);
+            const mainContainer = document.querySelector('.auth-container-wide') || document.querySelector('#main-content');
+            if (mainContainer) {
+                mainContainer.appendChild(container);
+            }
             return container;
         }
 
@@ -2109,14 +2104,14 @@
                         <div id="autoClickCountdown" style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 0.75rem; font-size: 0.875rem; font-weight: 600; color: var(--impact-green); border: 1px solid rgba(16, 185, 129, 0.2);">
                             ⏱️ Auto-capturing in 3s...
                         </div>
-                        <div style="display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: center;">
-                            <button class="btn-primary" id="captureLivenessBtn" onclick="captureLiveness(${step.id}, '${nextStep}')" style="padding: 1rem 2rem; font-size: 1rem; font-weight: 600; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
-                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                        <div style="display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: center; align-items: center;">
+                            <button class="btn-primary" id="captureLivenessBtn" onclick="captureLiveness(${step.id}, '${nextStep}')" style="padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); white-space: nowrap; min-width: 160px; height: 52px; display: inline-flex; align-items: center; justify-content: center;">
+                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem; flex-shrink: 0;">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 Capture Now
                             </button>
-                            <button class="btn-secondary" onclick="${nextStep}()" style="padding: 1rem 1.5rem; font-size: 1rem; font-weight: 600;">
+                            <button class="btn-secondary" onclick="${nextStep}()" style="padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; white-space: nowrap; min-width: 120px; height: 52px; display: inline-flex; align-items: center; justify-content: center;">
                                 Next →
                             </button>
                         </div>
@@ -2151,51 +2146,46 @@
                 frame.style.borderWidth = '3px';
                 frame.style.borderStyle = 'solid';
                 frame.style.boxShadow = '0 8px 32px rgba(16, 185, 129, 0.2), 0 0 0 8px rgba(16, 185, 129, 0.05)';
+                frame.style.height = '280px'; // Consistent height with document alignment screen
                 frame.innerHTML = `
-                    <div style="padding: 1.25rem 1rem; text-align: center; height: 100%;">
-                        <!-- Success checkmark -->
-                        <div style="width: 56px; height: 56px; background: var(--impact-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3); animation: checkmark 0.5s ease-out;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <div style="padding: 1rem 0.875rem; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                        <!-- Success checkmark (smaller) -->
+                        <div style="width: 48px; height: 48px; background: var(--impact-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3); animation: checkmark 0.5s ease-out;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
                         
-                        <!-- Heading -->
-                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--stone-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em;">Photo Captured!</h3>
+                        <!-- Heading (smaller) -->
+                        <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--stone-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em;">Photo Captured!</h3>
                         
-                        <!-- File info -->
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: white; border-radius: 0.625rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
-                            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="var(--stone-medium)" stroke-width="2">
+                        <!-- File info (smaller) -->
+                        <div style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: white; border-radius: 0.5rem; margin-bottom: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                            <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="var(--stone-medium)" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--stone-medium);">passport_${docType}.jpg</span>
+                            <span style="font-size: 0.688rem; font-weight: 600; color: var(--stone-medium);">passport_${docType}.jpg</span>
                         </div>
                         
-                        <!-- Validation checks -->
-                        <div style="display: grid; gap: 0.5rem; text-align: left; max-width: 240px; margin: 0 auto;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.625rem; background: white; border-radius: 0.625rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                                <div style="width: 18px; height: 18px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--impact-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                </div>
-                                <span style="font-size: 0.813rem; font-weight: 500; color: var(--stone-dark);">All corners visible</span>
+                        <!-- Validation checks - Compact horizontal badges -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.375rem; justify-content: center; max-width: 280px; margin: 0 auto;">
+                            <div style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(16, 185, 129, 0.1); border-radius: 1rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--impact-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span style="font-size: 0.688rem; font-weight: 600; color: var(--impact-green);">All corners</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.625rem; background: white; border-radius: 0.625rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                                <div style="width: 18px; height: 18px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--impact-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                </div>
-                                <span style="font-size: 0.813rem; font-weight: 500; color: var(--stone-dark);">Good lighting</span>
+                            <div style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(16, 185, 129, 0.1); border-radius: 1rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--impact-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span style="font-size: 0.688rem; font-weight: 600; color: var(--impact-green);">Good lighting</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.625rem; background: white; border-radius: 0.625rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                                <div style="width: 18px; height: 18px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--impact-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                </div>
-                                <span style="font-size: 0.813rem; font-weight: 500; color: var(--stone-dark);">Text readable</span>
+                            <div style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(16, 185, 129, 0.1); border-radius: 1rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--impact-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span style="font-size: 0.688rem; font-weight: 600; color: var(--impact-green);">Text readable</span>
                             </div>
                         </div>
                     </div>
@@ -2232,6 +2222,7 @@
                 // Show captured face image (sample)
                 frame.style.borderColor = 'var(--impact-green)';
                 frame.style.boxShadow = '0 12px 40px rgba(16, 185, 129, 0.3)';
+                frame.style.height = '400px'; // Consistent height with camera frame
                 frame.innerHTML = `
                     <div style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(0,0,0,0.3), rgba(0,0,0,0.7)); display: flex; align-items: center; justify-content: center;">
                         <!-- Sample face silhouette -->
@@ -2435,6 +2426,7 @@
                 // Show success
                 frame.style.borderColor = 'var(--impact-green)';
                 frame.style.boxShadow = '0 12px 40px rgba(16, 185, 129, 0.3), 0 0 0 4px rgba(16, 185, 129, 0.1)';
+                frame.style.height = '320px'; // Consistent height with returning liveness frame
                 frame.innerHTML = `
                     <div style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(16, 185, 129, 0.1), rgba(0,0,0,0.8)); display: flex; align-items: center; justify-content: center;">
                         <svg width="140" height="180" viewBox="0 0 140 180" fill="none" style="filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));">

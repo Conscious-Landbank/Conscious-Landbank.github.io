@@ -423,6 +423,9 @@
             transition: all 0.3s;
             position: relative;
             overflow: visible;
+            min-height: 200px; /* Allow cards to grow when content wraps */
+            display: flex;
+            flex-direction: column;
         }
 
         .balance-card:hover {
@@ -465,13 +468,22 @@
             margin-bottom: 1.5rem;
             position: relative;
             z-index: 1;
-            flex-wrap: nowrap;
+            flex-wrap: wrap; /* Allow wrapping when content is too wide */
+            min-height: 48px; /* Ensure consistent minimum height */
         }
 
         .currency-info {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            flex: 0 1 auto; /* Don't grow, can shrink, auto width */
+            max-width: 65%; /* Prevent from taking too much space */
+        }
+
+        .currency-info > div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Currency Icons with Flags */
@@ -559,6 +571,8 @@
             position: relative;
             flex-shrink: 0;
             white-space: nowrap;
+            flex: 0 0 auto; /* Don't grow or shrink */
+            margin-top: auto; /* Push to bottom when wrapped */
         }
 
         .balance-change.positive {
@@ -809,6 +823,33 @@
             pointer-events: none;
         }
 
+        .search-clear-btn {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .search-clear-btn:hover {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .search-clear-btn:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
         .filter-btn {
             display: inline-flex;
             align-items: center;
@@ -881,6 +922,319 @@
             background: rgba(16, 185, 129, 0.2);
         }
 
+        .filter-chip-clear-all {
+            background: none;
+            border: 2px solid var(--neutral-300);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 980px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .filter-chip-clear-all:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        /* Filter Modal */
+        .filter-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-modal.active {
+            display: flex;
+        }
+
+        .filter-modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .filter-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .filter-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .filter-modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .modal-close-btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .filter-modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 1rem 0;
+        }
+
+        .date-range-presets {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .date-preset-btn {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-100);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .date-preset-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--primary-green);
+        }
+
+        .date-preset-btn.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        .date-range-custom {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .date-range-custom label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .date-range-custom input[type="date"] {
+            padding: 0.75rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .date-range-custom input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .radio-label,
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.938rem;
+            min-height: 48px; /* WCAG touch target */
+        }
+
+        .radio-label:hover,
+        .checkbox-label:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .radio-label input[type="radio"],
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary-green);
+        }
+
+        .radio-label input[type="radio"]:checked + span,
+        .checkbox-label input[type="checkbox"]:checked + span {
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .radio-label input[type="radio"]:focus,
+        .checkbox-label input[type="checkbox"]:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .filter-section select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            background: var(--neutral-50);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 48px;
+        }
+
+        .filter-section select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .filter-modal-footer {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-top: 2px solid var(--border-subtle);
+        }
+
+        .filter-modal-footer button {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 48px;
+        }
+
+        /* Mobile: Bottom Sheet */
+        @media (max-width: 768px) {
+            .filter-modal.active {
+                align-items: flex-end;
+            }
+            
+            .filter-modal-content {
+                width: 100%;
+                max-width: none;
+                border-radius: 1.5rem 1.5rem 0 0;
+                max-height: 90vh;
+                animation: slideUpMobile 0.3s ease-out;
+            }
+
+            @keyframes slideUpMobile {
+                from {
+                    transform: translateY(100%);
+                }
+                to {
+                    transform: translateY(0);
+                }
+            }
+
+            .date-range-custom {
+                grid-template-columns: 1fr;
+            }
+
+            .date-range-presets {
+                flex-direction: column;
+            }
+
+            .date-preset-btn {
+                width: 100%;
+            }
+        }
+
         /* Transaction List - Enhanced with Avatars */
         .transaction-list {
             background: var(--neutral-50);
@@ -898,7 +1252,7 @@
         }
 
         .date-header {
-            padding: 1rem 1.5rem 1.5rem 1.5rem;
+            padding: 1rem 1.5rem; /* Balanced padding - no extra bottom padding */
             background: var(--neutral-100);
             font-weight: 700;
             color: var(--text-primary);
@@ -908,7 +1262,7 @@
             position: sticky;
             top: 44px;
             z-index: 10;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.5rem; /* Spacing created via margin instead */
         }
 
         .transaction-item {
@@ -1058,13 +1412,25 @@
             color: var(--text-secondary);
         }
 
-        /* See All Button */
-        .see-all-container {
+        /* Load More Container */
+        .load-more-container {
             text-align: center;
             padding: 2rem 0 3rem 0;
         }
 
-        .see-all-btn {
+        .transaction-count {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .transaction-count span {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .load-more-btn {
             display: inline-flex;
             align-items: center;
             gap: 0.75rem;
@@ -1080,30 +1446,406 @@
             transition: all 0.2s;
         }
 
-        .see-all-btn:hover {
+        .load-more-btn:hover {
             border-color: var(--primary-green);
             background: rgba(16, 185, 129, 0.05);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
         }
 
-        .see-all-btn:focus {
+        .load-more-btn:focus {
             outline: 3px solid var(--primary-green);
             outline-offset: 2px;
         }
 
-        .see-all-btn svg {
+        .load-more-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .load-more-btn svg {
             transition: transform 0.2s;
         }
 
-        .see-all-btn:hover svg {
+        .load-more-btn:hover:not(:disabled) svg {
+            transform: translateY(2px);
+        }
+
+        /* Loading Indicator */
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--neutral-200);
+            border-top-color: var(--primary-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Search Highlight */
+        .search-highlight {
+            background: rgba(255, 235, 59, 0.4);
+            color: inherit;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            animation: highlightPulse 0.3s ease-out;
+        }
+
+        @keyframes highlightPulse {
+            0% {
+                background: rgba(255, 235, 59, 0.8);
+            }
+            100% {
+                background: rgba(255, 235, 59, 0.4);
+            }
+        }
+
+        /* Filter Presets */
+        .filter-presets {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-presets-empty {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-style: italic;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .preset-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .preset-item:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .preset-item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .preset-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .preset-delete-btn {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .preset-delete-btn:hover {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .btn-save-preset {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 2px dashed var(--primary-green);
+            border-radius: 0.75rem;
+            color: var(--primary-green);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-save-preset:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        /* Preset Dialog */
+        .preset-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preset-dialog.active {
+            display: flex;
+        }
+
+        .preset-dialog-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .preset-dialog-content {
+            position: relative;
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .preset-dialog-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .preset-dialog-content p {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            margin: 0 0 1.5rem 0;
+        }
+
+        .preset-dialog-content input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            margin-bottom: 1.5rem;
+        }
+
+        .preset-dialog-content input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .preset-dialog-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .preset-dialog-actions button {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Export Container & Button */
+        .export-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 980px;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .export-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .export-btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Export Dialog */
+        .export-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .export-dialog.active {
+            display: flex;
+        }
+
+        .export-dialog-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .export-dialog-content {
+            position: relative;
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .export-dialog-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .export-dialog-content > p {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            margin: 0 0 1.5rem 0;
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .export-option-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .export-option-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
             transform: translateX(4px);
         }
 
-        .transaction-count {
-            margin-top: 1rem;
-            font-size: 0.875rem;
+        .export-option-btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .export-option-btn svg {
+            color: var(--primary-green);
+            flex-shrink: 0;
+        }
+
+        .export-option-btn div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .export-option-btn strong {
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .export-option-btn span {
             color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .export-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+        }
+
+        .export-info svg {
+            color: var(--primary-green);
+            flex-shrink: 0;
+        }
+
+        .export-info strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .export-dialog-footer {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem 0 0 0;
+            margin-top: 1.5rem;
+            border-top: 2px solid var(--border-subtle);
+        }
+
+        .export-dialog-footer button {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
         }
 
         /* Empty State */
@@ -1365,6 +2107,7 @@
             background: rgba(255, 255, 255, 0.15);
             color: white;
             backdrop-filter: blur(10px);
+            width: fit-content;
         }
 
         .balance-card.total .security-badge svg {
@@ -1490,13 +2233,12 @@
                     class="privacy-toggle" 
                     onclick="toggleBalancePrivacy()" 
                     aria-label="Toggle balance visibility"
-                    aria-pressed="false"
+                    aria-pressed="true"
                     id="privacyToggle">
                     <svg class="privacy-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.988 18.988 0 015.125-5.172M9.879 9.879a3 3 0 004.242 4.242M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M2 2l20 20"/>
                     </svg>
-                    <span id="privacyToggleText">Hide Balances</span>
+                    <span id="privacyToggleText">Show Balances</span>
                 </button>
             </div>
 
@@ -1647,10 +2389,16 @@
                     <input 
                         type="search" 
                         class="search-input" 
-                        placeholder="Search transactions..." 
+                        placeholder="Search by name, amount, category, or note..." 
                         id="searchInput"
-                        aria-label="Search transactions"
-                        oninput="searchTransactions()">
+                        aria-label="Search transactions by name, amount, category, or note"
+                        oninput="searchTransactions()"
+                        autocomplete="off">
+                    <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" aria-label="Clear search" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
                 <button 
                     class="filter-btn" 
@@ -1668,6 +2416,16 @@
             <!-- Active Filters Display -->
             <div class="active-filters" id="activeFilters" style="display: none;" role="region" aria-label="Active filters">
                 <!-- Filter chips populated by JavaScript -->
+            </div>
+
+            <!-- Export Button (shows when filters are active) -->
+            <div class="export-container" id="exportContainer" style="display: none;">
+                <button class="export-btn" onclick="showExportDialog()" aria-label="Export filtered transactions">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span>Export Results</span>
+                </button>
             </div>
 
             <!-- Transaction List -->
@@ -1919,15 +2677,26 @@
                 </div>
             </div>
 
-            <!-- See All Transactions Button -->
-            <div class="see-all-container">
-                <button class="see-all-btn" onclick="window.location.href='transactions.html'" aria-label="View all transactions">
-                    <span>See All Transactions</span>
+            <!-- Load More Transactions -->
+            <div class="load-more-container" id="loadMoreContainer">
+                <div class="transaction-count" role="status" aria-live="polite" id="transactionCount">
+                    Showing <span id="shownCount">10</span> of <span id="totalCount">247</span> transactions
+                </div>
+                <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreTransactions()" aria-label="Load more transactions">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                     </svg>
+                    <span id="loadMoreText">Load More Transactions</span>
                 </button>
-                <p class="transaction-count">Showing 10 of 247 transactions</p>
+                
+                <!-- Loading indicator -->
+                <div class="loading-indicator" id="loadingIndicator" style="display: none;" role="status" aria-live="polite">
+                    <div class="spinner"></div>
+                    <span>Loading transactions...</span>
+                </div>
+                
+                <!-- Infinite scroll sentinel -->
+                <div id="scrollSentinel" style="height: 1px;"></div>
             </div>
 
             <!-- Empty State (initially hidden) -->
@@ -1972,6 +2741,211 @@
             </div>
         </div>
     </div>
+
+    <!-- Filter Panel Modal -->
+    <div class="filter-modal" id="filterModal" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle" aria-hidden="true">
+        <div class="filter-modal-overlay" onclick="closeFilterPanel()"></div>
+        <div class="filter-modal-content" onclick="event.stopPropagation()">
+            <div class="filter-modal-header">
+                <h2 id="filterModalTitle">Filter Transactions</h2>
+                <button class="modal-close-btn" onclick="closeFilterPanel()" aria-label="Close filter panel">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="filter-modal-body">
+                <!-- Date Range Filter -->
+                <div class="filter-section">
+                    <h3>Date Range</h3>
+                    <div class="date-range-presets">
+                        <button type="button" class="date-preset-btn" onclick="setDateRange('last7days')" aria-label="Filter last 7 days">Last 7 days</button>
+                        <button type="button" class="date-preset-btn" onclick="setDateRange('last30days')" aria-label="Filter last 30 days">Last 30 days</button>
+                        <button type="button" class="date-preset-btn" onclick="setDateRange('thisMonth')" aria-label="Filter this month">This month</button>
+                    </div>
+                    <div class="date-range-custom">
+                        <label for="dateFrom">
+                            From:
+                            <input type="date" id="dateFrom" aria-label="Filter from date">
+                        </label>
+                        <label for="dateTo">
+                            To:
+                            <input type="date" id="dateTo" aria-label="Filter to date">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Transaction Type Filter -->
+                <div class="filter-section">
+                    <h3>Transaction Type</h3>
+                    <div class="radio-group" role="radiogroup" aria-label="Transaction type">
+                        <label class="radio-label">
+                            <input type="radio" name="txType" value="all" checked>
+                            <span>All Transactions</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="txType" value="in">
+                            <span>💰 Money In</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="txType" value="out">
+                            <span>📤 Money Out</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="filter-section">
+                    <h3>Category</h3>
+                    <div class="checkbox-group" role="group" aria-label="Categories">
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="received" id="cat-received">
+                            <span>👤 Received</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="donation" id="cat-donation">
+                            <span>❤️ Donations</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="transfer" id="cat-transfer">
+                            <span>📤 Transfers</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="yield" id="cat-yield">
+                            <span>📈 Yield/Interest</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="bank" id="cat-bank">
+                            <span>🏦 Bank Transfers</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="filter-section">
+                    <h3>Status</h3>
+                    <div class="checkbox-group" role="group" aria-label="Transaction status">
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="completed" id="status-completed" checked>
+                            <span>✅ Completed</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="pending" id="status-pending" checked>
+                            <span>⏳ Pending</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="failed" id="status-failed">
+                            <span>❌ Failed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Currency Filter -->
+                <div class="filter-section">
+                    <h3>Currency</h3>
+                    <label for="currencyFilter" class="sr-only">Filter by currency</label>
+                    <select id="currencyFilter" aria-label="Filter by currency">
+                        <option value="all">All Currencies</option>
+                        <option value="hUSD">hUSD</option>
+                        <option value="hCAD">hCAD</option>
+                        <option value="hEUR">hEUR</option>
+                        <option value="hGBP">hGBP</option>
+                        <option value="hJPY">hJPY</option>
+                    </select>
+                </div>
+
+                <!-- Saved Filter Presets -->
+                <div class="filter-section">
+                    <h3>Saved Presets</h3>
+                    <div class="filter-presets" id="filterPresets">
+                        <!-- Presets populated by JavaScript -->
+                        <p class="filter-presets-empty" id="presetsEmpty">No saved presets yet</p>
+                    </div>
+                    <button type="button" class="btn-save-preset" onclick="showSavePresetDialog()" aria-label="Save current filters as preset">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Save Current Filters
+                    </button>
+                </div>
+            </div>
+            
+            <div class="filter-modal-footer">
+                <button type="button" class="btn-secondary" onclick="clearAllFilters()" aria-label="Clear all filters">Clear All</button>
+                <button type="button" class="btn-primary" onclick="applyFilters()" aria-label="Apply filters">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Preset Dialog -->
+    <div class="preset-dialog" id="presetDialog" role="dialog" aria-modal="true" aria-labelledby="presetDialogTitle" aria-hidden="true">
+        <div class="preset-dialog-overlay" onclick="closeSavePresetDialog()"></div>
+        <div class="preset-dialog-content" onclick="event.stopPropagation()">
+            <h3 id="presetDialogTitle">Save Filter Preset</h3>
+            <p>Give your filter preset a name:</p>
+            <input type="text" id="presetNameInput" placeholder="e.g., My Donations" maxlength="30" aria-label="Preset name">
+            <div class="preset-dialog-actions">
+                <button type="button" class="btn-secondary" onclick="closeSavePresetDialog()">Cancel</button>
+                <button type="button" class="btn-primary" onclick="saveFilterPreset()" id="savePresetBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Dialog -->
+    <div class="export-dialog" id="exportDialog" role="dialog" aria-modal="true" aria-labelledby="exportDialogTitle" aria-hidden="true">
+        <div class="export-dialog-overlay" onclick="closeExportDialog()"></div>
+        <div class="export-dialog-content" onclick="event.stopPropagation()">
+            <h3 id="exportDialogTitle">Export Transactions</h3>
+            <p>Choose export format for your filtered transactions:</p>
+            
+            <div class="export-options">
+                <button class="export-option-btn" onclick="exportTransactions('csv')">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <div>
+                        <strong>CSV File</strong>
+                        <span>Spreadsheet format</span>
+                    </div>
+                </button>
+                
+                <button class="export-option-btn" onclick="exportTransactions('pdf')">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                    <div>
+                        <strong>PDF Statement</strong>
+                        <span>Printable document</span>
+                    </div>
+                </button>
+                
+                <button class="export-option-btn" onclick="exportTransactions('json')">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    <div>
+                        <strong>JSON Data</strong>
+                        <span>Developer format</span>
+                    </div>
+                </button>
+            </div>
+            
+            <div class="export-info">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span id="exportInfo">Exporting <strong>0</strong> visible transactions</span>
+            </div>
+            
+            <div class="export-dialog-footer">
+                <button type="button" class="btn-secondary" onclick="closeExportDialog()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen Reader Announcements -->
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="searchAnnouncer"></div>
 
     <script>
         // Mock transaction data
@@ -2124,7 +3098,8 @@
         };
 
         // Toggle balance privacy with state management
-        let balancesHidden = false;
+        let balancesHidden = true; // Start with balances hidden by default
+        
         function toggleBalancePrivacy() {
             balancesHidden = !balancesHidden;
             const amounts = document.querySelectorAll('.balance-amount');
@@ -2145,6 +3120,31 @@
                 icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
                 text.textContent = 'Hide Balances';
             }
+        }
+        
+        // Initialize balances as hidden on page load
+        function initializePrivacy() {
+            const amounts = document.querySelectorAll('.balance-amount');
+            const btn = document.getElementById('privacyToggle');
+            const icon = btn.querySelector('.privacy-toggle-icon');
+            const text = document.getElementById('privacyToggleText');
+            
+            // Hide balances
+            amounts.forEach(amount => {
+                amount.classList.add('hidden');
+            });
+            
+            // Update button state
+            btn.setAttribute('aria-pressed', 'true');
+            icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.988 18.988 0 015.125-5.172M9.879 9.879a3 3 0 004.242 4.242M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M2 2l20 20"/>';
+            text.textContent = 'Show Balances';
+        }
+        
+        // Call initialization when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePrivacy);
+        } else {
+            initializePrivacy();
         }
 
         // Handle action buttons with loading state
@@ -2258,14 +3258,397 @@
             }
         });
 
-        // Search transactions
+        // Transaction Search & Filter - MVP Implementation
+        let searchTimeout = null;
+        let activeFilters = {
+            dateFrom: null,
+            dateTo: null,
+            type: 'all',
+            categories: [],
+            statuses: ['completed', 'pending'],
+            currency: 'all'
+        };
+
+        // Enhanced Search Function
         function searchTransactions() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            // In production, filter transactions
-            console.log('Searching for:', query);
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
             
-            // Show empty state if no results (demo)
-            if (query && query.length > 3 && query.includes('xyz')) {
+            // Clear previous timeout
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            
+            // Debounce search by 300ms
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        }
+
+        function performSearch(query) {
+            const transactionItems = document.querySelectorAll('.transaction-item');
+            let matchCount = 0;
+            let totalCount = transactionItems.length;
+            
+            // Show/hide clear button
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) {
+                clearBtn.style.display = query ? 'flex' : 'none';
+            }
+            
+            if (!query) {
+                // Show all transactions if no query
+                transactionItems.forEach(item => {
+                    item.style.display = 'flex';
+                    clearHighlights(item); // Clear any highlights
+                });
+                matchCount = totalCount;
+            } else {
+                // Search across multiple fields
+                transactionItems.forEach(item => {
+                    const title = item.querySelector('.transaction-title')?.textContent || '';
+                    const meta = item.querySelector('.transaction-meta')?.textContent || '';
+                    const amount = item.querySelector('.amount-primary')?.textContent || '';
+                    const ariaLabel = item.getAttribute('aria-label') || '';
+                    
+                    // Combine all searchable text
+                    const searchableText = `${title} ${meta} ${amount} ${ariaLabel}`.toLowerCase();
+                    
+                    // Check for matches (including amount operators)
+                    let matches = false;
+                    
+                    if (query.startsWith('>') || query.startsWith('<')) {
+                        // Amount operator search
+                        matches = matchesAmountOperator(amount, query);
+                    } else {
+                        // Regular text search
+                        matches = searchableText.includes(query);
+                    }
+                    
+                    if (matches) {
+                        item.style.display = 'flex';
+                        highlightMatch(item, query);
+                        matchCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Handle empty date groups
+            hideEmptyDateGroups();
+            
+            // Show/hide empty state
+            if (matchCount === 0) {
+                document.getElementById('transactionList').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                announceToScreenReader(`No transactions found for "${query}"`);
+            } else {
+                document.getElementById('transactionList').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+                announceToScreenReader(`Found ${matchCount} of ${totalCount} transactions`);
+            }
+        }
+
+        function matchesAmountOperator(amountText, query) {
+            // Extract number from amount text (e.g., "+ $500.00" -> 500)
+            const numberMatch = amountText.match(/[\d,]+\.?\d*/);
+            if (!numberMatch) return false;
+            
+            const amount = parseFloat(numberMatch[0].replace(/,/g, ''));
+            const operator = query.charAt(0);
+            const queryAmount = parseFloat(query.substring(1));
+            
+            if (isNaN(queryAmount)) return false;
+            
+            if (operator === '>') {
+                return amount > queryAmount;
+            } else if (operator === '<') {
+                return amount < queryAmount;
+            }
+            
+            return false;
+        }
+
+        // ========================================
+        // PHASE 5: SEARCH HIGHLIGHTING
+        // ========================================
+        
+        function highlightMatch(item, query) {
+            if (!query) {
+                clearHighlights(item);
+                return;
+            }
+            
+            // Get text elements to highlight
+            const title = item.querySelector('.transaction-title');
+            const meta = item.querySelector('.transaction-meta');
+            const amount = item.querySelector('.amount-primary');
+            
+            if (title) highlightText(title, query);
+            if (meta) highlightText(meta, query);
+            if (amount && !query.startsWith('>') && !query.startsWith('<')) {
+                highlightText(amount, query);
+            }
+        }
+
+        function highlightText(element, query) {
+            // Store original text if not already stored
+            if (!element.hasAttribute('data-original-text')) {
+                element.setAttribute('data-original-text', element.textContent);
+            }
+            
+            const originalText = element.getAttribute('data-original-text');
+            const escapedQuery = escapeRegExp(query);
+            const regex = new RegExp(`(${escapedQuery})`, 'gi');
+            
+            // Replace matches with highlighted version
+            const highlightedHTML = originalText.replace(regex, '<mark class="search-highlight">$1</mark>');
+            
+            // Only update if there were matches
+            if (highlightedHTML !== originalText) {
+                element.innerHTML = highlightedHTML;
+            }
+        }
+
+        function clearHighlights(item) {
+            const elementsWithHighlight = item.querySelectorAll('[data-original-text]');
+            elementsWithHighlight.forEach(el => {
+                const originalText = el.getAttribute('data-original-text');
+                el.textContent = originalText;
+            });
+        }
+
+        function clearAllHighlights() {
+            document.querySelectorAll('[data-original-text]').forEach(el => {
+                const originalText = el.getAttribute('data-original-text');
+                el.textContent = originalText;
+                el.removeAttribute('data-original-text');
+            });
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function hideEmptyDateGroups() {
+            const dateGroups = document.querySelectorAll('.date-group');
+            dateGroups.forEach(group => {
+                const visibleItems = Array.from(group.querySelectorAll('.transaction-item'))
+                    .filter(item => item.style.display !== 'none');
+                
+                if (visibleItems.length === 0) {
+                    group.style.display = 'none';
+                } else {
+                    group.style.display = 'block';
+                }
+            });
+        }
+
+        // Clear Search
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            performSearch('');
+            clearAllHighlights();
+        }
+
+        // Filter Panel Functions
+        let lastFocusedElement = null;
+
+        function toggleFilterPanel() {
+            const modal = document.getElementById('filterModal');
+            if (modal.classList.contains('active')) {
+                closeFilterPanel();
+            } else {
+                openFilterPanel();
+            }
+        }
+
+        function openFilterPanel() {
+            lastFocusedElement = document.activeElement;
+            
+            const modal = document.getElementById('filterModal');
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            
+            // Focus first interactive element
+            const firstInput = modal.querySelector('button, input, select');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+            
+            // Trap focus
+            trapFocus(modal);
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFilterPanel() {
+            const modal = document.getElementById('filterModal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+            
+            // Return focus
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        // Focus Trap for Accessibility
+        function trapFocus(modal) {
+            const focusableElements = modal.querySelectorAll(
+                'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            const handleKeyDown = (e) => {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    } else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+                
+                if (e.key === 'Escape') {
+                    closeFilterPanel();
+                }
+            };
+            
+            modal.addEventListener('keydown', handleKeyDown);
+            
+            // Store for cleanup
+            modal._focusTrapHandler = handleKeyDown;
+        }
+
+        // Date Range Presets
+        function setDateRange(preset) {
+            const today = new Date();
+            let fromDate, toDate;
+            
+            // Clear active state from all presets
+            document.querySelectorAll('.date-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Set active state on clicked button
+            event.target.classList.add('active');
+            
+            switch(preset) {
+                case 'last7days':
+                    fromDate = new Date(today.setDate(today.getDate() - 7));
+                    toDate = new Date();
+                    break;
+                case 'last30days':
+                    fromDate = new Date(today.setDate(today.getDate() - 30));
+                    toDate = new Date();
+                    break;
+                case 'thisMonth':
+                    fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    toDate = new Date();
+                    break;
+                case 'lastMonth':
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    fromDate = lastMonth;
+                    toDate = new Date(today.getFullYear(), today.getMonth(), 0);
+                    break;
+            }
+            
+            document.getElementById('dateFrom').value = formatDateForInput(fromDate);
+            document.getElementById('dateTo').value = formatDateForInput(toDate);
+        }
+
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            // Validate filters
+            if (!validateFilters()) {
+                return;
+            }
+            
+            // Collect filter values
+            activeFilters.dateFrom = document.getElementById('dateFrom').value;
+            activeFilters.dateTo = document.getElementById('dateTo').value;
+            activeFilters.type = document.querySelector('input[name="txType"]:checked').value;
+            
+            // Collect checked categories
+            activeFilters.categories = Array.from(
+                document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+            ).filter(cb => cb.id.startsWith('cat-')).map(cb => cb.value);
+            
+            // Collect checked statuses
+            activeFilters.statuses = Array.from(
+                document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+            ).filter(cb => cb.id.startsWith('status-')).map(cb => cb.value);
+            
+            activeFilters.currency = document.getElementById('currencyFilter').value;
+            
+            // Apply filters to transactions
+            filterTransactions();
+            
+            // Update active filter chips
+            updateActiveFilterChips();
+            
+            // Mark filter button as active
+            const filterBtn = document.getElementById('filterBtn');
+            filterBtn.classList.add('active');
+            filterBtn.setAttribute('aria-label', 'Filters active - click to modify');
+            
+            // Show export button
+            const exportContainer = document.getElementById('exportContainer');
+            if (exportContainer) exportContainer.style.display = 'flex';
+            
+            // Close modal
+            closeFilterPanel();
+            
+            // Count filtered transactions
+            const visibleCount = document.querySelectorAll('.transaction-item[style*="display: flex"]').length;
+            announceToScreenReader(`Filters applied. Showing ${visibleCount} transactions.`);
+        }
+
+        function validateFilters() {
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
+                alert('Start date must be before end date');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function filterTransactions() {
+            const transactionItems = document.querySelectorAll('.transaction-item');
+            let matchCount = 0;
+            
+            transactionItems.forEach(item => {
+                if (matchesFilters(item)) {
+                    item.style.display = 'flex';
+                    matchCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            hideEmptyDateGroups();
+            
+            // Show/hide empty state
+            if (matchCount === 0) {
                 document.getElementById('transactionList').style.display = 'none';
                 document.getElementById('emptyState').style.display = 'block';
             } else {
@@ -2274,9 +3657,655 @@
             }
         }
 
-        // Filter panel (placeholder)
-        function toggleFilterPanel() {
-            alert('Filter panel would open here with advanced filtering options.');
+        function matchesFilters(item) {
+            // Extract transaction data from DOM
+            const title = item.querySelector('.transaction-title')?.textContent || '';
+            const meta = item.querySelector('.transaction-meta')?.textContent || '';
+            const amountText = item.querySelector('.amount-primary')?.textContent || '';
+            const isPositive = item.querySelector('.amount-primary')?.classList.contains('positive');
+            const isNegative = item.querySelector('.amount-primary')?.classList.contains('negative');
+            
+            // Type filter (money in/out)
+            if (activeFilters.type !== 'all') {
+                if (activeFilters.type === 'in' && !isPositive) return false;
+                if (activeFilters.type === 'out' && !isNegative) return false;
+            }
+            
+            // Category filter
+            if (activeFilters.categories.length > 0) {
+                const hasMatchingCategory = activeFilters.categories.some(cat => {
+                    const categoryMap = {
+                        'received': ['Received from'],
+                        'donation': ['Donation to'],
+                        'transfer': ['Sent to', 'Transfer'],
+                        'yield': ['Yield Earned', 'Interest'],
+                        'bank': ['Bank Transfer']
+                    };
+                    
+                    const keywords = categoryMap[cat] || [];
+                    return keywords.some(keyword => title.includes(keyword));
+                });
+                
+                if (!hasMatchingCategory) return false;
+            }
+            
+            // Status filter
+            if (activeFilters.statuses.length > 0) {
+                const hasMatchingStatus = activeFilters.statuses.some(status => {
+                    return meta.toLowerCase().includes(status.toLowerCase());
+                });
+                
+                if (!hasMatchingStatus) return false;
+            }
+            
+            // Currency filter
+            if (activeFilters.currency !== 'all') {
+                if (!meta.includes(activeFilters.currency)) return false;
+            }
+            
+            // Date filter (simplified - in production, would parse actual dates)
+            // For now, we skip date filtering on the demo data
+            
+            return true;
+        }
+
+        function updateActiveFilterChips() {
+            const container = document.getElementById('activeFilters');
+            container.innerHTML = '';
+            
+            const chips = [];
+            
+            // Date range chip
+            if (activeFilters.dateFrom || activeFilters.dateTo) {
+                const fromStr = activeFilters.dateFrom || 'Start';
+                const toStr = activeFilters.dateTo || 'Now';
+                chips.push({
+                    label: `📅 ${fromStr} to ${toStr}`,
+                    onRemove: () => clearDateFilter()
+                });
+            }
+            
+            // Type chip
+            if (activeFilters.type !== 'all') {
+                const typeLabel = activeFilters.type === 'in' ? '💰 Money In' : '📤 Money Out';
+                chips.push({
+                    label: typeLabel,
+                    onRemove: () => clearTypeFilter()
+                });
+            }
+            
+            // Category chips
+            activeFilters.categories.forEach(cat => {
+                const categoryLabels = {
+                    'received': '👤 Received',
+                    'donation': '❤️ Donations',
+                    'transfer': '📤 Transfers',
+                    'yield': '📈 Yield',
+                    'bank': '🏦 Bank'
+                };
+                chips.push({
+                    label: categoryLabels[cat] || cat,
+                    onRemove: () => removeCategoryFilter(cat)
+                });
+            });
+            
+            // Currency chip
+            if (activeFilters.currency !== 'all') {
+                chips.push({
+                    label: `Currency: ${activeFilters.currency}`,
+                    onRemove: () => clearCurrencyFilter()
+                });
+            }
+            
+            if (chips.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'flex';
+            
+            chips.forEach((chip, index) => {
+                const chipEl = document.createElement('div');
+                chipEl.className = 'filter-chip';
+                chipEl.innerHTML = `
+                    <span>${chip.label}</span>
+                    <button onclick="window.removeFilterChip(${index})" aria-label="Remove ${chip.label} filter" tabindex="0">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                `;
+                container.appendChild(chipEl);
+                
+                // Store remove handler
+                window[`removeFilterChip${index}`] = chip.onRemove;
+            });
+            
+            // Add "Clear All" button
+            const clearAllBtn = document.createElement('button');
+            clearAllBtn.className = 'filter-chip-clear-all';
+            clearAllBtn.textContent = 'Clear all';
+            clearAllBtn.onclick = clearAllFilters;
+            clearAllBtn.setAttribute('aria-label', 'Clear all filters');
+            container.appendChild(clearAllBtn);
+        }
+
+        // Individual filter clearing functions
+        window.removeFilterChip = function(index) {
+            const handler = window[`removeFilterChip${index}`];
+            if (handler) {
+                handler();
+                applyFilters();
+            }
+        };
+
+        function clearDateFilter() {
+            activeFilters.dateFrom = null;
+            activeFilters.dateTo = null;
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
+        }
+
+        function clearTypeFilter() {
+            activeFilters.type = 'all';
+            document.querySelector('input[name="txType"][value="all"]').checked = true;
+        }
+
+        function removeCategoryFilter(category) {
+            activeFilters.categories = activeFilters.categories.filter(c => c !== category);
+            const checkbox = document.getElementById(`cat-${category}`);
+            if (checkbox) checkbox.checked = false;
+        }
+
+        function clearCurrencyFilter() {
+            activeFilters.currency = 'all';
+            document.getElementById('currencyFilter').value = 'all';
+        }
+
+        function clearAllFilters() {
+            // Reset all filter values
+            clearDateFilter();
+            clearTypeFilter();
+            activeFilters.categories = [];
+            activeFilters.statuses = ['completed', 'pending'];
+            activeFilters.currency = 'all';
+            
+            // Reset UI
+            document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => {
+                if (cb.id === 'status-completed' || cb.id === 'status-pending') {
+                    cb.checked = true;
+                } else {
+                    cb.checked = false;
+                }
+            });
+            document.getElementById('currencyFilter').value = 'all';
+            
+            // Clear filter chips
+            document.getElementById('activeFilters').style.display = 'none';
+            document.getElementById('activeFilters').innerHTML = '';
+            
+            // Remove active state from filter button
+            const filterBtn = document.getElementById('filterBtn');
+            filterBtn.classList.remove('active');
+            filterBtn.setAttribute('aria-label', 'Open filter panel');
+            
+            // Hide export button
+            const exportContainer = document.getElementById('exportContainer');
+            if (exportContainer) exportContainer.style.display = 'none';
+            
+            // Show all transactions
+            document.querySelectorAll('.transaction-item').forEach(item => {
+                item.style.display = 'flex';
+            });
+            document.querySelectorAll('.date-group').forEach(group => {
+                group.style.display = 'block';
+            });
+            
+            document.getElementById('transactionList').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            announceToScreenReader('All filters cleared');
+        }
+
+        // Screen Reader Announcements
+        function announceToScreenReader(message) {
+            const announcer = document.getElementById('searchAnnouncer');
+            if (announcer) {
+                announcer.textContent = message;
+                setTimeout(() => {
+                    announcer.textContent = '';
+                }, 1000);
+            }
+        }
+
+        // ========================================
+        // PHASE 6: SAVED FILTER PRESETS
+        // ========================================
+        
+        const PRESETS_STORAGE_KEY = 'filterPresets';
+        let savedPresets = [];
+
+        function loadSavedFilters() {
+            // Load presets from localStorage
+            const stored = localStorage.getItem(PRESETS_STORAGE_KEY);
+            savedPresets = stored ? JSON.parse(stored) : [];
+            renderFilterPresets();
+        }
+
+        function renderFilterPresets() {
+            const container = document.getElementById('filterPresets');
+            const emptyMessage = document.getElementById('presetsEmpty');
+            
+            if (!container) return;
+            
+            if (savedPresets.length === 0) {
+                if (emptyMessage) emptyMessage.style.display = 'block';
+                container.querySelectorAll('.preset-item').forEach(item => item.remove());
+                return;
+            }
+            
+            if (emptyMessage) emptyMessage.style.display = 'none';
+            container.querySelectorAll('.preset-item').forEach(item => item.remove());
+            
+            // Render each preset
+            savedPresets.forEach((preset, index) => {
+                const presetEl = document.createElement('div');
+                presetEl.className = 'preset-item';
+                presetEl.innerHTML = `
+                    <span class="preset-item-name">${escapeHTML(preset.name)}</span>
+                    <div class="preset-item-actions">
+                        <button class="preset-delete-btn" onclick="deletePreset(${index})" aria-label="Delete preset ${escapeHTML(preset.name)}" title="Delete" type="button">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                // Add click handler to preset name
+                presetEl.querySelector('.preset-item-name').onclick = () => loadPreset(index);
+                presetEl.querySelector('.preset-item-name').style.cursor = 'pointer';
+                
+                const saveBtn = container.querySelector('.btn-save-preset');
+                if (saveBtn) {
+                    container.insertBefore(presetEl, saveBtn);
+                } else {
+                    container.appendChild(presetEl);
+                }
+            });
+        }
+
+        function showSavePresetDialog() {
+            const dialog = document.getElementById('presetDialog');
+            const input = document.getElementById('presetNameInput');
+            
+            dialog.classList.add('active');
+            dialog.setAttribute('aria-hidden', 'false');
+            
+            input.value = '';
+            setTimeout(() => input.focus(), 100);
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSavePresetDialog() {
+            const dialog = document.getElementById('presetDialog');
+            dialog.classList.remove('active');
+            dialog.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function saveFilterPreset() {
+            const nameInput = document.getElementById('presetNameInput');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                alert('Please enter a name for this preset');
+                nameInput.focus();
+                return;
+            }
+            
+            // Create preset object
+            const preset = {
+                name: name,
+                filters: {
+                    dateFrom: document.getElementById('dateFrom').value,
+                    dateTo: document.getElementById('dateTo').value,
+                    type: document.querySelector('input[name="txType"]:checked').value,
+                    categories: Array.from(
+                        document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+                    ).filter(cb => cb.id.startsWith('cat-')).map(cb => cb.value),
+                    statuses: Array.from(
+                        document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+                    ).filter(cb => cb.id.startsWith('status-')).map(cb => cb.value),
+                    currency: document.getElementById('currencyFilter').value
+                },
+                createdAt: new Date().toISOString()
+            };
+            
+            savedPresets.push(preset);
+            localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(savedPresets));
+            
+            renderFilterPresets();
+            closeSavePresetDialog();
+            
+            announceToScreenReader(`Filter preset "${name}" saved`);
+        }
+
+        function loadPreset(index) {
+            const preset = savedPresets[index];
+            if (!preset) return;
+            
+            // Apply preset filters
+            activeFilters = {...preset.filters};
+            
+            // Update UI
+            document.getElementById('dateFrom').value = preset.filters.dateFrom || '';
+            document.getElementById('dateTo').value = preset.filters.dateTo || '';
+            
+            const typeRadio = document.querySelector(`input[name="txType"][value="${preset.filters.type}"]`);
+            if (typeRadio) typeRadio.checked = true;
+            
+            // Update checkboxes
+            document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => {
+                if (cb.id.startsWith('cat-')) {
+                    cb.checked = preset.filters.categories.includes(cb.value);
+                }
+                if (cb.id.startsWith('status-')) {
+                    cb.checked = preset.filters.statuses.includes(cb.value);
+                }
+            });
+            
+            document.getElementById('currencyFilter').value = preset.filters.currency;
+            
+            // Apply and close
+            applyFilters();
+            
+            announceToScreenReader(`Applied preset "${preset.name}"`);
+        }
+
+        function deletePreset(index) {
+            const preset = savedPresets[index];
+            if (!preset) return;
+            
+            if (confirm(`Delete preset "${preset.name}"?`)) {
+                savedPresets.splice(index, 1);
+                localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(savedPresets));
+                renderFilterPresets();
+                announceToScreenReader(`Preset "${preset.name}" deleted`);
+            }
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ========================================
+        // PHASE 7: EXPORT FILTERED RESULTS
+        // ========================================
+        
+        function showExportDialog() {
+            const dialog = document.getElementById('exportDialog');
+            const visibleCount = document.querySelectorAll('.transaction-item[style*="display: flex"]').length;
+            
+            // Update count in dialog
+            document.querySelector('#exportInfo strong').textContent = visibleCount;
+            
+            dialog.classList.add('active');
+            dialog.setAttribute('aria-hidden', 'false');
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeExportDialog() {
+            const dialog = document.getElementById('exportDialog');
+            dialog.classList.remove('active');
+            dialog.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function exportTransactions(format) {
+            const visibleTransactions = extractVisibleTransactions();
+            
+            if (visibleTransactions.length === 0) {
+                alert('No transactions to export');
+                return;
+            }
+            
+            let fileName = `transactions_${new Date().toISOString().split('T')[0]}`;
+            let content, mimeType;
+            
+            switch(format) {
+                case 'csv':
+                    content = generateCSV(visibleTransactions);
+                    fileName += '.csv';
+                    mimeType = 'text/csv';
+                    break;
+                case 'json':
+                    content = JSON.stringify(visibleTransactions, null, 2);
+                    fileName += '.json';
+                    mimeType = 'application/json';
+                    break;
+                case 'pdf':
+                    // PDF generation is more complex - this is a simplified version
+                    // In production, use a library like jsPDF
+                    alert('PDF export coming soon! For now, please use CSV or JSON format.');
+                    return;
+            }
+            
+            // Create and trigger download
+            downloadFile(content, fileName, mimeType);
+            
+            closeExportDialog();
+            announceToScreenReader(`Exported ${visibleTransactions.length} transactions as ${format.toUpperCase()}`);
+        }
+
+        function extractVisibleTransactions() {
+            const transactions = [];
+            const visibleItems = document.querySelectorAll('.transaction-item[style*="display: flex"]');
+            
+            visibleItems.forEach(item => {
+                const title = item.querySelector('.transaction-title')?.textContent.trim() || '';
+                const meta = item.querySelector('.transaction-meta')?.textContent.trim() || '';
+                const amount = item.querySelector('.amount-primary')?.textContent.trim() || '';
+                const secondary = item.querySelector('.amount-secondary')?.textContent.trim() || '';
+                
+                // Parse meta data (time, status, currency)
+                const metaParts = meta.split('•').map(s => s.trim());
+                
+                transactions.push({
+                    title: title,
+                    time: metaParts[0] || '',
+                    status: metaParts[1] || '',
+                    currency: metaParts[2] || '',
+                    amount: amount,
+                    secondary: secondary
+                });
+            });
+            
+            return transactions;
+        }
+
+        function generateCSV(transactions) {
+            // CSV header
+            let csv = 'Title,Time,Status,Currency,Amount,Additional\n';
+            
+            // Add rows
+            transactions.forEach(tx => {
+                const row = [
+                    escapeCsvValue(tx.title),
+                    escapeCsvValue(tx.time),
+                    escapeCsvValue(tx.status),
+                    escapeCsvValue(tx.currency),
+                    escapeCsvValue(tx.amount),
+                    escapeCsvValue(tx.secondary)
+                ].join(',');
+                
+                csv += row + '\n';
+            });
+            
+            return csv;
+        }
+
+        function escapeCsvValue(value) {
+            // Escape quotes and wrap in quotes if contains comma, quote, or newline
+            if (!value) return '""';
+            value = value.replace(/"/g, '""');
+            if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                return `"${value}"`;
+            }
+            return value;
+        }
+
+        function downloadFile(content, fileName, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // ========================================
+        // PHASE 4: LOAD MORE / PAGINATION
+        // ========================================
+        
+        let displayedTransactionCount = 10; // Initially show 10
+        const loadIncrement = 10; // Load 10 more each time
+        let totalTransactions = 0; // Will be calculated
+        let isLoading = false;
+        let allTransactionsLoaded = false;
+
+        function initializePagination() {
+            // Count total transactions
+            const allItems = document.querySelectorAll('.transaction-item');
+            totalTransactions = allItems.length;
+            
+            // Hide transactions beyond initial display count
+            allItems.forEach((item, index) => {
+                if (index >= displayedTransactionCount) {
+                    item.setAttribute('data-initially-hidden', 'true');
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Update counter
+            updateTransactionCount();
+            
+            // Setup infinite scroll observer
+            setupInfiniteScroll();
+            
+            // Show/hide load more button
+            updateLoadMoreButton();
+        }
+
+        function loadMoreTransactions() {
+            if (isLoading || allTransactionsLoaded) return;
+            
+            isLoading = true;
+            
+            // Show loading indicator
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadMoreBtn.style.display = 'none';
+            loadingIndicator.style.display = 'flex';
+            
+            // Simulate API delay (remove in production)
+            setTimeout(() => {
+                const allItems = document.querySelectorAll('.transaction-item');
+                let newlyShown = 0;
+                
+                // Show next batch of hidden transactions
+                for (let i = 0; i < allItems.length && newlyShown < loadIncrement; i++) {
+                    const item = allItems[i];
+                    if (item.style.display === 'none' && item.getAttribute('data-initially-hidden') === 'true') {
+                        item.style.display = 'flex';
+                        newlyShown++;
+                        displayedTransactionCount++;
+                    }
+                }
+                
+                // Update UI
+                updateTransactionCount();
+                updateLoadMoreButton();
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+                
+                // Check if all loaded
+                if (displayedTransactionCount >= totalTransactions) {
+                    allTransactionsLoaded = true;
+                    loadMoreBtn.style.display = 'none';
+                    announceToScreenReader('All transactions loaded');
+                } else {
+                    loadMoreBtn.style.display = 'inline-flex';
+                    announceToScreenReader(`Loaded ${newlyShown} more transactions. Showing ${displayedTransactionCount} of ${totalTransactions}.`);
+                }
+                
+                isLoading = false;
+            }, 800); // Simulated delay
+        }
+
+        function updateTransactionCount() {
+            document.getElementById('shownCount').textContent = displayedTransactionCount;
+            document.getElementById('totalCount').textContent = totalTransactions;
+        }
+
+        function updateLoadMoreButton() {
+            const btn = document.getElementById('loadMoreBtn');
+            const remaining = totalTransactions - displayedTransactionCount;
+            
+            if (remaining > 0) {
+                const loadText = remaining <= loadIncrement 
+                    ? `Load Last ${remaining} Transactions` 
+                    : `Load More (${remaining} remaining)`;
+                document.getElementById('loadMoreText').textContent = loadText;
+                btn.style.display = 'inline-flex';
+            } else {
+                btn.style.display = 'none';
+                allTransactionsLoaded = true;
+            }
+        }
+
+        // Infinite Scroll Implementation
+        let infiniteScrollObserver = null;
+
+        function setupInfiniteScroll() {
+            if ('IntersectionObserver' in window) {
+                const sentinel = document.getElementById('scrollSentinel');
+                
+                infiniteScrollObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && !isLoading && !allTransactionsLoaded) {
+                            loadMoreTransactions();
+                        }
+                    });
+                }, {
+                    rootMargin: '100px' // Start loading 100px before reaching bottom
+                });
+                
+                infiniteScrollObserver.observe(sentinel);
+            }
+        }
+
+        function disableInfiniteScroll() {
+            if (infiniteScrollObserver) {
+                infiniteScrollObserver.disconnect();
+            }
+        }
+
+        // Scroll to Top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
 
         // Dismiss alert banner
@@ -2297,11 +4326,36 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('UNERA Wallet Enhanced - Loaded');
             
-            // Check if alert was previously dismissed
-            const alertDismissed = localStorage.getItem('kycAlertDismissed');
-            if (alertDismissed === 'true') {
-                const alert = document.getElementById('kycAlert');
-                if (alert) alert.style.display = 'none';
+            // Initialize pagination/load more
+            initializePagination();
+            
+            // Initialize saved filters (if any)
+            loadSavedFilters();
+            
+            // Check wallet creation - redirect if no wallet exists
+            const hasWallet = !!localStorage.getItem('walletAddress');
+            if (!hasWallet) {
+                // User accessed wallet page without creating a wallet
+                const shouldCreate = confirm('You need to create a wallet first. Would you like to create one now?');
+                if (shouldCreate) {
+                    localStorage.setItem('walletCreationReturn', 'wallet');
+                    window.location.href = 'wallet-creation.html?return=wallet';
+                } else {
+                    window.location.href = 'dashboard-enhanced.html';
+                }
+                return;
+            }
+            
+            // Banner Priority Logic for Wallet Page
+            const kycStatus = localStorage.getItem('kycStatus');
+            const kycAlert = document.getElementById('kycAlert');
+            
+            if (kycStatus === 'verified' && kycAlert) {
+                // KYC is done, hide KYC banner
+                kycAlert.style.display = 'none';
+            } else if (localStorage.getItem('kycAlertDismissed') === 'true' && kycAlert) {
+                // Check if alert was previously dismissed
+                kycAlert.style.display = 'none';
             }
             
             // Announce page load to screen readers

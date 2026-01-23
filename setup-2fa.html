@@ -112,7 +112,7 @@
         .country-code {
             min-width: 140px;
             height: 52px;
-            padding: 0 1rem;
+            padding: 0 2.5rem 0 1rem; /* More right padding for dropdown arrow spacing */
             font-size: 1rem;
             font-family: var(--font-body);
             font-weight: 500;
@@ -269,6 +269,8 @@
             text-decoration: underline;
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
+            display: inline-block;
+            margin: 0 auto;
         }
         
         .btn-text:hover {
@@ -553,23 +555,65 @@
         function setupCodeInputHandlers() {
             const digits = document.querySelectorAll('.code-digit[data-index]');
             
+            // Remove any existing event listeners by cloning
             digits.forEach((digit, index) => {
+                const newDigit = digit.cloneNode(true);
+                digit.parentNode.replaceChild(newDigit, digit);
+            });
+            
+            // Re-query after cloning
+            const cleanDigits = document.querySelectorAll('.code-digit[data-index]');
+            
+            cleanDigits.forEach((digit, index) => {
+                // Handle input - only allow numbers and auto-advance
                 digit.addEventListener('input', (e) => {
-                    if (e.target.value) {
-                        if (index < 5) {
-                            digits[index + 1].focus();
+                    const value = e.target.value;
+                    
+                    // Remove non-numeric characters
+                    if (!/^\d*$/.test(value)) {
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    // Keep only first character if multiple entered
+                    if (value.length > 1) {
+                        e.target.value = value.charAt(0);
+                    }
+                    
+                    // Auto-advance to next digit
+                    if (e.target.value && index < 5) {
+                        cleanDigits[index + 1].focus();
+                    }
+                });
+                
+                // Handle backspace
+                digit.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace') {
+                        if (!e.target.value && index > 0) {
+                            // Move to previous digit if current is empty
+                            cleanDigits[index - 1].focus();
                         }
                     }
                 });
                 
-                digit.addEventListener('keydown', (e) => {
-                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                        digits[index - 1].focus();
-                    }
+                // Handle paste
+                digit.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                    
+                    pastedData.split('').forEach((char, i) => {
+                        if (index + i < 6) {
+                            cleanDigits[index + i].value = char;
+                        }
+                    });
+                    
+                    // Focus the last filled digit or next empty one
+                    const nextIndex = Math.min(index + pastedData.length, 5);
+                    cleanDigits[nextIndex].focus();
                 });
             });
             
-            digits[0].focus();
+            cleanDigits[0].focus();
         }
 
         async function verify2FACode(method) {

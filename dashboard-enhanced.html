@@ -944,6 +944,9 @@
             to { transform: rotate(360deg); }
         }
     </style>
+    
+    <!-- Wallet Prompt System -->
+    <script src="wallet-prompt.js"></script>
 </head>
 <body>
     <!-- Skip Link -->
@@ -1130,7 +1133,7 @@
                     <div class="action-card-desc">View balances & transactions</div>
                 </a>
 
-                <a href="add-money.html" class="action-card primary" aria-label="Add money to wallet - Recommended action">
+                <a href="javascript:void(0)" onclick="handleActionClick('add-money.html', 'add money')" class="action-card primary" aria-label="Add money to wallet - Recommended action">
                     <div class="action-card-icon">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
@@ -1140,7 +1143,7 @@
                     <div class="action-card-desc">Fund your wallet instantly</div>
                 </a>
 
-                <a href="send-enhanced.html" class="action-card" aria-label="Send money or donate">
+                <a href="javascript:void(0)" onclick="handleActionClick('send-enhanced.html', 'send money')" class="action-card" aria-label="Send money or donate">
                     <div class="action-card-icon">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
@@ -1336,6 +1339,42 @@
     </main>
 
     <script>
+        // Handle action button clicks - Check for wallet after KYC
+        function handleActionClick(targetPage, actionName) {
+            const kycStatus = localStorage.getItem('kycStatus');
+            
+            // If KYC is not verified, redirect to KYC first
+            if (kycStatus !== 'verified') {
+                if (confirm(`You need to verify your identity before you can ${actionName}. Would you like to complete verification now?`)) {
+                    window.location.href = 'kyc-verify.html';
+                }
+                return;
+            }
+            
+            // KYC is verified - check for wallet
+            if (typeof WalletPrompt !== 'undefined') {
+                const hasWallet = WalletPrompt.checkAndPrompt({
+                    title: `💳 Wallet Required to ${actionName.charAt(0).toUpperCase() + actionName.slice(1)}`,
+                    message: `You need a wallet before you can ${actionName}. Create one now to continue.`,
+                    benefits: [
+                        'Secure digital account under your control',
+                        'Send and receive funds instantly',
+                        'Track all your transactions',
+                        'Earn rewards and track impact'
+                    ],
+                    page: 'dashboard'
+                });
+                
+                // If has wallet, navigate to target page
+                if (hasWallet) {
+                    window.location.href = targetPage;
+                }
+            } else {
+                // Fallback if WalletPrompt not loaded
+                window.location.href = targetPage;
+            }
+        }
+        
         // Dismiss alert banner with animation and persistence
         function dismissAlert() {
             const alert = document.getElementById('kycAlert');
@@ -1412,9 +1451,51 @@
 
         // Enhanced keyboard navigation
         document.addEventListener('DOMContentLoaded', () => {
-            // Check KYC alert dismissal
-            if (localStorage.getItem('kycAlertDismissed') === 'true') {
-                document.getElementById('kycAlert').style.display = 'none';
+            // Banner Priority Logic:
+            // 1. If KYC not verified → Show KYC banner
+            // 2. If KYC verified but no wallet → Show wallet banner
+            // 3. If both complete → Show nothing
+            
+            const kycStatus = localStorage.getItem('kycStatus');
+            const hasWallet = !!localStorage.getItem('walletAddress');
+            const kycAlert = document.getElementById('kycAlert');
+            
+            // Debug logging
+            console.log('🔍 Dashboard Banner Logic:');
+            console.log('  KYC Status:', kycStatus);
+            console.log('  Has Wallet:', hasWallet);
+            console.log('  WalletPrompt loaded:', typeof WalletPrompt !== 'undefined');
+            
+            if (kycStatus === 'verified') {
+                // KYC is done, hide KYC banner
+                console.log('✅ KYC verified - hiding KYC banner');
+                if (kycAlert) {
+                    kycAlert.style.display = 'none';
+                }
+                
+                // Clear the dismissed flag since KYC is now complete
+                localStorage.removeItem('kycAlertDismissed');
+                
+                // Show wallet creation banner if no wallet exists
+                if (!hasWallet) {
+                    console.log('💳 No wallet found - showing wallet banner');
+                    if (typeof WalletPrompt !== 'undefined') {
+                        WalletPrompt.showDashboardBanner();
+                    } else {
+                        console.error('❌ WalletPrompt not loaded!');
+                    }
+                } else {
+                    console.log('✅ Wallet exists - no banners needed');
+                }
+            } else {
+                // KYC not verified yet, show KYC banner (unless dismissed)
+                console.log('⚠️ KYC not verified - showing KYC banner');
+                if (localStorage.getItem('kycAlertDismissed') === 'true') {
+                    console.log('🔕 KYC banner dismissed by user');
+                    if (kycAlert) {
+                        kycAlert.style.display = 'none';
+                    }
+                }
             }
             
             // Announce page load
