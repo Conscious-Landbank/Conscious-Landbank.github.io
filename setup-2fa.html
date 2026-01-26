@@ -515,7 +515,12 @@
             // Setup code input handlers for the app method immediately
             if (method === 'app') {
                 // Wait for DOM to update then setup handlers
-                setTimeout(() => setupCodeInputHandlers(), 50);
+                setTimeout(() => {
+                    const appInputs = document.querySelectorAll('#appSetup .code-digit[data-index]');
+                    if (appInputs.length > 0) {
+                        initCodeInputs('#appSetup .code-digit[data-index]');
+                    }
+                }, 50);
             }
         }
 
@@ -542,8 +547,13 @@
             document.getElementById('smsCodeVerification').style.display = 'block';
             btn.style.display = 'none';
             
-            // Setup code input handlers
-            setupCodeInputHandlers();
+            // Initialize code input handlers for SMS inputs
+            setTimeout(() => {
+                const smsInputs = document.querySelectorAll('#smsCodeVerification .code-digit[data-index]');
+                if (smsInputs.length > 0) {
+                    initCodeInputs('#smsCodeVerification .code-digit[data-index]');
+                }
+            }, 50);
         }
 
         async function sendEmailCode() {
@@ -557,73 +567,16 @@
             document.getElementById('emailCodeVerification').style.display = 'block';
             btn.style.display = 'none';
             
-            // Setup code input handlers
-            setupCodeInputHandlers();
+            // Initialize code input handlers for Email inputs
+            setTimeout(() => {
+                const emailInputs = document.querySelectorAll('#emailCodeVerification .code-digit[data-index]');
+                if (emailInputs.length > 0) {
+                    initCodeInputs('#emailCodeVerification .code-digit[data-index]');
+                }
+            }, 50);
         }
 
-        function setupCodeInputHandlers() {
-            const digits = document.querySelectorAll('.code-digit[data-index]');
-            
-            // Remove any existing event listeners by cloning
-            digits.forEach((digit, index) => {
-                const newDigit = digit.cloneNode(true);
-                digit.parentNode.replaceChild(newDigit, digit);
-            });
-            
-            // Re-query after cloning
-            const cleanDigits = document.querySelectorAll('.code-digit[data-index]');
-            
-            cleanDigits.forEach((digit, index) => {
-                // Handle input - only allow numbers and auto-advance
-                digit.addEventListener('input', (e) => {
-                    const value = e.target.value;
-                    
-                    // Remove non-numeric characters
-                    if (!/^\d*$/.test(value)) {
-                        e.target.value = '';
-                        return;
-                    }
-                    
-                    // Keep only first character if multiple entered
-                    if (value.length > 1) {
-                        e.target.value = value.charAt(0);
-                    }
-                    
-                    // Auto-advance to next digit
-                    if (e.target.value && index < 5) {
-                        cleanDigits[index + 1].focus();
-                    }
-                });
-                
-                // Handle backspace
-                digit.addEventListener('keydown', (e) => {
-                    if (e.key === 'Backspace') {
-                        if (!e.target.value && index > 0) {
-                            // Move to previous digit if current is empty
-                            cleanDigits[index - 1].focus();
-                        }
-                    }
-                });
-                
-                // Handle paste
-                digit.addEventListener('paste', (e) => {
-                    e.preventDefault();
-                    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-                    
-                    pastedData.split('').forEach((char, i) => {
-                        if (index + i < 6) {
-                            cleanDigits[index + i].value = char;
-                        }
-                    });
-                    
-                    // Focus the last filled digit or next empty one
-                    const nextIndex = Math.min(index + pastedData.length, 5);
-                    cleanDigits[nextIndex].focus();
-                });
-            });
-            
-            cleanDigits[0].focus();
-        }
+        // Old function removed - now using initCodeInputs() from code-input-handler.js
 
         async function verify2FACode(method) {
             const digits = document.querySelectorAll('.code-digit[data-index]');
