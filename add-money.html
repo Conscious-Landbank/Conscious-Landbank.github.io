@@ -38,13 +38,13 @@
             --font-display: 'Space Grotesk', sans-serif;
             --font-body: 'Inter', sans-serif;
             
-            /* Accessibility - WCAG AAA */
+            /* Accessibility */
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
         }
 
-        /* Reduced Motion */
+        /* Reduced Motion Support */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -59,6 +59,7 @@
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
         }
 
@@ -80,7 +81,7 @@
             top: 0;
         }
 
-        /* Navigation */
+        /* Navigation - Exact match to dashboard */
         .nav {
             background: #FFFFFF;
             padding: 0 2.75rem;
@@ -100,11 +101,23 @@
             gap: 2.75rem;
         }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .nav-brand {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
+        }
+
+        .nav-brand:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
         .nav-logo-icon {
@@ -131,6 +144,7 @@
             text-decoration: none;
             font-size: 0.75rem;
             font-weight: 500;
+            letter-spacing: 0.02em;
             transition: color 0.2s;
             padding: 0.5rem;
             border-radius: 4px;
@@ -145,113 +159,190 @@
             outline-offset: 2px;
         }
 
-        /* Container */
-        .container {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
+        .nav-link.active {
+            color: var(--primary-green);
+            font-weight: 600;
         }
 
-        /* Progress Stepper */
-        .stepper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-            position: relative;
+        /* Hamburger Menu Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
         }
 
-        .stepper::before {
-            content: '';
-            position: absolute;
-            top: 20px;
+        .hamburger:hover {
+            background: var(--neutral-200);
+        }
+
+        .hamburger:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: block;
             right: 0;
-            height: 2px;
-            background: var(--border-subtle);
-            z-index: 0;
         }
 
-        .stepper-progress {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            transition: width 0.4s ease;
-            z-index: 1;
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .step {
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-menu-close:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-links {
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: 0.5rem;
-            position: relative;
-            z-index: 2;
+            list-style: none;
         }
 
-        .step-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            border: 2px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-family: var(--font-display);
-            transition: all 0.3s;
+        .mobile-nav-links .nav-link {
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
 
-        .step.active .step-circle {
-            background: var(--gradient-primary);
-            border-color: var(--primary-green);
-            color: white;
+        .mobile-nav-links .nav-link:hover {
+            background: var(--neutral-200);
         }
 
-        .step.completed .step-circle {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
-        }
-
-        .step-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .step.active .step-label {
+        .mobile-nav-links .nav-link.active {
+            background: rgba(16, 185, 129, 0.1);
             color: var(--primary-green);
         }
 
-        /* Step Content */
-        .step-content {
-            display: none;
-            animation: fadeIn 0.4s ease;
+        /* User Profile in Nav */
+        .user-profile-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
         }
 
-        .step-content.active {
-            display: block;
+        .user-profile-nav:hover {
+            background: rgba(0, 0, 0, 0.04);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .user-avatar-nav {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.813rem;
+        }
+
+        .user-name-nav {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-800);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
         }
 
         /* Page Header */
         .page-header {
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
             text-align: center;
         }
 
@@ -262,21 +353,124 @@
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.75rem;
-            line-height: 1.1;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
 
         .page-subtitle {
             font-size: 1.125rem;
             color: var(--text-secondary);
-            line-height: 1.6;
         }
 
-        /* Section Header */
-        .section-header {
-            margin-bottom: 1.5rem;
+        /* Progress Stepper */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+            position: relative;
+            padding: 0 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+            height: 2px;
+            background: var(--neutral-300);
+            z-index: 0;
+        }
+
+        .stepper-progress {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.5s ease;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            transition: all 0.3s;
+        }
+
+        .step.active .step-circle {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        /* Step Content */
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Headers */
         .section-title {
             font-family: var(--font-display);
             font-size: 1.5rem;
@@ -287,163 +481,366 @@
 
         .section-desc {
             color: var(--text-secondary);
-            font-size: 0.938rem;
-        }
-
-        /* Payment Method Cards */
-        .payment-methods {
-            display: grid;
-            gap: 1rem;
+            font-size: 1rem;
             margin-bottom: 2rem;
         }
 
-        .payment-card {
+        /* Payment Methods */
+        .payment-methods-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-add-new {
             background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
-            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            padding: 0.625rem 1rem;
+            font-family: var(--font-body);
+            font-weight: 500;
+            color: var(--text-primary);
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             transition: all 0.2s;
-            position: relative;
+            font-size: 0.875rem;
         }
 
-        .payment-card:hover {
+        .btn-add-new:hover {
             border-color: var(--primary-green);
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
         }
 
-        .payment-card:focus {
-            outline: 3px solid var(--primary-green);
+        .btn-add-new:focus {
+            outline: 2px solid var(--primary-green);
             outline-offset: 2px;
         }
 
-        .payment-card.selected {
-            border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.02);
-        }
-
-        .payment-card.recommended::before {
-            content: 'RECOMMENDED';
-            position: absolute;
-            top: -10px;
-            right: 1rem;
-            background: var(--gradient-primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 980px;
-            font-size: 0.688rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .payment-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .payment-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 0.75rem;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .payment-info {
-            flex: 1;
-        }
-
-        .payment-name {
-            font-family: var(--font-display);
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .payment-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            font-size: 0.813rem;
-            color: var(--text-secondary);
-        }
-
-        .payment-desc {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-
-        .payment-check {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .payment-card.selected .payment-check {
-            background: var(--primary-green);
-            border-color: var(--primary-green);
-        }
-
-        /* Currency Selection */
-        .currency-grid {
+        /* Saved Methods Grid */
+        .saved-methods-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        .currency-card {
+        .saved-method-group {
             background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
             padding: 1.25rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
         }
 
-        .currency-card:hover {
-            border-color: var(--primary-green);
-            transform: translateY(-2px);
+        .method-group-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .currency-card.selected {
-            border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.02);
+        .method-icon {
+            font-size: 1.25rem;
         }
 
-        .currency-flag {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .currency-name {
+        .method-type {
             font-family: var(--font-display);
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-primary);
             font-size: 1rem;
         }
 
-        /* Amount Input */
+        /* Saved Method Cards */
+        .saved-method-card {
+            background: var(--neutral-100);
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .saved-method-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .saved-method-card:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .saved-method-card.selected {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .saved-method-card:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .method-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .method-name {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.938rem;
+        }
+
+        .method-info {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .method-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .currency-badge {
+            background: var(--neutral-200);
+            color: var(--neutral-700);
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .method-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-edit {
+            background: none;
+            border: 1px solid var(--neutral-300);
+            border-radius: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .method-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .saved-method-card.selected .method-check {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        /* Currency Selector */
+        .currency-selector {
+            margin-bottom: 2rem;
+        }
+
+        .dropdown {
+            position: relative;
+            max-width: 400px;
+            margin-bottom: 1rem;
+        }
+
+        .dropdown-toggle {
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .dropdown-toggle:hover {
+            border-color: var(--primary-green);
+        }
+
+        .dropdown-toggle:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .selected-currency {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .currency-flag {
+            font-size: 1.5rem;
+        }
+
+        .currency-code {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .currency-name {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-search {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .dropdown-search input {
+            width: 100%;
+            padding: 0.625rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.375rem;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-search input:focus {
+            outline: 2px solid var(--primary-green);
+            border-color: transparent;
+        }
+
+        .dropdown-list {
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--neutral-100);
+        }
+
+        .dropdown-item.selected {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .currency-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .currency-rate {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--primary-green);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-footer {
+            padding: 0.75rem;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+
+        .rate-info {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        /* Live Rate Banner */
+        .live-rate-banner {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .rate-trend {
+            font-weight: 600;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .rate-trend.positive {
+            background: rgba(5, 150, 105, 0.2);
+            color: var(--success);
+        }
+
+        /* Amount Section */
         .amount-section {
             background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
             padding: 2rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .input-group {
@@ -454,7 +851,7 @@
             display: block;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             font-size: 0.938rem;
         }
 
@@ -464,10 +861,10 @@
 
         .input-prefix {
             position: absolute;
-            left: 1.25rem;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--text-primary);
             pointer-events: none;
@@ -475,12 +872,12 @@
 
         .amount-input {
             width: 100%;
-            padding: 1.25rem 1.25rem 1.25rem 3rem;
-            font-size: 2rem;
+            padding: 1.25rem 1rem 1.25rem 3.5rem;
+            font-size: 2.5rem;
             font-weight: 700;
             font-family: var(--font-display);
             border: 2px solid var(--border-subtle);
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             transition: all 0.2s;
             background: var(--neutral-100);
         }
@@ -489,41 +886,43 @@
             outline: none;
             border-color: var(--primary-green);
             background: white;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .amount-input.error {
             border-color: var(--error);
         }
 
-        .input-error {
-            display: none;
-            color: var(--error);
+        .input-hint {
             font-size: 0.875rem;
+            color: var(--text-secondary);
             margin-top: 0.5rem;
-            font-weight: 600;
         }
 
-        .input-error.show {
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
+        .input-error {
+            font-size: 0.875rem;
+            color: var(--error);
+            margin-top: 0.5rem;
+            display: none;
         }
 
-        /* Quick Presets */
+        .input-error.active {
+            display: block;
+        }
+
+        /* Amount Presets */
         .presets {
-            display: flex;
-            gap: 0.75rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
 
         .preset-btn {
-            flex: 1;
             padding: 0.75rem;
             background: white;
-            border: 2px solid var(--border-subtle);
+            border: 1px solid var(--border-subtle);
             border-radius: 0.5rem;
-            font-weight: 700;
+            font-weight: 600;
             font-family: var(--font-display);
             cursor: pointer;
             transition: all 0.2s;
@@ -531,7 +930,7 @@
 
         .preset-btn:hover {
             border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.02);
+            background: rgba(16, 185, 129, 0.05);
         }
 
         .preset-btn:focus {
@@ -541,17 +940,17 @@
 
         /* Conversion Summary */
         .conversion-summary {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
-            border: 2px solid rgba(16, 185, 129, 0.2);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
+            padding: 0.625rem 0;
             border-bottom: 1px solid var(--border-subtle);
         }
 
@@ -564,90 +963,63 @@
         .summary-label {
             color: var(--text-secondary);
             font-size: 0.938rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .summary-value {
             font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.125rem;
+            font-weight: 600;
+            font-size: 1rem;
             color: var(--text-primary);
         }
 
         .summary-row:last-child .summary-value {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--primary-green);
         }
 
-        /* Rate Timer */
-        .rate-timer {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            font-size: 0.813rem;
+        /* Confirm Section */
+        .confirm-section {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .confirm-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .confirm-detail:last-child {
+            border-bottom: none;
+        }
+
+        .confirm-detail-label {
+            font-weight: 500;
             color: var(--text-secondary);
-            margin-top: 0.75rem;
+            font-size: 0.938rem;
         }
 
-        .timer-value {
-            font-weight: 700;
-            color: var(--warning);
-        }
-
-        /* Info Tooltip */
-        .info-icon {
-            width: 18px;
-            height: 18px;
-            background: rgba(14, 165, 233, 0.15);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-blue);
-            font-size: 0.688rem;
-            font-weight: 700;
-            cursor: help;
-            position: relative;
-        }
-
-        .info-icon::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: calc(100% + 12px);
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.75rem 1rem;
-            background: var(--neutral-900);
-            color: white;
-            font-size: 0.813rem;
-            font-weight: 400;
-            border-radius: 0.5rem;
-            white-space: nowrap;
-            max-width: 280px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .info-icon:hover::after,
-        .info-icon:focus::after {
-            opacity: 1;
-            visibility: visible;
+        .confirm-detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.938rem;
+            text-align: right;
         }
 
         /* Buttons */
         .btn {
             width: 100%;
-            padding: 1rem 2rem;
+            padding: 0.875rem 1.5rem;
             font-family: var(--font-body);
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 600;
             border: none;
-            border-radius: 980px;
+            border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
@@ -664,23 +1036,23 @@
         .btn-primary {
             background: var(--gradient-primary);
             color: white;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
         }
 
         .btn-primary:hover:not(:disabled) {
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+            transform: translateY(-1px);
         }
 
         .btn-primary:focus {
-            outline: 3px solid var(--primary-green);
+            outline: 3px solid rgba(16, 185, 129, 0.5);
             outline-offset: 2px;
         }
 
         .btn-secondary {
             background: white;
             color: var(--text-primary);
-            border: 2px solid var(--border-subtle);
+            border: 1px solid var(--border-subtle);
         }
 
         .btn-secondary:hover {
@@ -689,101 +1061,10 @@
         }
 
         .btn-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-top: 2rem;
-        }
-
-        /* Loading State */
-        .loading {
-            pointer-events: none;
-            position: relative;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 3px solid currentColor;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Confirmation Screen */
-        .confirmation-card {
-            background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .confirm-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .confirm-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
-            background: var(--gradient-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-        }
-
-        .confirm-title {
-            font-family: var(--font-display);
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .confirm-desc {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .confirm-details {
-            background: var(--neutral-100);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.875rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            color: var(--text-secondary);
-            font-size: 0.938rem;
-        }
-
-        .detail-value {
-            font-family: var(--font-display);
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: right;
         }
 
         /* Success Screen */
@@ -793,94 +1074,163 @@
         }
 
         .success-icon {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             margin: 0 auto 2rem;
             background: var(--gradient-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            font-size: 3.5rem;
             animation: scaleIn 0.5s ease;
         }
 
         @keyframes scaleIn {
             from {
-                transform: scale(0);
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
             }
             to {
-                transform: scale(1);
+                transform: scale(1) rotate(0);
+                opacity: 1;
             }
         }
 
         .success-title {
             font-family: var(--font-display);
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
-        }
-
-        .success-desc {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            line-height: 1.6;
         }
 
         .success-amount {
             font-family: var(--font-display);
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary-green);
-            margin-bottom: 0.5rem;
-        }
-
-        .success-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-bottom: 3rem;
-        }
-
-        .transaction-id {
-            background: var(--neutral-100);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
             margin: 2rem 0;
         }
 
-        .transaction-id-label {
+        .success-details {
+            background: var(--neutral-100);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .success-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .success-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .success-detail-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .success-detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        /* Save Prompt */
+        .save-prompt {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+
+        .save-prompt-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .save-prompt-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .save-options {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .save-option {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .save-option:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .save-option.selected {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .save-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .save-option-label {
+            flex: 1;
+        }
+
+        .save-option-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.938rem;
+        }
+
+        .save-option-desc {
             color: var(--text-secondary);
             font-size: 0.813rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-top: 0.125rem;
         }
 
-        .transaction-id-value {
-            font-family: monospace;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            word-break: break-all;
-        }
-
-        /* KYC Modal */
+        /* Modal */
         .modal-overlay {
-            display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
-            animation: fadeIn 0.2s;
+            padding: 2rem;
+            z-index: 2000;
         }
 
         .modal-overlay.active {
@@ -889,57 +1239,46 @@
 
         .modal {
             background: white;
-            border-radius: 1.5rem;
-            max-width: 540px;
-            width: 100%;
+            border-radius: 0.75rem;
+            width: min(540px, 100%);
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.3s ease;
         }
 
         @keyframes slideUp {
             from {
+                transform: translateY(100px);
                 opacity: 0;
-                transform: translateY(30px);
             }
             to {
-                opacity: 1;
                 transform: translateY(0);
+                opacity: 1;
             }
         }
 
         .modal-header {
-            padding: 2rem 2rem 1rem;
+            padding: 1.5rem;
             border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .modal-title {
             font-family: var(--font-display);
-            font-size: 1.75rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.938rem;
-        }
-
-        .modal-body {
-            padding: 2rem;
         }
 
         .modal-close {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            background: none;
             border: none;
-            background: var(--neutral-100);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -948,29 +1287,70 @@
         }
 
         .modal-close:hover {
-            background: var(--neutral-200);
+            background: var(--neutral-100);
         }
 
-        /* Processing Screen */
-        .processing-screen {
-            text-align: center;
-            padding: 3rem 0;
+        .modal-body {
+            padding: 1.5rem;
         }
 
-        .processing-spinner {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 2rem;
-            border: 4px solid var(--neutral-200);
-            border-top-color: var(--primary-green);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .form-group {
+            margin-bottom: 1.25rem;
         }
 
-        /* Responsive */
-        @media (max-width: 640px) {
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.375rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1.5rem;
+            }
+
+            .nav-links,
+            .user-profile-nav {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
             .container {
-                padding: 1.5rem 1rem 3rem;
+                padding: 2rem 1.5rem;
             }
 
             .page-title {
@@ -978,46 +1358,102 @@
             }
 
             .stepper {
-                margin-bottom: 2rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
             }
 
-            .step-label {
+            .stepper::before,
+            .stepper-progress {
                 display: none;
             }
 
-            .currency-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .step {
+                flex-direction: row;
+                gap: 1rem;
+                width: 100%;
             }
 
-            .amount-input {
-                font-size: 1.5rem;
-                padding: 1rem 1rem 1rem 2.5rem;
+            .step-circle {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
             }
 
-            .input-prefix {
-                font-size: 1.25rem;
-                left: 1rem;
+            .step-label {
+                text-align: left;
             }
 
             .btn-actions {
-                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+
+            .amount-input {
+                font-size: 2rem;
+                padding: 1rem 1rem 1rem 3rem;
+            }
+
+            .input-prefix {
+                font-size: 1.75rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .saved-methods-list {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* High Contrast */
-        @media (prefers-contrast: high) {
-            .payment-card,
-            .currency-card,
-            .amount-section {
-                border-width: 3px;
+        @media (max-width: 480px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .saved-method-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .method-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav,
+            .btn,
+            .modal-overlay,
+            .skip-link {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .step-content {
+                display: block !important;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Navigation -->
+    <!-- Navigation - Exact match to dashboard -->
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-left">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
@@ -1032,12 +1468,54 @@
             <ul class="nav-links">
                 <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
                 <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
-                <li><a href="add-money.html" class="nav-link" aria-current="page">ADD MONEY</a></li>
+                <li><a href="add-money.html" class="nav-link active" aria-current="page">ADD MONEY</a></li>
                 <li><a href="withdraw.html" class="nav-link">WITHDRAW</a></li>
             </ul>
         </div>
+        <div class="nav-right">
+            <div class="user-profile-nav">
+                <div class="user-avatar-nav">JS</div>
+                <div class="user-name-nav">Jane Smith</div>
+            </div>
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
     </nav>
 
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu" onclick="toggleMobileMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="add-money.html" class="nav-link active" aria-current="page">ADD MONEY</a></li>
+            <li><a href="withdraw.html" class="nav-link">WITHDRAW</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
     <main id="main-content" class="container">
         <!-- Page Header -->
         <div class="page-header">
@@ -1070,137 +1548,182 @@
             </div>
         </div>
 
-        <!-- Step 1: Payment Method -->
+        <!-- Step 1: Payment Method & Currency -->
         <div id="step1" class="step-content active">
-            <div class="section-header">
+            <div class="payment-methods-header">
                 <h2 class="section-title">Choose Payment Method</h2>
-                <p class="section-desc">Select how you'd like to pay</p>
+                <button class="btn-add-new" onclick="showAddNewPayment()" aria-label="Add new payment method">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Add New
+                </button>
             </div>
 
-            <div class="payment-methods" role="radiogroup" aria-label="Payment methods">
-                <div class="payment-card recommended" 
-                     role="radio" 
-                     aria-checked="false" 
-                     tabindex="0" 
-                     data-method="interac"
-                     onclick="selectPayment('interac')"
-                     onkeypress="handleCardKeypress(event, 'interac')">
-                    <div class="payment-header">
-                        <div class="payment-icon">📧</div>
-                        <div class="payment-info">
-                            <div class="payment-name">Interac e-Transfer</div>
-                            <div class="payment-badge">
-                                <span>💳 0% Fee</span>
-                                <span>•</span>
-                                <span>🇨🇦 Canada Only</span>
+            <!-- Saved Payment Methods Grid -->
+            <div class="saved-methods-list">
+                <!-- Interac e-Transfer Methods -->
+                <div class="saved-method-group">
+                    <div class="method-group-header">
+                        <span class="method-icon" aria-hidden="true">📧</span>
+                        <span class="method-type">Interac e-Transfer</span>
+                    </div>
+                    
+                    <div class="saved-method-card selected" 
+                         role="option" 
+                         aria-selected="true"
+                         tabindex="0"
+                         data-id="interac_1"
+                         onclick="selectPaymentMethod('interac', 'interac_1', this)">
+                        <div class="method-details">
+                            <div class="method-name">Primary Email</div>
+                            <div class="method-info">alex@example.com</div>
+                            <div class="method-meta">
+                                <span class="badge">Default</span>
+                                <span class="currency-badge">CAD</span>
                             </div>
                         </div>
-                        <div class="payment-check">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                    <div class="payment-desc">Free transfers, typically completes in minutes</div>
+                    
+                    <div class="saved-method-card" 
+                         role="option"
+                         tabindex="0"
+                         data-id="interac_2"
+                         onclick="selectPaymentMethod('interac', 'interac_2', this)">
+                        <div class="method-details">
+                            <div class="method-name">Work Email</div>
+                            <div class="method-info">alex.work@company.com</div>
+                            <div class="method-meta">
+                                <span class="currency-badge">USD</span>
+                            </div>
+                        </div>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="payment-card" 
-                     role="radio" 
-                     aria-checked="false" 
-                     tabindex="0" 
-                     data-method="card"
-                     onclick="selectPayment('card')"
-                     onkeypress="handleCardKeypress(event, 'card')">
-                    <div class="payment-header">
-                        <div class="payment-icon">💳</div>
-                        <div class="payment-info">
-                            <div class="payment-name">Credit / Debit Card</div>
-                            <div class="payment-badge">
-                                <span>⚡ Instant</span>
-                                <span>•</span>
-                                <span>2.5% Fee</span>
+                <!-- Credit/Debit Card Methods -->
+                <div class="saved-method-group">
+                    <div class="method-group-header">
+                        <span class="method-icon" aria-hidden="true">💳</span>
+                        <span class="method-type">Credit/Debit Cards</span>
+                    </div>
+                    
+                    <div class="saved-method-card" 
+                         role="option"
+                         tabindex="0"
+                         data-id="card_1"
+                         onclick="selectPaymentMethod('card', 'card_1', this)">
+                        <div class="method-details">
+                            <div class="method-name">Visa •••• 4242</div>
+                            <div class="method-info">Expires 12/25 • Alex Johnson</div>
+                            <div class="method-meta">
+                                <span class="badge">Low Fee</span>
+                                <span class="currency-badge">EUR</span>
                             </div>
                         </div>
-                        <div class="payment-check">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check"></div>
                         </div>
                     </div>
-                    <div class="payment-desc">Instant purchase, accepted worldwide</div>
+                    
+                    <div class="saved-method-card" 
+                         role="option"
+                         tabindex="0"
+                         data-id="card_2"
+                         onclick="selectPaymentMethod('card', 'card_2', this)">
+                        <div class="method-details">
+                            <div class="method-name">Mastercard •••• 8888</div>
+                            <div class="method-info">Expires 09/26 • Alex Johnson</div>
+                            <div class="method-meta">
+                                <span class="currency-badge">USD</span>
+                            </div>
+                        </div>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="payment-card" 
-                     role="radio" 
-                     aria-checked="false" 
-                     tabindex="0" 
-                     data-method="bank"
-                     onclick="selectPayment('bank')"
-                     onkeypress="handleCardKeypress(event, 'bank')">
-                    <div class="payment-header">
-                        <div class="payment-icon">🏦</div>
-                        <div class="payment-info">
-                            <div class="payment-name">Bank Transfer</div>
-                            <div class="payment-badge">
-                                <span>💵 Low Fee (1%)</span>
-                                <span>•</span>
-                                <span>1-2 Days</span>
+                <!-- Bank Transfer Methods -->
+                <div class="saved-method-group">
+                    <div class="method-group-header">
+                        <span class="method-icon" aria-hidden="true">🏦</span>
+                        <span class="method-type">Bank Transfer</span>
+                    </div>
+                    
+                    <div class="saved-method-card" 
+                         role="option"
+                         tabindex="0"
+                         data-id="bank_1"
+                         onclick="selectPaymentMethod('bank', 'bank_1', this)">
+                        <div class="method-details">
+                            <div class="method-name">TD Canada Trust</div>
+                            <div class="method-info">Account •••• 1234</div>
+                            <div class="method-meta">
+                                <span class="badge">Verified</span>
+                                <span class="currency-badge">CAD</span>
                             </div>
                         </div>
-                        <div class="payment-check">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check"></div>
                         </div>
                     </div>
-                    <div class="payment-desc">Direct from your bank, 1-2 business days</div>
                 </div>
             </div>
 
-            <div class="section-header" style="margin-top: 2rem;">
-                <h2 class="section-title">Select Currency</h2>
-                <p class="section-desc">Choose which HUMA stablecoin to receive</p>
-            </div>
+            <!-- Currency Selector -->
+            <h2 class="section-title" style="margin-top: 2rem;">Select Currency</h2>
+            <p class="section-desc">Choose which HUMA stablecoin to receive</p>
 
-            <div class="currency-grid">
-                <div class="currency-card selected" 
-                     role="radio" 
-                     aria-checked="true" 
-                     tabindex="0" 
-                     data-currency="hCAD"
-                     onclick="selectCurrency('hCAD')"
-                     onkeypress="handleCardKeypress(event, 'hCAD', 'currency')">
-                    <div class="currency-flag">🇨🇦</div>
-                    <div class="currency-name">hCAD</div>
+            <div class="currency-selector">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="currencyDropdown" aria-haspopup="listbox" aria-expanded="false" onclick="toggleCurrencyDropdown()">
+                        <span class="selected-currency">
+                            <span class="currency-flag" aria-hidden="true">🇨🇦</span>
+                            <span>
+                                <div class="currency-code">hCAD</div>
+                                <div class="currency-name">Canadian Dollar</div>
+                            </span>
+                        </span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" id="currencyDropdownMenu">
+                        <div class="dropdown-search">
+                            <input type="text" placeholder="Search currencies..." aria-label="Search currencies" id="currencySearch" oninput="filterCurrencies()">
+                        </div>
+                        <div class="dropdown-list" id="currencyList"></div>
+                        <div class="dropdown-footer">
+                            <span class="rate-info">Rates update every 60 seconds</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="currency-card" 
-                     role="radio" 
-                     aria-checked="false" 
-                     tabindex="0" 
-                     data-currency="hUSD"
-                     onclick="selectCurrency('hUSD')"
-                     onkeypress="handleCardKeypress(event, 'hUSD', 'currency')">
-                    <div class="currency-flag">🇺🇸</div>
-                    <div class="currency-name">hUSD</div>
-                </div>
-
-                <div class="currency-card" 
-                     role="radio" 
-                     aria-checked="false" 
-                     tabindex="0" 
-                     data-currency="hEUR"
-                     onclick="selectCurrency('hEUR')"
-                     onkeypress="handleCardKeypress(event, 'hEUR', 'currency')">
-                    <div class="currency-flag">€</div>
-                    <div class="currency-name">hEUR</div>
+                
+                <div class="live-rate-banner" id="liveRateBanner">
+                    <span>💱 Live rate: 1 hCAD = $0.74 USD</span>
+                    <span class="rate-trend positive">↑ 0.2%</span>
                 </div>
             </div>
 
             <div class="btn-actions">
-                <button class="btn btn-primary" id="step1Continue" disabled onclick="goToStep(2)">
+                <button class="btn btn-primary" onclick="goToStep(2)">
                     Continue
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </button>
@@ -1209,157 +1732,116 @@
 
         <!-- Step 2: Amount -->
         <div id="step2" class="step-content">
-            <div class="section-header">
-                <h2 class="section-title">Enter Amount</h2>
-                <p class="section-desc">How much would you like to buy?</p>
-            </div>
-
             <div class="amount-section">
+                <h2 class="section-title">Enter Amount</h2>
+                
                 <div class="input-group">
-                    <label for="amountInput" class="input-label">Amount in <span id="fiatCurrency">CAD</span></label>
+                    <label for="amountInput" class="input-label">How much do you want to add?</label>
                     <div class="input-wrapper">
-                        <div class="input-prefix">$</div>
+                        <span class="input-prefix">$</span>
                         <input 
                             type="number" 
                             id="amountInput" 
                             class="amount-input" 
                             placeholder="0.00"
-                            value="100"
                             min="10"
-                            max="50000"
                             step="0.01"
-                            oninput="calculateConversion()"
-                            aria-describedby="amountError amountHint">
+                            oninput="validateAmount()"
+                        >
                     </div>
-                    <div id="amountError" class="input-error">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="12" stroke="white" stroke-width="2"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16" stroke="white" stroke-width="2"/>
-                        </svg>
-                        <span id="amountErrorText"></span>
-                    </div>
+                    <p class="input-hint">Minimum: $10 • Maximum: $10,000</p>
+                    <p class="input-error" id="amountError">Please enter an amount between $10 and $10,000</p>
                 </div>
-
+                
+                <!-- Amount Presets -->
                 <div class="presets">
                     <button class="preset-btn" onclick="setAmount(50)">$50</button>
                     <button class="preset-btn" onclick="setAmount(100)">$100</button>
-                    <button class="preset-btn" onclick="setAmount(200)">$200</button>
+                    <button class="preset-btn" onclick="setAmount(250)">$250</button>
                     <button class="preset-btn" onclick="setAmount(500)">$500</button>
+                    <button class="preset-btn" onclick="setAmount(1000)">$1,000</button>
+                    <button class="preset-btn" onclick="setAmount(5000)">$5,000</button>
                 </div>
-
-                <div class="conversion-summary" role="status" aria-live="polite">
+                
+                <!-- Conversion Summary -->
+                <div class="conversion-summary" id="conversionSummary">
                     <div class="summary-row">
-                        <span class="summary-label">
-                            You Pay
-                        </span>
-                        <span class="summary-value" id="summaryPay">$100.00 CAD</span>
+                        <span class="summary-label">You pay</span>
+                        <span class="summary-value" id="youPay">$0.00 CAD</span>
                     </div>
-                    
                     <div class="summary-row">
-                        <span class="summary-label">
-                            Processing Fee
-                            <span class="info-icon" 
-                                  tabindex="0" 
-                                  role="tooltip" 
-                                  data-tooltip="Fee helps cover transaction costs"
-                                  aria-label="Fee information">i</span>
-                        </span>
-                        <span class="summary-value" id="summaryFee">$0.00</span>
+                        <span class="summary-label">Exchange rate</span>
+                        <span class="summary-value" id="exchangeRate">1 hCAD = $0.74 USD</span>
                     </div>
-                    
                     <div class="summary-row">
-                        <span class="summary-label">
-                            Exchange Rate
-                            <span class="info-icon" 
-                                  tabindex="0" 
-                                  role="tooltip" 
-                                  data-tooltip="1:1 backed by reserves"
-                                  aria-label="Rate information">i</span>
-                        </span>
-                        <span class="summary-value" id="summaryRate">1 hCAD = $1.00 CAD</span>
+                        <span class="summary-label">Processing fee</span>
+                        <span class="summary-value" id="processingFee">$0.00</span>
                     </div>
-                    
                     <div class="summary-row">
-                        <span class="summary-label">You Receive</span>
-                        <span class="summary-value" id="summaryReceive">100.00 hCAD</span>
-                    </div>
-
-                    <div class="rate-timer">
-                        ⏱️ Rate valid for <span class="timer-value" id="rateTimer">60</span> seconds
+                        <span class="summary-label">You receive</span>
+                        <span class="summary-value" id="youReceive">0.00 hCAD</span>
                     </div>
                 </div>
             </div>
 
             <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(1)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
                     Back
                 </button>
-                <button class="btn btn-primary" onclick="goToStep(3)">
+                <button class="btn btn-primary" id="step2Continue" onclick="goToStep(3)" disabled>
                     Continue
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </button>
             </div>
         </div>
 
-        <!-- Step 3: Confirmation -->
+        <!-- Step 3: Confirm -->
         <div id="step3" class="step-content">
-            <div class="confirmation-card">
-                <div class="confirm-header">
-                    <div class="confirm-icon">💰</div>
-                    <h2 class="confirm-title">Review Your Purchase</h2>
-                    <p class="confirm-desc">Please review the details before confirming</p>
+            <div class="confirm-section">
+                <h2 class="section-title" style="margin-bottom: 1.5rem;">Confirm Details</h2>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Payment Method</span>
+                    <span class="confirm-detail-value" id="confirmPaymentMethod">—</span>
                 </div>
-
-                <div class="confirm-details">
-                    <div class="detail-row">
-                        <span class="detail-label">Payment Method</span>
-                        <span class="detail-value" id="confirmMethod">Interac e-Transfer</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Currency</span>
-                        <span class="detail-value" id="confirmCurrency">🇨🇦 hCAD</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Amount to Pay</span>
-                        <span class="detail-value" id="confirmAmount">$100.00 CAD</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Fee</span>
-                        <span class="detail-value" id="confirmFee">$0.00</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">You Will Receive</span>
-                        <span class="detail-value" id="confirmReceive" style="color: var(--primary-green); font-size: 1.5rem;">100.00 hCAD</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Deposit To</span>
-                        <span class="detail-value">Your UNERA Wallet</span>
-                    </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Currency</span>
+                    <span class="confirm-detail-value" id="confirmCurrency">—</span>
+                </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Amount</span>
+                    <span class="confirm-detail-value" id="confirmAmount">—</span>
+                </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Processing Fee</span>
+                    <span class="confirm-detail-value" id="confirmFee">—</span>
+                </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">You'll Receive</span>
+                    <span class="confirm-detail-value" id="confirmReceive" style="color: var(--primary-green); font-size: 1.25rem;">—</span>
                 </div>
             </div>
 
             <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(2)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
                     Back
                 </button>
-                <button class="btn btn-primary" onclick="confirmPurchase()">
-                    Confirm Purchase
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <polyline points="20 6 9 17 4 12"/>
+                <button class="btn btn-primary" onclick="processTransaction()">
+                    Confirm & Pay
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                     </svg>
                 </button>
             </div>
@@ -1368,377 +1850,525 @@
         <!-- Step 4: Success -->
         <div id="step4" class="step-content">
             <div class="success-screen">
-                <div class="success-icon">✅</div>
-                <h2 class="success-title">Money Added Successfully!</h2>
-                <p class="success-desc">Your funds have been added to your wallet</p>
+                <div class="success-icon">✓</div>
+                <h2 class="success-title">Transaction Successful!</h2>
+                <div class="success-amount" id="successAmount">+0.00 hCAD</div>
                 
-                <div class="success-amount" id="successAmount">100.00 hCAD</div>
-                <div class="success-subtitle">Added to your UNERA wallet</div>
-
-                <div class="transaction-id">
-                    <div class="transaction-id-label">Transaction ID</div>
-                    <div class="transaction-id-value" id="transactionId">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</div>
+                <div class="success-details">
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Transaction ID</span>
+                        <span class="success-detail-value" id="successTxId">—</span>
+                    </div>
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Date & Time</span>
+                        <span class="success-detail-value" id="successDateTime">—</span>
+                    </div>
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Payment Method</span>
+                        <span class="success-detail-value" id="successPaymentMethod">—</span>
+                    </div>
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Status</span>
+                        <span class="success-detail-value" style="color: var(--success);">Completed</span>
+                    </div>
                 </div>
+            </div>
 
-                <button class="btn btn-primary" onclick="window.location.href='wallet-enhanced.html'" style="max-width: 320px; margin: 0 auto;">
-                    Go to Wallet
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+            <!-- Save Payment Method Prompt -->
+            <div class="save-prompt" id="savePrompt">
+                <h3 class="save-prompt-title">Save Payment Method?</h3>
+                <p class="save-prompt-desc">Would you like to save this payment method for faster transactions next time?</p>
+                
+                <div class="save-options">
+                    <label class="save-option" onclick="selectSaveOption('yes', this)">
+                        <input type="radio" name="saveMethod" value="yes">
+                        <div class="save-option-label">
+                            <div class="save-option-title">Yes, save for next time</div>
+                            <div class="save-option-desc">Quick checkout for future transactions</div>
+                        </div>
+                    </label>
+                    
+                    <label class="save-option" onclick="selectSaveOption('no', this)">
+                        <input type="radio" name="saveMethod" value="no">
+                        <div class="save-option-label">
+                            <div class="save-option-title">No, don't save</div>
+                            <div class="save-option-desc">I'll enter details each time</div>
+                        </div>
+                    </label>
+                </div>
+                
+                <button class="btn btn-primary" onclick="completeSaveChoice()" style="margin-top: 1.5rem;">
+                    Continue
                 </button>
+            </div>
 
-                <button class="btn btn-secondary" onclick="window.location.href='donate.html'" style="max-width: 320px; margin: 1rem auto 0;">
-                    Donate with HUMA
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                    </svg>
+            <div class="btn-actions" style="margin-top: 3rem;">
+                <button class="btn btn-secondary" onclick="window.location.href='wallet-enhanced.html'">
+                    View Wallet
+                </button>
+                <button class="btn btn-primary" onclick="resetFlow()">
+                    Add More Money
                 </button>
             </div>
         </div>
     </main>
 
-    <!-- KYC Modal -->
-    <div class="modal-overlay" id="kycModal" role="dialog" aria-modal="true" aria-labelledby="kycTitle">
+    <!-- Add New Payment Method Modal -->
+    <div class="modal-overlay" id="addPaymentModal">
         <div class="modal">
-            <div class="modal-header" style="position: relative;">
-                <h3 class="modal-title" id="kycTitle">🛡️ Identity Verification Required</h3>
-                <p class="modal-subtitle">We need to verify your identity to comply with regulations and keep our community safe.</p>
-                <button class="modal-close" onclick="closeKYCModal()" aria-label="Close verification modal">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Add New Payment Method</h2>
+                <button class="modal-close" onclick="closeAddPaymentModal()" aria-label="Close modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="processing-screen">
-                    <div class="processing-spinner"></div>
-                    <h3 class="confirm-title" style="margin-bottom: 1rem;">Verifying Your Identity</h3>
-                    <p class="confirm-desc">This usually takes just a few seconds...</p>
+                <!-- Payment Method Type Selector -->
+                <div class="form-group">
+                    <label class="form-label">Payment Method Type</label>
+                    <select class="form-input" id="paymentMethodType" onchange="updatePaymentForm()">
+                        <option value="interac">Interac e-Transfer</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="bank">Bank Transfer</option>
+                    </select>
                 </div>
+
+                <!-- Interac Form -->
+                <div id="interacForm" class="payment-form">
+                    <div class="form-group">
+                        <label for="interacEmail" class="form-label">Email Address</label>
+                        <input type="email" id="interacEmail" class="form-input" placeholder="your@email.com">
+                        <p class="form-hint">Used for Interac e-Transfer transactions</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="interacName" class="form-label">Account Holder Name</label>
+                        <input type="text" id="interacName" class="form-input" placeholder="John Doe">
+                    </div>
+                </div>
+
+                <!-- Card Form -->
+                <div id="cardForm" class="payment-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="cardNumber" class="form-label">Card Number</label>
+                        <input type="text" id="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardName" class="form-label">Cardholder Name</label>
+                        <input type="text" id="cardName" class="form-input" placeholder="John Doe">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardExpiry" class="form-label">Expiry Date</label>
+                            <input type="text" id="cardExpiry" class="form-input" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cardCVV" class="form-label">CVV</label>
+                            <input type="text" id="cardCVV" class="form-input" placeholder="123" maxlength="3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bank Form -->
+                <div id="bankForm" class="payment-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="bankName" class="form-label">Bank Name</label>
+                        <input type="text" id="bankName" class="form-input" placeholder="TD Canada Trust">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountNumber" class="form-label">Account Number</label>
+                        <input type="text" id="accountNumber" class="form-input" placeholder="123456789">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transitNumber" class="form-label">Transit Number</label>
+                        <input type="text" id="transitNumber" class="form-input" placeholder="12345">
+                        <p class="form-hint">5-digit branch number</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="institutionNumber" class="form-label">Institution Number</label>
+                        <input type="text" id="institutionNumber" class="form-input" placeholder="004">
+                        <p class="form-hint">3-digit bank code</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveNewPaymentMethod()">
+                    Save Payment Method
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- JavaScript -->
     <script>
-        // State
-        let currentStep = 1;
-        let selectedPayment = null;
-        let selectedCurrency = 'hCAD';
-        let amount = 100;
-        let timerInterval = null;
+        // State Management
+        const appState = {
+            currentStep: 1,
+            selectedPaymentMethod: 'interac',
+            selectedPaymentId: 'interac_1',
+            selectedCurrency: 'hCAD',
+            amount: 0,
+            exchangeRate: 0.74,
+            processingFee: 0,
+            saveMethod: null
+        };
 
-        // Payment Method Selection
-        function selectPayment(method) {
-            selectedPayment = method;
+        // Currency Data
+        const currencies = [
+            { code: 'hCAD', name: 'Canadian Dollar', flag: '🇨🇦', rate: 0.74 },
+            { code: 'hUSD', name: 'US Dollar', flag: '🇺🇸', rate: 1.00 },
+            { code: 'hEUR', name: 'Euro', flag: '🇪🇺', rate: 1.08 },
+            { code: 'hGBP', name: 'British Pound', flag: '🇬🇧', rate: 1.27 },
+            { code: 'hAUD', name: 'Australian Dollar', flag: '🇦🇺', rate: 0.64 },
+            { code: 'hJPY', name: 'Japanese Yen', flag: '🇯🇵', rate: 0.0067 },
+            { code: 'hCHF', name: 'Swiss Franc', flag: '🇨🇭', rate: 1.13 },
+            { code: 'hNZD', name: 'New Zealand Dollar', flag: '🇳🇿', rate: 0.60 }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            populateCurrencyList();
+            updateStepperProgress();
+        });
+
+        function populateCurrencyList() {
+            const currencyList = document.getElementById('currencyList');
+            currencyList.innerHTML = '';
             
-            // Update UI
-            document.querySelectorAll('.payment-card').forEach(card => {
-                card.classList.remove('selected');
-                card.setAttribute('aria-checked', 'false');
+            currencies.forEach(currency => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item' + (currency.code === appState.selectedCurrency ? ' selected' : '');
+                item.setAttribute('role', 'option');
+                item.setAttribute('tabindex', '0');
+                item.onclick = () => selectCurrency(currency);
+                
+                item.innerHTML = `
+                    <span class="currency-flag">${currency.flag}</span>
+                    <div class="currency-info">
+                        <div class="currency-code">${currency.code}</div>
+                        <div class="currency-name">${currency.name}</div>
+                    </div>
+                    <div class="currency-rate">$${currency.rate.toFixed(2)} USD</div>
+                `;
+                
+                currencyList.appendChild(item);
             });
-            
-            const selectedCard = document.querySelector(`[data-method="${method}"]`);
-            selectedCard.classList.add('selected');
-            selectedCard.setAttribute('aria-checked', 'true');
-            
-            // Enable continue button
-            document.getElementById('step1Continue').disabled = false;
-            
-            // Announce to screen readers
-            announceToScreenReader(`${method} payment method selected`);
         }
 
-        // Currency Selection
-        function selectCurrency(currency) {
-            selectedCurrency = currency;
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
             
-            // Update UI
-            document.querySelectorAll('.currency-card').forEach(card => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+            hamburger.setAttribute('aria-expanded', !isExpanded);
+            
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Currency Dropdown
+        function toggleCurrencyDropdown() {
+            const dropdown = document.getElementById('currencyDropdownMenu');
+            const toggle = document.getElementById('currencyDropdown');
+            const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+            
+            toggle.setAttribute('aria-expanded', !isExpanded);
+            dropdown.classList.toggle('active');
+            
+            if (!isExpanded) {
+                const searchInput = document.getElementById('currencySearch');
+                setTimeout(() => searchInput.focus(), 100);
+            }
+        }
+
+        function filterCurrencies() {
+            const searchTerm = document.getElementById('currencySearch').value.toLowerCase();
+            const items = document.querySelectorAll('.dropdown-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function selectCurrency(currency) {
+            appState.selectedCurrency = currency.code;
+            appState.exchangeRate = currency.rate;
+            
+            document.querySelector('.selected-currency').innerHTML = `
+                <span class="currency-flag" aria-hidden="true">${currency.flag}</span>
+                <span>
+                    <div class="currency-code">${currency.code}</div>
+                    <div class="currency-name">${currency.name}</div>
+                </span>
+            `;
+            
+            document.getElementById('liveRateBanner').innerHTML = `
+                <span>💱 Live rate: 1 ${currency.code} = $${currency.rate.toFixed(2)} USD</span>
+                <span class="rate-trend positive">↑ 0.2%</span>
+            `;
+            
+            document.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            toggleCurrencyDropdown();
+            
+            if (appState.amount > 0) {
+                updateConversion();
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.querySelector('.dropdown');
+            const menu = document.getElementById('currencyDropdownMenu');
+            
+            if (dropdown && !dropdown.contains(e.target) && menu.classList.contains('active')) {
+                toggleCurrencyDropdown();
+            }
+        });
+
+        // Payment Method Selection
+        function selectPaymentMethod(method, id, element) {
+            document.querySelectorAll('.saved-method-card').forEach(card => {
                 card.classList.remove('selected');
-                card.setAttribute('aria-checked', 'false');
+                card.setAttribute('aria-selected', 'false');
             });
             
-            const selectedCard = document.querySelector(`[data-currency="${currency}"]`);
-            selectedCard.classList.add('selected');
-            selectedCard.setAttribute('aria-checked', 'true');
+            element.classList.add('selected');
+            element.setAttribute('aria-selected', 'true');
             
-            // Update currency labels
-            const currencyMap = {
-                'hCAD': { fiat: 'CAD', flag: '🇨🇦' },
-                'hUSD': { fiat: 'USD', flag: '🇺🇸' },
-                'hEUR': { fiat: 'EUR', flag: '€' }
-            };
+            appState.selectedPaymentMethod = method;
+            appState.selectedPaymentId = id;
+        }
+
+        // Add New Payment Method
+        function showAddNewPayment() {
+            document.getElementById('addPaymentModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddPaymentModal() {
+            document.getElementById('addPaymentModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updatePaymentForm() {
+            const type = document.getElementById('paymentMethodType').value;
             
-            const curr = currencyMap[currency];
-            document.getElementById('fiatCurrency').textContent = curr.fiat;
+            document.getElementById('interacForm').style.display = 'none';
+            document.getElementById('cardForm').style.display = 'none';
+            document.getElementById('bankForm').style.display = 'none';
             
-            // Recalculate if on step 2
-            if (currentStep >= 2) {
-                calculateConversion();
+            if (type === 'interac') {
+                document.getElementById('interacForm').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Add Interac e-Transfer';
+            } else if (type === 'card') {
+                document.getElementById('cardForm').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Add Credit/Debit Card';
+            } else if (type === 'bank') {
+                document.getElementById('bankForm').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Add Bank Account';
             }
+        }
+
+        function saveNewPaymentMethod() {
+            alert('Payment method saved successfully!');
+            closeAddPaymentModal();
+        }
+
+        // Amount Validation
+        function validateAmount() {
+            const input = document.getElementById('amountInput');
+            const error = document.getElementById('amountError');
+            const continueBtn = document.getElementById('step2Continue');
+            const amount = parseFloat(input.value);
             
-            announceToScreenReader(`${currency} selected`);
+            if (isNaN(amount) || amount < 10 || amount > 10000) {
+                input.classList.add('error');
+                error.classList.add('active');
+                continueBtn.disabled = true;
+                appState.amount = 0;
+            } else {
+                input.classList.remove('error');
+                error.classList.remove('active');
+                continueBtn.disabled = false;
+                appState.amount = amount;
+                updateConversion();
+            }
+        }
+
+        function setAmount(amount) {
+            document.getElementById('amountInput').value = amount;
+            validateAmount();
+        }
+
+        function updateConversion() {
+            const amount = appState.amount;
+            const currency = currencies.find(c => c.code === appState.selectedCurrency);
+            
+            const fee = amount * 0.02;
+            const totalAmount = amount + fee;
+            const receivedAmount = amount / currency.rate;
+            
+            appState.processingFee = fee;
+            
+            document.getElementById('youPay').textContent = `$${totalAmount.toFixed(2)} ${currency.code.replace('h', '')}`;
+            document.getElementById('exchangeRate').textContent = `1 ${currency.code} = $${currency.rate.toFixed(2)} USD`;
+            document.getElementById('processingFee').textContent = `$${fee.toFixed(2)}`;
+            document.getElementById('youReceive').textContent = `${receivedAmount.toFixed(2)} ${currency.code}`;
         }
 
         // Step Navigation
-        function goToStep(step) {
-            // Hide all steps
+        function goToStep(stepNumber) {
+            if (stepNumber > appState.currentStep) {
+                if (stepNumber === 2 && !appState.selectedPaymentMethod) {
+                    alert('Please select a payment method');
+                    return;
+                }
+                if (stepNumber === 3 && appState.amount === 0) {
+                    alert('Please enter a valid amount');
+                    return;
+                }
+            }
+            
             document.querySelectorAll('.step-content').forEach(content => {
                 content.classList.remove('active');
             });
             
-            // Show target step
-            document.getElementById(`step${step}`).classList.add('active');
+            document.getElementById('step' + stepNumber).classList.add('active');
             
-            // Update stepper
-            document.querySelectorAll('.step').forEach((stepEl, index) => {
-                stepEl.classList.remove('active', 'completed');
-                if (index + 1 < step) {
-                    stepEl.classList.add('completed');
-                } else if (index + 1 === step) {
-                    stepEl.classList.add('active');
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+                if (stepNum < stepNumber) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (stepNum === stepNumber) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
                 }
             });
             
-            // Update progress bar
-            const progress = ((step - 1) / 3) * 100;
-            document.getElementById('stepperProgress').style.width = `${progress}%`;
+            appState.currentStep = stepNumber;
+            updateStepperProgress();
             
-            // Update aria
-            document.querySelector('.stepper').setAttribute('aria-valuenow', step);
-            
-            currentStep = step;
-            
-            // Start timer on step 2
-            if (step === 2) {
-                startRateTimer();
-                calculateConversion();
-            }
-            
-            // Update confirmation details on step 3
-            if (step === 3) {
+            if (stepNumber === 3) {
                 updateConfirmation();
             }
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            announceToScreenReader(`Step ${step} of 4`);
         }
 
-        // Amount Functions
-        function setAmount(value) {
-            document.getElementById('amountInput').value = value;
-            calculateConversion();
+        function updateStepperProgress() {
+            const progress = document.getElementById('stepperProgress');
+            const percentage = ((appState.currentStep - 1) / 3) * 100;
+            progress.style.width = percentage + '%';
         }
 
-        function calculateConversion() {
-            const input = document.getElementById('amountInput');
-            let value = parseFloat(input.value) || 0;
-            
-            // Validation
-            const errorEl = document.getElementById('amountError');
-            const errorText = document.getElementById('amountErrorText');
-            
-            if (value < 10 && value > 0) {
-                input.classList.add('error');
-                errorEl.classList.add('show');
-                errorText.textContent = 'Minimum amount is $10';
-                return;
-            } else if (value > 50000) {
-                input.classList.add('error');
-                errorEl.classList.add('show');
-                errorText.textContent = 'Maximum amount is $50,000';
-                return;
-            } else {
-                input.classList.remove('error');
-                errorEl.classList.remove('show');
-            }
-            
-            amount = value;
-            
-            // Calculate fees
-            const fees = {
-                'interac': 0,
-                'card': value * 0.025,
-                'bank': value * 0.01
-            };
-            
-            const fee = fees[selectedPayment] || 0;
-            const receive = value - fee;
-            
-            // Update summary
-            const currencyMap = {
-                'hCAD': 'CAD',
-                'hUSD': 'USD',
-                'hEUR': 'EUR'
-            };
-            const fiat = currencyMap[selectedCurrency];
-            
-            document.getElementById('summaryPay').textContent = `$${value.toFixed(2)} ${fiat}`;
-            document.getElementById('summaryFee').textContent = `$${fee.toFixed(2)}`;
-            document.getElementById('summaryRate').textContent = `1 ${selectedCurrency} = $1.00 ${fiat}`;
-            document.getElementById('summaryReceive').textContent = `${receive.toFixed(2)} ${selectedCurrency}`;
-        }
-
-        // Rate Timer
-        function startRateTimer() {
-            let seconds = 60;
-            const timerEl = document.getElementById('rateTimer');
-            
-            if (timerInterval) clearInterval(timerInterval);
-            
-            timerInterval = setInterval(() => {
-                seconds--;
-                timerEl.textContent = seconds;
-                
-                if (seconds <= 0) {
-                    clearInterval(timerInterval);
-                    // Refresh rate
-                    announceToScreenReader('Rate expired. Please review the updated rate.');
-                    startRateTimer();
-                }
-            }, 1000);
-        }
-
-        // Update Confirmation
         function updateConfirmation() {
-            const methodMap = {
-                'interac': 'Interac e-Transfer',
-                'card': 'Credit / Debit Card',
-                'bank': 'Bank Transfer'
-            };
+            const currency = currencies.find(c => c.code === appState.selectedCurrency);
+            const receivedAmount = appState.amount / currency.rate;
             
-            const currencyMap = {
-                'hCAD': { fiat: 'CAD', flag: '🇨🇦' },
-                'hUSD': { fiat: 'USD', flag: '🇺🇸' },
-                'hEUR': { fiat: 'EUR', flag: '€' }
-            };
+            const selectedCard = document.querySelector(`[data-id="${appState.selectedPaymentId}"]`);
+            const paymentMethodName = selectedCard.querySelector('.method-name').textContent;
+            const paymentMethodInfo = selectedCard.querySelector('.method-info').textContent;
             
-            const fees = {
-                'interac': 0,
-                'card': amount * 0.025,
-                'bank': amount * 0.01
-            };
-            
-            const fee = fees[selectedPayment] || 0;
-            const receive = amount - fee;
-            const curr = currencyMap[selectedCurrency];
-            
-            document.getElementById('confirmMethod').textContent = methodMap[selectedPayment];
-            document.getElementById('confirmCurrency').textContent = `${curr.flag} ${selectedCurrency}`;
-            document.getElementById('confirmAmount').textContent = `$${amount.toFixed(2)} ${curr.fiat}`;
-            document.getElementById('confirmFee').textContent = `$${fee.toFixed(2)}`;
-            document.getElementById('confirmReceive').textContent = `${receive.toFixed(2)} ${selectedCurrency}`;
+            document.getElementById('confirmPaymentMethod').textContent = `${paymentMethodName} (${paymentMethodInfo})`;
+            document.getElementById('confirmCurrency').textContent = appState.selectedCurrency;
+            document.getElementById('confirmAmount').textContent = `$${appState.amount.toFixed(2)}`;
+            document.getElementById('confirmFee').textContent = `$${appState.processingFee.toFixed(2)}`;
+            document.getElementById('confirmReceive').textContent = `${receivedAmount.toFixed(2)} ${appState.selectedCurrency}`;
         }
 
-        // Confirm Purchase
-        function confirmPurchase() {
-            // Show KYC modal (simulated)
-            showKYCModal();
+        // Transaction Processing
+        function processTransaction() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span>Processing...</span>';
             
-            // Simulate KYC approval after 2 seconds
             setTimeout(() => {
-                closeKYCModal();
-                processPurchase();
+                goToStep(4);
+                updateSuccessScreen();
+                btn.disabled = false;
+                btn.innerHTML = 'Confirm & Pay <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
             }, 2000);
         }
 
-        // Process Purchase
-        function processPurchase() {
-            const btn = event.target;
-            btn.classList.add('loading');
-            btn.textContent = 'Processing...';
+        function updateSuccessScreen() {
+            const currency = currencies.find(c => c.code === appState.selectedCurrency);
+            const receivedAmount = appState.amount / currency.rate;
             
-            // Simulate processing
-            setTimeout(() => {
-                // Update success screen
-                const fees = {
-                    'interac': 0,
-                    'card': amount * 0.025,
-                    'bank': amount * 0.01
-                };
-                const fee = fees[selectedPayment] || 0;
-                const receive = amount - fee;
-                
-                document.getElementById('successAmount').textContent = `${receive.toFixed(2)} ${selectedCurrency}`;
-                document.getElementById('transactionId').textContent = `0x${Math.random().toString(16).substr(2, 40)}`;
-                
-                // Go to success
-                goToStep(4);
-                
-                btn.classList.remove('loading');
-                announceToScreenReader('Purchase completed successfully!');
-            }, 1500);
-        }
-
-        // KYC Modal
-        function showKYCModal() {
-            const modal = document.getElementById('kycModal');
-            modal.classList.add('active');
-            modal.querySelector('.modal-close').focus();
+            const txId = 'TX' + Math.random().toString(36).substr(2, 9).toUpperCase();
             
-            // Trap focus
-            document.addEventListener('keydown', handleKYCKeydown);
+            const now = new Date();
+            const dateTime = now.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            const selectedCard = document.querySelector(`[data-id="${appState.selectedPaymentId}"]`);
+            const paymentMethodName = selectedCard.querySelector('.method-name').textContent;
+            const paymentMethodInfo = selectedCard.querySelector('.method-info').textContent;
+            
+            document.getElementById('successAmount').textContent = `+${receivedAmount.toFixed(2)} ${appState.selectedCurrency}`;
+            document.getElementById('successTxId').textContent = txId;
+            document.getElementById('successDateTime').textContent = dateTime;
+            document.getElementById('successPaymentMethod').textContent = `${paymentMethodName} (${paymentMethodInfo})`;
         }
 
-        function closeKYCModal() {
-            const modal = document.getElementById('kycModal');
-            modal.classList.remove('active');
-            document.removeEventListener('keydown', handleKYCKeydown);
+        // Save Method Prompt
+        function selectSaveOption(option, element) {
+            appState.saveMethod = option;
+            
+            document.querySelectorAll('.save-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
         }
 
-        function handleKYCKeydown(e) {
-            if (e.key === 'Escape') {
-                closeKYCModal();
+        function completeSaveChoice() {
+            if (!appState.saveMethod) {
+                alert('Please select an option');
+                return;
             }
-        }
-
-        // Keyboard Navigation
-        function handleCardKeypress(event, value, type = 'payment') {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                if (type === 'payment') {
-                    selectPayment(value);
-                } else {
-                    selectCurrency(value);
-                }
-            }
-        }
-
-        // Screen Reader Announcements
-        function announceToScreenReader(message) {
-            const announcement = document.createElement('div');
-            announcement.setAttribute('role', 'status');
-            announcement.setAttribute('aria-live', 'polite');
-            announcement.style.position = 'absolute';
-            announcement.style.left = '-10000px';
-            announcement.textContent = message;
-            document.body.appendChild(announcement);
-            setTimeout(() => announcement.remove(), 1000);
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Pre-select Interac
-            selectPayment('interac');
             
-            // Initialize conversion
-            calculateConversion();
-            
-            // Announce page load
-            announceToScreenReader('Add Money page loaded. Step 1 of 4: Choose payment method.');
-        });
-
-        // ESC key handling
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (document.getElementById('kycModal').classList.contains('active')) {
-                    closeKYCModal();
-                }
+            if (appState.saveMethod === 'yes') {
+                alert('Payment method saved successfully!');
             }
-        });
+            
+            document.getElementById('savePrompt').style.display = 'none';
+        }
+
+        // Reset Flow
+        function resetFlow() {
+            appState.currentStep = 1;
+            appState.amount = 0;
+            appState.processingFee = 0;
+            appState.saveMethod = null;
+            
+            document.getElementById('amountInput').value = '';
+            document.getElementById('savePrompt').style.display = 'block';
+            
+            goToStep(1);
+        }
     </script>
 </body>
 </html>

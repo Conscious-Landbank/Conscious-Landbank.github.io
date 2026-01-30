@@ -38,13 +38,13 @@
             --font-display: 'Space Grotesk', sans-serif;
             --font-body: 'Inter', sans-serif;
             
-            /* Accessibility - WCAG AAA */
+            /* Accessibility */
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
         }
 
-        /* Reduced Motion */
+        /* Reduced Motion Support */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -59,6 +59,7 @@
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
         }
 
@@ -80,7 +81,7 @@
             top: 0;
         }
 
-        /* Navigation */
+        /* Navigation - Exact match to dashboard */
         .nav {
             background: #FFFFFF;
             padding: 0 2.75rem;
@@ -100,11 +101,23 @@
             gap: 2.75rem;
         }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .nav-brand {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
+        }
+
+        .nav-brand:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
         .nav-logo-icon {
@@ -131,6 +144,7 @@
             text-decoration: none;
             font-size: 0.75rem;
             font-weight: 500;
+            letter-spacing: 0.02em;
             transition: color 0.2s;
             padding: 0.5rem;
             border-radius: 4px;
@@ -145,112 +159,190 @@
             outline-offset: 2px;
         }
 
-        /* Container */
-        .container {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
+        .nav-link.active {
+            color: var(--primary-green);
+            font-weight: 600;
         }
 
-        /* Progress Stepper - Same as onramp */
-        .stepper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-            position: relative;
+        /* Hamburger Menu Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
         }
 
-        .stepper::before {
-            content: '';
-            position: absolute;
-            top: 20px;
+        .hamburger:hover {
+            background: var(--neutral-200);
+        }
+
+        .hamburger:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: block;
             right: 0;
-            height: 2px;
-            background: var(--border-subtle);
-            z-index: 0;
         }
 
-        .stepper-progress {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            transition: width 0.4s ease;
-            z-index: 1;
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .step {
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-menu-close:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-links {
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: 0.5rem;
-            position: relative;
-            z-index: 2;
+            list-style: none;
         }
 
-        .step-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            border: 2px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-family: var(--font-display);
-            transition: all 0.3s;
+        .mobile-nav-links .nav-link {
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
 
-        .step.active .step-circle {
-            background: var(--gradient-primary);
-            border-color: var(--primary-green);
-            color: white;
+        .mobile-nav-links .nav-link:hover {
+            background: var(--neutral-200);
         }
 
-        .step.completed .step-circle {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
-        }
-
-        .step-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .step.active .step-label {
+        .mobile-nav-links .nav-link.active {
+            background: rgba(16, 185, 129, 0.1);
             color: var(--primary-green);
         }
 
-        .step-content {
-            display: none;
-            animation: fadeIn 0.4s ease;
+        /* User Profile in Nav */
+        .user-profile-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
         }
 
-        .step-content.active {
-            display: block;
+        .user-profile-nav:hover {
+            background: rgba(0, 0, 0, 0.04);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .user-avatar-nav {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.813rem;
+        }
+
+        .user-name-nav {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-800);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
         }
 
         /* Page Header */
         .page-header {
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
             text-align: center;
         }
 
@@ -261,20 +353,124 @@
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.75rem;
-            line-height: 1.1;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
 
         .page-subtitle {
             font-size: 1.125rem;
             color: var(--text-secondary);
-            line-height: 1.6;
         }
 
-        .section-header {
-            margin-bottom: 1.5rem;
+        /* Progress Stepper */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+            position: relative;
+            padding: 0 1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+            height: 2px;
+            background: var(--neutral-300);
+            z-index: 0;
+        }
+
+        .stepper-progress {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.5s ease;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            transition: all 0.3s;
+        }
+
+        .step.active .step-circle {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        /* Step Content */
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Headers */
         .section-title {
             font-family: var(--font-display);
             font-size: 1.5rem;
@@ -285,67 +481,229 @@
 
         .section-desc {
             color: var(--text-secondary);
-            font-size: 0.938rem;
+            font-size: 1rem;
+            margin-bottom: 2rem;
         }
 
-        /* Payout Destination Cards */
-        .payout-methods {
+        /* Withdrawal Methods */
+        .withdrawal-methods-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-add-new {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            padding: 0.625rem 1rem;
+            font-family: var(--font-body);
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .btn-add-new:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        .btn-add-new:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Saved Methods Grid */
+        .saved-methods-list {
             display: grid;
             gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        .payout-card {
+        .saved-method-group {
             background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
-            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .method-group-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .method-icon {
+            font-size: 1.25rem;
+        }
+
+        .method-type {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        /* Saved Method Cards */
+        .saved-method-card {
+            background: var(--neutral-100);
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            padding: 1rem;
             cursor: pointer;
             transition: all 0.2s;
-            position: relative;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .payout-card:hover {
+        .saved-method-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .saved-method-card:hover {
             border-color: var(--primary-green);
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);
+            background: rgba(16, 185, 129, 0.05);
         }
 
-        .payout-card:focus {
-            outline: 3px solid var(--primary-green);
+        .saved-method-card.selected {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .saved-method-card:focus {
+            outline: 2px solid var(--primary-green);
             outline-offset: 2px;
         }
 
-        .payout-card.selected {
+        .method-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .method-name {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.938rem;
+        }
+
+        .method-info {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .method-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .currency-badge {
+            background: var(--neutral-200);
+            color: var(--neutral-700);
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .method-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-edit {
+            background: none;
+            border: 1px solid var(--neutral-300);
+            border-radius: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .method-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .saved-method-card.selected .method-check {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        /* Wallet Selection */
+        .wallet-selector {
+            margin-bottom: 2rem;
+        }
+
+        .wallet-list {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .wallet-card {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-card:hover {
             border-color: var(--primary-green);
             background: rgba(16, 185, 129, 0.02);
         }
 
-        .payout-card.verified::after {
-            content: '✔️ Verified';
-            position: absolute;
-            top: -10px;
-            right: 1rem;
-            background: var(--success);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 980px;
-            font-size: 0.688rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+        .wallet-card.selected {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
         }
 
-        .payout-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .payout-icon {
+        .wallet-icon {
             width: 48px;
             height: 48px;
-            border-radius: 0.75rem;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+            border-radius: 50%;
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -353,100 +711,68 @@
             flex-shrink: 0;
         }
 
-        .payout-info {
+        .wallet-details {
             flex: 1;
+            min-width: 0;
         }
 
-        .payout-name {
+        .wallet-name {
             font-family: var(--font-display);
-            font-size: 1.125rem;
             font-weight: 700;
             color: var(--text-primary);
+            font-size: 1.125rem;
             margin-bottom: 0.25rem;
         }
 
-        .payout-detail {
-            font-size: 0.875rem;
+        .wallet-balance {
             color: var(--text-secondary);
-            font-family: monospace;
+            font-size: 0.875rem;
         }
 
-        .payout-check {
+        .wallet-check {
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            border: 2px solid var(--border-subtle);
+            border: 2px solid var(--neutral-300);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .payout-card.selected .payout-check {
+        .wallet-card.selected .wallet-check {
             background: var(--primary-green);
             border-color: var(--primary-green);
         }
 
-        .add-account-btn {
-            width: 100%;
+        /* Multi-Wallet Notice */
+        .multi-wallet-notice {
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 0.5rem;
             padding: 1rem;
-            background: white;
-            border: 2px dashed var(--border-subtle);
-            border-radius: 1rem;
-            font-weight: 600;
-            color: var(--primary-green);
-            cursor: pointer;
-            transition: all 0.2s;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-family: var(--font-body);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
-        .add-account-btn:hover {
-            border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.02);
+        .multi-wallet-notice svg {
+            flex-shrink: 0;
+            color: var(--primary-blue);
         }
 
-        /* Balance Display */
-        .balance-display {
-            background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .balance-label {
+        .multi-wallet-notice-text {
             font-size: 0.875rem;
             color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .balance-amount {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary-green);
-            margin-bottom: 0.25rem;
-        }
-
-        .balance-fiat {
-            font-size: 1rem;
-            color: var(--text-secondary);
-        }
-
-        /* Amount Section - Same styling as onramp */
+        /* Amount Section */
         .amount-section {
             background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
             padding: 2rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .input-group {
@@ -457,7 +783,7 @@
             display: block;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             font-size: 0.938rem;
         }
 
@@ -465,25 +791,25 @@
             position: relative;
         }
 
-        .input-suffix {
+        .input-prefix {
             position: absolute;
-            right: 1.25rem;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.25rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             pointer-events: none;
         }
 
         .amount-input {
             width: 100%;
-            padding: 1.25rem 5rem 1.25rem 1.25rem;
-            font-size: 2rem;
+            padding: 1.25rem 1rem 1.25rem 3.5rem;
+            font-size: 2.5rem;
             font-weight: 700;
             font-family: var(--font-display);
             border: 2px solid var(--border-subtle);
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             transition: all 0.2s;
             background: var(--neutral-100);
         }
@@ -492,40 +818,67 @@
             outline: none;
             border-color: var(--primary-green);
             background: white;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .amount-input.error {
             border-color: var(--error);
         }
 
-        .input-error {
-            display: none;
-            color: var(--error);
+        .input-hint {
             font-size: 0.875rem;
+            color: var(--text-secondary);
             margin-top: 0.5rem;
-            font-weight: 600;
         }
 
-        .input-error.show {
+        .input-error {
+            font-size: 0.875rem;
+            color: var(--error);
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .input-error.active {
+            display: block;
+        }
+
+        /* Available Balance */
+        .available-balance {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.375rem;
+            margin-bottom: 1.5rem;
         }
 
+        .available-balance-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .available-balance-value {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--primary-green);
+            font-size: 1.125rem;
+        }
+
+        /* Amount Presets */
         .presets {
-            display: flex;
-            gap: 0.75rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
 
         .preset-btn {
-            flex: 1;
             padding: 0.75rem;
             background: white;
-            border: 2px solid var(--border-subtle);
+            border: 1px solid var(--border-subtle);
             border-radius: 0.5rem;
-            font-weight: 700;
+            font-weight: 600;
             font-family: var(--font-display);
             cursor: pointer;
             transition: all 0.2s;
@@ -533,21 +886,27 @@
 
         .preset-btn:hover {
             border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.02);
+            background: rgba(16, 185, 129, 0.05);
         }
 
-        .conversion-summary {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
-            border: 2px solid rgba(16, 185, 129, 0.2);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+        .preset-btn:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Withdrawal Summary */
+        .withdrawal-summary {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
+            padding: 0.625rem 0;
             border-bottom: 1px solid var(--border-subtle);
         }
 
@@ -560,74 +919,63 @@
         .summary-label {
             color: var(--text-secondary);
             font-size: 0.938rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .summary-value {
             font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.125rem;
+            font-weight: 600;
+            font-size: 1rem;
             color: var(--text-primary);
         }
 
         .summary-row:last-child .summary-value {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--primary-green);
         }
 
-        .info-icon {
-            width: 18px;
-            height: 18px;
-            background: rgba(14, 165, 233, 0.15);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-blue);
-            font-size: 0.688rem;
-            font-weight: 700;
-            cursor: help;
-            position: relative;
+        /* Confirm Section */
+        .confirm-section {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .info-icon::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: calc(100% + 12px);
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.75rem 1rem;
-            background: var(--neutral-900);
-            color: white;
-            font-size: 0.813rem;
-            font-weight: 400;
-            border-radius: 0.5rem;
-            white-space: nowrap;
-            max-width: 280px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s;
-            pointer-events: none;
-            z-index: 1000;
+        .confirm-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .info-icon:hover::after,
-        .info-icon:focus::after {
-            opacity: 1;
-            visibility: visible;
+        .confirm-detail:last-child {
+            border-bottom: none;
+        }
+
+        .confirm-detail-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+        }
+
+        .confirm-detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.938rem;
+            text-align: right;
         }
 
         /* Buttons */
         .btn {
             width: 100%;
-            padding: 1rem 2rem;
+            padding: 0.875rem 1.5rem;
             font-family: var(--font-body);
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 600;
             border: none;
-            border-radius: 980px;
+            border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
@@ -644,23 +992,23 @@
         .btn-primary {
             background: var(--gradient-primary);
             color: white;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
         }
 
         .btn-primary:hover:not(:disabled) {
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+            transform: translateY(-1px);
         }
 
         .btn-primary:focus {
-            outline: 3px solid var(--primary-green);
+            outline: 3px solid rgba(16, 185, 129, 0.5);
             outline-offset: 2px;
         }
 
         .btn-secondary {
             background: white;
             color: var(--text-primary);
-            border: 2px solid var(--border-subtle);
+            border: 1px solid var(--border-subtle);
         }
 
         .btn-secondary:hover {
@@ -669,116 +1017,10 @@
         }
 
         .btn-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-top: 2rem;
-        }
-
-        .loading {
-            pointer-events: none;
-            position: relative;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 3px solid currentColor;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Confirmation Card */
-        .confirmation-card {
-            background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .confirm-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .confirm-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
-            background: var(--gradient-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-        }
-
-        .confirm-title {
-            font-family: var(--font-display);
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .confirm-desc {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .confirm-details {
-            background: var(--neutral-100);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.875rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            color: var(--text-secondary);
-            font-size: 0.938rem;
-        }
-
-        .detail-value {
-            font-family: var(--font-display);
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: right;
-        }
-
-        /* Processing Screen */
-        .processing-screen {
-            text-align: center;
-            padding: 3rem 0;
-        }
-
-        .processing-spinner {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 2rem;
-            border: 4px solid var(--neutral-200);
-            border-top-color: var(--primary-green);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
         }
 
         /* Success Screen */
@@ -788,117 +1030,386 @@
         }
 
         .success-icon {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             margin: 0 auto 2rem;
             background: var(--gradient-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            font-size: 3.5rem;
             animation: scaleIn 0.5s ease;
         }
 
         @keyframes scaleIn {
             from {
-                transform: scale(0);
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
             }
             to {
-                transform: scale(1);
+                transform: scale(1) rotate(0);
+                opacity: 1;
             }
         }
 
         .success-title {
             font-family: var(--font-display);
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
-        }
-
-        .success-desc {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            line-height: 1.6;
         }
 
         .success-amount {
             font-family: var(--font-display);
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary-green);
-            margin-bottom: 0.5rem;
-        }
-
-        .success-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-bottom: 3rem;
-        }
-
-        .transaction-id {
-            background: var(--neutral-100);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
             margin: 2rem 0;
         }
 
-        .transaction-id-label {
+        .success-details {
+            background: var(--neutral-100);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .success-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .success-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .success-detail-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .success-detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        /* Save Prompt */
+        .save-prompt {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+
+        .save-prompt-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .save-prompt-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .save-options {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .save-option {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .save-option:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .save-option.selected {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .save-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .save-option-label {
+            flex: 1;
+        }
+
+        .save-option-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.938rem;
+        }
+
+        .save-option-desc {
             color: var(--text-secondary);
             font-size: 0.813rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-top: 0.125rem;
         }
 
-        .transaction-id-value {
-            font-family: monospace;
-            font-size: 0.875rem;
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 0.75rem;
+            width: min(540px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
             color: var(--text-primary);
-            word-break: break-all;
         }
 
-        /* Responsive */
-        @media (max-width: 640px) {
+        .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-100);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.375rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1.5rem;
+            }
+
+            .nav-links,
+            .user-profile-nav {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
             .container {
-                padding: 1.5rem 1rem 3rem;
+                padding: 2rem 1.5rem;
             }
 
             .page-title {
                 font-size: 2rem;
             }
 
-            .step-label {
+            .stepper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .stepper::before,
+            .stepper-progress {
                 display: none;
             }
 
-            .amount-input {
-                font-size: 1.5rem;
-                padding: 1rem 4rem 1rem 1rem;
+            .step {
+                flex-direction: row;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .step-circle {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .step-label {
+                text-align: left;
             }
 
             .btn-actions {
-                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+
+            .amount-input {
+                font-size: 2rem;
+                padding: 1rem 1rem 1rem 3rem;
+            }
+
+            .input-prefix {
+                font-size: 1.75rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .saved-methods-list {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* High Contrast */
-        @media (prefers-contrast: high) {
-            .payout-card,
-            .amount-section {
-                border-width: 3px;
+        @media (max-width: 480px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .saved-method-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .method-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav,
+            .btn,
+            .modal-overlay,
+            .skip-link {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .step-content {
+                display: block !important;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Navigation -->
+    <!-- Navigation - Exact match to dashboard -->
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-left">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
@@ -914,20 +1425,62 @@
                 <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
                 <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
                 <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
-                <li><a href="withdraw.html" class="nav-link" aria-current="page">WITHDRAW</a></li>
+                <li><a href="withdraw.html" class="nav-link active" aria-current="page">WITHDRAW</a></li>
             </ul>
+        </div>
+        <div class="nav-right">
+            <div class="user-profile-nav">
+                <div class="user-avatar-nav">JS</div>
+                <div class="user-name-nav">Jane Smith</div>
+            </div>
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </nav>
 
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu" onclick="toggleMobileMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+            <li><a href="withdraw.html" class="nav-link active" aria-current="page">WITHDRAW</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
     <main id="main-content" class="container">
         <!-- Page Header -->
         <div class="page-header">
-            <h1 class="page-title">Withdraw</h1>
-            <p class="page-subtitle">Transfer money from your wallet to your bank</p>
+            <h1 class="page-title">Withdraw Money</h1>
+            <p class="page-subtitle">Transfer funds from your UNERA wallet to your bank account</p>
         </div>
 
         <!-- Progress Stepper -->
-        <div class="stepper" role="progressbar" aria-label="Withdrawal progress" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
+        <div class="stepper" role="progressbar" aria-label="Withdrawal progress" aria-valuenow="1" aria-valuemin="1" aria-valuemax="5">
             <div class="stepper-progress" id="stepperProgress" style="width: 0%"></div>
             
             <div class="step active" data-step="1">
@@ -937,471 +1490,789 @@
             
             <div class="step" data-step="2">
                 <div class="step-circle">2</div>
-                <div class="step-label">Amount</div>
+                <div class="step-label">Source Wallet</div>
             </div>
             
             <div class="step" data-step="3">
                 <div class="step-circle">3</div>
-                <div class="step-label">Confirm</div>
+                <div class="step-label">Amount</div>
             </div>
             
             <div class="step" data-step="4">
                 <div class="step-circle">4</div>
+                <div class="step-label">Confirm</div>
+            </div>
+            
+            <div class="step" data-step="5">
+                <div class="step-circle">5</div>
                 <div class="step-label">Complete</div>
             </div>
         </div>
 
-        <!-- Step 1: Payout Destination -->
+        <!-- Step 1: Select Withdrawal Destination -->
         <div id="step1" class="step-content active">
-            <div class="section-header">
-                <h2 class="section-title">Select Payout Destination</h2>
-                <p class="section-desc">Where would you like to receive your funds?</p>
+            <div class="withdrawal-methods-header">
+                <h2 class="section-title">Choose Withdrawal Destination</h2>
+                <button class="btn-add-new" onclick="showAddNewWithdrawal()" aria-label="Add new withdrawal method">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Add New
+                </button>
             </div>
 
-            <div class="payout-methods" role="radiogroup" aria-label="Payout methods">
-                <div class="payout-card verified" 
-                     role="radio" 
-                     aria-checked="false" 
-                     tabindex="0" 
-                     data-method="bank-td"
-                     onclick="selectPayout('bank-td')"
-                     onkeypress="handleCardKeypress(event, 'bank-td')">
-                    <div class="payout-header">
-                        <div class="payout-icon">🏦</div>
-                        <div class="payout-info">
-                            <div class="payout-name">TD Bank</div>
-                            <div class="payout-detail">****1234</div>
+            <!-- Saved Withdrawal Methods Grid -->
+            <div class="saved-methods-list">
+                <!-- Bank Account Methods -->
+                <div class="saved-method-group">
+                    <div class="method-group-header">
+                        <span class="method-icon" aria-hidden="true">🏦</span>
+                        <span class="method-type">Bank Accounts</span>
+                    </div>
+                    
+                    <div class="saved-method-card selected" 
+                         role="option" 
+                         aria-selected="true"
+                         tabindex="0"
+                         data-id="bank_1"
+                         onclick="selectWithdrawalMethod('bank', 'bank_1', this)">
+                        <div class="method-details">
+                            <div class="method-name">TD Canada Trust</div>
+                            <div class="method-info">Account •••• 1234</div>
+                            <div class="method-meta">
+                                <span class="badge">Primary</span>
+                                <span class="currency-badge">CAD</span>
+                            </div>
                         </div>
-                        <div class="payout-check">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="saved-method-card" 
+                         role="option"
+                         tabindex="0"
+                         data-id="bank_2"
+                         onclick="selectWithdrawalMethod('bank', 'bank_2', this)">
+                        <div class="method-details">
+                            <div class="method-name">RBC Royal Bank</div>
+                            <div class="method-info">Account •••• 5678</div>
+                            <div class="method-meta">
+                                <span class="badge">Verified</span>
+                                <span class="currency-badge">CAD</span>
+                            </div>
+                        </div>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="payout-card verified" 
-                     role="radio" 
-                     aria-checked="false" 
-                     tabindex="0" 
-                     data-method="interac"
-                     onclick="selectPayout('interac')"
-                     onkeypress="handleCardKeypress(event, 'interac')">
-                    <div class="payout-header">
-                        <div class="payout-icon">📧</div>
-                        <div class="payout-info">
-                            <div class="payout-name">Interac e-Transfer</div>
-                            <div class="payout-detail">jane@example.com</div>
+                <!-- Interac e-Transfer Methods -->
+                <div class="saved-method-group">
+                    <div class="method-group-header">
+                        <span class="method-icon" aria-hidden="true">📧</span>
+                        <span class="method-type">Interac e-Transfer</span>
+                    </div>
+                    
+                    <div class="saved-method-card" 
+                         role="option"
+                         tabindex="0"
+                         data-id="interac_1"
+                         onclick="selectWithdrawalMethod('interac', 'interac_1', this)">
+                        <div class="method-details">
+                            <div class="method-name">Primary Email</div>
+                            <div class="method-info">jane@example.com</div>
+                            <div class="method-meta">
+                                <span class="currency-badge">CAD</span>
+                            </div>
                         </div>
-                        <div class="payout-check">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="saved-method-card" 
+                         role="option"
+                         tabindex="0"
+                         data-id="interac_2"
+                         onclick="selectWithdrawalMethod('interac', 'interac_2', this)">
+                        <div class="method-details">
+                            <div class="method-name">Work Email</div>
+                            <div class="method-info">jane.work@company.com</div>
+                            <div class="method-meta">
+                                <span class="currency-badge">USD</span>
+                            </div>
+                        </div>
+                        <div class="method-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <div class="method-check"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <button class="add-account-btn" onclick="alert('Add new bank account feature coming soon!')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M12 5v14M5 12h14"/>
-                </svg>
-                Add New Bank Account
-            </button>
 
             <div class="btn-actions">
-                <button class="btn btn-primary" id="step1Continue" disabled onclick="goToStep(2)">
+                <button class="btn btn-primary" onclick="goToStep(2)">
                     Continue
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </button>
             </div>
         </div>
 
-        <!-- Step 2: Amount -->
+        <!-- Step 2: Select Source Wallet(s) -->
         <div id="step2" class="step-content">
-            <div class="section-header">
-                <h2 class="section-title">Enter Withdrawal Amount</h2>
-                <p class="section-desc">How much HUMA would you like to withdraw?</p>
-            </div>
+            <h2 class="section-title">Select Source Wallet</h2>
+            <p class="section-desc">Choose which wallet(s) to withdraw from</p>
 
-            <!-- Balance Display -->
-            <div class="balance-display">
-                <div class="balance-label">Available Balance</div>
-                <div class="balance-amount" id="availableBalance">3,500.00 hCAD</div>
-                <div class="balance-fiat">≈ $3,500 CAD</div>
-            </div>
-
-            <div class="amount-section">
-                <div class="input-group">
-                    <label for="amountInput" class="input-label">Amount to Withdraw</label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="number" 
-                            id="amountInput" 
-                            class="amount-input" 
-                            placeholder="0.00"
-                            value="100"
-                            min="10"
-                            max="3500"
-                            step="0.01"
-                            oninput="calculateConversion()"
-                            aria-describedby="amountError amountHint">
-                        <div class="input-suffix" id="currencySuffix">hCAD</div>
+            <div class="wallet-selector">
+                <div class="wallet-list">
+                    <div class="wallet-card selected" 
+                         tabindex="0"
+                         data-wallet="hCAD"
+                         data-balance="1250.50"
+                         onclick="selectWallet('hCAD', 1250.50, this)">
+                        <div class="wallet-icon">🇨🇦</div>
+                        <div class="wallet-details">
+                            <div class="wallet-name">hCAD Wallet</div>
+                            <div class="wallet-balance">Available: $1,250.50 CAD</div>
+                        </div>
+                        <div class="wallet-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div id="amountError" class="input-error">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="12" stroke="white" stroke-width="2"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16" stroke="white" stroke-width="2"/>
-                        </svg>
-                        <span id="amountErrorText"></span>
+
+                    <div class="wallet-card" 
+                         tabindex="0"
+                         data-wallet="hUSD"
+                         data-balance="850.75"
+                         onclick="selectWallet('hUSD', 850.75, this)">
+                        <div class="wallet-icon">🇺🇸</div>
+                        <div class="wallet-details">
+                            <div class="wallet-name">hUSD Wallet</div>
+                            <div class="wallet-balance">Available: $850.75 USD</div>
+                        </div>
+                        <div class="wallet-check"></div>
+                    </div>
+
+                    <div class="wallet-card" 
+                         tabindex="0"
+                         data-wallet="hEUR"
+                         data-balance="620.30"
+                         onclick="selectWallet('hEUR', 620.30, this)">
+                        <div class="wallet-icon">🇪🇺</div>
+                        <div class="wallet-details">
+                            <div class="wallet-name">hEUR Wallet</div>
+                            <div class="wallet-balance">Available: €620.30 EUR</div>
+                        </div>
+                        <div class="wallet-check"></div>
+                    </div>
+
+                    <div class="wallet-card" 
+                         tabindex="0"
+                         data-wallet="hGBP"
+                         data-balance="450.00"
+                         onclick="selectWallet('hGBP', 450.00, this)">
+                        <div class="wallet-icon">🇬🇧</div>
+                        <div class="wallet-details">
+                            <div class="wallet-name">hGBP Wallet</div>
+                            <div class="wallet-balance">Available: £450.00 GBP</div>
+                        </div>
+                        <div class="wallet-check"></div>
                     </div>
                 </div>
 
-                <div class="presets">
-                    <button class="preset-btn" onclick="setAmount(100)">100</button>
-                    <button class="preset-btn" onclick="setAmount(500)">500</button>
-                    <button class="preset-btn" onclick="setAmount(1000)">1,000</button>
-                    <button class="preset-btn" onclick="setAmount(3500)">All</button>
-                </div>
-
-                <div class="conversion-summary" role="status" aria-live="polite">
-                    <div class="summary-row">
-                        <span class="summary-label">
-                            You're Withdrawing
-                        </span>
-                        <span class="summary-value" id="summaryWithdraw">100.00 hCAD</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">
-                            Network Fee
-                            <span class="info-icon" 
-                                  tabindex="0" 
-                                  role="tooltip" 
-                                  data-tooltip="Small fee to cover blockchain costs"
-                                  aria-label="Fee information">i</span>
-                        </span>
-                        <span class="summary-value" id="summaryFee">1.00 hCAD</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">
-                            Exchange Rate
-                            <span class="info-icon" 
-                                  tabindex="0" 
-                                  role="tooltip" 
-                                  data-tooltip="1:1 backed by reserves"
-                                  aria-label="Rate information">i</span>
-                        </span>
-                        <span class="summary-value" id="summaryRate">1 hCAD = $1.00 CAD</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">You Will Receive</span>
-                        <span class="summary-value" id="summaryReceive">$99.00 CAD</span>
-                    </div>
-
-                    <div class="rate-timer" style="margin-top: 0.75rem; font-size: 0.813rem; color: var(--text-secondary);">
-                        💡 Transfers typically arrive within 1 business day
+                <div class="multi-wallet-notice">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                    <div class="multi-wallet-notice-text">
+                        <strong>Multi-wallet withdrawals:</strong> You can combine funds from multiple wallets in the next step. Select your primary wallet now.
                     </div>
                 </div>
             </div>
 
             <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(1)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
                     Back
                 </button>
                 <button class="btn btn-primary" onclick="goToStep(3)">
                     Continue
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </button>
             </div>
         </div>
 
-        <!-- Step 3: Confirmation -->
+        <!-- Step 3: Enter Amount -->
         <div id="step3" class="step-content">
-            <div class="confirmation-card">
-                <div class="confirm-header">
-                    <div class="confirm-icon">💸</div>
-                    <h2 class="confirm-title">Review Withdrawal</h2>
-                    <p class="confirm-desc">Please review the details before confirming</p>
+            <div class="amount-section">
+                <h2 class="section-title">Enter Amount</h2>
+                
+                <div class="available-balance">
+                    <span class="available-balance-label">Available Balance</span>
+                    <span class="available-balance-value" id="availableBalance">$1,250.50 CAD</span>
                 </div>
 
-                <div class="confirm-details">
-                    <div class="detail-row">
-                        <span class="detail-label">Destination</span>
-                        <span class="detail-value" id="confirmDestination">TD Bank ****1234</span>
+                <div class="input-group">
+                    <label for="amountInput" class="input-label">Withdrawal Amount</label>
+                    <div class="input-wrapper">
+                        <span class="input-prefix">$</span>
+                        <input 
+                            type="number" 
+                            id="amountInput" 
+                            class="amount-input" 
+                            placeholder="0.00"
+                            min="10"
+                            step="0.01"
+                            oninput="validateAmount()"
+                        >
                     </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Withdrawal Amount</span>
-                        <span class="detail-value" id="confirmAmount">100.00 hCAD</span>
+                    <p class="input-hint">Minimum: $10 • Maximum: Your available balance</p>
+                    <p class="input-error" id="amountError">Please enter a valid amount</p>
+                </div>
+                
+                <!-- Amount Presets -->
+                <div class="presets">
+                    <button class="preset-btn" onclick="setAmount(50)">$50</button>
+                    <button class="preset-btn" onclick="setAmount(100)">$100</button>
+                    <button class="preset-btn" onclick="setAmount(250)">$250</button>
+                    <button class="preset-btn" onclick="setAmount(500)">$500</button>
+                    <button class="preset-btn" onclick="setAmount(1000)">$1,000</button>
+                    <button class="preset-btn" onclick="setMaxAmount()">Max</button>
+                </div>
+                
+                <!-- Withdrawal Summary -->
+                <div class="withdrawal-summary" id="withdrawalSummary">
+                    <div class="summary-row">
+                        <span class="summary-label">Withdrawal amount</span>
+                        <span class="summary-value" id="withdrawAmount">$0.00 CAD</span>
                     </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Fee</span>
-                        <span class="detail-value" id="confirmFee">1.00 hCAD</span>
+                    <div class="summary-row">
+                        <span class="summary-label">Transaction fee</span>
+                        <span class="summary-value" id="transactionFee">$0.00</span>
                     </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">You Will Receive</span>
-                        <span class="detail-value" id="confirmReceive" style="color: var(--primary-green); font-size: 1.5rem;">$99.00 CAD</span>
+                    <div class="summary-row">
+                        <span class="summary-label">Processing time</span>
+                        <span class="summary-value">1-2 business days</span>
                     </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Estimated Arrival</span>
-                        <span class="detail-value">1 Business Day</span>
+                    <div class="summary-row">
+                        <span class="summary-label">You'll receive</span>
+                        <span class="summary-value" id="youReceive">$0.00 CAD</span>
                     </div>
                 </div>
             </div>
 
             <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(2)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
                     Back
                 </button>
-                <button class="btn btn-primary" onclick="confirmWithdrawal()">
-                    Confirm Withdrawal
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <polyline points="20 6 9 17 4 12"/>
+                <button class="btn btn-primary" id="step3Continue" onclick="goToStep(4)" disabled>
+                    Continue
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </button>
             </div>
         </div>
 
-        <!-- Step 4: Processing/Success -->
+        <!-- Step 4: Confirm -->
         <div id="step4" class="step-content">
-            <div id="processingState" class="processing-screen">
-                <div class="processing-spinner"></div>
-                <h2 class="confirm-title">Processing Withdrawal...</h2>
-                <p class="confirm-desc">Your withdrawal is being processed. This may take a moment.</p>
+            <div class="confirm-section">
+                <h2 class="section-title" style="margin-bottom: 1.5rem;">Confirm Withdrawal</h2>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Destination</span>
+                    <span class="confirm-detail-value" id="confirmDestination">—</span>
+                </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Source Wallet</span>
+                    <span class="confirm-detail-value" id="confirmWallet">—</span>
+                </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Withdrawal Amount</span>
+                    <span class="confirm-detail-value" id="confirmAmount">—</span>
+                </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">Transaction Fee</span>
+                    <span class="confirm-detail-value" id="confirmFee">—</span>
+                </div>
+                
+                <div class="confirm-detail">
+                    <span class="confirm-detail-label">You'll Receive</span>
+                    <span class="confirm-detail-value" id="confirmReceive" style="color: var(--primary-green); font-size: 1.25rem;">—</span>
+                </div>
             </div>
 
-            <div id="successState" class="success-screen" style="display: none;">
-                <div class="success-icon">✅</div>
-                <h2 class="success-title">Withdrawal Complete!</h2>
-                <p class="success-desc">Your funds are on the way to your account</p>
-                
-                <div class="success-amount" id="successAmount">$99.00 CAD</div>
-                <div class="success-subtitle">Being sent to TD Bank ****1234</div>
-
-                <div class="transaction-id">
-                    <div class="transaction-id-label">Transaction ID</div>
-                    <div class="transaction-id-value" id="transactionId">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</div>
-                </div>
-
-                <button class="btn btn-primary" onclick="window.location.href='wallet-enhanced.html'" style="max-width: 320px; margin: 0 auto;">
-                    Back to Wallet
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+            <div class="btn-actions">
+                <button class="btn btn-secondary" onclick="goToStep(3)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back
+                </button>
+                <button class="btn btn-primary" onclick="processWithdrawal()">
+                    Confirm Withdrawal
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                     </svg>
                 </button>
+            </div>
+        </div>
 
-                <p style="margin-top: 2rem; color: var(--text-secondary); font-size: 0.938rem;">
-                    💚 Thank you for using UNERA. We hope to see you supporting more Humanity Centres soon!
-                </p>
+        <!-- Step 5: Success -->
+        <div id="step5" class="step-content">
+            <div class="success-screen">
+                <div class="success-icon">✓</div>
+                <h2 class="success-title">Withdrawal Initiated!</h2>
+                <div class="success-amount" id="successAmount">-$0.00 CAD</div>
+                
+                <div class="success-details">
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Transaction ID</span>
+                        <span class="success-detail-value" id="successTxId">—</span>
+                    </div>
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Date & Time</span>
+                        <span class="success-detail-value" id="successDateTime">—</span>
+                    </div>
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Destination</span>
+                        <span class="success-detail-value" id="successDestination">—</span>
+                    </div>
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Expected Arrival</span>
+                        <span class="success-detail-value" id="successArrival">1-2 business days</span>
+                    </div>
+                    <div class="success-detail-row">
+                        <span class="success-detail-label">Status</span>
+                        <span class="success-detail-value" style="color: var(--warning);">Processing</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Withdrawal Method Prompt -->
+            <div class="save-prompt" id="savePrompt">
+                <h3 class="save-prompt-title">Save Withdrawal Method?</h3>
+                <p class="save-prompt-desc">Would you like to save this withdrawal destination for faster transfers next time?</p>
+                
+                <div class="save-options">
+                    <label class="save-option" onclick="selectSaveOption('yes', this)">
+                        <input type="radio" name="saveMethod" value="yes">
+                        <div class="save-option-label">
+                            <div class="save-option-title">Yes, save for next time</div>
+                            <div class="save-option-desc">Quick access for future withdrawals</div>
+                        </div>
+                    </label>
+                    
+                    <label class="save-option" onclick="selectSaveOption('no', this)">
+                        <input type="radio" name="saveMethod" value="no">
+                        <div class="save-option-label">
+                            <div class="save-option-title">No, don't save</div>
+                            <div class="save-option-desc">I'll enter details each time</div>
+                        </div>
+                    </label>
+                </div>
+                
+                <button class="btn btn-primary" onclick="completeSaveChoice()" style="margin-top: 1.5rem;">
+                    Continue
+                </button>
+            </div>
+
+            <div class="btn-actions" style="margin-top: 3rem;">
+                <button class="btn btn-secondary" onclick="window.location.href='wallet-enhanced.html'">
+                    View Wallet
+                </button>
+                <button class="btn btn-primary" onclick="resetFlow()">
+                    New Withdrawal
+                </button>
             </div>
         </div>
     </main>
 
-    <script>
-        // State
-        let currentStep = 1;
-        let selectedPayout = null;
-        let amount = 100;
-        const availableBalance = 3500;
+    <!-- Add New Withdrawal Method Modal -->
+    <div class="modal-overlay" id="addWithdrawalModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Add New Withdrawal Method</h2>
+                <button class="modal-close" onclick="closeAddWithdrawalModal()" aria-label="Close modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Withdrawal Method Type Selector -->
+                <div class="form-group">
+                    <label class="form-label">Withdrawal Method Type</label>
+                    <select class="form-input" id="withdrawalMethodType" onchange="updateWithdrawalForm()">
+                        <option value="bank">Bank Account</option>
+                        <option value="interac">Interac e-Transfer</option>
+                    </select>
+                </div>
 
-        // Payout Selection
-        function selectPayout(method) {
-            selectedPayout = method;
+                <!-- Bank Form -->
+                <div id="bankForm" class="withdrawal-form">
+                    <div class="form-group">
+                        <label for="bankName" class="form-label">Bank Name</label>
+                        <input type="text" id="bankName" class="form-input" placeholder="TD Canada Trust">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountNumber" class="form-label">Account Number</label>
+                        <input type="text" id="accountNumber" class="form-input" placeholder="123456789">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transitNumber" class="form-label">Transit Number</label>
+                        <input type="text" id="transitNumber" class="form-input" placeholder="12345">
+                        <p class="form-hint">5-digit branch number</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="institutionNumber" class="form-label">Institution Number</label>
+                        <input type="text" id="institutionNumber" class="form-input" placeholder="004">
+                        <p class="form-hint">3-digit bank code</p>
+                    </div>
+                </div>
+
+                <!-- Interac Form -->
+                <div id="interacForm" class="withdrawal-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="interacEmail" class="form-label">Email Address</label>
+                        <input type="email" id="interacEmail" class="form-input" placeholder="your@email.com">
+                        <p class="form-hint">Email registered for Interac e-Transfer</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="interacName" class="form-label">Account Holder Name</label>
+                        <input type="text" id="interacName" class="form-input" placeholder="Jane Smith">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveNewWithdrawalMethod()">
+                    Save Withdrawal Method
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // State Management
+        const appState = {
+            currentStep: 1,
+            selectedWithdrawalMethod: 'bank',
+            selectedWithdrawalId: 'bank_1',
+            selectedWallet: 'hCAD',
+            walletBalance: 1250.50,
+            amount: 0,
+            transactionFee: 0,
+            saveMethod: null
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStepperProgress();
+        });
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
             
-            // Update UI
-            document.querySelectorAll('.payout-card').forEach(card => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+            hamburger.setAttribute('aria-expanded', !isExpanded);
+            
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Withdrawal Method Selection
+        function selectWithdrawalMethod(method, id, element) {
+            document.querySelectorAll('.saved-method-card').forEach(card => {
                 card.classList.remove('selected');
-                card.setAttribute('aria-checked', 'false');
+                card.setAttribute('aria-selected', 'false');
             });
             
-            const selectedCard = document.querySelector(`[data-method="${method}"]`);
-            selectedCard.classList.add('selected');
-            selectedCard.setAttribute('aria-checked', 'true');
+            element.classList.add('selected');
+            element.setAttribute('aria-selected', 'true');
             
-            // Enable continue button
-            document.getElementById('step1Continue').disabled = false;
+            appState.selectedWithdrawalMethod = method;
+            appState.selectedWithdrawalId = id;
+        }
+
+        // Wallet Selection
+        function selectWallet(wallet, balance, element) {
+            document.querySelectorAll('.wallet-card').forEach(card => {
+                card.classList.remove('selected');
+            });
             
-            // Announce to screen readers
-            announceToScreenReader(`${method} selected as payout destination`);
+            element.classList.add('selected');
+            
+            appState.selectedWallet = wallet;
+            appState.walletBalance = balance;
+            
+            // Update available balance display in step 3
+            const currencySymbol = wallet === 'hEUR' ? '€' : wallet === 'hGBP' ? '£' : '$';
+            document.getElementById('availableBalance').textContent = `${currencySymbol}${balance.toFixed(2)} ${wallet.replace('h', '')}`;
+        }
+
+        // Add New Withdrawal Method
+        function showAddNewWithdrawal() {
+            document.getElementById('addWithdrawalModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddWithdrawalModal() {
+            document.getElementById('addWithdrawalModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateWithdrawalForm() {
+            const type = document.getElementById('withdrawalMethodType').value;
+            
+            document.getElementById('bankForm').style.display = 'none';
+            document.getElementById('interacForm').style.display = 'none';
+            
+            if (type === 'bank') {
+                document.getElementById('bankForm').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Add Bank Account';
+            } else if (type === 'interac') {
+                document.getElementById('interacForm').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Add Interac e-Transfer';
+            }
+        }
+
+        function saveNewWithdrawalMethod() {
+            alert('Withdrawal method saved successfully!');
+            closeAddWithdrawalModal();
+        }
+
+        // Amount Validation
+        function validateAmount() {
+            const input = document.getElementById('amountInput');
+            const error = document.getElementById('amountError');
+            const continueBtn = document.getElementById('step3Continue');
+            const amount = parseFloat(input.value);
+            
+            if (isNaN(amount) || amount < 10 || amount > appState.walletBalance) {
+                input.classList.add('error');
+                error.classList.add('active');
+                error.textContent = amount > appState.walletBalance 
+                    ? 'Amount exceeds available balance' 
+                    : 'Please enter an amount of at least $10';
+                continueBtn.disabled = true;
+                appState.amount = 0;
+            } else {
+                input.classList.remove('error');
+                error.classList.remove('active');
+                continueBtn.disabled = false;
+                appState.amount = amount;
+                updateWithdrawalSummary();
+            }
+        }
+
+        function setAmount(amount) {
+            document.getElementById('amountInput').value = Math.min(amount, appState.walletBalance);
+            validateAmount();
+        }
+
+        function setMaxAmount() {
+            document.getElementById('amountInput').value = appState.walletBalance;
+            validateAmount();
+        }
+
+        function updateWithdrawalSummary() {
+            const amount = appState.amount;
+            
+            // Calculate fee (1% for example)
+            const fee = amount * 0.01;
+            const netAmount = amount - fee;
+            
+            appState.transactionFee = fee;
+            
+            const currencyCode = appState.selectedWallet.replace('h', '');
+            const currencySymbol = appState.selectedWallet === 'hEUR' ? '€' : appState.selectedWallet === 'hGBP' ? '£' : '$';
+            
+            // Update summary
+            document.getElementById('withdrawAmount').textContent = `${currencySymbol}${amount.toFixed(2)} ${currencyCode}`;
+            document.getElementById('transactionFee').textContent = `${currencySymbol}${fee.toFixed(2)}`;
+            document.getElementById('youReceive').textContent = `${currencySymbol}${netAmount.toFixed(2)} ${currencyCode}`;
         }
 
         // Step Navigation
-        function goToStep(step) {
-            // Hide all steps
+        function goToStep(stepNumber) {
+            if (stepNumber > appState.currentStep) {
+                if (stepNumber === 2 && !appState.selectedWithdrawalMethod) {
+                    alert('Please select a withdrawal destination');
+                    return;
+                }
+                if (stepNumber === 3 && !appState.selectedWallet) {
+                    alert('Please select a source wallet');
+                    return;
+                }
+                if (stepNumber === 4 && appState.amount === 0) {
+                    alert('Please enter a valid amount');
+                    return;
+                }
+            }
+            
             document.querySelectorAll('.step-content').forEach(content => {
                 content.classList.remove('active');
             });
             
-            // Show target step
-            document.getElementById(`step${step}`).classList.add('active');
+            document.getElementById('step' + stepNumber).classList.add('active');
             
-            // Update stepper
-            document.querySelectorAll('.step').forEach((stepEl, index) => {
-                stepEl.classList.remove('active', 'completed');
-                if (index + 1 < step) {
-                    stepEl.classList.add('completed');
-                } else if (index + 1 === step) {
-                    stepEl.classList.add('active');
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+                if (stepNum < stepNumber) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (stepNum === stepNumber) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
                 }
             });
             
-            // Update progress bar
-            const progress = ((step - 1) / 3) * 100;
-            document.getElementById('stepperProgress').style.width = `${progress}%`;
+            appState.currentStep = stepNumber;
+            updateStepperProgress();
             
-            // Update aria
-            document.querySelector('.stepper').setAttribute('aria-valuenow', step);
-            
-            currentStep = step;
-            
-            // Calculate on step 2
-            if (step === 2) {
-                calculateConversion();
-            }
-            
-            // Update confirmation on step 3
-            if (step === 3) {
+            if (stepNumber === 4) {
                 updateConfirmation();
             }
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            announceToScreenReader(`Step ${step} of 4`);
         }
 
-        // Amount Functions
-        function setAmount(value) {
-            document.getElementById('amountInput').value = value;
-            calculateConversion();
+        function updateStepperProgress() {
+            const progress = document.getElementById('stepperProgress');
+            const percentage = ((appState.currentStep - 1) / 4) * 100;
+            progress.style.width = percentage + '%';
         }
 
-        function calculateConversion() {
-            const input = document.getElementById('amountInput');
-            let value = parseFloat(input.value) || 0;
-            
-            // Validation
-            const errorEl = document.getElementById('amountError');
-            const errorText = document.getElementById('amountErrorText');
-            
-            if (value < 10 && value > 0) {
-                input.classList.add('error');
-                errorEl.classList.add('show');
-                errorText.textContent = 'Minimum withdrawal is 10 hCAD';
-                return;
-            } else if (value > availableBalance) {
-                input.classList.add('error');
-                errorEl.classList.add('show');
-                errorText.textContent = 'Insufficient balance';
-                return;
-            } else {
-                input.classList.remove('error');
-                errorEl.classList.remove('show');
-            }
-            
-            amount = value;
-            
-            // Calculate fees (1 hCAD network fee)
-            const fee = 1;
-            const receive = value - fee;
-            
-            // Update summary
-            document.getElementById('summaryWithdraw').textContent = `${value.toFixed(2)} hCAD`;
-            document.getElementById('summaryFee').textContent = `${fee.toFixed(2)} hCAD`;
-            document.getElementById('summaryRate').textContent = `1 hCAD = $1.00 CAD`;
-            document.getElementById('summaryReceive').textContent = `$${receive.toFixed(2)} CAD`;
-        }
-
-        // Update Confirmation
         function updateConfirmation() {
-            const payoutMap = {
-                'bank-td': 'TD Bank ****1234',
-                'interac': 'Interac e-Transfer (jane@example.com)'
-            };
+            const currencyCode = appState.selectedWallet.replace('h', '');
+            const currencySymbol = appState.selectedWallet === 'hEUR' ? '€' : appState.selectedWallet === 'hGBP' ? '£' : '$';
+            const netAmount = appState.amount - appState.transactionFee;
             
-            const fee = 1;
-            const receive = amount - fee;
+            // Get withdrawal method details
+            const selectedCard = document.querySelector(`[data-id="${appState.selectedWithdrawalId}"]`);
+            const methodName = selectedCard.querySelector('.method-name').textContent;
+            const methodInfo = selectedCard.querySelector('.method-info').textContent;
             
-            document.getElementById('confirmDestination').textContent = payoutMap[selectedPayout];
-            document.getElementById('confirmAmount').textContent = `${amount.toFixed(2)} hCAD`;
-            document.getElementById('confirmFee').textContent = `${fee.toFixed(2)} hCAD`;
-            document.getElementById('confirmReceive').textContent = `$${receive.toFixed(2)} CAD`;
+            document.getElementById('confirmDestination').textContent = `${methodName} (${methodInfo})`;
+            document.getElementById('confirmWallet').textContent = `${appState.selectedWallet} Wallet`;
+            document.getElementById('confirmAmount').textContent = `${currencySymbol}${appState.amount.toFixed(2)} ${currencyCode}`;
+            document.getElementById('confirmFee').textContent = `${currencySymbol}${appState.transactionFee.toFixed(2)}`;
+            document.getElementById('confirmReceive').textContent = `${currencySymbol}${netAmount.toFixed(2)} ${currencyCode}`;
         }
 
-        // Confirm Withdrawal
-        function confirmWithdrawal() {
+        // Transaction Processing
+        function processWithdrawal() {
             const btn = event.target;
-            btn.classList.add('loading');
-            btn.textContent = 'Processing...';
+            btn.disabled = true;
+            btn.innerHTML = '<span>Processing...</span>';
             
-            // Go to processing state
-            goToStep(4);
-            
-            // Simulate processing
             setTimeout(() => {
-                // Hide processing, show success
-                document.getElementById('processingState').style.display = 'none';
-                document.getElementById('successState').style.display = 'block';
-                
-                // Update success details
-                const fee = 1;
-                const receive = amount - fee;
-                document.getElementById('successAmount').textContent = `$${receive.toFixed(2)} CAD`;
-                document.getElementById('transactionId').textContent = `0x${Math.random().toString(16).substr(2, 40)}`;
-                
-                btn.classList.remove('loading');
-                announceToScreenReader('Withdrawal completed successfully!');
-            }, 2500);
+                goToStep(5);
+                updateSuccessScreen();
+                btn.disabled = false;
+                btn.innerHTML = 'Confirm Withdrawal <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+            }, 2000);
         }
 
-        // Keyboard Navigation
-        function handleCardKeypress(event, value) {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                selectPayout(value);
+        function updateSuccessScreen() {
+            const currencyCode = appState.selectedWallet.replace('h', '');
+            const currencySymbol = appState.selectedWallet === 'hEUR' ? '€' : appState.selectedWallet === 'hGBP' ? '£' : '$';
+            const netAmount = appState.amount - appState.transactionFee;
+            
+            const txId = 'WD' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            
+            const now = new Date();
+            const dateTime = now.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            const selectedCard = document.querySelector(`[data-id="${appState.selectedWithdrawalId}"]`);
+            const methodName = selectedCard.querySelector('.method-name').textContent;
+            const methodInfo = selectedCard.querySelector('.method-info').textContent;
+            
+            document.getElementById('successAmount').textContent = `-${currencySymbol}${appState.amount.toFixed(2)} ${currencyCode}`;
+            document.getElementById('successTxId').textContent = txId;
+            document.getElementById('successDateTime').textContent = dateTime;
+            document.getElementById('successDestination').textContent = `${methodName} (${methodInfo})`;
+        }
+
+        // Save Method Prompt
+        function selectSaveOption(option, element) {
+            appState.saveMethod = option;
+            
+            document.querySelectorAll('.save-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        function completeSaveChoice() {
+            if (!appState.saveMethod) {
+                alert('Please select an option');
+                return;
             }
+            
+            if (appState.saveMethod === 'yes') {
+                alert('Withdrawal method saved successfully!');
+            }
+            
+            document.getElementById('savePrompt').style.display = 'none';
         }
 
-        // Screen Reader Announcements
-        function announceToScreenReader(message) {
-            const announcement = document.createElement('div');
-            announcement.setAttribute('role', 'status');
-            announcement.setAttribute('aria-live', 'polite');
-            announcement.style.position = 'absolute';
-            announcement.style.left = '-10000px';
-            announcement.textContent = message;
-            document.body.appendChild(announcement);
-            setTimeout(() => announcement.remove(), 1000);
+        // Reset Flow
+        function resetFlow() {
+            appState.currentStep = 1;
+            appState.amount = 0;
+            appState.transactionFee = 0;
+            appState.saveMethod = null;
+            
+            document.getElementById('amountInput').value = '';
+            document.getElementById('savePrompt').style.display = 'block';
+            
+            goToStep(1);
         }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Pre-select bank
-            selectPayout('bank-td');
-            
-            // Initialize conversion
-            calculateConversion();
-            
-            // Announce page load
-            announceToScreenReader('Withdraw page loaded. Step 1 of 4: Select payout destination.');
-        });
     </script>
 </body>
 </html>
