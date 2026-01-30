@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - UNERA</title>
+    <title>Login - UNERA</title>
     <style>
         * {
             margin: 0;
@@ -259,47 +259,6 @@
 
         .checkbox-label a:hover {
             text-decoration: underline;
-        }
-
-        /* ===== PASSWORD STRENGTH METER ===== */
-        .strength-bar {
-            height: 4px;
-            flex: 1;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .strength-bar.active {
-            background: var(--impact-green);
-        }
-
-        .strength-bar[data-level="1"].active {
-            background: #EF4444; /* Red - Weak */
-        }
-
-        .strength-bar[data-level="2"].active {
-            background: #F59E0B; /* Orange - Fair */
-        }
-
-        .strength-bar[data-level="3"].active {
-            background: #10B981; /* Green - Good */
-        }
-
-        .strength-bar[data-level="4"].active {
-            background: #059669; /* Dark Green - Strong */
-        }
-
-        .requirement.met {
-            color: var(--impact-green) !important;
-        }
-
-        .requirement.met .req-icon {
-            color: var(--impact-green);
-        }
-
-        .requirement.met .req-icon::before {
-            content: '✓';
         }
 
         /* ===== TABBED AUTH INTERFACE ===== */
@@ -678,69 +637,52 @@
             display: block;
         }
 
-        /* Role Selection - Full Width Equal Buttons */
+        /* Role Selection */
         .role-selection {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.375rem;
         }
 
-        .role-option {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.875rem 1.375rem;
-            border: 2.5px solid rgba(0, 0, 0, 0.12);
+        .role-card {
+            padding: 1.375rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
             border-radius: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
-            background: white;
-            position: relative;
+            transition: all 0.2s;
+            text-align: center;
         }
 
-        .role-option:hover {
+        .role-card:hover {
             border-color: var(--impact-green);
-            background: rgba(16, 185, 129, 0.04);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.03);
         }
 
-        .role-option:has(input:checked) {
+        .role-card.selected {
             border-color: var(--impact-green);
             background: rgba(16, 185, 129, 0.08);
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
         }
 
-        .role-option input[type="radio"] {
-            width: 20px !important;
-            height: 20px !important;
-            min-width: 20px !important;
-            min-height: 20px !important;
-            cursor: pointer;
-            accent-color: var(--impact-green);
-            margin: 0;
-            flex-shrink: 0;
+        .role-card input[type="radio"] {
+            display: none;
         }
 
-        .role-label {
-            font-size: 1rem;
+        .role-icon {
+            font-size: 2rem;
+            margin-bottom: 0.688rem;
+        }
+
+        .role-title {
             font-weight: 600;
+            font-size: 0.938rem;
             color: var(--stone-dark);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: color 0.2s;
+            margin-bottom: 0.25rem;
         }
 
-        .role-option:has(input:checked) .role-label {
-            color: var(--impact-green);
-        }
-
-        .role-label .emoji {
-            font-size: 1.25rem;
+        .role-desc {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
         }
 
         /* ===== MODAL STYLES ===== */
@@ -958,25 +900,10 @@
         <div class="signup-card">
             <!-- LEFT SIDE: FORM -->
             <div class="form-section">
-                <!-- Step 1: Account -->
-                <div class="form-step active" id="step1">
-                    <h1 class="form-title">Create Your Account</h1>
-                    <p class="form-subtitle">Join the circular impact economy and start making a difference that lasts forever.</p>
-
-                    <!-- Role Selection - Minimal & Top -->
-                    <div class="form-group">
-                        <label class="form-label" style="margin-bottom: 0.75rem; text-align: center; display: block;">I want to join as</label>
-                        <div class="role-selection">
-                            <label class="role-option">
-                                <input type="radio" name="role" value="donor" checked>
-                                <span class="role-label"><span class="emoji">💝</span> Donor</span>
-                            </label>
-                            <label class="role-option">
-                                <input type="radio" name="role" value="hc_operator">
-                                <span class="role-label"><span class="emoji">🏛️</span> HC Operator</span>
-                            </label>
-                        </div>
-                    </div>
+                <!-- Login Form -->
+                <div class="form-step active" id="loginForm">
+                    <h1 class="form-title">Welcome Back</h1>
+                    <p class="form-subtitle">Sign in to continue your impact journey and make a difference that lasts forever.</p>
 
                     <!-- Auth Method Tabs -->
                     <div class="auth-tabs" role="tablist">
@@ -996,7 +923,7 @@
 
                     <!-- Wallet Panel -->
                     <div class="auth-panel wallet-panel active" role="tabpanel" id="wallet-panel" aria-labelledby="wallet-tab">
-                        <p style="text-align: center; font-size: 0.875rem; color: var(--stone-medium); margin-bottom: 1.5rem;">Connect your crypto wallet to get started instantly</p>
+                        <p style="text-align: center; font-size: 0.875rem; color: var(--stone-medium); margin-bottom: 1.5rem;">Connect your crypto wallet to sign in instantly</p>
                         <div class="social-login">
                             <button class="social-btn" onclick="connectWalletWithLoading(this, 'metamask')">
                                 <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20">
@@ -1014,7 +941,7 @@
                             </button>
 
                             <button class="social-btn" onclick="connectWalletWithLoading(this, 'coinbase')">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
+                                <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20">
                                     <circle cx="12" cy="12" r="10" fill="#0052FF"/>
                                     <path d="M8.5 12a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5h0a3.5 3.5 0 0 1-3.5 3.5h0a3.5 3.5 0 0 1-3.5-3.5z" fill="white"/>
                                 </svg>
@@ -1025,7 +952,7 @@
 
                     <!-- Social Panel -->
                     <div class="auth-panel social-panel" role="tabpanel" id="social-panel" aria-labelledby="social-tab">
-                        <p style="text-align: center; font-size: 0.875rem; color: var(--stone-medium); margin-bottom: 1.5rem;">Sign up with your existing account</p>
+                        <p style="text-align: center; font-size: 0.875rem; color: var(--stone-medium); margin-bottom: 1.5rem;">Sign in with your existing account</p>
                         <div class="social-login">
                             <button class="social-btn" onclick="socialLogin('google')">
                                 <svg viewBox="0 0 24 24" width="20" height="20">
@@ -1058,269 +985,54 @@
 
                     <!-- Email Panel -->
                     <div class="auth-panel email-panel" role="tabpanel" id="email-panel" aria-labelledby="email-tab">
-                        <p style="text-align: center; font-size: 0.875rem; color: var(--stone-medium); margin-bottom: 1.5rem;">Create your account with email or phone</p>
-                        <form id="signupForm">
+                        <p style="text-align: center; font-size: 0.875rem; color: var(--stone-medium); margin-bottom: 1.5rem;">Sign in with your email or phone</p>
+                        <form id="loginFormElement" onsubmit="return false;">
                             <div class="form-group">
-                                <label class="form-label" for="emailOrPhone">Email or Mobile Number *</label>
-                                <input 
-                                    type="text" 
-                                    id="emailOrPhone" 
-                                    name="emailOrPhone"
-                                    class="form-input" 
-                                    placeholder="your@email.com or +1234567890" 
-                                    data-validate="email"
-                                    autocomplete="email"
-                                    aria-required="true"
-                                    required>
+                                <label class="form-label">Email or Mobile Number</label>
+                                <input type="text" id="loginEmailOrPhone" class="form-input" placeholder="your@email.com or +1234567890" autocomplete="email" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label" for="fullName">Full Name *</label>
-                                <input 
-                                    type="text" 
-                                    id="fullName"
-                                    name="fullName"
-                                    class="form-input" 
-                                    placeholder="John Smith" 
-                                    data-validate="text"
-                                    minlength="2"
-                                    maxlength="50"
-                                    autocomplete="name"
-                                    aria-required="true"
-                                    required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="password">Create Password *</label>
+                                <label class="form-label">Password</label>
                                 <div style="position: relative;">
-                                    <input 
-                                        type="password" 
-                                        id="password"
-                                        name="password"
-                                        class="form-input" 
-                                        placeholder="Create a strong password" 
-                                        autocomplete="new-password"
-                                        aria-required="true"
-                                        style="padding-right: 3rem;"
-                                        required>
+                                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" autocomplete="current-password" style="padding-right: 3rem;" required>
                                     <button 
                                         type="button" 
                                         class="password-toggle" 
-                                        onclick="togglePasswordVisibility('password')"
+                                        onclick="toggleLoginPasswordVisibility()"
                                         style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--stone-medium); padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
-                                        <svg id="password-eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <svg id="login-eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                                             <circle cx="12" cy="12" r="3"/>
                                         </svg>
-                                        <svg id="password-eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                        <svg id="login-eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
                                             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
                                             <line x1="1" y1="1" x2="23" y2="23"/>
                                         </svg>
                                     </button>
                                 </div>
-                                
-                                <!-- Password Strength Meter -->
-                                <div id="password-strength" style="margin-top: 0.5rem; display: none;">
-                                    <div style="display: flex; gap: 0.25rem; margin-bottom: 0.5rem;">
-                                        <div class="strength-bar" data-level="1"></div>
-                                        <div class="strength-bar" data-level="2"></div>
-                                        <div class="strength-bar" data-level="3"></div>
-                                        <div class="strength-bar" data-level="4"></div>
-                                    </div>
-                                    <div id="password-strength-text" style="font-size: 0.813rem; font-weight: 500;"></div>
-                                </div>
-
-                                <!-- Password Requirements -->
-                                <div id="password-requirements" style="margin-top: 0.75rem; padding: 0.875rem; background: rgba(0, 0, 0, 0.02); border-radius: 0.5rem; font-size: 0.813rem;">
-                                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--stone-dark);">Password must contain:</div>
-                                    <div class="requirement" id="req-length" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.375rem; color: var(--stone-medium);">
-                                        <span class="req-icon">○</span>
-                                        <span>At least 8 characters</span>
-                                    </div>
-                                    <div class="requirement" id="req-uppercase" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.375rem; color: var(--stone-medium);">
-                                        <span class="req-icon">○</span>
-                                        <span>One uppercase letter</span>
-                                    </div>
-                                    <div class="requirement" id="req-lowercase" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.375rem; color: var(--stone-medium);">
-                                        <span class="req-icon">○</span>
-                                        <span>One lowercase letter</span>
-                                    </div>
-                                    <div class="requirement" id="req-number" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.375rem; color: var(--stone-medium);">
-                                        <span class="req-icon">○</span>
-                                        <span>One number</span>
-                                    </div>
-                                    <div class="requirement" id="req-special" style="display: flex; align-items: center; gap: 0.5rem; color: var(--stone-medium);">
-                                        <span class="req-icon">○</span>
-                                        <span>One special character (@$!%*?&)</span>
-                                    </div>
-                                </div>
+                                <div id="login-error" style="margin-top: 0.5rem; font-size: 0.813rem; color: #EF4444; display: none;"></div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="confirmPassword">Confirm Password *</label>
-                                <div style="position: relative;">
-                                    <input 
-                                        type="password" 
-                                        id="confirmPassword"
-                                        name="confirmPassword"
-                                        class="form-input" 
-                                        placeholder="Re-enter your password" 
-                                        autocomplete="new-password"
-                                        aria-required="true"
-                                        style="padding-right: 3rem;"
-                                        required>
-                                    <button 
-                                        type="button" 
-                                        class="password-toggle" 
-                                        onclick="togglePasswordVisibility('confirmPassword')"
-                                        style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--stone-medium); padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
-                                        <svg id="confirmPassword-eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                            <circle cx="12" cy="12" r="3"/>
-                                        </svg>
-                                        <svg id="confirmPassword-eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                                            <line x1="1" y1="1" x2="23" y2="23"/>
-                                        </svg>
-                                    </button>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.375rem;">
+                                <div class="checkbox-group" style="margin: 0;">
+                                    <input type="checkbox" class="checkbox-input" id="remember">
+                                    <label class="checkbox-label" for="remember" style="margin: 0;">
+                                        Remember me
+                                    </label>
                                 </div>
-                                <div id="password-match-error" style="margin-top: 0.5rem; font-size: 0.813rem; color: #EF4444; display: none;">
-                                    ✗ Passwords do not match
-                                </div>
-                                <div id="password-match-success" style="margin-top: 0.5rem; font-size: 0.813rem; color: var(--impact-green); display: none;">
-                                    ✓ Passwords match
-                                </div>
+                                <a href="forgot-password.html" style="color: var(--impact-green); font-size: 0.875rem; text-decoration: none; font-weight: 500;">Forgot password?</a>
                             </div>
 
-                            <div class="checkbox-group">
-                                <input type="checkbox" class="checkbox-input" id="terms" name="terms" aria-required="true" required>
-                                <label class="checkbox-label" for="terms">
-                                    I agree to the <a href="#" style="color: var(--impact-green); text-decoration: underline;">Terms of Service</a> and <a href="#" style="color: var(--impact-green); text-decoration: underline;">Privacy Policy</a>
-                                </label>
-                            </div>
-
-                            <button type="button" class="submit-btn" onclick="validateAndProceed()">Continue</button>
+                            <button type="button" class="submit-btn" onclick="validateAndLogin()">Sign In</button>
                         </form>
                     </div>
 
                     <div class="login-link">
-                        Already have an account? <a href="login_2.html">Log in</a>
+                        Don't have an account? <a href="signup_2.html">Sign up</a>
                     </div>
                 </div>
 
-                <!-- Step 2: Verify -->
-                <div class="form-step" id="step2">
-                    <h1 class="form-title">Verify Your Contact</h1>
-                    <p class="form-subtitle">We've sent a verification code to <strong id="sentTo">your contact</strong>. Please enter it below.</p>
-
-                    <div class="success-message" style="background: rgba(16, 185, 129, 0.1); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.375rem; color: var(--impact-green); font-size: 0.875rem; text-align: center;">
-                        ✓ Verification code sent successfully!
-                    </div>
-
-                    <form id="verificationForm">
-                        <div class="form-group">
-                            <label class="form-label">Enter Verification Code</label>
-                            <div style="display: flex; gap: 0.688rem; justify-content: center; margin-bottom: 1rem;">
-                                <input type="text" maxlength="1" class="form-input verify-digit" style="width: 50px; text-align: center; font-size: 1.5rem; font-weight: 600;" data-index="0">
-                                <input type="text" maxlength="1" class="form-input verify-digit" style="width: 50px; text-align: center; font-size: 1.5rem; font-weight: 600;" data-index="1">
-                                <input type="text" maxlength="1" class="form-input verify-digit" style="width: 50px; text-align: center; font-size: 1.5rem; font-weight: 600;" data-index="2">
-                                <input type="text" maxlength="1" class="form-input verify-digit" style="width: 50px; text-align: center; font-size: 1.5rem; font-weight: 600;" data-index="3">
-                                <input type="text" maxlength="1" class="form-input verify-digit" style="width: 50px; text-align: center; font-size: 1.5rem; font-weight: 600;" data-index="4">
-                                <input type="text" maxlength="1" class="form-input verify-digit" style="width: 50px; text-align: center; font-size: 1.5rem; font-weight: 600;" data-index="5">
-                            </div>
-                            <div style="text-align: center;">
-                                <a href="#" style="color: var(--impact-green); font-size: 0.875rem; text-decoration: none; font-weight: 500;" onclick="resendCode(); return false;">Resend code</a>
-                            </div>
-                        </div>
-
-                        <button type="button" class="submit-btn" onclick="nextStep(3)">Verify & Continue</button>
-                        <button type="button" class="btn btn-secondary" style="width: 100%; padding: 0.875rem; border: 1.5px solid rgba(0, 0, 0, 0.1); border-radius: 0.75rem; background: white; font-family: var(--font-body); font-size: 0.938rem; font-weight: 500; color: var(--stone-dark); cursor: pointer; transition: all 0.2s; margin-top: 0.75rem;" onclick="nextStep(1)">Back</button>
-                    </form>
-                </div>
-
-                <!-- Step 3: Profile -->
-                <div class="form-step" id="step3">
-                    <h1 class="form-title">Complete Your Profile</h1>
-                    <p class="form-subtitle">Help us personalize your experience and ensure compliance with financial regulations.</p>
-
-                    <form id="profileForm">
-                        <div class="form-group">
-                            <label class="form-label">Country</label>
-                            <select class="form-input" id="country" required>
-                                <option value="">Select your country</option>
-                                <option value="CA">🇨🇦 Canada</option>
-                                <option value="US">🇺🇸 United States</option>
-                                <option value="GB">🇬🇧 United Kingdom</option>
-                                <option value="AU">🇦🇺 Australia</option>
-                                <option value="DE">🇩🇪 Germany</option>
-                                <option value="FR">🇫🇷 France</option>
-                                <option value="JP">🇯🇵 Japan</option>
-                                <option value="SG">🇸🇬 Singapore</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Date of Birth</label>
-                            <input type="date" class="form-input" id="dob" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Address</label>
-                            <input type="text" class="form-input" id="address" placeholder="123 Main Street" required>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">City</label>
-                                <input type="text" class="form-input" id="city" placeholder="Toronto" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Postal Code</label>
-                                <input type="text" class="form-input" id="postal" placeholder="M5V 3A8" required>
-                            </div>
-                        </div>
-
-                        <button type="button" class="submit-btn" onclick="nextStep(4)">Continue</button>
-                        <button type="button" class="btn btn-secondary" style="width: 100%; padding: 0.875rem; border: 1.5px solid rgba(0, 0, 0, 0.1); border-radius: 0.75rem; background: white; font-family: var(--font-body); font-size: 0.938rem; font-weight: 500; color: var(--stone-dark); cursor: pointer; transition: all 0.2s; margin-top: 0.75rem;" onclick="nextStep(2)">Back</button>
-                    </form>
-                </div>
-
-                <!-- Step 4: KYC -->
-                <div class="form-step" id="step4">
-                    <div style="text-align: center; padding: 1rem 0;">
-                        <div style="width: 100px; height: 100px; margin: 0 auto 1.375rem; background: var(--gradient-impact); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);">
-                            <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; stroke: white; fill: none; stroke-width: 2.5;">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                <path d="M9 12l2 2 4-4"/>
-                            </svg>
-                        </div>
-                        
-                        <h1 class="form-title" style="margin-bottom: 0.688rem;">Identity Verification Required</h1>
-                        <p class="form-subtitle" style="margin-bottom: 2rem;">
-                            To comply with financial regulations and keep our community safe, we need to verify your identity. 
-                            This process takes just 2-3 minutes.
-                        </p>
-
-                        <div style="background: rgba(14, 165, 233, 0.08); border-radius: 1rem; padding: 1.375rem; margin-bottom: 1.375rem; text-align: left;">
-                            <h4 style="font-weight: 600; margin-bottom: 0.75rem; color: var(--stone-dark); font-size: 0.938rem;">What you'll need:</h4>
-                            <ul style="color: var(--stone-medium); line-height: 1.8; padding-left: 1.375rem; font-size: 0.875rem;">
-                                <li>Government-issued ID (passport, driver's license, or national ID)</li>
-                                <li>A smartphone or webcam for selfie verification</li>
-                                <li>Good lighting and 2-3 minutes of your time</li>
-                            </ul>
-                        </div>
-
-                        <div style="background: rgba(16, 185, 129, 0.08); border-radius: 1rem; padding: 1rem; margin-bottom: 2rem; font-size: 0.875rem; color: var(--stone-medium); text-align: left; border: 1px solid rgba(16, 185, 129, 0.2);">
-                            <strong style="color: var(--impact-green);">🔒 Your privacy matters:</strong> All data is encrypted and securely stored. 
-                            We never share your information without your consent.
-                        </div>
-
-                        <button type="button" class="submit-btn" onclick="window.location.href='kyc-verify.html'">
-                            Start Identity Verification
-                        </button>
-                        <button type="button" class="btn btn-secondary" style="width: 100%; padding: 0.875rem; border: 1.5px solid rgba(0, 0, 0, 0.1); border-radius: 0.75rem; background: white; font-family: var(--font-body); font-size: 0.938rem; font-weight: 500; color: var(--stone-dark); cursor: pointer; transition: all 0.2s; margin-top: 0.75rem;" onclick="nextStep(3)">Back</button>
-                    </div>
-                </div>
             </div>
 
             <!-- RIGHT SIDE: ILLUSTRATION & STEPS -->
@@ -1342,19 +1054,12 @@
                     <path d="M12 8v4l3 3" stroke="white" stroke-width="2" stroke-linecap="round"/>
                 </svg>
 
-                <!-- Step Indicator (at top) -->
+                <!-- Login Info -->
                 <div class="step-indicator">
-                    <div class="step-badges">
-                        <div class="step-badge active" id="badge1">1</div>
-                        <div class="step-badge" id="badge2">2</div>
-                        <div class="step-badge" id="badge3">3</div>
-                        <div class="step-badge" id="badge4">4</div>
-                    </div>
-
-                    <div class="step-title" id="stepTitle">Step 1: Create Account</div>
-                    <h2 class="step-heading" id="stepHeading">Start Your Impact Journey</h2>
-                    <p class="step-description" id="stepDescription">
-                        Create your account in seconds using Google, Apple, Microsoft, or email. Join thousands of changemakers creating endless positive impact in communities worldwide.
+                    <div class="step-title">SECURE LOGIN</div>
+                    <h2 class="step-heading">Continue Your Impact</h2>
+                    <p class="step-description">
+                        Welcome back to UNERA! Sign in to access your dashboard and join a global network where every exchange supports communities, shared prosperity, and human well-being.
                     </p>
                 </div>
 
@@ -1367,10 +1072,10 @@
                                 <stop offset="100%" style="stop-color:#0EA5E9;stop-opacity:1" />
                             </linearGradient>
                         </defs>
-                        <!-- Layers Icon for Step 1 (Journey/Building) -->
-                        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 17l10 5 10-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 12l10 5 10-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Login Icon -->
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="10 17 15 12 10 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="15" y1="12" x2="3" y2="12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
             </div>
@@ -1482,7 +1187,7 @@
                         <li>Click "Continue" to open the authentication window</li>
                         <li>Sign in to your account if not already logged in</li>
                         <li>Review and approve the permissions requested</li>
-                        <li>You'll be automatically redirected back to complete signup</li>
+                        <li>You'll be automatically redirected back to your dashboard</li>
                     </ol>
                 </div>
 
@@ -1496,6 +1201,124 @@
     </div>
 
     <script>
+        // Tab switching for auth methods
+        function switchAuthTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+            document.getElementById(tabName + '-tab').setAttribute('aria-selected', 'true');
+            
+            // Update panels
+            document.querySelectorAll('.auth-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(tabName + '-panel').classList.add('active');
+        }
+
+        // ===== PASSWORD LOGIN VALIDATION =====
+        
+        // Toggle password visibility
+        function toggleLoginPasswordVisibility() {
+            const field = document.getElementById('loginPassword');
+            const eyeOpen = document.getElementById('login-eye-open');
+            const eyeClosed = document.getElementById('login-eye-closed');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                eyeOpen.style.display = 'none';
+                eyeClosed.style.display = 'block';
+            } else {
+                field.type = 'password';
+                eyeOpen.style.display = 'block';
+                eyeClosed.style.display = 'none';
+            }
+        }
+
+        // Validate and login
+        function validateAndLogin() {
+            const emailOrPhone = document.getElementById('loginEmailOrPhone');
+            const password = document.getElementById('loginPassword');
+            const errorDiv = document.getElementById('login-error');
+            
+            const emailOrPhoneValue = emailOrPhone.value.trim();
+            const passwordValue = password.value;
+            
+            // Get stored test credentials
+            const testEmail = localStorage.getItem('testEmail') || 'test@unera.com';
+            const testPassword = localStorage.getItem('testPassword') || 'Test@123';
+            
+            // Clear previous errors
+            errorDiv.style.display = 'none';
+            emailOrPhone.style.borderColor = '';
+            password.style.borderColor = '';
+            
+            // Validate email format
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const phonePattern = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
+            
+            if (!emailPattern.test(emailOrPhoneValue) && !phonePattern.test(emailOrPhoneValue.replace(/[\s\-\(\)\.]/g, ''))) {
+                errorDiv.textContent = '✗ Please enter a valid email or phone number';
+                errorDiv.style.display = 'block';
+                emailOrPhone.style.borderColor = '#EF4444';
+                emailOrPhone.focus();
+                return false;
+            }
+            
+            // Validate password
+            if (passwordValue.length === 0) {
+                errorDiv.textContent = '✗ Please enter your password';
+                errorDiv.style.display = 'block';
+                password.style.borderColor = '#EF4444';
+                password.focus();
+                return false;
+            }
+            
+            // Check credentials
+            if (emailOrPhoneValue === testEmail && passwordValue === testPassword) {
+                // Success!
+                errorDiv.style.display = 'none';
+                
+                // Set login state
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', 'Jane Smith');
+                localStorage.setItem('userEmail', emailOrPhoneValue);
+                localStorage.setItem('userInitials', 'JS');
+                localStorage.setItem('walletAddress', '0x742d...3a8f');
+                
+                // Show success message
+                alert('✓ Login successful!\n\nWelcome back to UNERA!');
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard-enhanced.html';
+                return true;
+            } else {
+                // Failed login
+                errorDiv.textContent = '✗ Invalid email or password. Please try again.';
+                errorDiv.style.display = 'block';
+                password.style.borderColor = '#EF4444';
+                emailOrPhone.style.borderColor = '#EF4444';
+                password.value = '';
+                password.focus();
+                return false;
+            }
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginFormElement');
+            if (form) {
+                form.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        validateAndLogin();
+                    }
+                });
+            }
+        });
+
         let currentStep = 1;
 
         const stepContent = {
@@ -1524,23 +1347,6 @@
                 icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
             }
         };
-
-        // Tab switching for auth methods
-        function switchAuthTab(tabName) {
-            // Update tabs
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.classList.remove('active');
-                tab.setAttribute('aria-selected', 'false');
-            });
-            document.getElementById(tabName + '-tab').classList.add('active');
-            document.getElementById(tabName + '-tab').setAttribute('aria-selected', 'true');
-            
-            // Update panels
-            document.querySelectorAll('.auth-panel').forEach(panel => {
-                panel.classList.remove('active');
-            });
-            document.getElementById(tabName + '-panel').classList.add('active');
-        }
 
         function nextStep(step) {
             // Hide current step
@@ -1693,10 +1499,10 @@
             status.className = 'connection-status connecting';
             status.innerHTML = '<span class="spinner"></span> Connecting to MetaMask...';
             
-            // Simulate wallet connection (for demo - in production, check window.ethereum)
+            // Simulate successful wallet connection (for demo - in production, check window.ethereum)
             setTimeout(() => {
                 status.className = 'connection-status success';
-                status.innerHTML = '✓ MetaMask connected successfully! Wallet: 0x742d...3a8f';
+                status.innerHTML = '✓ MetaMask connected successfully! Wallet: 0x742d...3a8f<br>Redirecting to dashboard...';
                 setTimeout(() => {
                     // Set login state
                     localStorage.setItem('isLoggedIn', 'true');
@@ -1705,8 +1511,7 @@
                     localStorage.setItem('userInitials', 'JS');
                     localStorage.setItem('walletAddress', '0x742d...3a8f');
                     closeMetaMaskModal();
-                    // Skip to dashboard or profile completion based on role
-                    window.location.href = 'dashboard-enhanced.html';
+                    window.location.href = 'dashboard-enhanced.html'; // Redirect to dashboard
                 }, 1500);
             }, 1500);
         }
@@ -1731,7 +1536,7 @@
             
             setTimeout(() => {
                 status.className = 'connection-status success';
-                status.innerHTML = '✓ WalletConnect connected successfully! Redirecting...';
+                status.innerHTML = '✓ WalletConnect connected successfully!<br>Redirecting to dashboard...';
                 setTimeout(() => {
                     // Set login state
                     localStorage.setItem('isLoggedIn', 'true');
@@ -1765,7 +1570,7 @@
             
             setTimeout(() => {
                 status.className = 'connection-status success';
-                status.innerHTML = '✓ Coinbase Wallet connected successfully! Redirecting...';
+                status.innerHTML = '✓ Coinbase Wallet connected successfully!<br>Redirecting to dashboard...';
                 setTimeout(() => {
                     // Set login state
                     localStorage.setItem('isLoggedIn', 'true');
@@ -1859,302 +1664,6 @@
 
         // Prevent body scroll when modal is open
         document.body.classList.remove('modal-open');
-        
-        // ===== PASSWORD VALIDATION AND STRENGTH METER =====
-        
-        // Password toggle visibility
-        function togglePasswordVisibility(fieldId) {
-            const field = document.getElementById(fieldId);
-            const eyeOpen = document.getElementById(`${fieldId}-eye-open`);
-            const eyeClosed = document.getElementById(`${fieldId}-eye-closed`);
-            
-            if (field.type === 'password') {
-                field.type = 'text';
-                eyeOpen.style.display = 'none';
-                eyeClosed.style.display = 'block';
-            } else {
-                field.type = 'password';
-                eyeOpen.style.display = 'block';
-                eyeClosed.style.display = 'none';
-            }
-        }
-
-        // Password validation requirements
-        const passwordRequirements = {
-            length: {
-                test: (pwd) => pwd.length >= 8,
-                id: 'req-length'
-            },
-            uppercase: {
-                test: (pwd) => /[A-Z]/.test(pwd),
-                id: 'req-uppercase'
-            },
-            lowercase: {
-                test: (pwd) => /[a-z]/.test(pwd),
-                id: 'req-lowercase'
-            },
-            number: {
-                test: (pwd) => /[0-9]/.test(pwd),
-                id: 'req-number'
-            },
-            special: {
-                test: (pwd) => /[@$!%*?&]/.test(pwd),
-                id: 'req-special'
-            }
-        };
-
-        // Check password strength
-        function checkPasswordStrength(password) {
-            let strength = 0;
-            let metRequirements = 0;
-
-            // Check each requirement
-            Object.keys(passwordRequirements).forEach(key => {
-                const req = passwordRequirements[key];
-                const element = document.getElementById(req.id);
-                
-                if (req.test(password)) {
-                    element.classList.add('met');
-                    metRequirements++;
-                } else {
-                    element.classList.remove('met');
-                }
-            });
-
-            // Calculate strength (0-4)
-            strength = metRequirements;
-
-            // Update strength meter
-            const strengthMeter = document.getElementById('password-strength');
-            const strengthText = document.getElementById('password-strength-text');
-            const bars = document.querySelectorAll('.strength-bar');
-
-            if (password.length > 0) {
-                strengthMeter.style.display = 'block';
-                
-                // Remove all active classes
-                bars.forEach(bar => bar.classList.remove('active'));
-                
-                // Add active class based on strength
-                for (let i = 0; i < strength; i++) {
-                    bars[i].classList.add('active');
-                }
-
-                // Update text
-                const strengthLabels = [
-                    { text: 'Weak password', color: '#EF4444' },
-                    { text: 'Fair password', color: '#F59E0B' },
-                    { text: 'Good password', color: '#F59E0B' },
-                    { text: 'Good password', color: '#10B981' },
-                    { text: 'Strong password', color: '#059669' }
-                ];
-
-                strengthText.textContent = strengthLabels[strength].text;
-                strengthText.style.color = strengthLabels[strength].color;
-            } else {
-                strengthMeter.style.display = 'none';
-            }
-
-            return metRequirements === 5; // All requirements met
-        }
-
-        // Real-time password validation
-        document.addEventListener('DOMContentLoaded', function() {
-            const passwordField = document.getElementById('password');
-            const confirmPasswordField = document.getElementById('confirmPassword');
-            const matchError = document.getElementById('password-match-error');
-            const matchSuccess = document.getElementById('password-match-success');
-
-            if (passwordField) {
-                passwordField.addEventListener('input', function() {
-                    const password = this.value;
-                    checkPasswordStrength(password);
-                    
-                    // Check match if confirm password has value
-                    if (confirmPasswordField && confirmPasswordField.value) {
-                        checkPasswordMatch();
-                    }
-                });
-            }
-
-            if (confirmPasswordField) {
-                confirmPasswordField.addEventListener('input', function() {
-                    checkPasswordMatch();
-                });
-            }
-
-            function checkPasswordMatch() {
-                const password = passwordField.value;
-                const confirmPassword = confirmPasswordField.value;
-
-                if (confirmPassword.length > 0) {
-                    if (password === confirmPassword) {
-                        matchError.style.display = 'none';
-                        matchSuccess.style.display = 'block';
-                        confirmPasswordField.style.borderColor = '#10B981';
-                    } else {
-                        matchError.style.display = 'block';
-                        matchSuccess.style.display = 'none';
-                        confirmPasswordField.style.borderColor = '#EF4444';
-                    }
-                } else {
-                    matchError.style.display = 'none';
-                    matchSuccess.style.display = 'none';
-                    confirmPasswordField.style.borderColor = '';
-                }
-            }
-        });
-
-        // Validate password meets all requirements
-        function validatePassword(password) {
-            return Object.keys(passwordRequirements).every(key => 
-                passwordRequirements[key].test(password)
-            );
-        }
-        
-        // Form validation function
-        function validateAndProceed() {
-            const emailOrPhone = document.getElementById('emailOrPhone');
-            const fullName = document.getElementById('fullName');
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirmPassword');
-            const terms = document.getElementById('terms');
-            
-            let isValid = true;
-            
-            // Validate email/phone
-            const emailOrPhoneValue = emailOrPhone.value.trim();
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            const phonePattern = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
-            
-            if (!emailPattern.test(emailOrPhoneValue) && !phonePattern.test(emailOrPhoneValue.replace(/[\s\-\(\)\.]/g, ''))) {
-                showValidationError(emailOrPhone, 'Please enter a valid email or phone number');
-                isValid = false;
-            } else {
-                clearValidationError(emailOrPhone);
-                // Store for login testing
-                localStorage.setItem('testEmail', emailOrPhoneValue);
-            }
-            
-            // Validate full name
-            const fullNameValue = fullName.value.trim();
-            if (fullNameValue.length < 2 || fullNameValue.length > 50) {
-                showValidationError(fullName, 'Name must be between 2 and 50 characters');
-                isValid = false;
-            } else if (!/^[a-zA-Z\s'-]+$/.test(fullNameValue)) {
-                showValidationError(fullName, 'Name can only contain letters, spaces, hyphens, and apostrophes');
-                isValid = false;
-            } else {
-                clearValidationError(fullName);
-            }
-            
-            // Validate password
-            const passwordValue = password.value;
-            if (!validatePassword(passwordValue)) {
-                showValidationError(password, 'Password does not meet all requirements');
-                isValid = false;
-            } else {
-                clearValidationError(password);
-                // Store for login testing
-                localStorage.setItem('testPassword', passwordValue);
-            }
-            
-            // Validate confirm password
-            const confirmPasswordValue = confirmPassword.value;
-            if (passwordValue !== confirmPasswordValue) {
-                showValidationError(confirmPassword, 'Passwords do not match');
-                isValid = false;
-            } else if (confirmPasswordValue.length === 0) {
-                showValidationError(confirmPassword, 'Please confirm your password');
-                isValid = false;
-            } else {
-                clearValidationError(confirmPassword);
-            }
-            
-            // Validate terms checkbox
-            if (!terms.checked) {
-                showValidationError(terms.parentElement, 'You must agree to the Terms and Privacy Policy');
-                isValid = false;
-            } else {
-                clearValidationError(terms.parentElement);
-            }
-            
-            if (isValid) {
-                // Show success message
-                alert('✓ Account validated! Password meets all security requirements.\n\nFor testing: Your credentials have been saved.');
-                nextStep(2);
-            } else {
-                // Focus first error
-                const firstError = document.querySelector('.input-error:not([style*="display: none"])');
-                if (firstError && firstError.previousElementSibling) {
-                    firstError.previousElementSibling.focus();
-                }
-            }
-        }
-        
-        function showValidationError(element, message) {
-            clearValidationError(element);
-            
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'input-error';
-            errorDiv.setAttribute('role', 'alert');
-            errorDiv.style.cssText = 'color: #DC2626; font-size: 0.813rem; margin-top: 0.5rem; display: flex; align-items: start; gap: 0.375rem;';
-            
-            const icon = document.createElement('span');
-            icon.textContent = '⚠️';
-            icon.style.flexShrink = '0';
-            errorDiv.appendChild(icon);
-            
-            const text = document.createElement('span');
-            text.textContent = message;
-            errorDiv.appendChild(text);
-            
-            element.parentElement.appendChild(errorDiv);
-            element.style.borderColor = '#DC2626';
-            element.setAttribute('aria-invalid', 'true');
-        }
-        
-        function clearValidationError(element) {
-            const errorDiv = element.parentElement.querySelector('.input-error');
-            if (errorDiv) {
-                errorDiv.remove();
-            }
-            
-            if (element.tagName === 'INPUT') {
-                element.style.borderColor = '';
-                element.removeAttribute('aria-invalid');
-            }
-        }
-        
-        // Add real-time validation
-        document.getElementById('emailOrPhone')?.addEventListener('blur', function() {
-            const value = this.value.trim();
-            if (value) {
-                const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                const phonePattern = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
-                
-                if (!emailPattern.test(value) && !phonePattern.test(value.replace(/[\s\-\(\)\.]/g, ''))) {
-                    showValidationError(this, 'Please enter a valid email or phone number');
-                }
-            }
-        });
-        
-        document.getElementById('emailOrPhone')?.addEventListener('input', function() {
-            clearValidationError(this);
-        });
-        
-        document.getElementById('fullName')?.addEventListener('blur', function() {
-            const value = this.value.trim();
-            if (value && (value.length < 2 || value.length > 50)) {
-                showValidationError(this, 'Name must be between 2 and 50 characters');
-            } else if (value && !/^[a-zA-Z\s'-]+$/.test(value)) {
-                showValidationError(this, 'Name can only contain letters, spaces, hyphens, and apostrophes');
-            }
-        });
-        
-        document.getElementById('fullName')?.addEventListener('input', function() {
-            clearValidationError(this);
-        });
     </script>
     <!-- Auth Enhancements JavaScript -->
     <script src="auth-enhancements.js"></script>

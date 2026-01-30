@@ -153,6 +153,145 @@
             outline-offset: 2px;
         }
 
+        .nav-link.active {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        /* Hamburger Menu Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .hamburger:hover {
+            background: var(--neutral-200);
+        }
+
+        .hamburger:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: block;
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-menu-close:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            list-style: none;
+        }
+
+        .mobile-nav-links .nav-link {
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .mobile-nav-links .nav-link:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-nav-links .nav-link.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+        }
+
         /* Main Container */
         .container {
             max-width: 1400px;
@@ -235,6 +374,7 @@
             color: rgba(255, 255, 255, 0.9);
             font-size: 0.875rem;
             line-height: 1.5;
+            text-align: left;
         }
 
         .alert-actions {
@@ -251,8 +391,13 @@
             border-radius: 980px;
             font-weight: 600;
             font-size: 0.938rem;
+            min-height: 46px;
             cursor: pointer;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
         }
 
         .alert-cta:hover {
@@ -1591,10 +1736,13 @@
 
         .radio-label input[type="radio"],
         .checkbox-label input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 20px !important;
+            height: 20px !important;
+            min-width: 20px !important;
+            min-height: 20px !important;
             cursor: pointer;
             accent-color: var(--primary-green);
+            flex-shrink: 0;
         }
 
         .radio-label input[type="radio"]:checked + span,
@@ -2464,6 +2612,18 @@
         }
 
         @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
             .container {
                 padding: 1.5rem 1rem;
             }
@@ -2786,12 +2946,47 @@
             </a>
             <ul class="nav-links">
                 <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
-                <li><a href="wallet-enhanced.html" class="nav-link" aria-current="page">WALLET</a></li>
+                <li><a href="wallet-enhanced.html" class="nav-link active" aria-current="page">WALLET</a></li>
                 <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
                 <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
             </ul>
         </div>
+        <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link active" aria-current="page">WALLET</a></li>
+            <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+            <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+        </ul>
+    </div>
 
     <!-- Main Content -->
     <main id="main-content" class="container">
@@ -5273,6 +5468,63 @@
             announcement.textContent = 'Wallet page loaded. Your total balance is $8,250.00';
             document.body.appendChild(announcement);
         });
+    </script>
+
+    <!-- Hamburger Menu Script -->
+    <script>
+        (function() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            const body = document.body;
+
+            function openMenu() {
+                hamburger.classList.add('active');
+                mobileMenu.classList.add('active');
+                mobileMenuOverlay.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+            }
+
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                body.style.overflow = ''; // Restore scrolling
+            }
+
+            // Toggle menu on hamburger click
+            hamburger.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('active')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            });
+
+            // Close menu on close button click
+            mobileMenuClose.addEventListener('click', closeMenu);
+
+            // Close menu on overlay click
+            mobileMenuOverlay.addEventListener('click', closeMenu);
+
+            // Close menu on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                    closeMenu();
+                }
+            });
+
+            // Close menu when clicking on a nav link
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-links .nav-link');
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+        })();
     </script>
 </body>
 </html>

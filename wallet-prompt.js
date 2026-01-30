@@ -616,10 +616,14 @@ const WalletPrompt = {
                     border: none;
                     font-weight: 600;
                     font-size: 0.938rem;
+                    min-height: 46px;
                     cursor: pointer;
                     transition: all 0.2s ease;
                     font-family: 'Inter', sans-serif;
                     white-space: nowrap;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 
                 .wallet-banner-btn:hover {
@@ -678,6 +682,7 @@ const WalletPrompt = {
                         flex: 1;
                         font-size: 0.875rem;
                         padding: 0.688rem 1.25rem;
+                        min-height: 44px;
                     }
                 }
             `;
