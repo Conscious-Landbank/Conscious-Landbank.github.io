@@ -447,6 +447,11 @@
             font-weight: 600;
         }
 
+        /* Mobile Compact Stepper */
+        .mobile-stepper-compact {
+            display: none;
+        }
+        
         /* Step Content */
         .step-content {
             display: none;
@@ -1227,10 +1232,11 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.6);
             display: none;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 2rem;
             z-index: 2000;
+            overflow-y: auto;
         }
 
         .modal-overlay.active {
@@ -1241,10 +1247,9 @@
             background: white;
             border-radius: 0.75rem;
             width: min(540px, 100%);
-            max-height: 90vh;
-            overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.3s ease;
+            margin: auto 0;
         }
 
         @keyframes slideUp {
@@ -1357,31 +1362,71 @@
                 font-size: 2rem;
             }
 
-            .stepper {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1.5rem;
+            .page-header {
+                margin-bottom: 1.5rem;
             }
 
-            .stepper::before,
-            .stepper-progress {
+            /* Compact Mobile Stepper */
+            .stepper {
                 display: none;
             }
 
-            .step {
-                flex-direction: row;
-                gap: 1rem;
-                width: 100%;
+            .mobile-stepper-compact {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: white;
+                border: 1px solid var(--border-subtle);
+                border-radius: 0.5rem;
+                padding: 0.75rem 1rem;
+                margin-bottom: 1.5rem;
             }
 
-            .step-circle {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
+            .mobile-step-current {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
             }
 
-            .step-label {
-                text-align: left;
+            .mobile-step-circle {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: var(--gradient-primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 0.875rem;
+                flex-shrink: 0;
+            }
+
+            .mobile-step-info {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .mobile-step-label {
+                font-size: 0.813rem;
+                color: var(--text-secondary);
+                font-weight: 500;
+            }
+
+            .mobile-step-title {
+                font-size: 0.938rem;
+                color: var(--text-primary);
+                font-weight: 600;
+            }
+
+            .mobile-step-counter {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                font-weight: 500;
+                padding: 0.25rem 0.625rem;
+                background: var(--neutral-100);
+                border-radius: 1rem;
+                white-space: nowrap;
             }
 
             .btn-actions {
@@ -1523,7 +1568,7 @@
             <p class="page-subtitle">Add funds to your wallet and start making an impact</p>
         </div>
 
-        <!-- Progress Stepper -->
+        <!-- Progress Stepper (Desktop) -->
         <div class="stepper" role="progressbar" aria-label="Purchase progress" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
             <div class="stepper-progress" id="stepperProgress" style="width: 0%"></div>
             
@@ -1546,6 +1591,18 @@
                 <div class="step-circle">4</div>
                 <div class="step-label">Complete</div>
             </div>
+        </div>
+
+        <!-- Compact Mobile Stepper -->
+        <div class="mobile-stepper-compact">
+            <div class="mobile-step-current">
+                <div class="mobile-step-circle" id="mobileStepNumber">1</div>
+                <div class="mobile-step-info">
+                    <div class="mobile-step-label">Step <span id="mobileCurrentStep">1</span> of 4</div>
+                    <div class="mobile-step-title" id="mobileStepTitle">Payment Method</div>
+                </div>
+            </div>
+            <div class="mobile-step-counter" id="mobileStepCounter">1/4</div>
         </div>
 
         <!-- Step 1: Payment Method & Currency -->
@@ -1584,7 +1641,7 @@
                             </div>
                         </div>
                         <div class="method-actions">
-                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
+                            <button class="btn-edit" onclick="event.stopPropagation(); editPaymentMethod('interac', 'interac_1', 'Primary Email', 'alex@example.com');">Edit</button>
                             <div class="method-check">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                                     <polyline points="20 6 9 17 4 12"/>
@@ -1606,8 +1663,12 @@
                             </div>
                         </div>
                         <div class="method-actions">
-                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
-                            <div class="method-check"></div>
+                            <button class="btn-edit" onclick="event.stopPropagation(); editPaymentMethod('interac', 'interac_2', 'Work Email', 'alex.work@company.com');">Edit</button>
+                            <div class="method-check">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1633,8 +1694,12 @@
                             </div>
                         </div>
                         <div class="method-actions">
-                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
-                            <div class="method-check"></div>
+                            <button class="btn-edit" onclick="event.stopPropagation(); editPaymentMethod('card', 'card_1', 'Visa •••• 4242', 'Expires 12/25');">Edit</button>
+                            <div class="method-check">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                     
@@ -1651,8 +1716,12 @@
                             </div>
                         </div>
                         <div class="method-actions">
-                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
-                            <div class="method-check"></div>
+                            <button class="btn-edit" onclick="event.stopPropagation(); editPaymentMethod('card', 'card_2', 'Mastercard •••• 8888', 'Expires 09/26');">Edit</button>
+                            <div class="method-check">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1678,8 +1747,12 @@
                             </div>
                         </div>
                         <div class="method-actions">
-                            <button class="btn-edit" onclick="event.stopPropagation();">Edit</button>
-                            <div class="method-check"></div>
+                            <button class="btn-edit" onclick="event.stopPropagation(); editPaymentMethod('bank', 'bank_1', 'TD Canada Trust', 'Account •••• 1234');">Edit</button>
+                            <div class="method-check">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1721,6 +1794,12 @@
             </div>
 
             <div class="btn-actions">
+                <button class="btn btn-secondary" onclick="goBack()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back
+                </button>
                 <button class="btn btn-primary" onclick="goToStep(2)">
                     Continue
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1913,11 +1992,95 @@
         </div>
     </main>
 
+    <!-- Edit Payment Method Modal -->
+    <div class="modal-overlay" id="editPaymentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="editModalTitle">Edit Payment Method</h2>
+                <button class="modal-close" onclick="closeEditPaymentModal()" aria-label="Close modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Interac Edit Form -->
+                <div id="editInteracForm" class="payment-form">
+                    <div class="form-group">
+                        <label for="editInteracEmail" class="form-label">Email Address</label>
+                        <input type="email" id="editInteracEmail" class="form-input" placeholder="your@email.com">
+                        <p class="form-hint">Used for Interac e-Transfer transactions</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editInteracName" class="form-label">Account Holder Name</label>
+                        <input type="text" id="editInteracName" class="form-input" placeholder="John Doe">
+                    </div>
+                </div>
+
+                <!-- Card Edit Form -->
+                <div id="editCardForm" class="payment-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="editCardNumber" class="form-label">Card Number</label>
+                        <input type="text" id="editCardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCardName" class="form-label">Cardholder Name</label>
+                        <input type="text" id="editCardName" class="form-input" placeholder="John Doe">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editCardExpiry" class="form-label">Expiry Date</label>
+                            <input type="text" id="editCardExpiry" class="form-input" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editCardCVV" class="form-label">CVV</label>
+                            <input type="text" id="editCardCVV" class="form-input" placeholder="123" maxlength="3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bank Edit Form -->
+                <div id="editBankForm" class="payment-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="editBankName" class="form-label">Bank Name</label>
+                        <input type="text" id="editBankName" class="form-input" placeholder="TD Canada Trust">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAccountNumber" class="form-label">Account Number</label>
+                        <input type="text" id="editAccountNumber" class="form-input" placeholder="123456789">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editTransitNumber" class="form-label">Transit Number</label>
+                        <input type="text" id="editTransitNumber" class="form-input" placeholder="12345">
+                        <p class="form-hint">5-digit branch number</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editInstitutionNumber" class="form-label">Institution Number</label>
+                        <input type="text" id="editInstitutionNumber" class="form-input" placeholder="004">
+                        <p class="form-hint">3-digit bank code</p>
+                    </div>
+                </div>
+
+                <div class="btn-actions" style="margin-top: 0;">
+                    <button class="btn btn-secondary" onclick="closeEditPaymentModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveEditedPaymentMethod()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Add New Payment Method Modal -->
     <div class="modal-overlay" id="addPaymentModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Add New Payment Method</h2>
+                <h2 class="modal-title" id="addModalTitle">Add New Payment Method</h2>
                 <button class="modal-close" onclick="closeAddPaymentModal()" aria-label="Close modal">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 6L6 18M6 6l12 12"/>
@@ -1936,65 +2099,65 @@
                 </div>
 
                 <!-- Interac Form -->
-                <div id="interacForm" class="payment-form">
+                <div id="addInteracForm" class="payment-form">
                     <div class="form-group">
-                        <label for="interacEmail" class="form-label">Email Address</label>
-                        <input type="email" id="interacEmail" class="form-input" placeholder="your@email.com">
+                        <label for="addInteracEmail" class="form-label">Email Address</label>
+                        <input type="email" id="addInteracEmail" class="form-input" placeholder="your@email.com">
                         <p class="form-hint">Used for Interac e-Transfer transactions</p>
                     </div>
                     
                     <div class="form-group">
-                        <label for="interacName" class="form-label">Account Holder Name</label>
-                        <input type="text" id="interacName" class="form-input" placeholder="John Doe">
+                        <label for="addInteracName" class="form-label">Account Holder Name</label>
+                        <input type="text" id="addInteracName" class="form-input" placeholder="John Doe">
                     </div>
                 </div>
 
                 <!-- Card Form -->
-                <div id="cardForm" class="payment-form" style="display: none;">
+                <div id="addCardForm" class="payment-form" style="display: none;">
                     <div class="form-group">
-                        <label for="cardNumber" class="form-label">Card Number</label>
-                        <input type="text" id="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                        <label for="addCardNumber" class="form-label">Card Number</label>
+                        <input type="text" id="addCardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
                     </div>
                     
                     <div class="form-group">
-                        <label for="cardName" class="form-label">Cardholder Name</label>
-                        <input type="text" id="cardName" class="form-input" placeholder="John Doe">
+                        <label for="addCardName" class="form-label">Cardholder Name</label>
+                        <input type="text" id="addCardName" class="form-input" placeholder="John Doe">
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="cardExpiry" class="form-label">Expiry Date</label>
-                            <input type="text" id="cardExpiry" class="form-input" placeholder="MM/YY" maxlength="5">
+                            <label for="addCardExpiry" class="form-label">Expiry Date</label>
+                            <input type="text" id="addCardExpiry" class="form-input" placeholder="MM/YY" maxlength="5">
                         </div>
                         
                         <div class="form-group">
-                            <label for="cardCVV" class="form-label">CVV</label>
-                            <input type="text" id="cardCVV" class="form-input" placeholder="123" maxlength="3">
+                            <label for="addCardCVV" class="form-label">CVV</label>
+                            <input type="text" id="addCardCVV" class="form-input" placeholder="123" maxlength="3">
                         </div>
                     </div>
                 </div>
 
                 <!-- Bank Form -->
-                <div id="bankForm" class="payment-form" style="display: none;">
+                <div id="addBankForm" class="payment-form" style="display: none;">
                     <div class="form-group">
-                        <label for="bankName" class="form-label">Bank Name</label>
-                        <input type="text" id="bankName" class="form-input" placeholder="TD Canada Trust">
+                        <label for="addBankName" class="form-label">Bank Name</label>
+                        <input type="text" id="addBankName" class="form-input" placeholder="TD Canada Trust">
                     </div>
                     
                     <div class="form-group">
-                        <label for="accountNumber" class="form-label">Account Number</label>
-                        <input type="text" id="accountNumber" class="form-input" placeholder="123456789">
+                        <label for="addAccountNumber" class="form-label">Account Number</label>
+                        <input type="text" id="addAccountNumber" class="form-input" placeholder="123456789">
                     </div>
                     
                     <div class="form-group">
-                        <label for="transitNumber" class="form-label">Transit Number</label>
-                        <input type="text" id="transitNumber" class="form-input" placeholder="12345">
+                        <label for="addTransitNumber" class="form-label">Transit Number</label>
+                        <input type="text" id="addTransitNumber" class="form-input" placeholder="12345">
                         <p class="form-hint">5-digit branch number</p>
                     </div>
                     
                     <div class="form-group">
-                        <label for="institutionNumber" class="form-label">Institution Number</label>
-                        <input type="text" id="institutionNumber" class="form-input" placeholder="004">
+                        <label for="addInstitutionNumber" class="form-label">Institution Number</label>
+                        <input type="text" id="addInstitutionNumber" class="form-input" placeholder="004">
                         <p class="form-hint">3-digit bank code</p>
                     </div>
                 </div>
@@ -2017,7 +2180,16 @@
             amount: 0,
             exchangeRate: 0.74,
             processingFee: 0,
-            saveMethod: null
+            saveMethod: null,
+            previousPage: document.referrer.includes('wallet') ? 'wallet-enhanced.html' : 'dashboard-enhanced.html'
+        };
+
+        // Step titles for mobile stepper
+        const stepTitles = {
+            1: 'Payment Method',
+            2: 'Amount',
+            3: 'Confirm',
+            4: 'Complete'
         };
 
         // Currency Data
@@ -2036,6 +2208,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             populateCurrencyList();
             updateStepperProgress();
+            updateMobileStepper();
         });
 
         function populateCurrencyList() {
@@ -2154,6 +2327,52 @@
             appState.selectedPaymentId = id;
         }
 
+        // Edit Payment Method
+        function editPaymentMethod(method, id, name, info) {
+            appState.editingMethod = { method, id, name, info };
+            
+            // Show appropriate form
+            if (method === 'interac') {
+                document.getElementById('editInteracForm').style.display = 'block';
+                document.getElementById('editCardForm').style.display = 'none';
+                document.getElementById('editBankForm').style.display = 'none';
+                document.getElementById('editModalTitle').textContent = 'Edit Interac e-Transfer';
+                
+                // Pre-fill with existing data
+                document.getElementById('editInteracEmail').value = info;
+            } else if (method === 'card') {
+                document.getElementById('editInteracForm').style.display = 'none';
+                document.getElementById('editCardForm').style.display = 'block';
+                document.getElementById('editBankForm').style.display = 'none';
+                document.getElementById('editModalTitle').textContent = 'Edit Credit/Debit Card';
+                
+                // Pre-fill with existing data (card number is masked for security)
+                document.getElementById('editCardName').value = 'Alex Johnson';
+            } else if (method === 'bank') {
+                document.getElementById('editInteracForm').style.display = 'none';
+                document.getElementById('editCardForm').style.display = 'none';
+                document.getElementById('editBankForm').style.display = 'block';
+                document.getElementById('editModalTitle').textContent = 'Edit Bank Account';
+                
+                // Pre-fill with existing data
+                document.getElementById('editBankName').value = name;
+            }
+            
+            document.getElementById('editPaymentModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditPaymentModal() {
+            document.getElementById('editPaymentModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function saveEditedPaymentMethod() {
+            alert('Payment method updated successfully!');
+            closeEditPaymentModal();
+            // In production, update the card in the UI with new details
+        }
+
         // Add New Payment Method
         function showAddNewPayment() {
             document.getElementById('addPaymentModal').classList.add('active');
@@ -2168,19 +2387,19 @@
         function updatePaymentForm() {
             const type = document.getElementById('paymentMethodType').value;
             
-            document.getElementById('interacForm').style.display = 'none';
-            document.getElementById('cardForm').style.display = 'none';
-            document.getElementById('bankForm').style.display = 'none';
+            document.getElementById('addInteracForm').style.display = 'none';
+            document.getElementById('addCardForm').style.display = 'none';
+            document.getElementById('addBankForm').style.display = 'none';
             
             if (type === 'interac') {
-                document.getElementById('interacForm').style.display = 'block';
-                document.getElementById('modalTitle').textContent = 'Add Interac e-Transfer';
+                document.getElementById('addInteracForm').style.display = 'block';
+                document.getElementById('addModalTitle').textContent = 'Add Interac e-Transfer';
             } else if (type === 'card') {
-                document.getElementById('cardForm').style.display = 'block';
-                document.getElementById('modalTitle').textContent = 'Add Credit/Debit Card';
+                document.getElementById('addCardForm').style.display = 'block';
+                document.getElementById('addModalTitle').textContent = 'Add Credit/Debit Card';
             } else if (type === 'bank') {
-                document.getElementById('bankForm').style.display = 'block';
-                document.getElementById('modalTitle').textContent = 'Add Bank Account';
+                document.getElementById('addBankForm').style.display = 'block';
+                document.getElementById('addModalTitle').textContent = 'Add Bank Account';
             }
         }
 
@@ -2265,6 +2484,7 @@
             
             appState.currentStep = stepNumber;
             updateStepperProgress();
+            updateMobileStepper();
             
             if (stepNumber === 3) {
                 updateConfirmation();
@@ -2277,6 +2497,25 @@
             const progress = document.getElementById('stepperProgress');
             const percentage = ((appState.currentStep - 1) / 3) * 100;
             progress.style.width = percentage + '%';
+        }
+
+        function updateMobileStepper() {
+            const mobileStepNumber = document.getElementById('mobileStepNumber');
+            const mobileCurrentStep = document.getElementById('mobileCurrentStep');
+            const mobileStepTitle = document.getElementById('mobileStepTitle');
+            const mobileStepCounter = document.getElementById('mobileStepCounter');
+            
+            if (mobileStepNumber) {
+                mobileStepNumber.textContent = appState.currentStep;
+                mobileCurrentStep.textContent = appState.currentStep;
+                mobileStepTitle.textContent = stepTitles[appState.currentStep];
+                mobileStepCounter.textContent = `${appState.currentStep}/4`;
+            }
+        }
+
+        // Back Navigation
+        function goBack() {
+            window.location.href = appState.previousPage;
         }
 
         function updateConfirmation() {
