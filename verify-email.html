@@ -174,7 +174,7 @@
             
             <div class="auth-header">
                 <h1 class="auth-title">Check Your Email</h1>
-                <p class="auth-subtitle">We sent a 6-digit verification code to:</p>
+                <!-- <p class="auth-subtitle" id="verifySubtitle">Step 2 of 3 • We sent a 6-digit code to:</p> -->
                 <p class="email-highlight" id="userEmail">your@email.com</p>
             </div>
 
@@ -214,7 +214,16 @@
         // Get email from URL params or localStorage
         const urlParams = new URLSearchParams(window.location.search);
         const userEmail = urlParams.get('email') || localStorage.getItem('signupEmail') || 'your@email.com';
+        const fromLogin = urlParams.get('from') === 'login';
         document.getElementById('userEmail').textContent = userEmail;
+
+        // Update UI if coming from login
+        if (fromLogin) {
+            const title = document.querySelector('.auth-title');
+            const subtitle = document.getElementById('verifySubtitle');
+            if (title) title.textContent = 'Verify Your Email';
+            if (subtitle) subtitle.textContent = 'We sent a new verification code to:';
+        }
 
         // Auto-focus first digit
         const digits = document.querySelectorAll('.code-digit');
@@ -350,9 +359,26 @@
                         window.navigator.vibrate([10, 50, 10]);
                     }
                     
-                    // Redirect to next step (name & password)
+                    // Redirect based on where user came from
                     setTimeout(() => {
-                        window.location.href = 'signup_2.html?step=details&verified=true';
+                        if (fromLogin) {
+                            // Coming from login - check 2FA and go to dashboard
+                            const twoFAEnabled = localStorage.getItem('2faEnabled') === 'true';
+                            const deviceTrusted = localStorage.getItem('deviceTrusted') === 'true';
+                            const trustExpiry = parseInt(localStorage.getItem('deviceTrustedUntil')) || 0;
+                            
+                            localStorage.setItem('isLoggedIn', 'true');
+                            localStorage.setItem('loginTimestamp', new Date().toISOString());
+                            
+                            if (twoFAEnabled && (!deviceTrusted || Date.now() > trustExpiry)) {
+                                window.location.href = 'verify-2fa.html';
+                            } else {
+                                window.location.href = 'dashboard-enhanced.html';
+                            }
+                        } else {
+                            // Coming from signup - go to complete profile (Step 3)
+                            window.location.href = 'signup_2.html?step=details&verified=true';
+                        }
                     }, 1000);
                 } else {
                     throw new Error('Invalid code');

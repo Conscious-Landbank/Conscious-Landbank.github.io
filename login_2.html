@@ -134,22 +134,22 @@
                 </div>
 
                 <!-- Submit Button (Sticky on Mobile) -->
-                <button type="submit" class="submit-btn sticky-cta" id="loginBtn"  style="margin-top: 16px;">
+                <button type="submit" class="submit-btn sticky-cta" id="loginBtn">
                     Sign In
                 </button>
 
                 <!-- Remember Me & Forgot Password -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 2px; flex-wrap: wrap; height: fit-content; vertical-align: middle;">
+                <div class="remember-forgot-wrapper">
                     <div class="checkbox-group">
                         <input type="checkbox" id="rememberMe" class="checkbox-input">
                         <label for="rememberMe" class="checkbox-label">Remember me</label>
                     </div>
-                    <a href="forgot-password.html" class="auth-link">Forgot password?</a>
+                    <a href="forgot-password.html" style="align-items: center;" class="auth-link">Forgot password?</a>
                 </div>
             </form>
 
             <!-- Divider -->
-            <div class="divider">Or continue with</div>
+            <!-- <div class="divider">Or continue with</div> -->
 
             <!-- TEMPORARILY HIDDEN: Wallet Connect Section -->
             <!--
@@ -179,7 +179,7 @@
             -->
 
             <!-- Social Login Buttons -->
-            <div style="display: grid; gap: 0.75rem;">
+            <!-- <div style="display: grid; gap: 0.75rem;">
                 <a href="connect-social.html?provider=google&flow=login" class="btn-secondary" style="text-decoration: none;">
                     <span class="btn-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24">
@@ -212,12 +212,14 @@
                     </span>
                     <span class="btn-text">Continue with Microsoft</span>
                 </a>
-            </div>
+            </div> -->
 
             <!-- Sign Up Link -->
             <div class="login-link">
                 Don't have an account? <a href="signup_2.html">Sign up</a>
+        
             </div>
+            <br>
         </div>
     </main>
 
@@ -319,7 +321,33 @@
             try {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                // Success - credentials valid
+                // Check if email is verified
+                // In production, this would be checked on the backend
+                const emailVerified = localStorage.getItem('emailVerified') === 'true';
+                const userEmail = emailInput.value.trim();
+                
+                if (!emailVerified) {
+                    // Email not verified - resend code and redirect to verification
+                    console.log('⚠️ Email not verified - sending new verification code');
+                    
+                    loginBtn.classList.remove('loading');
+                    loginBtn.textContent = 'Sending Code...';
+                    
+                    // Simulate sending verification code
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Store email and redirect to verification
+                    localStorage.setItem('signupEmail', userEmail);
+                    localStorage.setItem('loginAttemptEmail', userEmail);
+                    
+                    alert('Your email is not verified. We\'ve sent you a new verification code. Please check your email.');
+                    
+                    // Redirect to email verification
+                    window.location.href = `verify-email.html?email=${encodeURIComponent(userEmail)}&from=login`;
+                    return;
+                }
+                
+                // Success - credentials valid and email verified
                 loginBtn.classList.remove('loading');
                 loginBtn.classList.add('success');
                 loginBtn.textContent = 'Success!';
@@ -332,7 +360,7 @@
                 // Store login state
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('loginTimestamp', new Date().toISOString());
-                localStorage.setItem('signupEmail', emailInput.value.trim());
+                localStorage.setItem('signupEmail', userEmail);
                 
                 // Check if 2FA is enabled
                 setTimeout(() => {
