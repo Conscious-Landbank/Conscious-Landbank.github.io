@@ -326,7 +326,11 @@
                 const emailVerified = localStorage.getItem('emailVerified') === 'true';
                 const userEmail = emailInput.value.trim();
                 
-                if (!emailVerified) {
+                // DEMO MODE: Skip email verification for local testing
+                // Remove this in production when backend email verification is implemented
+                const isDemoMode = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                
+                if (!emailVerified && !isDemoMode) {
                     // Email not verified - resend code and redirect to verification
                     console.log('⚠️ Email not verified - sending new verification code');
                     
@@ -361,6 +365,11 @@
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('loginTimestamp', new Date().toISOString());
                 localStorage.setItem('signupEmail', userEmail);
+                
+                // Set email as verified in demo mode to prevent future verification prompts
+                if (isDemoMode && !emailVerified) {
+                    localStorage.setItem('emailVerified', 'true');
+                }
                 
                 // Check if 2FA is enabled
                 setTimeout(() => {

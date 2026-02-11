@@ -142,6 +142,16 @@
                 font-size: 6rem;
             }
         }
+        
+        .mobile-only { 
+            display: none; 
+        }
+        
+        @media (max-width: 768px) { 
+            .mobile-only { 
+                display: inline-flex !important; 
+            } 
+        }
     </style>
 </head>
 <body>
@@ -192,6 +202,14 @@
                 <p class="qr-instructions">
                     Scan this QR code with your mobile wallet app to connect
                 </p>
+                <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <button onclick="copyWcUri()" id="copyBtn" class="btn btn-secondary" style="flex: 1;">
+                        <span style="margin-right: 0.5rem;">📋</span> Copy Link
+                    </button>
+                    <button onclick="openMobile()" class="btn btn-secondary mobile-only" style="flex: 1;">
+                        <span style="margin-right: 0.5rem;">📱</span> Open Wallet
+                    </button>
+                </div>
             </div>
 
             <!-- Connection Steps -->
@@ -346,6 +364,24 @@
                 <div style="font-weight: 600; margin-bottom: 0.5rem;">${title}</div>
                 <div style="font-size: 0.875rem; opacity: 0.9;">${message}</div>
             `;
+        }
+
+        // Mock WalletConnect URI for demo
+        const mockWcUri = 'wc:a1b2c3d4e5f67890abcdef1234567890@2?relay-protocol=irn&symKey=xyz789abc123def456';
+
+        // Copy WalletConnect URI to clipboard
+        function copyWcUri() {
+            navigator.clipboard.writeText(mockWcUri);
+            const btn = document.getElementById('copyBtn');
+            btn.innerHTML = '<span style="margin-right: 0.5rem;">✓</span> Copied!';
+            setTimeout(() => { 
+                btn.innerHTML = '<span style="margin-right: 0.5rem;">📋</span> Copy Link'; 
+            }, 2000);
+        }
+
+        // Open mobile wallet with deep link
+        function openMobile() {
+            window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(mockWcUri)}`;
         }
     </script>
 </body>

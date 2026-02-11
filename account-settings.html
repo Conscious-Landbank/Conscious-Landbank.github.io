@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - UNERA | One Flow. Many Lives.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Wallet Integration Libraries -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* UNERA Brand Colors */
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-700: #4B5563;
+            --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation (simplified) */
+        .nav {
+            background: #FFFFFF;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-green);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .user-details h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-email {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+        }
+
+        /* Wallet Cards */
+        .wallet-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .wallet-card {
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .wallet-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--neutral-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .wallet-details h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .wallet-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.938rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--success);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--error);
+            border: 2px solid var(--error);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-danger:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-add {
+            width: 100%;
+            margin-top: 20px;
+            border: 2px dashed var(--border-subtle);
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        /* Transaction History */
+        .transaction-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: var(--neutral-100);
+            transition: background 0.2s;
+        }
+
+        .transaction-item:hover {
+            background: var(--neutral-200);
+        }
+
+        .tx-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .tx-icon.send {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .tx-icon.receive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+        }
+
+        .tx-details {
+            flex: 1;
+        }
+
+        .tx-amount {
+            font-weight: 600;
+            font-size: 0.938rem;
+            margin-bottom: 0.125rem;
+        }
+
+        .tx-address {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .tx-time {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+        }
+
+        /* Token Lists */
+        .token-network-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .token-network-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .token-network-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .token-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .token-table tr {
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .token-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .token-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .token-table td:first-child {
+            font-weight: 600;
+            width: 80px;
+        }
+
+        .token-table td:nth-child(2) {
+            width: 150px;
+        }
+
+        .token-table td:last-child {
+            font-family: 'Courier New', monospace;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: left;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-brand">
+            <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+            </svg>
+            <div class="logo">UNERA</div>
+        </a>
+        <a href="dashboard-enhanced.html" class="back-link">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Account Settings</h1>
+            <p class="page-subtitle">Manage your profile and connected wallets</p>
+        </div>
+
+        <!-- User Info Card -->
+        <div class="card">
+            <div class="user-info">
+                <div class="user-avatar-large">JS</div>
+                <div class="user-details">
+                    <h2>Jane Smith</h2>
+                    <p class="user-email">jane@example.com</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connected Wallets Card -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Connected Wallets</h3>
+                    <p class="card-description">Bind wallet addresses to verify ownership and enable features</p>
+                </div>
+            </div>
+
+            <div class="wallet-list" id="walletList">
+                <!-- Wallets will be rendered here -->
+            </div>
+
+            <button class="btn btn-add" onclick="bindNewWallet()">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                </svg>
+                Bind Another Wallet
+            </button>
+        </div>
+
+        <!-- Recent Activity Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Activity</h3>
+            </div>
+            <div class="transaction-list" id="transactionList">
+                <!-- Transactions will be rendered here -->
+            </div>
+        </div>
+
+        <!-- Supported Tokens Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Supported Tokens</h3>
+            </div>
+            <p class="card-description">View supported tokens across different networks</p>
+            <div id="tokenLists">
+                <!-- Token lists will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dummy Data
+        const DUMMY_TRANSACTIONS = [
+            {
+                wallet: '0x742d...3a8f',
+                type: 'send',
+                token: 'USDC',
+                amount: '50.00',
+                to: '0xabc...def',
+                time: '2 hours ago',
+                hash: '0xabc123...'
+            },
+            {
+                wallet: '0x742d...3a8f',
+                type: 'receive',
+                token: 'ETH',
+                amount: '0.1',
+                from: '0x123...456',
+                time: '1 day ago',
+                hash: '0xdef456...'
+            },
+            {
+                wallet: '0x8765...4321',
+                type: 'send',
+                token: 'DAI',
+                amount: '10.25',
+                to: '0x789...abc',
+                time: '3 days ago',
+                hash: '0x789abc...'
+            },
+            {
+                wallet: '0x742d...3a8f',
+                type: 'receive',
+                token: 'USDT',
+                amount: '25.50',
+                from: '0xdef...123',
+                time: '5 days ago',
+                hash: '0x123def...'
+            },
+            {
+                wallet: '0x8765...4321',
+                type: 'send',
+                token: 'ETH',
+                amount: '0.05',
+                to: '0x456...789',
+                time: '1 week ago',
+                hash: '0x456789...'
+            }
+        ];
+
+        const DUMMY_TOKEN_LISTS = {
+            ethereum: [
+                { symbol: 'USDC', name: 'USD Coin', address: '0xA0b8...eB48' },
+                { symbol: 'USDT', name: 'Tether USD', address: '0xdAC1...1ec7' },
+                { symbol: 'DAI', name: 'Dai Stablecoin', address: '0x6B17...1d0F' }
+            ],
+            base: [
+                { symbol: 'USDC', name: 'USD Coin', address: '0x8335...2913' }
+            ],
+            sepolia: [
+                { symbol: 'USDC', name: 'USD Coin (Test)', address: '0x1c7D...7238' }
+            ]
+        };
+
+        // Initialize dummy wallets on first visit
+        function initializeDummyWallets() {
+            const existing = localStorage.getItem('boundWallets');
+            if (!existing) {
+                const dummyWallets = [
+                    {
+                        address: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                        provider: 'metamask',
+                        verified: true,
+                        boundAt: Date.now() - (2 * 24 * 60 * 60 * 1000) // 2 days ago
+                    },
+                    {
+                        address: '0x87654321fedcba0987654321fedcba0987654321',
+                        provider: 'walletconnect',
+                        verified: true,
+                        boundAt: Date.now() - (5 * 24 * 60 * 60 * 1000) // 5 days ago
+                    }
+                ];
+                localStorage.setItem('boundWallets', JSON.stringify(dummyWallets));
+            }
+        }
+
+        // Format time ago
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+            
+            if (days === 0) return 'Today';
+            if (days === 1) return '1 day ago';
+            if (days < 7) return `${days} days ago`;
+            if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? 's' : ''} ago`;
+            return `${Math.floor(days / 30)} month${Math.floor(days / 30) > 1 ? 's' : ''} ago`;
+        }
+
+        // Render wallets
+        function renderWallets() {
+            const boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+            const container = document.getElementById('walletList');
+            
+            if (boundWallets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👛</div>
+                        <p class="empty-state-text">No wallets connected yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = boundWallets.map(wallet => `
+                <div class="wallet-card">
+                    <div class="wallet-info">
+                        <div class="wallet-icon">${wallet.provider === 'metamask' ? '🦊' : '🔗'}</div>
+                        <div class="wallet-details">
+                            <h3>${wallet.address.substring(0, 6)}...${wallet.address.substring(wallet.address.length - 4)}</h3>
+                            <div class="wallet-meta">
+                                <span class="verified-badge">
+                                    ✓ Verified
+                                </span>
+                                <span>•</span>
+                                <span>${wallet.provider === 'metamask' ? 'MetaMask' : 'WalletConnect'}</span>
+                                <span>•</span>
+                                <span>Bound ${formatTimeAgo(wallet.boundAt)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wallet-actions">
+                        <button class="btn btn-danger" onclick="removeWallet('${wallet.address}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render transactions
+        function renderTransactionHistory() {
+            const container = document.getElementById('transactionList');
+            container.innerHTML = DUMMY_TRANSACTIONS.map(tx => `
+                <div class="transaction-item">
+                    <div class="tx-icon ${tx.type}">${tx.type === 'send' ? '↑' : '↓'}</div>
+                    <div class="tx-details">
+                        <div class="tx-amount">${tx.amount} ${tx.token}</div>
+                        <div class="tx-address">${tx.type === 'send' ? 'To' : 'From'}: ${tx.type === 'send' ? tx.to : tx.from}</div>
+                    </div>
+                    <div class="tx-time">${tx.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render token lists
+        function renderTokenLists() {
+            const container = document.getElementById('tokenLists');
+            container.innerHTML = Object.entries(DUMMY_TOKEN_LISTS).map(([network, tokens]) => `
+                <div class="token-network-section">
+                    <h4>${network.charAt(0).toUpperCase() + network.slice(1)}</h4>
+                    <table class="token-table">
+                        ${tokens.map(t => `
+                            <tr>
+                                <td>${t.symbol}</td>
+                                <td>${t.name}</td>
+                                <td class="token-address">${t.address}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+            `).join('');
+        }
+
+        // Remove wallet
+        function removeWallet(address) {
+            if (confirm('Are you sure you want to remove this wallet?')) {
+                let boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+                boundWallets = boundWallets.filter(w => w.address !== address);
+                localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
+                renderWallets();
+            }
+        }
+
+        // Bind new wallet flow
+        async function bindNewWallet() {
+            // Show wallet selection modal
+            showWalletSelectionModal();
+        }
+
+        // Show wallet selection modal
+        function showWalletSelectionModal() {
+            const modal = document.createElement('div');
+            modal.id = 'walletSelectionModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                backdrop-filter: blur(4px);
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 1.5rem;
+                padding: 0;
+                max-width: 420px;
+                width: 90%;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                position: relative;
+                overflow: hidden;
+            `;
+            
+            modalContent.innerHTML = `
+                <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0; color: #1a1a1a;">
+                        Connect a wallet
+                    </h2>
+                    <button onclick="closeWalletSelectionModal()" style="
+                        background: transparent;
+                        border: none;
+                        font-size: 1.5rem;
+                        color: #666;
+                        cursor: pointer;
+                        padding: 0;
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        transition: background 0.2s;
+                    " onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
+                        ×
+                    </button>
+                </div>
+                
+                <div style="padding: 1rem;">
+                    <button onclick="connectAndBindWallet('metamask')" style="
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+                        padding: 1rem;
+                        background: white;
+                        border: 1.5px solid #e0e0e0;
+                        border-radius: 0.75rem;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        margin-bottom: 0.75rem;
+                    " onmouseover="this.style.borderColor='#10B981'" onmouseout="this.style.borderColor='#e0e0e0'">
+                        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🦊</div>
+                        <div style="flex: 1; text-align: left;">
+                            <div style="font-weight: 600; font-size: 1rem; color: #1a1a1a;">MetaMask</div>
+                            <div style="font-size: 0.813rem; color: #666;">Connect using browser extension</div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="connectAndBindWallet('walletconnect')" style="
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+                        padding: 1rem;
+                        background: white;
+                        border: 1.5px solid #e0e0e0;
+                        border-radius: 0.75rem;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    " onmouseover="this.style.borderColor='#10B981'" onmouseout="this.style.borderColor='#e0e0e0'">
+                        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🔗</div>
+                        <div style="flex: 1; text-align: left;">
+                            <div style="font-weight: 600; font-size: 1rem; color: #1a1a1a;">WalletConnect</div>
+                            <div style="font-size: 0.813rem; color: #666;">Scan QR code with mobile wallet</div>
+                        </div>
+                    </button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+
+        // Close wallet selection modal
+        function closeWalletSelectionModal() {
+            const modal = document.getElementById('walletSelectionModal');
+            if (modal) modal.remove();
+        }
+
+        // Connect and bind wallet
+        async function connectAndBindWallet(provider) {
+            closeWalletSelectionModal();
+            
+            // Show connecting modal
+            showConnectingModal(provider);
+            
+            // Simulate wallet connection (demo mode)
+            setTimeout(async () => {
+                const demoAddress = provider === 'metamask' 
+                    ? `0x${Math.random().toString(16).substr(2, 40)}` 
+                    : `0x${Math.random().toString(16).substr(2, 40)}`;
+                
+                // Close connecting modal
+                const connectingModal = document.getElementById('connectingModal');
+                if (connectingModal) connectingModal.remove();
+                
+                // Show signature request modal
+                showSignatureModal(provider, demoAddress);
+            }, 2000);
+        }
+
+        // Show connecting modal
+        function showConnectingModal(provider) {
+            const providerNames = { metamask: 'MetaMask', walletconnect: 'WalletConnect' };
+            const modal = document.createElement('div');
+            modal.id = 'connectingModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                backdrop-filter: blur(4px);
+            `;
+            
+            const iconColor = provider === 'metamask' ? '#F6851B' : '#3B99FC';
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 1.5rem;
+                    padding: 2rem;
+                    max-width: 420px;
+                    width: 90%;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    text-align: center;
+                ">
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="width: 80px; height: 80px; background: ${iconColor}; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
+                            ${provider === 'metamask' ? '🦊' : '🔗'}
+                        </div>
+                    </div>
+                    
+                    <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a1a;">
+                        Connect to ${providerNames[provider]}
+                    </h2>
+                    
+                    <p style="font-size: 0.938rem; color: #666; margin-bottom: 2rem;">
+                        Complete connection in your wallet
+                    </p>
+                    
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <div style="width: 20px; height: 20px; border: 3px solid #e0e0e0; border-top-color: ${iconColor}; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                        <span style="font-size: 0.875rem; color: #666;">Waiting for confirmation...</span>
+                    </div>
+                </div>
+            `;
+            
+            // Add spinner animation
+            if (!document.getElementById('spinnerKeyframes')) {
+                const style = document.createElement('style');
+                style.id = 'spinnerKeyframes';
+                style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
+            
+            document.body.appendChild(modal);
+        }
+
+        // Show signature request modal
+        function showSignatureModal(provider, address) {
+            const providerNames = { metamask: 'MetaMask', walletconnect: 'WalletConnect' };
+            const userEmail = localStorage.getItem('userEmail') || 'jane@example.com';
+            
+            const modal = document.createElement('div');
+            modal.id = 'signatureModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                backdrop-filter: blur(4px);
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 1.5rem;
+                padding: 2rem;
+                max-width: 480px;
+                width: 90%;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            `;
+            
+            const shortAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+            
+            modalContent.innerHTML = `
+                <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a1a;">
+                    Verify Wallet Ownership
+                </h2>
+                
+                <p style="font-size: 0.938rem; color: #666; margin-bottom: 1.5rem;">
+                    Sign this message to verify you own this wallet address and bind it to your account.
+                </p>
+                
+                <div style="background: #f9fafb; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid #e5e7eb;">
+                    <div style="font-size: 0.875rem; color: #666; margin-bottom: 1rem; font-weight: 600;">Message to sign:</div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 0.813rem; color: #1a1a1a; line-height: 1.6;">
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Domain:</strong> UNERA
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Email:</strong> ${userEmail}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Wallet:</strong> ${shortAddress}
+                        </div>
+                        <div>
+                            <strong>Timestamp:</strong> ${new Date().toISOString()}
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem;">
+                    <button onclick="cancelSignature()" style="
+                        flex: 1;
+                        padding: 0.875rem;
+                        background: #f5f5f5;
+                        border: none;
+                        border-radius: 0.75rem;
+                        font-size: 1rem;
+                        font-weight: 500;
+                        color: #1a1a1a;
+                        cursor: pointer;
+                        transition: background 0.2s;
+                    " onmouseover="this.style.background='#e8e8e8'" onmouseout="this.style.background='#f5f5f5'">
+                        Cancel
+                    </button>
+                    <button onclick="signAndBind('${provider}', '${address}')" style="
+                        flex: 1;
+                        padding: 0.875rem;
+                        background: #10B981;
+                        border: none;
+                        border-radius: 0.75rem;
+                        font-size: 1rem;
+                        font-weight: 500;
+                        color: white;
+                        cursor: pointer;
+                        transition: background 0.2s;
+                    " onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10B981'">
+                        Sign Message
+                    </button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+
+        // Cancel signature
+        function cancelSignature() {
+            const modal = document.getElementById('signatureModal');
+            if (modal) modal.remove();
+        }
+
+        // Sign and bind wallet
+        async function signAndBind(provider, address) {
+            const modal = document.getElementById('signatureModal');
+            if (!modal) return;
+            
+            // Update modal to show signing state
+            const modalContent = modal.querySelector('div > div');
+            modalContent.innerHTML = `
+                <div style="text-align: center; padding: 2rem 0;">
+                    <div style="width: 80px; height: 80px; background: #3B99FC; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
+                        ✍️
+                    </div>
+                    
+                    <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a1a;">
+                        Signing message...
+                    </h2>
+                    
+                    <p style="font-size: 0.938rem; color: #666;">
+                        Please check your wallet
+                    </p>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <div style="width: 20px; height: 20px; border: 3px solid #e0e0e0; border-top-color: #3B99FC; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Simulate signing (demo mode - no actual signature)
+            setTimeout(() => {
+                const dummySignature = '0x' + Math.random().toString(16).substr(2, 130);
+                
+                // Update modal to show success
+                modalContent.innerHTML = `
+                    <div style="text-align: center; padding: 2rem 0;">
+                        <div style="width: 80px; height: 80px; background: #10B981; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
+                            ✓
+                        </div>
+                        
+                        <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a1a;">
+                            Wallet Verified!
+                        </h2>
+                        
+                        <p style="font-size: 0.938rem; color: #666;">
+                            Your wallet has been bound to your account
+                        </p>
+                    </div>
+                `;
+                
+                // Save to localStorage
+                const boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+                
+                // Check if wallet already bound
+                if (boundWallets.some(w => w.address.toLowerCase() === address.toLowerCase())) {
+                    modalContent.innerHTML = `
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div style="width: 80px; height: 80px; background: #F59E0B; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
+                                ⚠️
+                            </div>
+                            
+                            <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a1a;">
+                                Wallet Already Bound
+                            </h2>
+                            
+                            <p style="font-size: 0.938rem; color: #666;">
+                                This wallet is already connected to your account
+                            </p>
+                        </div>
+                    `;
+                    
+                    setTimeout(() => {
+                        modal.remove();
+                    }, 2000);
+                    return;
+                }
+                
+                boundWallets.push({
+                    address: address,
+                    provider: provider,
+                    verified: true,
+                    boundAt: Date.now(),
+                    signature: dummySignature
+                });
+                localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
+                
+                // Close modal and refresh UI
+                setTimeout(() => {
+                    modal.remove();
+                    renderWallets();
+                }, 1500);
+            }, 2000);
+        }
+
+        // Close wallet selection modal
+        function closeWalletSelectionModal() {
+            const modal = document.getElementById('walletSelectionModal');
+            if (modal) modal.remove();
+        }
+
+        // Initialize page
+        initializeDummyWallets();
+        renderWallets();
+        renderTransactionHistory();
+        renderTokenLists();
+    </script>
+</body>
+</html>

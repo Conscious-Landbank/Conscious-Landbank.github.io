@@ -33,8 +33,8 @@ const WalletPrompt = {
      */
     showModal(options) {
         const {
-            title = '💳 Wallet Required',
-            message = 'You need a wallet to continue with this action.',
+            title = '💳 Connect Wallet',
+            message = 'Connect your wallet to continue with this action.',
             benefits = [],
             page = 'unknown',
             isFirstTime = true,
@@ -78,8 +78,8 @@ const WalletPrompt = {
                                 <span>✨</span> First Time Here?
                             </div>
                             <p class="wallet-prompt-first-time-text">
-                                Welcome! To get started, you'll need to create a secure wallet. 
-                                This is your personal digital account that only you control.
+                                Welcome! To get started, you'll need to connect your wallet (MetaMask or WalletConnect). 
+                                This is your secure digital account that only you control.
                             </p>
                         </div>
                     ` : ''}
@@ -119,7 +119,7 @@ const WalletPrompt = {
                     
                     <div class="wallet-prompt-actions">
                         <button class="wallet-prompt-btn wallet-prompt-btn-primary" onclick="WalletPrompt.createWallet('${page}')">
-                            Create Wallet Now
+                            Connect Wallet Now
                         </button>
                         <button class="wallet-prompt-btn wallet-prompt-btn-secondary" onclick="WalletPrompt.closeModal('${page}')">
                             I'll do this later
@@ -459,18 +459,26 @@ const WalletPrompt = {
     },
 
     /**
-     * Navigate to wallet creation
-     * @param {string} returnPage - Page to return to after wallet creation
+     * Navigate to wallet connection (UPDATED: replaced creation with connect flow)
+     * @param {string} returnPage - Page to return to after wallet connection
      */
     createWallet(returnPage) {
-        // Store return page for after wallet creation
-        localStorage.setItem('walletCreationReturn', returnPage);
+        // TEMPORARILY HIDDEN: Wallet creation flow
+        // Now using Connect Wallet flow (Uniswap-style)
+        
+        // Store return page for after wallet connection
+        localStorage.setItem('walletConnectionReturn', returnPage);
         
         // Track event
-        this._trackEvent('wallet_creation_started', { from: returnPage });
+        this._trackEvent('wallet_connection_started', { from: returnPage });
         
-        // Navigate to wallet creation
-        window.location.href = `wallet-creation.html?return=${returnPage}`;
+        // Open connect wallet modal instead of navigating to creation page
+        if (typeof openWalletModal === 'function') {
+            openWalletModal();
+        } else {
+            // Fallback: redirect to wallet page which has the connect button
+            window.location.href = 'wallet-enhanced.html';
+        }
     },
 
     /**
@@ -516,12 +524,12 @@ const WalletPrompt = {
                 <div class="wallet-banner-content">
                     <div class="wallet-banner-icon">💳</div>
                     <div class="wallet-banner-text">
-                        <div class="wallet-banner-title">Create Your Wallet</div>
-                        <div class="wallet-banner-description">Unlock full features: receive donations, track impact, and earn rewards</div>
+                        <div class="wallet-banner-title">Connect Your Wallet</div>
+                        <div class="wallet-banner-description">Connect MetaMask or WalletConnect to unlock full features and track your impact</div>
                     </div>
                     <div class="wallet-banner-actions">
-                        <button class="wallet-banner-btn" onclick="WalletPrompt.createWallet('dashboard')">
-                            Create Wallet
+                        <button class="wallet-banner-btn" onclick="toggleConnectDropdown()">
+                            Connect Wallet
                         </button>
                         <button class="wallet-banner-dismiss" onclick="WalletPrompt.dismissBanner()" aria-label="Dismiss banner">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -545,6 +553,9 @@ const WalletPrompt = {
                     animation: walletBannerSlideDown 0.5s ease-out;
                     position: relative;
                     overflow: hidden;
+                    z-index: 10;
+                    margin-top: 0;
+                    pointer-events: none;
                 }
                 
                 .wallet-banner::before {
@@ -577,6 +588,7 @@ const WalletPrompt = {
                     gap: 1.5rem;
                     position: relative;
                     z-index: 1;
+                    pointer-events: auto;
                 }
                 
                 .wallet-banner-icon {
@@ -614,6 +626,7 @@ const WalletPrompt = {
                     padding: 0.75rem 1.5rem;
                     border-radius: 0.5rem;
                     border: none;
+                    pointer-events: auto;
                     font-weight: 600;
                     font-size: 0.938rem;
                     min-height: 46px;
@@ -644,6 +657,7 @@ const WalletPrompt = {
                     transition: all 0.2s ease;
                     color: white;
                     flex-shrink: 0;
+                    pointer-events: auto;
                 }
                 
                 .wallet-banner-dismiss:hover {
