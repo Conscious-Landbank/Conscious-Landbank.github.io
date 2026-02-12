@@ -450,6 +450,838 @@
             font-size: 1rem;
             margin-bottom: 1.5rem;
         }
+
+        /* ========================================
+           TRANSACTION HISTORY ENHANCEMENTS
+           ======================================== */
+
+        /* History Controls (Search & Filter) */
+        .history-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-bar {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem 0.875rem 3.5rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--neutral-500);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--neutral-500);
+            pointer-events: none;
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .search-clear-btn:hover {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .search-clear-btn:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .filter-btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Active Filters Chips */
+        .active-filters {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--primary-green);
+            border-radius: 980px;
+            font-size: 0.875rem;
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        .filter-chip button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .filter-chip button:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .filter-chip-clear-all {
+            background: none;
+            border: 2px solid var(--neutral-300);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 980px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .filter-chip-clear-all:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        /* Filter Modal */
+        .filter-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-modal.active {
+            display: flex;
+        }
+
+        .filter-modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .filter-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .filter-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .filter-modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .modal-close-btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .filter-modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 1rem 0;
+        }
+
+        .date-range-presets {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .date-preset-btn {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-100);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .date-preset-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--primary-green);
+        }
+
+        .date-preset-btn.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        .date-range-custom {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .date-range-custom label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .date-range-custom input[type="date"] {
+            padding: 0.75rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .date-range-custom input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .radio-label,
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.938rem;
+            min-height: 48px;
+        }
+
+        .radio-label:hover,
+        .checkbox-label:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .radio-label input[type="radio"],
+        .checkbox-label input[type="checkbox"] {
+            width: 20px !important;
+            height: 20px !important;
+            min-width: 20px !important;
+            min-height: 20px !important;
+            cursor: pointer;
+            accent-color: var(--primary-green);
+            flex-shrink: 0;
+        }
+
+        .radio-label input[type="radio"]:checked + span,
+        .checkbox-label input[type="checkbox"]:checked + span {
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .radio-label input[type="radio"]:focus,
+        .checkbox-label input[type="checkbox"]:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .filter-section select {
+            width: 100%;
+            height: 52px;
+            padding: 0 3rem 0 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            background: var(--neutral-50);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%236B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            color: var(--text-primary);
+        }
+
+        .filter-section select:hover {
+            border-color: var(--border-default);
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%2310B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+        }
+
+        .filter-section select:focus {
+            border-color: var(--primary-green);
+            outline: 2px solid var(--primary-green);
+            outline-offset: 1px;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .filter-modal-footer {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-top: 2px solid var(--border-subtle);
+        }
+
+        .filter-modal-footer button {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Preset Styles */
+        .btn-save-preset {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 2px dashed var(--primary-green);
+            border-radius: 0.75rem;
+            color: var(--primary-green);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-save-preset:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .filter-presets {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-presets-empty {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .preset-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-item:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        /* Preset Dialog */
+        .preset-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preset-dialog.active {
+            display: flex;
+        }
+
+        .preset-dialog-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .preset-dialog-content {
+            position: relative;
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .preset-dialog-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .preset-dialog-content p {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            margin: 0 0 1.5rem 0;
+        }
+
+        .preset-dialog-content input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            margin-bottom: 1.5rem;
+        }
+
+        .preset-dialog-content input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .preset-dialog-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .preset-dialog-actions button {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Transaction Items & Date Groups */
+        .date-group {
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .date-group:last-child {
+            border-bottom: none;
+        }
+
+        .date-header {
+            padding: 1rem 1.5rem;
+            background: var(--neutral-100);
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 44px;
+            z-index: 10;
+            margin-bottom: 1.5rem;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .transaction-item:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: -3px;
+        }
+
+        .transaction-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .transaction-icon.in {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            color: var(--success);
+            border: 2px solid rgba(5, 150, 105, 0.3);
+        }
+
+        .transaction-icon.out {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
+            color: var(--error);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .transaction-icon.pending {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%);
+            color: var(--warning);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .transaction-icon.donation {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            color: var(--accent-pink);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .transaction-icon.yield {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            color: var(--primary-blue);
+            border: 2px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .transaction-icon.convert {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+            color: #8B5CF6;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .transaction-icon.reward {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+            color: var(--warning);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.375rem;
+            font-size: 1rem;
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .transaction-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .transaction-status.completed,
+        .transaction-status.confirmed {
+            background: rgba(5, 150, 105, 0.15);
+            color: #047857;
+        }
+
+        .transaction-status.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #D97706;
+        }
+
+        .transaction-status.failed {
+            background: rgba(239, 68, 68, 0.15);
+            color: #DC2626;
+        }
+
+        .transaction-amount {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .amount-primary {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .amount-primary.positive {
+            color: var(--success);
+        }
+
+        .amount-primary.negative {
+            color: var(--error);
+        }
+
+        .amount-secondary {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .history-controls {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .filter-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .transaction-item {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .transaction-details {
+                width: 100%;
+            }
+
+            .transaction-amount {
+                width: 100%;
+                text-align: left;
+            }
+
+            .transaction-meta {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .filter-modal-content {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .date-range-custom {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .transaction-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+
+            .transaction-title {
+                font-size: 0.938rem;
+            }
+
+            .transaction-meta {
+                font-size: 0.813rem;
+            }
+
+            .amount-primary {
+                font-size: 1.125rem;
+            }
+
+            .amount-secondary {
+                font-size: 0.813rem;
+            }
+
+            .date-header {
+                padding: 0.875rem 1rem;
+                font-size: 0.813rem;
+            }
+
+            .search-input {
+                padding: 0.75rem 1rem 0.75rem 3rem;
+                font-size: 0.938rem;
+            }
+
+            .filter-btn {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.938rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -516,6 +1348,46 @@
             <div class="card-header">
                 <h3 class="card-title">Recent Activity</h3>
             </div>
+            
+            <!-- Search and Filter Controls -->
+            <div class="history-controls">
+                <div class="search-bar">
+                    <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input 
+                        type="search" 
+                        class="search-input" 
+                        placeholder="Search by token, address, or transaction hash..." 
+                        id="searchInput"
+                        aria-label="Search blockchain transactions"
+                        oninput="searchTransactions()"
+                        autocomplete="off">
+                    <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" aria-label="Clear search" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <button 
+                    class="filter-btn" 
+                    onclick="toggleFilterPanel()" 
+                    id="filterBtn"
+                    aria-label="Open filter panel"
+                    aria-expanded="false">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                    <span>Filters</span>
+                </button>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div class="active-filters" id="activeFilters" style="display: none;" role="region" aria-label="Active filters">
+                <!-- Filter chips populated by JavaScript -->
+            </div>
+            
             <div class="transaction-list" id="transactionList">
                 <!-- Transactions will be rendered here -->
             </div>
@@ -534,52 +1406,434 @@
     </div>
 
     <script>
-        // Dummy Data
+        // Comprehensive Blockchain Transaction Data (24+ transactions)
         const DUMMY_TRANSACTIONS = [
+            // TODAY - 3 transactions
             {
-                wallet: '0x742d...3a8f',
-                type: 'send',
+                id: 'tx001',
+                action: 'transfer',
+                direction: 'in',
                 token: 'USDC',
-                amount: '50.00',
-                to: '0xabc...def',
-                time: '2 hours ago',
-                hash: '0xabc123...'
+                tokenName: 'USD Coin',
+                tokenContract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+                amount: '500.00',
+                amountFormatted: '500.00',
+                from: '0x1234567890abcdef1234567890abcdef12345678',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0xabc123def456789abc123def456789abc123def456789abc123def456789abc12',
+                blockNumber: 18942156,
+                timestamp: Date.now() - (2 * 60 * 60 * 1000), // 2 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
             },
             {
-                wallet: '0x742d...3a8f',
-                type: 'receive',
+                id: 'tx002',
+                action: 'transfer',
+                direction: 'out',
                 token: 'ETH',
-                amount: '0.1',
-                from: '0x123...456',
-                time: '1 day ago',
-                hash: '0xdef456...'
+                tokenName: 'Ethereum',
+                tokenContract: '0x0000000000000000000000000000000000000000',
+                amount: '0.25',
+                amountFormatted: '0.25',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0xabcdef1234567890abcdef1234567890abcdef12',
+                hash: '0xdef456abc789def456abc789def456abc789def456abc789def456abc789def456',
+                blockNumber: 18942089,
+                timestamp: Date.now() - (5 * 60 * 60 * 1000), // 5 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
             },
             {
-                wallet: '0x8765...4321',
-                type: 'send',
-                token: 'DAI',
-                amount: '10.25',
-                to: '0x789...abc',
-                time: '3 days ago',
-                hash: '0x789abc...'
-            },
-            {
-                wallet: '0x742d...3a8f',
-                type: 'receive',
+                id: 'tx003',
+                action: 'approve',
+                direction: 'out',
                 token: 'USDT',
-                amount: '25.50',
-                from: '0xdef...123',
-                time: '5 days ago',
-                hash: '0x123def...'
+                tokenName: 'Tether USD',
+                tokenContract: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+                amount: 'Unlimited',
+                amountFormatted: '∞',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                spender: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+                spenderName: 'Uniswap V2 Router',
+                hash: '0x123abc456def789abc123def456789abc123def456789abc123def456789abc12',
+                blockNumber: 18942045,
+                timestamp: Date.now() - (8 * 60 * 60 * 1000), // 8 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            // YESTERDAY - 3 transactions
+            {
+                id: 'tx004',
+                action: 'transfer',
+                direction: 'in',
+                token: 'DAI',
+                tokenName: 'Dai Stablecoin',
+                tokenContract: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+                amount: '1250.00',
+                amountFormatted: '1,250.00',
+                from: '0xfedcba0987654321fedcba0987654321fedcba09',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0x789def456abc123789def456abc123789def456abc123789def456abc123789d',
+                blockNumber: 18938567,
+                timestamp: Date.now() - (26 * 60 * 60 * 1000), // 26 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
             },
             {
-                wallet: '0x8765...4321',
-                type: 'send',
+                id: 'tx005',
+                action: 'transfer',
+                direction: 'out',
+                token: 'USDC',
+                tokenName: 'USD Coin',
+                tokenContract: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+                amount: '75.50',
+                amountFormatted: '75.50',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0x9876543210fedcba9876543210fedcba98765432',
+                hash: '0x456abc789def123456abc789def123456abc789def123456abc789def123456a',
+                blockNumber: 8245678,
+                timestamp: Date.now() - (30 * 60 * 60 * 1000), // 30 hours ago
+                network: 'Base',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx006',
+                action: 'approve',
+                direction: 'out',
+                token: 'USDC',
+                tokenName: 'USD Coin',
+                tokenContract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+                amount: '10000.00',
+                amountFormatted: '10,000.00',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                spender: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
+                spenderName: 'SushiSwap Router',
+                hash: '0xabc789def456123abc789def456123abc789def456123abc789def456123abc7',
+                blockNumber: 18937234,
+                timestamp: Date.now() - (35 * 60 * 60 * 1000), // 35 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            // 3 DAYS AGO - 2 transactions
+            {
+                id: 'tx007',
+                action: 'transfer',
+                direction: 'in',
+                token: 'WETH',
+                tokenName: 'Wrapped Ether',
+                tokenContract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+                amount: '0.85',
+                amountFormatted: '0.85',
+                from: '0x1111222233334444555566667777888899990000',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0xfed789abc456def789abc456def789abc456def789abc456def789abc456def7',
+                blockNumber: 18925890,
+                timestamp: Date.now() - (3 * 24 * 60 * 60 * 1000), // 3 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx008',
+                action: 'transfer',
+                direction: 'out',
+                token: 'USDT',
+                tokenName: 'Tether USD',
+                tokenContract: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+                amount: '200.00',
+                amountFormatted: '200.00',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0xaaaa1111bbbb2222cccc3333dddd4444eeee5555',
+                hash: '0x999888777666555444333222111000fffeeeddddccccbbbbaaaa9999888877',
+                blockNumber: 18924567,
+                timestamp: Date.now() - (3 * 24 * 60 * 60 * 1000 + 6 * 60 * 60 * 1000), // 3 days 6 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            // 5 DAYS AGO - 2 transactions
+            {
+                id: 'tx009',
+                action: 'transfer',
+                direction: 'in',
+                token: 'USDC',
+                tokenName: 'USD Coin',
+                tokenContract: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+                amount: '350.00',
+                amountFormatted: '350.00',
+                from: '0xbbbb3333cccc4444dddd5555eeee6666ffff7777',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0x111222333444555666777888999aaabbbcccdddeeefff000111222333444555',
+                blockNumber: 8198765,
+                timestamp: Date.now() - (5 * 24 * 60 * 60 * 1000), // 5 days ago
+                network: 'Base',
+                status: 'pending'
+            },
+            {
+                id: 'tx010',
+                action: 'approve',
+                direction: 'out',
+                token: 'DAI',
+                tokenName: 'Dai Stablecoin',
+                tokenContract: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+                amount: '5000.00',
+                amountFormatted: '5,000.00',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                spender: '0x1111000022220000333300004444000055550000',
+                spenderName: '1inch Router',
+                hash: '0xaaabbbcccdddeeefff000111222333444555666777888999aaabbbcccdddeee',
+                blockNumber: 18908123,
+                timestamp: Date.now() - (5 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000), // 5 days 4 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            // 1 WEEK AGO - 2 transactions
+            {
+                id: 'tx011',
+                action: 'transfer',
+                direction: 'out',
                 token: 'ETH',
-                amount: '0.05',
-                to: '0x456...789',
-                time: '1 week ago',
-                hash: '0x456789...'
+                tokenName: 'Ethereum',
+                tokenContract: '0x0000000000000000000000000000000000000000',
+                amount: '0.5',
+                amountFormatted: '0.5',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0xcccc5555dddd6666eeee7777ffff8888aaaa9999',
+                hash: '0xfff000111222333444555666777888999aaabbbcccdddeeefffaaabbbcccddd',
+                blockNumber: 18890234,
+                timestamp: Date.now() - (7 * 24 * 60 * 60 * 1000), // 1 week ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx012',
+                action: 'transfer',
+                direction: 'in',
+                token: 'USDC',
+                tokenName: 'USD Coin',
+                tokenContract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+                amount: '890.25',
+                amountFormatted: '890.25',
+                from: '0xdddd6666eeee7777ffff8888aaaa9999bbbb0000',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0x777888999aaabbbcccdddeeefff000111222333444555666777888999aaabbb',
+                blockNumber: 18888567,
+                timestamp: Date.now() - (7 * 24 * 60 * 60 * 1000 + 8 * 60 * 60 * 1000), // 1 week 8 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            // 2 WEEKS AGO - 3 transactions
+            {
+                id: 'tx013',
+                action: 'transfer',
+                direction: 'out',
+                token: 'USDT',
+                tokenName: 'Tether USD',
+                tokenContract: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+                amount: '450.00',
+                amountFormatted: '450.00',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0xeeee7777ffff8888aaaa9999bbbb0000cccc1111',
+                hash: '0x555666777888999aaabbbcccdddeeefff000111222333444555666777888999',
+                blockNumber: 18865432,
+                timestamp: Date.now() - (14 * 24 * 60 * 60 * 1000), // 2 weeks ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx014',
+                action: 'approve',
+                direction: 'out',
+                token: 'WETH',
+                tokenName: 'Wrapped Ether',
+                tokenContract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+                amount: 'Unlimited',
+                amountFormatted: '∞',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                spender: '0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9',
+                spenderName: 'Aave V2 Lending Pool',
+                hash: '0x333444555666777888999aaabbbcccdddeeefff000111222333444555666777',
+                blockNumber: 18863789,
+                timestamp: Date.now() - (14 * 24 * 60 * 60 * 1000 + 12 * 60 * 60 * 1000), // 2 weeks 12 hours ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx015',
+                action: 'transfer',
+                direction: 'in',
+                token: 'DAI',
+                tokenName: 'Dai Stablecoin',
+                tokenContract: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+                amount: '625.50',
+                amountFormatted: '625.50',
+                from: '0xffff8888aaaa9999bbbb0000cccc1111dddd2222',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0x111222333444555666777888999aaabbbcccdddeeefff000111222333444555',
+                blockNumber: 18862456,
+                timestamp: Date.now() - (15 * 24 * 60 * 60 * 1000), // 15 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            // OLDER DATES - 9 more transactions for variety
+            {
+                id: 'tx016',
+                action: 'transfer',
+                direction: 'out',
+                token: 'USDC',
+                tokenName: 'USD Coin',
+                tokenContract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+                amount: '125.00',
+                amountFormatted: '125.00',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0xaaaa9999bbbb0000cccc1111dddd2222eeee3333',
+                hash: '0xfff000111222333444555666777888999aaabbbcccdddeeefff000111222333',
+                blockNumber: 18845678,
+                timestamp: Date.now() - (18 * 24 * 60 * 60 * 1000), // 18 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx017',
+                action: 'transfer',
+                direction: 'in',
+                token: 'ETH',
+                tokenName: 'Ethereum',
+                tokenContract: '0x0000000000000000000000000000000000000000',
+                amount: '0.15',
+                amountFormatted: '0.15',
+                from: '0xbbbb0000cccc1111dddd2222eeee3333ffff4444',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0xdddeeefff000111222333444555666777888999aaabbbcccdddeeefff000111',
+                blockNumber: 18835432,
+                timestamp: Date.now() - (20 * 24 * 60 * 60 * 1000), // 20 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx018',
+                action: 'approve',
+                direction: 'out',
+                token: 'USDT',
+                tokenName: 'Tether USD',
+                tokenContract: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+                amount: '2500.00',
+                amountFormatted: '2,500.00',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                spender: '0xd51a44d3FaE010294C616388b506AcdA1bfAAE46',
+                spenderName: 'Curve Finance',
+                hash: '0xbbbcccdddeeefff000111222333444555666777888999aaabbbcccdddeeefff',
+                blockNumber: 18825678,
+                timestamp: Date.now() - (23 * 24 * 60 * 60 * 1000), // 23 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx019',
+                action: 'transfer',
+                direction: 'in',
+                token: 'USDC',
+                tokenName: 'USD Coin',
+                tokenContract: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+                amount: '1500.00',
+                amountFormatted: '1,500.00',
+                from: '0xcccc1111dddd2222eeee3333ffff4444aaaa5555',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0x999aaabbbcccdddeeefff000111222333444555666777888999aaabbbcccdddeee',
+                blockNumber: 8125678,
+                timestamp: Date.now() - (25 * 24 * 60 * 60 * 1000), // 25 days ago
+                network: 'Base',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx020',
+                action: 'transfer',
+                direction: 'out',
+                token: 'DAI',
+                tokenName: 'Dai Stablecoin',
+                tokenContract: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+                amount: '300.75',
+                amountFormatted: '300.75',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0xdddd2222eeee3333ffff4444aaaa5555bbbb6666',
+                hash: '0x777888999aaabbbcccdddeeefff000111222333444555666777888999aaabbb',
+                blockNumber: 18805432,
+                timestamp: Date.now() - (28 * 24 * 60 * 60 * 1000), // 28 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx021',
+                action: 'transfer',
+                direction: 'in',
+                token: 'WETH',
+                tokenName: 'Wrapped Ether',
+                tokenContract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+                amount: '0.42',
+                amountFormatted: '0.42',
+                from: '0xeeee3333ffff4444aaaa5555bbbb6666cccc7777',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0x555666777888999aaabbbcccdddeeefff000111222333444555666777888999',
+                blockNumber: 18795678,
+                timestamp: Date.now() - (30 * 24 * 60 * 60 * 1000), // 30 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx022',
+                action: 'transfer',
+                direction: 'out',
+                token: 'USDC',
+                tokenName: 'USD Coin',
+                tokenContract: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+                amount: '50.00',
+                amountFormatted: '50.00',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0xffff4444aaaa5555bbbb6666cccc7777dddd8888',
+                hash: '0x333444555666777888999aaabbbcccdddeeefff000111222333444555666777',
+                blockNumber: 5234567,
+                timestamp: Date.now() - (33 * 24 * 60 * 60 * 1000), // 33 days ago
+                network: 'Sepolia',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx023',
+                action: 'approve',
+                direction: 'out',
+                token: 'DAI',
+                tokenName: 'Dai Stablecoin',
+                tokenContract: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+                amount: 'Unlimited',
+                amountFormatted: '∞',
+                from: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                spender: '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD',
+                spenderName: 'Uniswap Universal Router',
+                hash: '0x111222333444555666777888999aaabbbcccdddeeefff000111222333444555',
+                blockNumber: 18775432,
+                timestamp: Date.now() - (35 * 24 * 60 * 60 * 1000), // 35 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
+            },
+            {
+                id: 'tx024',
+                action: 'transfer',
+                direction: 'in',
+                token: 'USDT',
+                tokenName: 'Tether USD',
+                tokenContract: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+                amount: '780.00',
+                amountFormatted: '780.00',
+                from: '0xaaaa5555bbbb6666cccc7777dddd8888eeee9999',
+                to: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
+                hash: '0xfff000111222333444555666777888999aaabbbcccdddeeefff000111222333',
+                blockNumber: 18765678,
+                timestamp: Date.now() - (38 * 24 * 60 * 60 * 1000), // 38 days ago
+                network: 'Ethereum',
+                status: 'confirmed'
             }
         ];
 
@@ -606,13 +1860,17 @@
                         address: '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f',
                         provider: 'metamask',
                         verified: true,
-                        boundAt: Date.now() - (2 * 24 * 60 * 60 * 1000) // 2 days ago
+                        boundAt: Date.now() - (2 * 24 * 60 * 60 * 1000), // 2 days ago
+                        isPrimary: true,
+                        nickname: 'Trading Wallet'
                     },
                     {
                         address: '0x87654321fedcba0987654321fedcba0987654321',
                         provider: 'walletconnect',
                         verified: true,
-                        boundAt: Date.now() - (5 * 24 * 60 * 60 * 1000) // 5 days ago
+                        boundAt: Date.now() - (5 * 24 * 60 * 60 * 1000), // 5 days ago
+                        isPrimary: false,
+                        nickname: null
                     }
                 ];
                 localStorage.setItem('boundWallets', JSON.stringify(dummyWallets));
@@ -632,9 +1890,9 @@
             return `${Math.floor(days / 30)} month${Math.floor(days / 30) > 1 ? 's' : ''} ago`;
         }
 
-        // Render wallets
+        // Render wallets with enhanced features
         function renderWallets() {
-            const boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+            let boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
             const container = document.getElementById('walletList');
             
             if (boundWallets.length === 0) {
@@ -647,41 +1905,348 @@
                 return;
             }
 
-            container.innerHTML = boundWallets.map(wallet => `
-                <div class="wallet-card">
-                    <div class="wallet-info">
-                        <div class="wallet-icon">${wallet.provider === 'metamask' ? '🦊' : '🔗'}</div>
-                        <div class="wallet-details">
-                            <h3>${wallet.address.substring(0, 6)}...${wallet.address.substring(wallet.address.length - 4)}</h3>
-                            <div class="wallet-meta">
-                                <span class="verified-badge">
-                                    ✓ Verified
-                                </span>
-                                <span>•</span>
-                                <span>${wallet.provider === 'metamask' ? 'MetaMask' : 'WalletConnect'}</span>
-                                <span>•</span>
-                                <span>Bound ${formatTimeAgo(wallet.boundAt)}</span>
+            // Ensure at least one wallet is marked as primary
+            if (!boundWallets.some(w => w.isPrimary)) {
+                boundWallets[0].isPrimary = true;
+                localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
+            }
+
+            // Generate mock data for each wallet
+            const mockNetworks = ['Ethereum', 'Base', 'Ethereum', 'Sepolia'];
+            const mockTxCounts = [142, 87, 234, 56];
+            const mockLastUsed = ['2 hours ago', '1 day ago', '3 days ago', '1 week ago'];
+
+            container.innerHTML = boundWallets.map((wallet, index) => {
+                const shortAddress = `${wallet.address.substring(0, 6)}...${wallet.address.substring(wallet.address.length - 4)}`;
+                const network = mockNetworks[index % mockNetworks.length];
+                const txCount = mockTxCounts[index % mockTxCounts.length];
+                const lastUsed = mockLastUsed[index % mockLastUsed.length];
+                const isPrimary = wallet.isPrimary || false;
+                const nickname = wallet.nickname || null;
+                
+                // Network color indicators
+                const networkColors = {
+                    'Ethereum': '#627EEA',
+                    'Base': '#0052FF',
+                    'Sepolia': '#FFA500'
+                };
+
+                return `
+                    <div class="wallet-card" style="position: relative;">
+                        ${isPrimary ? `
+                            <div style="position: absolute; top: 1rem; right: 1rem; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.3px;">
+                                ⭐ Primary
+                            </div>
+                        ` : ''}
+                        
+                        <div class="wallet-info">
+                            <div class="wallet-icon">${wallet.provider === 'metamask' ? '🦊' : '🔗'}</div>
+                            <div class="wallet-details">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.375rem;">
+                                    ${nickname ? `
+                                        <h3 style="margin: 0; font-size: 1.125rem; font-weight: 700; color: var(--text-primary);">${nickname}</h3>
+                                        <button onclick="updateWalletNickname('${wallet.address}')" 
+                                                style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; display: flex; align-items: center; border-radius: 0.25rem; transition: all 0.2s;"
+                                                onmouseover="this.style.background='var(--neutral-100)'; this.style.color='var(--primary-green)'"
+                                                onmouseout="this.style.background='none'; this.style.color='var(--text-secondary)'"
+                                                aria-label="Edit wallet nickname">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                    ` : `
+                                        <h3 style="margin: 0; font-size: 1.125rem; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="updateWalletNickname('${wallet.address}')" title="Click to add nickname">${shortAddress}</h3>
+                                        <button onclick="updateWalletNickname('${wallet.address}')" 
+                                                style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; display: flex; align-items: center; border-radius: 0.25rem; transition: all 0.2s;"
+                                                onmouseover="this.style.background='var(--neutral-100)'; this.style.color='var(--primary-green)'"
+                                                onmouseout="this.style.background='none'; this.style.color='var(--text-secondary)'"
+                                                aria-label="Add wallet nickname">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                    `}
+                                </div>
+                                ${nickname ? `
+                                    <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem; font-family: monospace;">${shortAddress}</div>
+                                ` : ''}
+                                <div class="wallet-meta" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                                    <span class="verified-badge">
+                                        ✓ Verified
+                                    </span>
+                                    <span>•</span>
+                                    <span>${wallet.provider === 'metamask' ? 'MetaMask' : 'WalletConnect'}</span>
+                                    <span>•</span>
+                                    <span>Bound ${formatTimeAgo(wallet.boundAt)}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem; background: var(--neutral-50); border-radius: 980px; font-size: 0.813rem; font-weight: 600;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${networkColors[network]};"></span>
+                                        ${network}
+                                    </span>
+                                    <span style="color: var(--text-secondary); font-size: 0.813rem;">
+                                        ${txCount} transactions
+                                    </span>
+                                    <span style="color: var(--text-secondary); font-size: 0.813rem;">
+                                        Last used ${lastUsed}
+                                    </span>
+                                </div>
                             </div>
                         </div>
+                        <div class="wallet-actions" style="display: flex; gap: 0.75rem;">
+                            ${!isPrimary ? `
+                                <button class="btn btn-secondary" 
+                                        onclick="setPrimaryWallet('${wallet.address}')"
+                                        style="background: white; color: var(--text-secondary); border: 2px solid var(--border-subtle); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                                        onmouseover="this.style.borderColor='var(--primary-green)'; this.style.color='var(--primary-green)'; this.style.background='rgba(16, 185, 129, 0.02)'"
+                                        onmouseout="this.style.borderColor='var(--border-subtle)'; this.style.color='var(--text-secondary)'; this.style.background='white'">
+                                    ⭐ Set as Primary
+                                </button>
+                            ` : ''}
+                            <button class="btn btn-danger" 
+                                    onclick="removeWallet('${wallet.address}')"
+                                    style="background: white; color: var(--error); border: 2px solid var(--border-subtle); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                                    onmouseover="this.style.borderColor='var(--error)'; this.style.background='rgba(239, 68, 68, 0.02)'"
+                                    onmouseout="this.style.borderColor='var(--border-subtle)'; this.style.background='white'">
+                                Remove
+                            </button>
+                        </div>
                     </div>
-                    <div class="wallet-actions">
-                        <button class="btn btn-danger" onclick="removeWallet('${wallet.address}')">Remove</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        // Render transactions
+        // Update wallet nickname
+        // Wallet Nickname Dialog Management
+        let currentEditingWalletAddress = null;
+
+        function updateWalletNickname(address) {
+            currentEditingWalletAddress = address;
+            const boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+            const wallet = boundWallets.find(w => w.address === address);
+            
+            if (!wallet) return;
+
+            // Open the custom modal
+            const dialog = document.getElementById('nicknameDialog');
+            const input = document.getElementById('nicknameInput');
+            const title = document.getElementById('nicknameDialogTitle');
+            
+            // Set current nickname value
+            input.value = wallet.nickname || '';
+            
+            // Update title based on whether wallet has a nickname
+            if (wallet.nickname) {
+                title.textContent = 'Edit Wallet Nickname';
+            } else {
+                title.textContent = 'Add Wallet Nickname';
+            }
+            
+            // Show dialog
+            dialog.classList.add('active');
+            dialog.setAttribute('aria-hidden', 'false');
+            
+            // Focus input after animation
+            setTimeout(() => {
+                input.focus();
+                input.select();
+            }, 100);
+            
+            // Handle ESC key
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    closeNicknameDialog();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
+            
+            // Handle Enter key in input
+            input.onkeypress = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveWalletNickname();
+                }
+            };
+        }
+
+        function closeNicknameDialog() {
+            const dialog = document.getElementById('nicknameDialog');
+            const input = document.getElementById('nicknameInput');
+            
+            dialog.classList.remove('active');
+            dialog.setAttribute('aria-hidden', 'true');
+            input.value = '';
+            currentEditingWalletAddress = null;
+        }
+
+        function saveWalletNickname() {
+            if (!currentEditingWalletAddress) return;
+            
+            const input = document.getElementById('nicknameInput');
+            const newNickname = input.value.trim();
+            
+            let boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+            const wallet = boundWallets.find(w => w.address === currentEditingWalletAddress);
+            
+            if (!wallet) {
+                closeNicknameDialog();
+                return;
+            }
+            
+            const oldNickname = wallet.nickname || '';
+            
+            // Only update if changed
+            if (newNickname !== oldNickname) {
+                wallet.nickname = newNickname || null;
+                localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
+                renderWallets();
+                
+                // Show success notification
+                if (typeof showNotification === 'function') {
+                    if (newNickname) {
+                        showNotification('Wallet nickname updated', 'success');
+                    } else {
+                        showNotification('Wallet nickname removed', 'success');
+                    }
+                }
+            }
+            
+            closeNicknameDialog();
+        }
+
+        // Set primary wallet
+        function setPrimaryWallet(address) {
+            let boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+            
+            // Remove primary status from all wallets
+            boundWallets.forEach(w => w.isPrimary = false);
+            
+            // Set the selected wallet as primary
+            const wallet = boundWallets.find(w => w.address === address);
+            if (wallet) {
+                wallet.isPrimary = true;
+                localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
+                renderWallets();
+                
+                // Show success notification
+                if (typeof showNotification === 'function') {
+                    const shortAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                    showNotification(`${wallet.nickname || shortAddress} set as primary wallet`, 'success');
+                }
+            }
+        }
+
+        // Helper: Group transactions by date
+        function groupTransactionsByDate(transactions) {
+            const groups = {};
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            transactions.forEach(tx => {
+                const txDate = new Date(tx.timestamp);
+                const txDay = new Date(txDate.getFullYear(), txDate.getMonth(), txDate.getDate());
+                
+                let key;
+                if (txDay.getTime() === today.getTime()) {
+                    key = 'TODAY';
+                } else if (txDay.getTime() === yesterday.getTime()) {
+                    key = 'YESTERDAY';
+                } else {
+                    key = txDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+                }
+                
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(tx);
+            });
+            
+            return groups;
+        }
+
+        // Helper: Format time (e.g., "2:45 PM")
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const hours = date.getHours();
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            return `${displayHours}:${minutes} ${ampm}`;
+        }
+
+        // Helper: Render individual transaction item
+        function renderTransactionItem(tx) {
+            const isIncoming = tx.direction === 'in';
+            const isApproval = tx.action === 'approve';
+            
+            const icon = isApproval ? '✓' : (isIncoming ? '📥' : '📤');
+            const iconClass = isApproval ? 'convert' : (isIncoming ? 'in' : 'out');
+            const amountSign = isIncoming ? '+' : (isApproval ? '' : '-');
+            const amountClass = isIncoming ? 'positive' : (isApproval ? '' : 'negative');
+            
+            const fromAddress = tx.from ? `${tx.from.substring(0, 6)}...${tx.from.substring(tx.from.length - 4)}` : '';
+            const toAddress = tx.to ? `${tx.to.substring(0, 6)}...${tx.to.substring(tx.to.length - 4)}` : '';
+            const spenderAddress = tx.spender ? `${tx.spender.substring(0, 6)}...${tx.spender.substring(tx.spender.length - 4)}` : '';
+            
+            return `
+                <div class="transaction-item" 
+                     onclick="showBlockchainTransactionDetail('${tx.id}')"
+                     role="button"
+                     tabindex="0"
+                     onkeypress="if(event.key==='Enter') showBlockchainTransactionDetail('${tx.id}')"
+                     aria-label="${isApproval ? 'Approval' : 'Transfer'} ${tx.amountFormatted} ${tx.tokenName}">
+                    <div class="transaction-icon ${iconClass}">${icon}</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">
+                            ${isApproval ? 'Approval' : 'Transfer'} • ${tx.tokenName}
+                        </div>
+                        <div class="transaction-meta">
+                            <span>${formatTime(tx.timestamp)}</span>
+                            <span>•</span>
+                            <span class="transaction-status ${tx.status}">
+                                ${tx.status === 'confirmed' ? 'Confirmed' : tx.status === 'pending' ? 'Pending' : 'Failed'}
+                            </span>
+                            <span>•</span>
+                            <span>Block #${tx.blockNumber.toLocaleString()}</span>
+                            <span>•</span>
+                            <span>${tx.network}</span>
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="amount-primary ${amountClass}">
+                            ${isApproval ? tx.amountFormatted : `${amountSign} ${tx.amountFormatted}`} ${tx.token}
+                        </div>
+                        <div class="amount-secondary">
+                            ${isIncoming ? `From: ${fromAddress}` : (isApproval ? `Spender: ${spenderAddress}` : `To: ${toAddress}`)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render transactions with date grouping
         function renderTransactionHistory() {
             const container = document.getElementById('transactionList');
-            container.innerHTML = DUMMY_TRANSACTIONS.map(tx => `
-                <div class="transaction-item">
-                    <div class="tx-icon ${tx.type}">${tx.type === 'send' ? '↑' : '↓'}</div>
-                    <div class="tx-details">
-                        <div class="tx-amount">${tx.amount} ${tx.token}</div>
-                        <div class="tx-address">${tx.type === 'send' ? 'To' : 'From'}: ${tx.type === 'send' ? tx.to : tx.from}</div>
+            
+            if (DUMMY_TRANSACTIONS.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p class="empty-state-text">No transaction history available</p>
                     </div>
-                    <div class="tx-time">${tx.time}</div>
+                `;
+                return;
+            }
+            
+            const grouped = groupTransactionsByDate(DUMMY_TRANSACTIONS);
+            
+            container.innerHTML = Object.entries(grouped).map(([dateKey, txs]) => `
+                <div class="date-group">
+                    <div class="date-header">${dateKey}</div>
+                    ${txs.map(tx => renderTransactionItem(tx)).join('')}
                 </div>
             `).join('');
         }
@@ -713,6 +2278,743 @@
                 localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
                 renderWallets();
             }
+        }
+
+        // ========================================
+        // SEARCH & FILTER FUNCTIONS
+        // ========================================
+
+        let searchTimeout = null;
+        let activeFilters = {
+            dateFrom: null,
+            dateTo: null,
+            type: 'all',
+            actions: [],
+            statuses: ['confirmed', 'pending'],
+            network: 'all',
+            token: 'all'
+        };
+
+        // Search transactions
+        function searchTransactions() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        }
+
+        function performSearch(query) {
+            const transactionItems = document.querySelectorAll('.transaction-item');
+            let matchCount = 0;
+            
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) {
+                clearBtn.style.display = query ? 'flex' : 'none';
+            }
+            
+            if (!query) {
+                transactionItems.forEach(item => {
+                    item.style.display = 'flex';
+                });
+                matchCount = transactionItems.length;
+            } else {
+                transactionItems.forEach(item => {
+                    const title = item.querySelector('.transaction-title')?.textContent || '';
+                    const meta = item.querySelector('.transaction-meta')?.textContent || '';
+                    const amount = item.querySelector('.amount-primary')?.textContent || '';
+                    const secondary = item.querySelector('.amount-secondary')?.textContent || '';
+                    
+                    const searchableText = `${title} ${meta} ${amount} ${secondary}`.toLowerCase();
+                    
+                    if (searchableText.includes(query)) {
+                        item.style.display = 'flex';
+                        matchCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+            
+            hideEmptyDateGroups();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            performSearch('');
+        }
+
+        function hideEmptyDateGroups() {
+            const dateGroups = document.querySelectorAll('.date-group');
+            dateGroups.forEach(group => {
+                const visibleItems = Array.from(group.querySelectorAll('.transaction-item'))
+                    .filter(item => item.style.display !== 'none');
+                
+                if (visibleItems.length === 0) {
+                    group.style.display = 'none';
+                } else {
+                    group.style.display = 'block';
+                }
+            });
+        }
+
+        // Filter panel functions
+        let lastFocusedElement = null;
+
+        function toggleFilterPanel() {
+            const modal = document.getElementById('filterModal');
+            if (modal.classList.contains('active')) {
+                closeFilterPanel();
+            } else {
+                openFilterPanel();
+            }
+        }
+
+        function openFilterPanel() {
+            lastFocusedElement = document.activeElement;
+            
+            const modal = document.getElementById('filterModal');
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            
+            const firstInput = modal.querySelector('button, input, select');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+            
+            trapFocus(modal);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFilterPanel() {
+            const modal = document.getElementById('filterModal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            
+            document.body.style.overflow = '';
+            
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        function trapFocus(modal) {
+            const focusableElements = modal.querySelectorAll(
+                'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            const handleKeyDown = (e) => {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    } else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+                
+                if (e.key === 'Escape') {
+                    closeFilterPanel();
+                }
+            };
+            
+            modal.addEventListener('keydown', handleKeyDown);
+            modal._focusTrapHandler = handleKeyDown;
+        }
+
+        // Date range presets
+        function setDateRange(preset) {
+            const today = new Date();
+            let fromDate, toDate;
+            
+            document.querySelectorAll('.date-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            switch(preset) {
+                case 'last7days':
+                    fromDate = new Date(today.setDate(today.getDate() - 7));
+                    toDate = new Date();
+                    break;
+                case 'last30days':
+                    fromDate = new Date(today.setDate(today.getDate() - 30));
+                    toDate = new Date();
+                    break;
+                case 'thisMonth':
+                    fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    toDate = new Date();
+                    break;
+            }
+            
+            document.getElementById('dateFrom').value = formatDateForInput(fromDate);
+            document.getElementById('dateTo').value = formatDateForInput(toDate);
+        }
+
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Apply filters
+        function applyFilters() {
+            if (!validateFilters()) {
+                return;
+            }
+            
+            activeFilters.dateFrom = document.getElementById('dateFrom').value;
+            activeFilters.dateTo = document.getElementById('dateTo').value;
+            activeFilters.type = document.querySelector('input[name="txType"]:checked').value;
+            
+            activeFilters.actions = Array.from(
+                document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+            ).filter(cb => cb.id.startsWith('cat-')).map(cb => cb.value);
+            
+            activeFilters.statuses = Array.from(
+                document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+            ).filter(cb => cb.id.startsWith('status-')).map(cb => cb.value);
+            
+            activeFilters.network = document.getElementById('networkFilter').value;
+            activeFilters.token = document.getElementById('tokenFilter').value;
+            
+            filterTransactions();
+            updateActiveFilterChips();
+            
+            const filterBtn = document.getElementById('filterBtn');
+            filterBtn.classList.add('active');
+            filterBtn.setAttribute('aria-label', 'Filters active - click to modify');
+            
+            closeFilterPanel();
+        }
+
+        function validateFilters() {
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
+                alert('Start date must be before end date');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function filterTransactions() {
+            const transactionItems = document.querySelectorAll('.transaction-item');
+            let matchCount = 0;
+            
+            transactionItems.forEach(item => {
+                if (matchesFilters(item)) {
+                    item.style.display = 'flex';
+                    matchCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            hideEmptyDateGroups();
+        }
+
+        // ADAPTED FOR BLOCKCHAIN TRANSACTIONS
+        function matchesFilters(item) {
+            const txId = item.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+            if (!txId) return true;
+            
+            const transaction = DUMMY_TRANSACTIONS.find(tx => tx.id === txId);
+            if (!transaction) return true;
+            
+            // Check direction (in/out)
+            if (activeFilters.type !== 'all') {
+                if (activeFilters.type === 'in' && transaction.direction !== 'in') return false;
+                if (activeFilters.type === 'out' && transaction.direction !== 'out') return false;
+            }
+            
+            // Check action (transfer/approve/swap/mint)
+            if (activeFilters.actions.length > 0) {
+                if (!activeFilters.actions.includes(transaction.action)) return false;
+            }
+            
+            // Check status
+            if (activeFilters.statuses.length > 0) {
+                if (!activeFilters.statuses.includes(transaction.status)) return false;
+            }
+            
+            // Check network
+            if (activeFilters.network !== 'all' && transaction.network !== activeFilters.network) {
+                return false;
+            }
+            
+            // Check token
+            if (activeFilters.token !== 'all' && transaction.tokenName !== activeFilters.token) {
+                return false;
+            }
+            
+            // Check date range
+            if (activeFilters.dateFrom || activeFilters.dateTo) {
+                const txDate = new Date(transaction.timestamp);
+                if (activeFilters.dateFrom && txDate < new Date(activeFilters.dateFrom)) return false;
+                if (activeFilters.dateTo && txDate > new Date(activeFilters.dateTo + ' 23:59:59')) return false;
+            }
+            
+            return true;
+        }
+
+        function updateActiveFilterChips() {
+            const container = document.getElementById('activeFilters');
+            container.innerHTML = '';
+            
+            const chips = [];
+            
+            if (activeFilters.dateFrom || activeFilters.dateTo) {
+                const fromStr = activeFilters.dateFrom || 'Start';
+                const toStr = activeFilters.dateTo || 'Now';
+                chips.push({
+                    label: `📅 ${fromStr} to ${toStr}`,
+                    onRemove: () => clearDateFilter()
+                });
+            }
+            
+            if (activeFilters.type !== 'all') {
+                const typeLabel = activeFilters.type === 'in' ? '📥 Incoming' : '📤 Outgoing';
+                chips.push({
+                    label: typeLabel,
+                    onRemove: () => clearTypeFilter()
+                });
+            }
+            
+            activeFilters.actions.forEach(action => {
+                const actionLabels = {
+                    'transfer': '💸 Transfer',
+                    'approve': '✅ Approve',
+                    'swap': '🔄 Swap',
+                    'mint': '🪙 Mint'
+                };
+                chips.push({
+                    label: actionLabels[action] || action,
+                    onRemove: () => removeActionFilter(action)
+                });
+            });
+            
+            if (activeFilters.network !== 'all') {
+                chips.push({
+                    label: `Network: ${activeFilters.network}`,
+                    onRemove: () => clearNetworkFilter()
+                });
+            }
+            
+            if (activeFilters.token !== 'all') {
+                chips.push({
+                    label: `Token: ${activeFilters.token}`,
+                    onRemove: () => clearTokenFilter()
+                });
+            }
+            
+            if (chips.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'flex';
+            
+            chips.forEach((chip, index) => {
+                const chipEl = document.createElement('div');
+                chipEl.className = 'filter-chip';
+                chipEl.innerHTML = `
+                    <span>${chip.label}</span>
+                    <button onclick="window.removeFilterChip(${index})" aria-label="Remove ${chip.label} filter" tabindex="0">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                `;
+                container.appendChild(chipEl);
+                
+                window[`removeFilterChip${index}`] = chip.onRemove;
+            });
+            
+            const clearAllBtn = document.createElement('button');
+            clearAllBtn.className = 'filter-chip-clear-all';
+            clearAllBtn.textContent = 'Clear all';
+            clearAllBtn.onclick = clearAllFilters;
+            clearAllBtn.setAttribute('aria-label', 'Clear all filters');
+            container.appendChild(clearAllBtn);
+        }
+
+        window.removeFilterChip = function(index) {
+            const handler = window[`removeFilterChip${index}`];
+            if (handler) {
+                handler();
+                applyFilters();
+            }
+        };
+
+        function clearDateFilter() {
+            activeFilters.dateFrom = null;
+            activeFilters.dateTo = null;
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
+        }
+
+        function clearTypeFilter() {
+            activeFilters.type = 'all';
+            document.querySelector('input[name="txType"][value="all"]').checked = true;
+        }
+
+        function removeActionFilter(action) {
+            activeFilters.actions = activeFilters.actions.filter(a => a !== action);
+            const checkbox = document.getElementById(`cat-${action}`);
+            if (checkbox) checkbox.checked = false;
+        }
+
+        function clearNetworkFilter() {
+            activeFilters.network = 'all';
+            document.getElementById('networkFilter').value = 'all';
+        }
+
+        function clearTokenFilter() {
+            activeFilters.token = 'all';
+            document.getElementById('tokenFilter').value = 'all';
+        }
+
+        function clearAllFilters() {
+            clearDateFilter();
+            clearTypeFilter();
+            activeFilters.actions = [];
+            activeFilters.statuses = ['confirmed', 'pending'];
+            activeFilters.network = 'all';
+            activeFilters.token = 'all';
+            
+            document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => {
+                if (cb.id === 'status-confirmed' || cb.id === 'status-pending') {
+                    cb.checked = true;
+                } else {
+                    cb.checked = false;
+                }
+            });
+            document.getElementById('networkFilter').value = 'all';
+            document.getElementById('tokenFilter').value = 'all';
+            
+            document.getElementById('activeFilters').style.display = 'none';
+            document.getElementById('activeFilters').innerHTML = '';
+            
+            const filterBtn = document.getElementById('filterBtn');
+            filterBtn.classList.remove('active');
+            filterBtn.setAttribute('aria-label', 'Open filter panel');
+            
+            document.querySelectorAll('.transaction-item').forEach(item => {
+                item.style.display = 'flex';
+            });
+            document.querySelectorAll('.date-group').forEach(group => {
+                group.style.display = 'block';
+            });
+        }
+
+        // ========================================
+        // SAVED FILTER PRESETS
+        // ========================================
+
+        const PRESETS_STORAGE_KEY = 'blockchainFilterPresets';
+        let savedPresets = [];
+
+        function loadSavedFilters() {
+            const stored = localStorage.getItem(PRESETS_STORAGE_KEY);
+            savedPresets = stored ? JSON.parse(stored) : [];
+            renderFilterPresets();
+        }
+
+        function renderFilterPresets() {
+            const container = document.getElementById('filterPresets');
+            const emptyMessage = document.getElementById('presetsEmpty');
+            
+            if (!container) return;
+            
+            if (savedPresets.length === 0) {
+                if (emptyMessage) emptyMessage.style.display = 'block';
+                container.querySelectorAll('.preset-item').forEach(item => item.remove());
+                return;
+            }
+            
+            if (emptyMessage) emptyMessage.style.display = 'none';
+            container.querySelectorAll('.preset-item').forEach(item => item.remove());
+            
+            savedPresets.forEach((preset, index) => {
+                const presetEl = document.createElement('div');
+                presetEl.className = 'preset-item';
+                presetEl.innerHTML = `
+                    <span class="preset-item-name">${escapeHTML(preset.name)}</span>
+                    <div class="preset-item-actions">
+                        <button class="preset-delete-btn" onclick="deletePreset(${index})" aria-label="Delete preset ${escapeHTML(preset.name)}" title="Delete" type="button">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                presetEl.querySelector('.preset-item-name').onclick = () => loadPreset(index);
+                presetEl.querySelector('.preset-item-name').style.cursor = 'pointer';
+                
+                const saveBtn = container.querySelector('.btn-save-preset');
+                if (saveBtn) {
+                    container.insertBefore(presetEl, saveBtn);
+                } else {
+                    container.appendChild(presetEl);
+                }
+            });
+        }
+
+        function showSavePresetDialog() {
+            const dialog = document.getElementById('presetDialog');
+            const input = document.getElementById('presetNameInput');
+            
+            dialog.classList.add('active');
+            dialog.setAttribute('aria-hidden', 'false');
+            
+            input.value = '';
+            setTimeout(() => input.focus(), 100);
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSavePresetDialog() {
+            const dialog = document.getElementById('presetDialog');
+            dialog.classList.remove('active');
+            dialog.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function saveFilterPreset() {
+            const nameInput = document.getElementById('presetNameInput');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                alert('Please enter a name for this preset');
+                nameInput.focus();
+                return;
+            }
+            
+            const preset = {
+                name: name,
+                filters: {
+                    dateFrom: document.getElementById('dateFrom').value,
+                    dateTo: document.getElementById('dateTo').value,
+                    type: document.querySelector('input[name="txType"]:checked').value,
+                    actions: Array.from(
+                        document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+                    ).filter(cb => cb.id.startsWith('cat-')).map(cb => cb.value),
+                    statuses: Array.from(
+                        document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+                    ).filter(cb => cb.id.startsWith('status-')).map(cb => cb.value),
+                    network: document.getElementById('networkFilter').value,
+                    token: document.getElementById('tokenFilter').value
+                },
+                createdAt: new Date().toISOString()
+            };
+            
+            savedPresets.push(preset);
+            localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(savedPresets));
+            
+            renderFilterPresets();
+            closeSavePresetDialog();
+        }
+
+        function loadPreset(index) {
+            const preset = savedPresets[index];
+            if (!preset) return;
+            
+            activeFilters = {...preset.filters};
+            
+            document.getElementById('dateFrom').value = preset.filters.dateFrom || '';
+            document.getElementById('dateTo').value = preset.filters.dateTo || '';
+            
+            const typeRadio = document.querySelector(`input[name="txType"][value="${preset.filters.type}"]`);
+            if (typeRadio) typeRadio.checked = true;
+            
+            document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => {
+                if (cb.id.startsWith('cat-')) {
+                    cb.checked = preset.filters.actions.includes(cb.value);
+                }
+                if (cb.id.startsWith('status-')) {
+                    cb.checked = preset.filters.statuses.includes(cb.value);
+                }
+            });
+            
+            document.getElementById('networkFilter').value = preset.filters.network;
+            document.getElementById('tokenFilter').value = preset.filters.token;
+            
+            applyFilters();
+        }
+
+        function deletePreset(index) {
+            const preset = savedPresets[index];
+            if (!preset) return;
+            
+            if (confirm(`Delete preset "${preset.name}"?`)) {
+                savedPresets.splice(index, 1);
+                localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(savedPresets));
+                renderFilterPresets();
+            }
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ========================================
+        // TRANSACTION DETAIL MODAL
+        // ========================================
+
+        function showBlockchainTransactionDetail(txId) {
+            const tx = DUMMY_TRANSACTIONS.find(t => t.id === txId);
+            if (!tx) return;
+
+            const modal = document.createElement('div');
+            modal.id = 'txDetailModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                animation: fadeIn 0.2s ease-out;
+            `;
+
+            const shortHash = `${tx.hash.substring(0, 10)}...${tx.hash.substring(tx.hash.length - 8)}`;
+            const fromShort = tx.from ? `${tx.from.substring(0, 10)}...${tx.from.substring(tx.from.length - 8)}` : '';
+            const toShort = tx.to ? `${tx.to.substring(0, 10)}...${tx.to.substring(tx.to.length - 8)}` : '';
+            const spenderShort = tx.spender ? `${tx.spender.substring(0, 10)}...${tx.spender.substring(tx.spender.length - 8)}` : '';
+            const isApproval = tx.action === 'approve';
+
+            modal.innerHTML = `
+                <div style="position: relative; background: white; border-radius: 1.5rem; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: slideUp 0.3s ease-out;">
+                    <div style="padding: 1.5rem 2rem; border-bottom: 2px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Transaction Details</h2>
+                        <button onclick="closeTxDetailModal()" style="background: none; border: none; color: var(--neutral-500); cursor: pointer; padding: 0.5rem; display: flex; border-radius: 50%; transition: all 0.2s;" onmouseover="this.style.background='var(--neutral-100)'" onmouseout="this.style.background='none'">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div style="padding: 2rem;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Transaction Hash</div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; background: var(--neutral-50); border-radius: 0.75rem; font-family: monospace; font-size: 0.875rem; word-break: break-all;">
+                                <span style="flex: 1;">${shortHash}</span>
+                                <button onclick="copyToClipboard('${tx.hash}', 'Hash')" style="background: var(--primary-green); color: white; border: none; padding: 0.5rem 0.75rem; border-radius: 0.5rem; cursor: pointer; flex-shrink: 0; font-size: 0.813rem; font-weight: 600;">Copy</button>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Status</div>
+                            <span style="display: inline-flex; padding: 0.5rem 1rem; background: ${tx.status === 'confirmed' ? 'rgba(5, 150, 105, 0.15)' : tx.status === 'pending' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color: ${tx.status === 'confirmed' ? '#047857' : tx.status === 'pending' ? '#D97706' : '#DC2626'}; border-radius: 0.5rem; font-weight: 700; font-size: 0.875rem;">${tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</span>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Block Number</div>
+                            <div style="font-size: 1rem; color: var(--text-primary);">${tx.blockNumber.toLocaleString()}</div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Network</div>
+                            <div style="font-size: 1rem; color: var(--text-primary);">${tx.network}</div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Action</div>
+                            <div style="font-size: 1rem; color: var(--text-primary);">${isApproval ? 'Token Approval' : 'Transfer'}</div>
+                        </div>
+                        ${!isApproval ? `
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">From</div>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; background: var(--neutral-50); border-radius: 0.75rem; font-family: monospace; font-size: 0.875rem;">
+                                    <span style="flex: 1;">${fromShort}</span>
+                                    <button onclick="copyToClipboard('${tx.from}', 'From address')" style="background: var(--primary-green); color: white; border: none; padding: 0.5rem 0.75rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.813rem; font-weight: 600;">Copy</button>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">To</div>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; background: var(--neutral-50); border-radius: 0.75rem; font-family: monospace; font-size: 0.875rem;">
+                                    <span style="flex: 1;">${toShort}</span>
+                                    <button onclick="copyToClipboard('${tx.to}', 'To address')" style="background: var(--primary-green); color: white; border: none; padding: 0.5rem 0.75rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.813rem; font-weight: 600;">Copy</button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Spender</div>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; background: var(--neutral-50); border-radius: 0.75rem; font-family: monospace; font-size: 0.875rem;">
+                                    <span style="flex: 1;">${tx.spenderName || spenderShort}</span>
+                                    <button onclick="copyToClipboard('${tx.spender}', 'Spender address')" style="background: var(--primary-green); color: white; border: none; padding: 0.5rem 0.75rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.813rem; font-weight: 600;">Copy</button>
+                                </div>
+                            </div>
+                        `}
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Token</div>
+                            <div style="font-size: 1rem; color: var(--text-primary);">${tx.tokenName} (${tx.token})</div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Amount</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">${tx.amountFormatted} ${tx.token}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Timestamp</div>
+                            <div style="font-size: 1rem; color: var(--text-primary);">${new Date(tx.timestamp).toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeTxDetailModal();
+                }
+            });
+
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+
+        function closeTxDetailModal() {
+            const modal = document.getElementById('txDetailModal');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = '';
+                document.removeEventListener('keydown', handleEscapeKey);
+            }
+        }
+
+        function handleEscapeKey(e) {
+            if (e.key === 'Escape') {
+                closeTxDetailModal();
+            }
+        }
+
+        function copyToClipboard(text, label) {
+            navigator.clipboard.writeText(text).then(() => {
+                if (typeof showNotification === 'function') {
+                    showNotification(`${label} copied to clipboard`, 'success');
+                } else {
+                    alert(`${label} copied!`);
+                }
+            });
         }
 
         // Bind new wallet flow
@@ -1117,6 +3419,179 @@
         renderWallets();
         renderTransactionHistory();
         renderTokenLists();
+        loadSavedFilters();
     </script>
+    <!-- Filter Modal for Blockchain Transactions -->
+    <div class="filter-modal" id="filterModal" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle" aria-hidden="true">
+        <div class="filter-modal-overlay" onclick="closeFilterPanel()"></div>
+        <div class="filter-modal-content" onclick="event.stopPropagation()">
+            <div class="filter-modal-header">
+                <h2 id="filterModalTitle">Filter Transactions</h2>
+                <button class="modal-close-btn" onclick="closeFilterPanel()" aria-label="Close filter panel">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="filter-modal-body">
+                <!-- Date Range Filter -->
+                <div class="filter-section">
+                    <h3>Date Range</h3>
+                    <div class="date-range-presets">
+                        <button type="button" class="date-preset-btn" onclick="setDateRange('last7days')" aria-label="Filter last 7 days">Last 7 days</button>
+                        <button type="button" class="date-preset-btn" onclick="setDateRange('last30days')" aria-label="Filter last 30 days">Last 30 days</button>
+                        <button type="button" class="date-preset-btn" onclick="setDateRange('thisMonth')" aria-label="Filter this month">This month</button>
+                    </div>
+                    <div class="date-range-custom">
+                        <label for="dateFrom">
+                            From:
+                            <input type="date" id="dateFrom" aria-label="Filter from date">
+                        </label>
+                        <label for="dateTo">
+                            To:
+                            <input type="date" id="dateTo" aria-label="Filter to date">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Transaction Direction Filter -->
+                <div class="filter-section">
+                    <h3>Transaction Direction</h3>
+                    <div class="radio-group" role="radiogroup" aria-label="Transaction direction">
+                        <label class="radio-label">
+                            <input type="radio" name="txType" value="all" checked>
+                            <span>All Transactions</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="txType" value="in">
+                            <span>📥 Incoming</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="txType" value="out">
+                            <span>📤 Outgoing</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Type Filter -->
+                <div class="filter-section">
+                    <h3>Action Type</h3>
+                    <div class="checkbox-group" role="group" aria-label="Action types">
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="transfer" id="cat-transfer">
+                            <span>💸 Transfer</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="approve" id="cat-approve">
+                            <span>✅ Approve</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="swap" id="cat-swap">
+                            <span>🔄 Swap</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="mint" id="cat-mint">
+                            <span>🪙 Mint</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="filter-section">
+                    <h3>Status</h3>
+                    <div class="checkbox-group" role="group" aria-label="Transaction status">
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="confirmed" id="status-confirmed" checked>
+                            <span>✅ Confirmed</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="pending" id="status-pending" checked>
+                            <span>⏳ Pending</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="failed" id="status-failed">
+                            <span>❌ Failed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Network Filter -->
+                <div class="filter-section">
+                    <h3>Network</h3>
+                    <label for="networkFilter" class="sr-only">Filter by network</label>
+                    <select id="networkFilter" aria-label="Filter by network">
+                        <option value="all">All Networks</option>
+                        <option value="Ethereum">Ethereum</option>
+                        <option value="Base">Base</option>
+                        <option value="Sepolia">Sepolia (Testnet)</option>
+                    </select>
+                </div>
+
+                <!-- Token Filter -->
+                <div class="filter-section">
+                    <h3>Token</h3>
+                    <label for="tokenFilter" class="sr-only">Filter by token</label>
+                    <select id="tokenFilter" aria-label="Filter by token">
+                        <option value="all">All Tokens</option>
+                        <option value="USDC">USDC</option>
+                        <option value="USDT">USDT</option>
+                        <option value="DAI">DAI</option>
+                        <option value="ETH">ETH</option>
+                        <option value="WETH">WETH</option>
+                    </select>
+                </div>
+
+                <!-- Saved Filter Presets -->
+                <div class="filter-section">
+                    <h3>Saved Presets</h3>
+                    <div class="filter-presets" id="filterPresets">
+                        <!-- Presets populated by JavaScript -->
+                        <p class="filter-presets-empty" id="presetsEmpty">No saved presets yet</p>
+                    </div>
+                    <button type="button" class="btn-save-preset" onclick="showSavePresetDialog()" aria-label="Save current filters as preset">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Save Current Filters
+                    </button>
+                </div>
+            </div>
+            
+            <div class="filter-modal-footer">
+                <button type="button" class="btn-secondary" onclick="clearAllFilters()" aria-label="Clear all filters">Clear All</button>
+                <button type="button" class="btn-primary" onclick="applyFilters()" aria-label="Apply filters">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Preset Dialog -->
+    <div class="preset-dialog" id="presetDialog" role="dialog" aria-modal="true" aria-labelledby="presetDialogTitle" aria-hidden="true">
+        <div class="preset-dialog-overlay" onclick="closeSavePresetDialog()"></div>
+        <div class="preset-dialog-content" onclick="event.stopPropagation()">
+            <h3 id="presetDialogTitle">Save Filter Preset</h3>
+            <p>Give your filter preset a name:</p>
+            <input type="text" id="presetNameInput" placeholder="e.g., Recent USDC transfers" maxlength="30" aria-label="Preset name">
+            <div class="preset-dialog-actions">
+                <button type="button" class="btn-secondary" onclick="closeSavePresetDialog()">Cancel</button>
+                <button type="button" class="btn-primary" onclick="saveFilterPreset()" id="savePresetBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallet Nickname Dialog -->
+    <div class="preset-dialog" id="nicknameDialog" role="dialog" aria-modal="true" aria-labelledby="nicknameDialogTitle" aria-hidden="true">
+        <div class="preset-dialog-overlay" onclick="closeNicknameDialog()"></div>
+        <div class="preset-dialog-content" onclick="event.stopPropagation()">
+            <h3 id="nicknameDialogTitle">Edit Wallet Nickname</h3>
+            <p>Give this wallet a memorable name:</p>
+            <input type="text" id="nicknameInput" placeholder="e.g., Trading Wallet, Savings, DeFi..." maxlength="30" aria-label="Wallet nickname">
+            <div class="preset-dialog-actions">
+                <button type="button" class="btn-secondary" onclick="closeNicknameDialog()">Cancel</button>
+                <button type="button" class="btn-primary" onclick="saveWalletNickname()" id="saveNicknameBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

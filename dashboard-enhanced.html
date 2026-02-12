@@ -2428,6 +2428,29 @@
 
         // Enhanced keyboard navigation
         document.addEventListener('DOMContentLoaded', () => {
+            // #region agent log
+            // FINAL VERIFICATION: Dashboard reference for comparison
+            setTimeout(() => {
+                const navLinks = document.querySelectorAll('.nav-link');
+                const visibleLinks = Array.from(navLinks).slice(0, 5);
+                
+                visibleLinks.forEach((link, idx) => {
+                    const styles = window.getComputedStyle(link);
+                    const rect = link.getBoundingClientRect();
+                    const parent = link.parentElement;
+                    const parentStyles = parent ? window.getComputedStyle(parent) : null;
+                    
+                    fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'dashboard-enhanced.html:2437',message:`[DASHBOARD-FINAL] nav-link ${idx}`,data:{text:link.textContent.trim(),isActive:link.classList.contains('active'),display:styles.display,lineHeight:styles.lineHeight,height:styles.height,computedHeight:rect.height,top:rect.top,parentDisplay:parentStyles?parentStyles.display:'none',parentAlignItems:parentStyles?parentStyles.alignItems:'none'},timestamp:Date.now(),runId:'final-verification',hypothesisId:'H6,H7,H8'})}).catch(()=>{});
+                });
+                
+                const container = document.querySelector('.nav-links');
+                if (container) {
+                    const containerStyles = window.getComputedStyle(container);
+                    fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'dashboard-enhanced.html:2438',message:'[DASHBOARD-FINAL] nav-links container',data:{display:containerStyles.display,alignItems:containerStyles.alignItems,height:containerStyles.height},timestamp:Date.now(),runId:'final-verification',hypothesisId:'H1'})}).catch(()=>{});
+                }
+            }, 500);
+            // #endregion
+            
             // Banner Priority Logic:
             // 1. If KYC not verified → Show KYC banner
             // 2. If KYC verified but no wallet → Show wallet banner

@@ -6829,17 +6829,13 @@
 
         // Disconnect wallet function
         function disconnectWallet() {
-            if (confirm('Are you sure you want to disconnect your wallet?')) {
+            showDisconnectConfirmModal(() => {
                 const walletManager = new WalletManager();
                 walletManager.disconnect();
                 
-                showNotification('Wallet disconnected successfully', 'success');
-                
-                // Reload page to update UI
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            }
+                // Show success modal (no need for showNotification)
+                showDisconnectSuccessModal();
+            });
         }
 
         // Logout function
@@ -6861,7 +6857,9 @@
         // Toggle connect wallet dropdown (copied from toggleUserDropdown pattern)
         function toggleConnectDropdown() {
             const dropdown = document.getElementById('connectDropdown');
-            dropdown.classList.toggle('show');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
             console.log('Connect dropdown toggled');
         }
         
@@ -6872,9 +6870,11 @@
         document.addEventListener('click', function(event) {
             const walletNavItem = document.getElementById('walletNavItem');
             const dropdown = document.getElementById('connectDropdown');
+            const walletBanner = document.getElementById('walletBanner');
             
             if (dropdown && dropdown.classList.contains('show')) {
-                if (!walletNavItem?.contains(event.target)) {
+                // Don't close if click is inside wallet nav item OR wallet banner
+                if (!walletNavItem?.contains(event.target) && !walletBanner?.contains(event.target)) {
                     dropdown.classList.remove('show');
                 }
             }

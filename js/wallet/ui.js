@@ -229,7 +229,7 @@ function updateTransactionDisplay(transactions) {
 }
 
 // Show error modal
-function showErrorModal(title, message, onRetry = null, networkError = false) {
+function showErrorModal(title, message, onRetry = null) {
     const modal = document.createElement('div');
     modal.id = 'walletErrorModal';
     modal.innerHTML = `
@@ -276,17 +276,7 @@ function showErrorModal(title, message, onRetry = null, networkError = false) {
                     gap: 12px;
                     justify-content: center;
                 ">
-                    ${networkError ? `
-                        <button onclick="document.getElementById('walletErrorModal').remove(); switchToSupportedNetwork()" style="
-                            padding: 12px 24px;
-                            background: #10B981;
-                            color: white;
-                            border: none;
-                            border-radius: 8px;
-                            font-weight: 500;
-                            cursor: pointer;
-                        ">Switch Network</button>
-                    ` : onRetry ? `
+                    ${onRetry ? `
                         <button onclick="document.getElementById('walletErrorModal').remove(); (${onRetry.toString()})()" style="
                             padding: 12px 24px;
                             background: #10B981;
@@ -360,40 +350,4 @@ function handleConnectionError(error, retryCallback = null) {
     // Pass retry callback to modal
     showErrorModal(errorInfo.title, errorInfo.message, retryCallback);
     console.error('Wallet connection error:', error);
-}
-
-// Switch to supported network (Ethereum mainnet)
-async function switchToSupportedNetwork() {
-    try {
-        // Check if MetaMask is available
-        if (typeof window.ethereum !== 'undefined') {
-            showLoading('Switching network...');
-            
-            // Try to switch to Ethereum mainnet (0x1)
-            await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x1' }],
-            });
-            
-            hideLoading();
-            showNotification('Switched to Ethereum Mainnet', 'success');
-            
-            // Reload page after 1 second
-            setTimeout(() => window.location.reload(), 1000);
-        } else {
-            // Demo mode - just update localStorage
-            localStorage.setItem('walletChainId', '0x1');
-            showNotification('Network switched (demo mode)', 'success');
-            setTimeout(() => window.location.reload(), 1000);
-        }
-    } catch (error) {
-        hideLoading();
-        if (error.code === 4902) {
-            // Network not added to wallet
-            showNotification('Please add Ethereum network to your wallet', 'error');
-        } else {
-            showNotification('Failed to switch network', 'error');
-        }
-        console.error('Network switch error:', error);
-    }
 }
