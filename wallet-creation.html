@@ -1648,8 +1648,10 @@
             
             if (kycStatus !== 'verified') {
                 // User hasn't completed KYC - redirect to KYC verification
-                alert('⚠️ KYC Verification Required\n\nFor regulatory compliance, you must complete identity verification before creating a wallet.\n\nYou will be redirected to KYC verification now.');
-                window.location.href = 'kyc-verify.html?return=wallet-creation';
+                showNotification('For regulatory compliance, you must complete identity verification before creating a wallet. You will be redirected to KYC verification now.', 'warning', 'KYC Verification Required');
+                setTimeout(() => {
+                    window.location.href = 'kyc-verify.html?return=wallet-creation';
+                }, 2000);
                 return;
             }
 
@@ -1677,6 +1679,30 @@
                 finishButton.textContent = buttonText;
             }
         });
+
+        // Modal Functions
+        function showNotification(message, type, title) {
+            const iconColors = {
+                'success': 'linear-gradient(135deg, #10B981 0%, #0EA5E9 100%)',
+                'warning': 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                'error': 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                'info': 'linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%)'
+            };
+            const modalHTML = `
+                <div class="modal-overlay" id="notificationModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: white; border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: ${iconColors[type] || iconColors.warning}; color: white; font-size: 2rem;">⚠️</div>
+                        <h2 style="margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">${title}</h2>
+                        <p style="color: #475569; line-height: 1.6;">${message}</p>
+                        <button onclick="closeNotificationModal()" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">OK</button>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+        function closeNotificationModal() {
+            const modal = document.getElementById('notificationModal');
+            if (modal) modal.remove();
+        }
     </script>
 </body>
 </html>

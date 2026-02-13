@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stablecoin Issuance - UNERA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #10B981;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-600: #6B7280;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+            --gradient-operator: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Reuse navigation from operator-dashboard */
+        .nav {
+            background: white;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 2rem;
+        }
+
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Mint Form */
+        .mint-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+
+        .preview-card {
+            padding: 1rem;
+            background: rgba(236, 72, 153, 0.05);
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-value {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-pink);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-operator);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        /* History Table */
+        .history-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: var(--neutral-50);
+            border-bottom: 2px solid var(--border-subtle);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .history-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-table tbody tr:hover {
+            background: var(--neutral-50);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .history-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        .modal-body { padding: 1.5rem; text-align: center; }
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            color: white;
+            font-size: 2rem;
+        }
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #E2E8F0;
+        }
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
+        .notification-modal .modal-body {
+            padding: 2rem 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-header">
+            <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;">UNERA - Stablecoin Issuance</h1>
+            <a href="operator-dashboard.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1 class="page-title">Stablecoin Issuance</h1>
+
+        <!-- Supply Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Current Total Supply</div>
+                <div class="stat-value" id="total-supply">$2,845,290</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Last Mint Amount</div>
+                <div class="stat-value" id="last-mint">$50,000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Minted This Month</div>
+                <div class="stat-value" id="month-minted">$425,000</div>
+            </div>
+        </div>
+
+        <!-- Mint Form -->
+        <div class="mint-section">
+            <h2 class="section-title">Mint New Tokens</h2>
+            <form id="mintForm" onsubmit="handleMint(event)">
+                <div class="form-group">
+                    <label for="amount" class="form-label">Amount to Mint ($)</label>
+                    <input type="number" id="amount" class="form-input" placeholder="50000" min="1" required oninput="updatePreview()">
+                </div>
+
+                <div class="form-group">
+                    <label for="reason" class="form-label">Reason</label>
+                    <select id="reason" class="form-select" required>
+                        <option value="">Select reason...</option>
+                        <option value="fiat-deposit">Fiat Deposit</option>
+                        <option value="reserve-topup">Reserve Top-up</option>
+                        <option value="manual-adjustment">Manual Adjustment</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reference" class="form-label">Reference Number</label>
+                    <input type="text" id="reference" class="form-input" placeholder="REF-2026-001" required>
+                </div>
+
+                <div class="preview-card">
+                    <div class="preview-label">New Total Supply Will Be</div>
+                    <div class="preview-value" id="new-supply">$2,845,290</div>
+                </div>
+
+                <button type="submit" class="btn-primary">Confirm Mint</button>
+            </form>
+        </div>
+
+        <!-- Minting History -->
+        <div class="history-section">
+            <h2 class="section-title">Minting History</h2>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="history-list">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon warning">⚠️</div>
+                <p class="notification-message" id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.75rem;">
+                <button class="btn-secondary" onclick="closeConfirmationModal()" style="flex: 1; padding: 0.75rem; background: #E5E7EB; border: none; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+                <button class="btn-primary" id="confirmButton" style="flex: 1; padding: 0.75rem; border-radius: 0.5rem;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal-overlay" id="notificationModal">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Success</h2>
+                <button class="modal-close" onclick="closeNotificationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon">✓</div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeNotificationModal()" style="width: 100%; padding: 0.75rem; border-radius: 0.5rem;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data
+        const currentSupply = 2845290;
+        const mintHistory = [
+            { date: '2026-02-11 10:30', amount: 50000, reason: 'Fiat Deposit' },
+            { date: '2026-02-10 14:15', amount: 100000, reason: 'Reserve Top-up' },
+            { date: '2026-02-08 09:45', amount: 75000, reason: 'Fiat Deposit' },
+            { date: '2026-02-06 16:20', amount: 200000, reason: 'Fiat Deposit' },
+            { date: '2026-02-04 11:00', amount: 50000, reason: 'Manual Adjustment' },
+            { date: '2026-02-01 13:30', amount: 150000, reason: 'Fiat Deposit' },
+            { date: '2026-01-28 10:15', amount: 100000, reason: 'Reserve Top-up' },
+            { date: '2026-01-25 15:45', amount: 80000, reason: 'Fiat Deposit' },
+            { date: '2026-01-22 09:20', amount: 60000, reason: 'Fiat Deposit' },
+            { date: '2026-01-20 14:00', amount: 125000, reason: 'Fiat Deposit' }
+        ];
+
+        // Load history
+        function loadHistory() {
+            const tbody = document.getElementById('history-list');
+            tbody.innerHTML = mintHistory.map(record => `
+                <tr>
+                    <td style="color: var(--text-secondary); font-size: 0.875rem;">${record.date}</td>
+                    <td style="font-weight: 700; font-family: monospace; color: var(--primary-green);">$${record.amount.toLocaleString()}</td>
+                    <td><span class="badge">${record.reason}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Update preview
+        function updatePreview() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const newSupply = currentSupply + amount;
+            document.getElementById('new-supply').textContent = '$' + newSupply.toLocaleString();
+        }
+
+        // Handle mint
+        function handleMint(event) {
+            event.preventDefault();
+            
+            const amount = document.getElementById('amount').value;
+            const reason = document.getElementById('reason').value;
+            const reference = document.getElementById('reference').value;
+
+            showConfirmation(
+                `You are about to mint $${parseFloat(amount).toLocaleString()} hCAD. This action will increase the total supply. Are you sure?`,
+                'Confirm Minting',
+                () => {
+                    // Simulate minting
+                    setTimeout(() => {
+                        showNotification(`Successfully minted $${parseFloat(amount).toLocaleString()} hCAD. Reference: ${reference}`, 'success', 'Mint Successful');
+                        document.getElementById('mintForm').reset();
+                        updatePreview();
+                    }, 500);
+                }
+            );
+        }
+
+        // Modal functions
+        function showConfirmation(message, title, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmButton').onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+            modal.classList.add('active');
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
+        }
+
+        function showNotification(message, type, title) {
+            const modal = document.getElementById('notificationModal');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            modal.classList.add('active');
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+        }
+
+        // Initialize
+        loadHistory();
+    </script>
+</body>
+</html>

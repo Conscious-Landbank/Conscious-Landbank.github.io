@@ -1835,6 +1835,82 @@
                 padding: 0.625rem 0.5rem;
             }
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        .modal-body { padding: 1.5rem; }
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            color: white;
+            font-size: 2rem;
+        }
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
     </style>
 </head>
 <body>
@@ -1956,7 +2032,119 @@
                 <!-- Token lists will be rendered here -->
             </div>
         </div>
+
+        <!-- Notification Preferences Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Notification Preferences</h3>
+            </div>
+            <p class="card-description">Manage how you receive notifications</p>
+            <div style="padding: 1.5rem 0;">
+                <!-- Transaction Updates -->
+                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">Transaction Updates</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Get notified about your transaction status</div>
+                        </div>
+                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
+                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        </label>
+                    </div>
+                    <div style="display: flex; gap: 1.5rem; margin-top: 0.75rem; padding-left: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                            <input type="checkbox" checked style="width: 16px; height: 16px; cursor: pointer;">
+                            <span>Email</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                            <input type="checkbox" checked style="width: 16px; height: 16px; cursor: pointer;">
+                            <span>SMS</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                            <input type="checkbox" checked style="width: 16px; height: 16px; cursor: pointer;">
+                            <span>Push</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Donation Receipts -->
+                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">Donation Receipts</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Receive receipts for your donations</div>
+                        </div>
+                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
+                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Security Alerts -->
+                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">Security Alerts</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Important security updates and warnings</div>
+                        </div>
+                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
+                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Marketing Emails -->
+                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">Marketing Emails</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Promotions, updates, and news</div>
+                        </div>
+                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--neutral-300); transition: 0.4s; border-radius: 24px;"></span>
+                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Weekly Summaries -->
+                <div style="padding: 1rem 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">Weekly Summaries</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Weekly activity and impact reports</div>
+                        </div>
+                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
+                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div style="padding-top: 1rem;">
+                    <button style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;" onclick="saveNotificationPreferences()">
+                        Save Preferences
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Save notification preferences
+        function saveNotificationPreferences() {
+            alert('Notification preferences saved successfully!');
+        }
+    </script>
 
     <script>
         // Comprehensive Blockchain Transaction Data (24+ transactions)
@@ -2823,12 +3011,16 @@
 
         // Remove wallet
         function removeWallet(address) {
-            if (confirm('Are you sure you want to remove this wallet?')) {
-                let boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
-                boundWallets = boundWallets.filter(w => w.address !== address);
-                localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
-                renderWallets();
-            }
+            showConfirmation(
+                'Are you sure you want to remove this wallet? This action cannot be undone.',
+                'Remove Wallet',
+                () => {
+                    let boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+                    boundWallets = boundWallets.filter(w => w.address !== address);
+                    localStorage.setItem('boundWallets', JSON.stringify(boundWallets));
+                    renderWallets();
+                }
+            );
         }
 
         // ========================================
@@ -3055,7 +3247,7 @@
             const dateTo = document.getElementById('dateTo').value;
             
             if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
-                alert('Start date must be before end date');
+                showNotification('The start date must be before the end date.', 'warning', 'Invalid Date Range');
                 return false;
             }
             
@@ -3352,7 +3544,7 @@
             const name = nameInput.value.trim();
             
             if (!name) {
-                alert('Please enter a name for this preset');
+                showNotification('Please enter a name for this filter preset.', 'warning', 'Preset Name Required');
                 nameInput.focus();
                 return;
             }
@@ -3413,11 +3605,15 @@
             const preset = savedPresets[index];
             if (!preset) return;
             
-            if (confirm(`Delete preset "${preset.name}"?`)) {
-                savedPresets.splice(index, 1);
-                localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(savedPresets));
-                renderFilterPresets();
-            }
+            showConfirmation(
+                `Are you sure you want to delete the preset "${preset.name}"? This action cannot be undone.`,
+                'Delete Preset',
+                () => {
+                    savedPresets.splice(index, 1);
+                    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(savedPresets));
+                    renderFilterPresets();
+                }
+            );
         }
 
         function escapeHTML(str) {
@@ -4252,5 +4448,66 @@
         </div>
     </div>
 
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">✓</div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon warning" id="confirmationIcon">⚠️</div>
+                <p class="notification-message" id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-secondary" onclick="closeConfirmationModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-primary" id="confirmButton" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function showNotification(message, type, title) {
+            const modal = document.getElementById('notificationModal');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            document.getElementById('notificationIcon').className = 'notification-icon ' + (type || '');
+            modal.classList.add('active');
+        }
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+        }
+        function showConfirmation(message, title, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmButton').onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+            modal.classList.add('active');
+        }
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
+        }
+    </script>
 </body>
 </html>

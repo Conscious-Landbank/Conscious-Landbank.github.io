@@ -2450,6 +2450,143 @@
             overflow-wrap: anywhere;
             word-break: break-word;
         }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #64748B;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-100);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Notification Modal Specific Styles */
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .notification-icon.info {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+        }
+
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
+
+        .notification-modal .modal-footer .btn {
+            width: 100%;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
@@ -3164,6 +3301,31 @@
             <!-- Content will be dynamically inserted -->
         </div>
     </main>
+
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close notification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Sumsub Web SDK (Commented for demo) -->
     <!-- <script src="https://static.sumsub.com/idensic/static/sns-websdk-builder.js"></script> -->
@@ -3957,13 +4119,13 @@
 
             // Validate file type
             if (!file.type.match('image/(jpeg|jpg|png)')) {
-                alert('Please upload a JPEG or PNG image');
+                showNotification('Please upload a JPEG or PNG image file.', 'warning', 'Invalid File Type');
                 return;
             }
 
             // Validate file size (max 10MB)
             if (file.size > 10 * 1024 * 1024) {
-                alert('File size must be less than 10MB');
+                showNotification('File size must be less than 10MB. Please choose a smaller file.', 'warning', 'File Too Large');
                 return;
             }
 
@@ -4089,12 +4251,12 @@
             const today = new Date();
             
             if (dob > today) {
-                alert('Date of birth cannot be in the future');
+                showNotification('Date of birth cannot be in the future. Please enter a valid date.', 'warning', 'Invalid Date');
                 return;
             }
             
             if (expiry < today) {
-                alert('Your ID has expired. Please use a valid document.');
+                showNotification('Your ID has expired. Please use a valid document.', 'warning', 'Expired Document');
                 return;
             }
             
@@ -5220,6 +5382,64 @@
                 localStorage.setItem('kycLevel', 'tier1');
             }
         }
+
+        // Custom Notification Modal Functions
+        function showNotification(message, type = 'success', title = 'Success') {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            const titleEl = document.getElementById('notificationTitle');
+            
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Update icon based on type
+            icon.className = 'notification-icon';
+            if (type === 'error') {
+                icon.classList.add('error');
+            } else if (type === 'warning') {
+                icon.classList.add('warning');
+            } else if (type === 'info') {
+                icon.classList.add('info');
+            }
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+            
+            // Focus on close button for accessibility
+            setTimeout(() => {
+                const closeBtn = modal.querySelector('.modal-close');
+                if (closeBtn) closeBtn.focus();
+            }, 100);
+        }
+
+        function closeNotificationModal() {
+            const modal = document.getElementById('notificationModal');
+            modal.classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        // Close notification modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('notificationModal');
+            if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+                closeNotificationModal();
+            }
+        });
+
+        // Close notification modal on overlay click
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationModal = document.getElementById('notificationModal');
+            if (notificationModal) {
+                notificationModal.addEventListener('click', function(e) {
+                    if (e.target === notificationModal) {
+                        closeNotificationModal();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Receipt - UNERA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-600: #6B7280;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            color: var(--neutral-900);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            color: var(--neutral-900);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        /* Receipt Card */
+        .receipt-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 2rem;
+        }
+
+        .receipt-header {
+            text-align: center;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border-subtle);
+            margin-bottom: 2rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .receipt-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .receipt-number {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+            font-family: monospace;
+        }
+
+        /* Status Tracker */
+        .status-tracker {
+            margin-bottom: 2rem;
+        }
+
+        .tracker-title {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .tracker-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .tracker-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--neutral-300);
+            z-index: 0;
+        }
+
+        .tracker-progress {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: var(--primary-green);
+            z-index: 1;
+            transition: width 0.3s;
+        }
+
+        .tracker-step {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .step-icon.completed {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+            max-width: 80px;
+        }
+
+        .step-time {
+            font-size: 0.688rem;
+            color: var(--neutral-600);
+        }
+
+        /* Details Section */
+        .details-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .detail-value.large {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+
+        /* QR Code */
+        .qr-section {
+            text-align: center;
+            padding: 2rem;
+            background: var(--neutral-100);
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            margin: 0 auto 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .qr-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .actions-bar {
+                display: none;
+            }
+
+            .receipt-card {
+                box-shadow: none;
+                border: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .receipt-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .tracker-steps {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .tracker-line, .tracker-progress {
+                display: none;
+            }
+
+            .tracker-step {
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+
+            .step-label {
+                text-align: left;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Actions Bar -->
+        <div class="actions-bar">
+            <a href="wallet-enhanced.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Wallet
+            </a>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                        <path d="M6 14h12v8H6z"/>
+                    </svg>
+                    Print
+                </button>
+                <button class="btn btn-primary" onclick="downloadPDF()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Receipt Card -->
+        <div class="receipt-card">
+            <!-- Header -->
+            <div class="receipt-header">
+                <div class="logo-section">
+                    <div class="logo-icon"></div>
+                    <div class="logo-text">UNERA</div>
+                </div>
+                <div class="receipt-title">Transaction Receipt</div>
+                <div class="receipt-number">Receipt #: RCP-2026-02-11-7f2a9c4d</div>
+            </div>
+
+            <!-- Status Tracker -->
+            <div class="status-tracker">
+                <div class="tracker-title">Transaction Status</div>
+                <div class="tracker-steps">
+                    <div class="tracker-line"></div>
+                    <div class="tracker-progress" style="width: 100%;"></div>
+                    
+                    <div class="tracker-step">
+                        <div class="step-icon completed">✓</div>
+                        <div class="step-label">Payment Received</div>
+                        <div class="step-time">14:30</div>
+                    </div>
+                    <div class="tracker-step">
+                        <div class="step-icon completed">✓</div>
+                        <div class="step-label">Processing</div>
+                        <div class="step-time">14:31</div>
+                    </div>
+                    <div class="tracker-step">
+                        <div class="step-icon completed">✓</div>
+                        <div class="step-label">Tokens Minted</div>
+                        <div class="step-time">14:32</div>
+                    </div>
+                    <div class="tracker-step">
+                        <div class="step-icon completed">✓</div>
+                        <div class="step-label">Delivered</div>
+                        <div class="step-time">14:32</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Details -->
+            <div class="details-section">
+                <h3 class="section-title">Transaction Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Date & Time</span>
+                    <span class="detail-value">February 11, 2026 at 2:30 PM</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Transaction Type</span>
+                    <span class="detail-value">Purchase Stablecoins</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount (Fiat)</span>
+                    <span class="detail-value large">$250.00 CAD</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount (Stablecoin)</span>
+                    <span class="detail-value">250.00 hCAD</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Exchange Rate</span>
+                    <span class="detail-value">1.0000</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Transaction Fee</span>
+                    <span class="detail-value">$0.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Payment Method</span>
+                    <span class="detail-value">Bank Transfer</span>
+                </div>
+            </div>
+
+            <!-- Blockchain Details -->
+            <div class="details-section">
+                <h3 class="section-title">Blockchain Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Transaction Hash</span>
+                    <span class="detail-value" style="font-family: monospace; font-size: 0.813rem;">0x7f2a...9c4d</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Network</span>
+                    <span class="detail-value">Ethereum Mainnet</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value" style="color: var(--primary-green);">✓ Completed</span>
+                </div>
+            </div>
+
+            <!-- QR Code -->
+            <div class="qr-section">
+                <div class="qr-code">
+                    <svg width="120" height="120" viewBox="0 0 100 100">
+                        <rect width="100" height="100" fill="white"/>
+                        <g fill="black">
+                            <rect x="10" y="10" width="10" height="10"/>
+                            <rect x="30" y="10" width="10" height="10"/>
+                            <rect x="50" y="10" width="10" height="10"/>
+                            <rect x="70" y="10" width="10" height="10"/>
+                            <rect x="10" y="30" width="10" height="10"/>
+                            <rect x="70" y="30" width="10" height="10"/>
+                            <rect x="10" y="50" width="10" height="10"/>
+                            <rect x="30" y="50" width="10" height="10"/>
+                            <rect x="50" y="50" width="10" height="10"/>
+                            <rect x="70" y="50" width="10" height="10"/>
+                            <rect x="10" y="70" width="10" height="10"/>
+                            <rect x="30" y="70" width="10" height="10"/>
+                            <rect x="50" y="70" width="10" height="10"/>
+                            <rect x="70" y="70" width="10" height="10"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="qr-label">Scan to verify transaction</div>
+            </div>
+
+            <!-- Footer -->
+            <div style="text-align: center; color: var(--text-secondary); font-size: 0.875rem; padding-top: 2rem; border-top: 2px solid var(--border-subtle);">
+                <p>Thank you for using UNERA</p>
+                <p style="margin-top: 0.5rem;">If you have any questions, contact support@unera.io</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            alert('PDF download functionality would be implemented here.\n\nIn production, this would generate and download a PDF version of this receipt.');
+        }
+    </script>
+</body>
+</html>

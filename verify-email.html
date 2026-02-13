@@ -142,6 +142,102 @@
                 gap: 0.5rem;
             }
         }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #64748B;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            color: white;
+        }
+
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .notification-icon.info {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+        }
+
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #475569;
+            margin: 0;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
     </style>
 </head>
 <body>
@@ -204,10 +300,61 @@
             <!-- Help Links -->
             <div class="help-links">
                 <a href="#" onclick="changeEmail(); return false;">Change email</a>
-                <a href="#" onclick="alert('Contact support at support@unera.io'); return false;">Need help?</a>
+                <a href="#" onclick="showNotification('For assistance, please contact our support team at support@unera.io', 'info', 'Contact Support'); return false;">Need help?</a>
             </div>
         </div>
     </main>
+
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close notification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()" aria-label="Close confirmation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon warning" id="confirmationIcon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-secondary" onclick="closeConfirmationModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-primary" id="confirmButton" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript -->
     <script>
@@ -428,17 +575,21 @@
             } catch (error) {
                 resendBtn.textContent = 'Resend Code';
                 resendBtn.disabled = false;
-                alert('Failed to resend code. Please try again.');
+                showNotification('Failed to resend code. Please try again.', 'error', 'Resend Failed');
             }
         }
 
         // Change email function
         function changeEmail() {
-            if (confirm('Go back and change your email address?')) {
-                localStorage.removeItem('signupEmail');
-                localStorage.removeItem('emailVerified');
-                window.location.href = 'signup_2.html';
-            }
+            showConfirmation(
+                'Go back and change your email address? Your current verification will be cancelled.',
+                'Change Email',
+                () => {
+                    localStorage.removeItem('signupEmail');
+                    localStorage.removeItem('emailVerified');
+                    window.location.href = 'signup_2.html';
+                }
+            );
         }
 
         // Show error function
@@ -449,7 +600,7 @@
             });
             
             // Show error message
-            alert(message);
+            showNotification(message, 'error', 'Verification Failed');
             
             // Clear digits after error
             setTimeout(() => {
@@ -466,6 +617,58 @@
             if (e.key === 'Enter') {
                 e.preventDefault();
                 verifyCode();
+            }
+        });
+
+        // Custom Modal Functions
+        function showNotification(message, type = 'success', title = 'Success') {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            const titleEl = document.getElementById('notificationTitle');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            icon.className = 'notification-icon';
+            if (type === 'error') icon.classList.add('error');
+            else if (type === 'warning') icon.classList.add('warning');
+            else if (type === 'info') icon.classList.add('info');
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showConfirmation(message, title, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            const messageEl = document.getElementById('confirmationMessage');
+            const titleEl = document.getElementById('confirmationTitle');
+            const confirmBtn = document.getElementById('confirmButton');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            confirmBtn.onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeNotificationModal();
+                closeConfirmationModal();
             }
         });
     </script>

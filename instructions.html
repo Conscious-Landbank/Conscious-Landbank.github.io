@@ -633,19 +633,65 @@
 
     <script>
         function resetStorage() {
-            if (confirm('⚠️ Are you sure you want to reset all data?\n\nThis will clear:\n• User authentication\n• Wallet information\n• KYC status\n• All saved preferences\n\nThis action cannot be undone.')) {
-                // Clear all localStorage
-                localStorage.clear();
-                
-                // Clear all sessionStorage
-                sessionStorage.clear();
-                
-                // Show success message
-                alert('✅ All data has been reset successfully!\n\nYou will now be redirected to the homepage.');
-                
-                // Redirect to homepage
-                window.location.href = 'index.html';
-            }
+            showConfirmation(
+                'Are you sure you want to reset all data? This will clear:\n• User authentication\n• Wallet information\n• KYC status\n• All saved preferences\n\nThis action cannot be undone.',
+                'Reset All Data',
+                () => {
+                    // Clear all localStorage
+                    localStorage.clear();
+                    
+                    // Clear all sessionStorage
+                    sessionStorage.clear();
+                    
+                    // Show success message
+                    showNotification('All data has been reset successfully! You will now be redirected to the homepage.', 'success', 'Reset Complete');
+                    
+                    // Redirect to homepage
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+            );
+        }
+        
+        // Modal Functions
+        function showNotification(message, type, title) {
+            const modalHTML = `
+                <div class="modal-overlay" id="notificationModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: white; border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                        <h2 style="margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">${title}</h2>
+                        <p style="color: #475569; line-height: 1.6;">${message}</p>
+                        <button onclick="closeNotificationModal()" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">OK</button>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+        function closeNotificationModal() {
+            const modal = document.getElementById('notificationModal');
+            if (modal) modal.remove();
+        }
+        function showConfirmation(message, title, onConfirm) {
+            const formattedMessage = message.replace(/\n/g, '<br>');
+            const modalHTML = `
+                <div class="modal-overlay" id="confirmationModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: white; border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                        <h2 style="margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">${title}</h2>
+                        <p style="color: #475569; line-height: 1.6; text-align: left;">${formattedMessage}</p>
+                        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                            <button onclick="closeConfirmationModal()" style="flex: 1; padding: 0.75rem; background: #E5E7EB; color: #374151; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+                            <button id="confirmBtn" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Confirm</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.getElementById('confirmBtn').onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+        }
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            if (modal) modal.remove();
         }
     </script>
 </body>

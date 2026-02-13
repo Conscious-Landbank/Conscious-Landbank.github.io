@@ -1359,6 +1359,57 @@
             padding: 1.5rem;
         }
 
+        /* Notification Modal Specific Styles */
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .notification-icon.info {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+        }
+
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
+
+        .notification-modal .modal-footer .btn {
+            width: 100%;
+        }
+
         .form-group {
             margin-bottom: 1.25rem;
         }
@@ -1950,6 +2001,15 @@
                     <button class="preset-btn" onclick="setMaxAmount()">Max</button>
                 </div>
                 
+                <!-- Live Exchange Rate -->
+                <div class="live-rate-banner" id="liveRateBanner" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.5rem; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span>💱 Exchange Rate: <strong id="exchangeRate">1 hCAD = $1.00 CAD</strong></span>
+                        <span style="font-size: 0.75rem; color: #6B7280;" id="rateUpdated">Updated now</span>
+                    </div>
+                    <span class="rate-trend positive" id="rateTrend" style="font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; background: rgba(5, 150, 105, 0.2); color: #059669;">↑ 0.1%</span>
+                </div>
+                
                 <!-- Withdrawal Summary -->
                 <div class="withdrawal-summary" id="withdrawalSummary">
                     <div class="summary-row">
@@ -2131,6 +2191,31 @@
         </div>
     </main>
 
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close notification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Withdrawal Method Modal -->
     <div class="modal-overlay" id="editWithdrawalModal">
         <div class="modal">
@@ -2292,7 +2377,46 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateStepperProgress();
             updateMobileStepper();
+            updateExchangeRate(); // Initial rate update
+            setInterval(updateExchangeRate, 30000); // Update every 30 seconds
         });
+        
+        // Exchange Rate Auto-Update
+        function updateExchangeRate() {
+            const rateElement = document.getElementById('exchangeRate');
+            const updatedElement = document.getElementById('rateUpdated');
+            const trendElement = document.getElementById('rateTrend');
+            
+            if (!rateElement) return;
+            
+            // Simulate rate fluctuation (in production, this would fetch from API)
+            const baseRate = 1.0000;
+            const fluctuation = (Math.random() - 0.5) * 0.005; // ±0.25%
+            const newRate = baseRate + fluctuation;
+            const change = (fluctuation / baseRate * 100).toFixed(2);
+            
+            rateElement.textContent = `1 hCAD = $${newRate.toFixed(4)} CAD`;
+            updatedElement.textContent = 'Updated now';
+            
+            if (trendElement) {
+                if (change >= 0) {
+                    trendElement.className = 'rate-trend positive';
+                    trendElement.style.background = 'rgba(5, 150, 105, 0.2)';
+                    trendElement.style.color = '#059669';
+                    trendElement.textContent = `↑ ${Math.abs(change)}%`;
+                } else {
+                    trendElement.className = 'rate-trend negative';
+                    trendElement.style.background = 'rgba(239, 68, 68, 0.2)';
+                    trendElement.style.color = '#DC2626';
+                    trendElement.textContent = `↓ ${Math.abs(change)}%`;
+                }
+            }
+            
+            // Update timestamp gradually
+            setTimeout(() => {
+                if (updatedElement) updatedElement.textContent = 'Updated 30s ago';
+            }, 15000);
+        }
 
         // Mobile Menu
         function toggleMobileMenu() {
@@ -2331,7 +2455,7 @@
             if (isSelected) {
                 // Don't allow deselecting if it's the only selected wallet
                 if (appState.selectedWallets.length <= 1) {
-                    alert('At least one wallet must be selected');
+                    showNotification('You must select at least one wallet to continue with the withdrawal.', 'warning', 'Wallet Required');
                     return;
                 }
                 element.classList.remove('selected');
@@ -2404,7 +2528,7 @@
         }
 
         function saveEditedWithdrawalMethod() {
-            alert('Withdrawal method updated successfully!');
+            showNotification('Your withdrawal method details have been updated successfully.', 'success', 'Withdrawal Method Updated!');
             closeEditWithdrawalModal();
             // In production, update the card in the UI with new details
         }
@@ -2436,7 +2560,7 @@
         }
 
         function saveNewWithdrawalMethod() {
-            alert('Withdrawal method saved successfully!');
+            showNotification('Your withdrawal method has been saved and can now be used for future transfers.', 'success', 'Withdrawal Method Saved!');
             closeAddWithdrawalModal();
         }
 
@@ -2650,15 +2774,15 @@
         function goToStep(stepNumber) {
             if (stepNumber > appState.currentStep) {
                 if (stepNumber === 2 && !appState.selectedWithdrawalMethod) {
-                    alert('Please select a withdrawal destination');
+                    showNotification('Please select a withdrawal destination to continue.', 'warning', 'Destination Required');
                     return;
                 }
                 if (stepNumber === 3 && (!appState.selectedWallets || appState.selectedWallets.length === 0)) {
-                    alert('Please select at least one source wallet');
+                    showNotification('Please select at least one source wallet to continue.', 'warning', 'Source Wallet Required');
                     return;
                 }
                 if (stepNumber === 4 && appState.amount === 0) {
-                    alert('Please enter a valid amount');
+                    showNotification('Please enter a valid withdrawal amount to continue.', 'warning', 'Amount Required');
                     return;
                 }
             }
@@ -2828,12 +2952,12 @@
 
         function completeSaveChoice() {
             if (!appState.saveMethod) {
-                alert('Please select an option');
+                showNotification('Please select an option before continuing.', 'warning', 'Selection Required');
                 return;
             }
             
             if (appState.saveMethod === 'yes') {
-                alert('Withdrawal method saved successfully!');
+                showNotification('Your withdrawal method has been saved and can now be used for future transfers.', 'success', 'Withdrawal Method Saved!');
             }
             
             document.getElementById('savePrompt').style.display = 'none';
@@ -2858,6 +2982,64 @@
             
             goToStep(1);
         }
+
+        // Custom Notification Modal Functions
+        function showNotification(message, type = 'success', title = 'Success') {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            const titleEl = document.getElementById('notificationTitle');
+            
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Update icon based on type
+            icon.className = 'notification-icon';
+            if (type === 'error') {
+                icon.classList.add('error');
+            } else if (type === 'warning') {
+                icon.classList.add('warning');
+            } else if (type === 'info') {
+                icon.classList.add('info');
+            }
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus on close button for accessibility
+            setTimeout(() => {
+                const closeBtn = modal.querySelector('.modal-close');
+                if (closeBtn) closeBtn.focus();
+            }, 100);
+        }
+
+        function closeNotificationModal() {
+            const modal = document.getElementById('notificationModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close notification modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('notificationModal');
+            if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+                closeNotificationModal();
+            }
+        });
+
+        // Close notification modal on overlay click
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationModal = document.getElementById('notificationModal');
+            if (notificationModal) {
+                notificationModal.addEventListener('click', function(e) {
+                    if (e.target === notificationModal) {
+                        closeNotificationModal();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

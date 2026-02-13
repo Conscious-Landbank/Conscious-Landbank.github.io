@@ -1687,6 +1687,143 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #64748B;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-100);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Notification Modal Specific Styles */
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .notification-icon.info {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+        }
+
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
+
+        .notification-modal .modal-footer .btn {
+            width: 100%;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
     </style>
     
     <!-- Wallet Prompt System -->
@@ -2315,6 +2452,57 @@
         </section>
     </main>
 
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close notification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()" aria-label="Close confirmation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon warning" id="confirmationIcon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-secondary" onclick="closeConfirmationModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-primary" id="confirmButton" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Handle action button clicks - Check for wallet after KYC
         function handleActionClick(targetPage, actionName) {
@@ -2322,9 +2510,13 @@
             
             // If KYC is not verified, redirect to KYC first
             if (kycStatus !== 'verified') {
-                if (confirm(`You need to verify your identity before you can ${actionName}. Would you like to complete verification now?`)) {
-                    window.location.href = 'kyc-verify.html';
-                }
+                showConfirmation(
+                    `You need to verify your identity before you can ${actionName}. Would you like to complete verification now?`,
+                    'KYC Verification Required',
+                    () => {
+                        window.location.href = 'kyc-verify.html';
+                    }
+                );
                 return;
             }
             
@@ -2411,7 +2603,7 @@
             };
 
             const detail = details[type];
-            alert(`${detail.title}\n\n${detail.value}\n\n${detail.description}\n\n${detail.breakdown}\n\n💡 ${detail.impact}\n\nClick "View Details" for your complete impact report.`);
+            showNotification(`${detail.title}\n\n${detail.value}\n\n${detail.description}\n\n${detail.breakdown}\n\n💡 ${detail.impact}\n\nClick "View Details" for your complete impact report.`, 'info', detail.title);
         }
 
         // Loading state for action cards
@@ -2817,18 +3009,24 @@
         // Logout function
         // Disconnect wallet function
         function disconnectWallet() {
-            if (confirm('Are you sure you want to disconnect your wallet?')) {
-                // Clear wallet data
-                localStorage.removeItem('walletConnected');
-                localStorage.removeItem('walletAddress');
-                localStorage.removeItem('walletProvider');
-                
-                // Show simple notification
-                alert('Wallet disconnected successfully');
-                
-                // Reload page to update UI
-                window.location.reload();
-            }
+            showConfirmation(
+                'Are you sure you want to disconnect your wallet? You can reconnect it anytime.',
+                'Disconnect Wallet',
+                () => {
+                    // Clear wallet data
+                    localStorage.removeItem('walletConnected');
+                    localStorage.removeItem('walletAddress');
+                    localStorage.removeItem('walletProvider');
+                    
+                    // Show success notification
+                    showNotification('Your wallet has been disconnected successfully.', 'success', 'Wallet Disconnected');
+                    
+                    // Reload page to update UI after a short delay
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                }
+            );
         }
 
         // Connect wallet function (Uniswap-style)
@@ -4143,6 +4341,108 @@
             }
         `;
         document.head.appendChild(style);
+
+        // Custom Notification Modal Functions
+        function showNotification(message, type = 'success', title = 'Success') {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            const titleEl = document.getElementById('notificationTitle');
+            
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Update icon based on type
+            icon.className = 'notification-icon';
+            if (type === 'error') {
+                icon.classList.add('error');
+            } else if (type === 'warning') {
+                icon.classList.add('warning');
+            } else if (type === 'info') {
+                icon.classList.add('info');
+            }
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+            
+            // Focus on close button for accessibility
+            setTimeout(() => {
+                const closeBtn = modal.querySelector('.modal-close');
+                if (closeBtn) closeBtn.focus();
+            }, 100);
+        }
+
+        function closeNotificationModal() {
+            const modal = document.getElementById('notificationModal');
+            modal.classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        // Custom Confirmation Modal Functions
+        function showConfirmation(message, title, onConfirm, onCancel = null) {
+            const modal = document.getElementById('confirmationModal');
+            const messageEl = document.getElementById('confirmationMessage');
+            const titleEl = document.getElementById('confirmationTitle');
+            const confirmBtn = document.getElementById('confirmButton');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            confirmBtn.onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+            
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+            
+            // Focus on confirm button
+            setTimeout(() => confirmBtn.focus(), 100);
+        }
+
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        // Close modals on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const notificationModal = document.getElementById('notificationModal');
+                const confirmationModal = document.getElementById('confirmationModal');
+                
+                if (notificationModal && notificationModal.classList.contains('active')) {
+                    closeNotificationModal();
+                }
+                if (confirmationModal && confirmationModal.classList.contains('active')) {
+                    closeConfirmationModal();
+                }
+            }
+        });
+
+        // Close modals on overlay click
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationModal = document.getElementById('notificationModal');
+            if (notificationModal) {
+                notificationModal.addEventListener('click', function(e) {
+                    if (e.target === notificationModal) {
+                        closeNotificationModal();
+                    }
+                });
+            }
+
+            const confirmationModal = document.getElementById('confirmationModal');
+            if (confirmationModal) {
+                confirmationModal.addEventListener('click', function(e) {
+                    if (e.target === confirmationModal) {
+                        closeConfirmationModal();
+                    }
+                });
+            }
+        });
     </script>
 
     <!-- Wallet Integration Modules -->

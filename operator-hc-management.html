@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HC Management - UNERA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #10B981;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-600: #6B7280;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+            --gradient-operator: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .nav {
+            background: white;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 2rem;
+        }
+
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-operator);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        /* HC Table */
+        .hc-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .hc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .hc-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: var(--neutral-100);
+            border-bottom: 2px solid var(--border-subtle);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .hc-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .hc-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .hc-table tbody tr:hover {
+            background: var(--neutral-100);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .badge-inactive {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--neutral-600);
+        }
+
+        .btn-edit {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: var(--neutral-300);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--neutral-600);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--neutral-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle.active {
+            background: var(--primary-green);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .toggle.active .toggle-slider {
+            left: 26px;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .hc-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-header">
+            <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;">UNERA - HC Management</h1>
+            <a href="operator-dashboard.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title">Humanity Centre Management</h1>
+            <button class="btn-primary" onclick="openAddModal()">+ Add New HC</button>
+        </div>
+
+        <div class="hc-section">
+            <table class="hc-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="hc-list">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Edit/Add HC Modal -->
+    <div class="modal-overlay" id="hcModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">Add Humanity Centre</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <form id="hcForm" onsubmit="handleSave(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" id="hc-name" class="form-input" placeholder="Nairobi Hope Centre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <input type="text" id="hc-location" class="form-input" placeholder="Nairobi, Kenya" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="hc-description" class="form-textarea" placeholder="Describe the centre's mission and programs..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Image URL</label>
+                        <input type="url" id="hc-image" class="form-input" placeholder="https://example.com/image.jpg">
+                        <small style="color: var(--text-secondary); font-size: 0.813rem;">Enter a URL for the centre image</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <div class="toggle-group">
+                            <div class="toggle active" id="status-toggle" onclick="toggleStatus()">
+                                <div class="toggle-slider"></div>
+                            </div>
+                            <span id="status-label">Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary" style="flex: 1;">Save HC</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mock HC data
+        const humanityCentres = [
+            { id: 1, name: 'Nairobi Hope Centre', location: 'Nairobi, Kenya', status: 'Active' },
+            { id: 2, name: 'Mumbai Community Centre', location: 'Mumbai, India', status: 'Active' },
+            { id: 3, name: 'São Paulo Care Centre', location: 'São Paulo, Brazil', status: 'Active' },
+            { id: 4, name: 'Dhaka Relief Centre', location: 'Dhaka, Bangladesh', status: 'Active' },
+            { id: 5, name: 'Lagos Community Hub', location: 'Lagos, Nigeria', status: 'Active' },
+            { id: 6, name: 'Manila Support Centre', location: 'Manila, Philippines', status: 'Inactive' },
+            { id: 7, name: 'Cairo Aid Centre', location: 'Cairo, Egypt', status: 'Active' },
+            { id: 8, name: 'Port-au-Prince Centre', location: 'Haiti', status: 'Active' },
+            { id: 9, name: 'Jakarta Hope Centre', location: 'Jakarta, Indonesia', status: 'Active' },
+            { id: 10, name: 'Karachi Community Centre', location: 'Karachi, Pakistan', status: 'Active' },
+            { id: 11, name: 'Lima Support Centre', location: 'Lima, Peru', status: 'Active' },
+            { id: 12, name: 'Kampala Care Centre', location: 'Kampala, Uganda', status: 'Active' }
+        ];
+
+        let currentHC = null;
+
+        // Load HCs into table
+        function loadHCs() {
+            const tbody = document.getElementById('hc-list');
+            tbody.innerHTML = humanityCentres.map(hc => `
+                <tr>
+                    <td style="font-weight: 500;">${hc.name}</td>
+                    <td style="color: var(--text-secondary);">${hc.location}</td>
+                    <td>
+                        <span class="badge ${hc.status === 'Active' ? 'badge-active' : 'badge-inactive'}">
+                            ${hc.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-edit" onclick="openEditModal(${hc.id})">Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .badge-inactive {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--neutral-600);
+        }
+
+        // Open add modal
+        function openAddModal() {
+            currentHC = null;
+            document.getElementById('modal-title').textContent = 'Add Humanity Centre';
+            document.getElementById('hcForm').reset();
+            document.getElementById('status-toggle').classList.add('active');
+            document.getElementById('status-label').textContent = 'Active';
+            document.getElementById('hcModal').classList.add('active');
+        }
+
+        // Open edit modal
+        function openEditModal(id) {
+            currentHC = humanityCentres.find(hc => hc.id === id);
+            if (!currentHC) return;
+
+            document.getElementById('modal-title').textContent = 'Edit Humanity Centre';
+            document.getElementById('hc-name').value = currentHC.name;
+            document.getElementById('hc-location').value = currentHC.location;
+            document.getElementById('hc-description').value = currentHC.description || '';
+            document.getElementById('hc-image').value = currentHC.image || '';
+            
+            const toggle = document.getElementById('status-toggle');
+            const label = document.getElementById('status-label');
+            if (currentHC.status === 'Active') {
+                toggle.classList.add('active');
+                label.textContent = 'Active';
+            } else {
+                toggle.classList.remove('active');
+                label.textContent = 'Inactive';
+            }
+
+            document.getElementById('hcModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('hcModal').classList.remove('active');
+        }
+
+        // Toggle status
+        function toggleStatus() {
+            const toggle = document.getElementById('status-toggle');
+            const label = document.getElementById('status-label');
+            
+            if (toggle.classList.contains('active')) {
+                toggle.classList.remove('active');
+                label.textContent = 'Inactive';
+            } else {
+                toggle.classList.add('active');
+                label.textContent = 'Active';
+            }
+        }
+
+        // Handle save
+        function handleSave(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('hc-name').value;
+            const location = document.getElementById('hc-location').value;
+            const isActive = document.getElementById('status-toggle').classList.contains('active');
+            
+            // Simulate save
+            closeModal();
+            alert(`HC "${name}" saved successfully!`);
+            
+            // In real app, would update table here
+        }
+
+        // Initialize
+        loadHCs();
+    </script>
+</body>
+</html>

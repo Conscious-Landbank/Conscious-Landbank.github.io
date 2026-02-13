@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation History - UNERA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-600: #6B7280;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .nav {
+            background: white;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.5rem;
+            color: var(--neutral-900);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-donated {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        /* Filters */
+        .filters-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .filter-select, .filter-input {
+            padding: 0.5rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+        }
+
+        /* Donations List */
+        .donations-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .donation-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .donation-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .hc-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 0.75rem;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .donation-info {
+            flex: 1;
+        }
+
+        .hc-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .donation-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .donation-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .donation-amount {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .tx-id {
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .btn-receipt {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-receipt:hover {
+            background: var(--neutral-300);
+        }
+
+        /* Impact Section */
+        .impact-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .impact-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .impact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .impact-icon {
+            font-size: 3rem;
+        }
+
+        .impact-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .impact-label {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .donation-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .donation-details {
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <h1 style="font-family: var(--font-display); font-size: 1.125rem; font-weight: 700;">Your Donations</h1>
+        <a href="dashboard-enhanced.html" class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </a>
+    </nav>
+
+    <main class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Your Donation History</h1>
+                <div class="total-donated">Total Donated: $3,250</div>
+            </div>
+            <a href="donate.html" class="btn-primary">Make a Donation</a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Donated</div>
+                <div class="stat-value">$3,250</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">HCs Supported</div>
+                <div class="stat-value">4</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">This Month</div>
+                <div class="stat-value">$450</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Favorite HC</div>
+                <div class="stat-value" style="font-size: 1rem;">Nairobi</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Start Date</label>
+                    <input type="date" class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">End Date</label>
+                    <input type="date" class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Humanity Centre</label>
+                    <select class="filter-select">
+                        <option value="">All Centres</option>
+                        <option value="nairobi">Nairobi</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="saopaulo">São Paulo</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Sort By</label>
+                    <select class="filter-select">
+                        <option value="recent">Most Recent</option>
+                        <option value="amount-high">Amount (High to Low)</option>
+                        <option value="amount-low">Amount (Low to High)</option>
+                        <option value="hc-name">HC Name</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donations List -->
+        <div class="donations-list">
+            <div class="donation-card">
+                <div class="hc-logo">🇰🇪</div>
+                <div class="donation-info">
+                    <div class="hc-name">Nairobi Hope Centre</div>
+                    <div class="donation-date">February 10, 2026 at 2:30 PM</div>
+                </div>
+                <div class="donation-details">
+                    <div class="donation-amount">$250</div>
+                    <div class="tx-id">TX: 0x7f2a...9c4d</div>
+                    <span class="badge">Completed</span>
+                </div>
+                <button class="btn-receipt">View Receipt</button>
+            </div>
+
+            <div class="donation-card">
+                <div class="hc-logo">🇮🇳</div>
+                <div class="donation-info">
+                    <div class="hc-name">Mumbai Community Centre</div>
+                    <div class="donation-date">February 5, 2026 at 11:15 AM</div>
+                </div>
+                <div class="donation-details">
+                    <div class="donation-amount">$150</div>
+                    <div class="tx-id">TX: 0x3d8b...2f1a</div>
+                    <span class="badge">Completed</span>
+                </div>
+                <button class="btn-receipt">View Receipt</button>
+            </div>
+
+            <div class="donation-card">
+                <div class="hc-logo">🇰🇪</div>
+                <div class="donation-info">
+                    <div class="hc-name">Nairobi Hope Centre</div>
+                    <div class="donation-date">January 28, 2026 at 4:45 PM</div>
+                </div>
+                <div class="donation-details">
+                    <div class="donation-amount">$500</div>
+                    <div class="tx-id">TX: 0x9e5c...7a8b</div>
+                    <span class="badge">Completed</span>
+                </div>
+                <button class="btn-receipt">View Receipt</button>
+            </div>
+
+            <div class="donation-card">
+                <div class="hc-logo">🇧🇷</div>
+                <div class="donation-info">
+                    <div class="hc-name">São Paulo Care Centre</div>
+                    <div class="donation-date">January 20, 2026 at 9:20 AM</div>
+                </div>
+                <div class="donation-details">
+                    <div class="donation-amount">$200</div>
+                    <div class="tx-id">TX: 0x1a4f...6d3e</div>
+                    <span class="badge">Completed</span>
+                </div>
+                <button class="btn-receipt">View Receipt</button>
+            </div>
+
+            <div class="donation-card">
+                <div class="hc-logo">🇰🇪</div>
+                <div class="donation-info">
+                    <div class="hc-name">Nairobi Hope Centre</div>
+                    <div class="donation-date">January 15, 2026 at 1:30 PM</div>
+                </div>
+                <div class="donation-details">
+                    <div class="donation-amount">$350</div>
+                    <div class="tx-id">TX: 0x5b2c...4e9f</div>
+                    <span class="badge">Completed</span>
+                </div>
+                <button class="btn-receipt">View Receipt</button>
+            </div>
+        </div>
+
+        <!-- Impact Summary -->
+        <div class="impact-section">
+            <h2 class="impact-title">Your Impact</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Your donations have helped provide:</p>
+            <div class="impact-grid">
+                <div class="impact-item">
+                    <div class="impact-icon">🍲</div>
+                    <div class="impact-value">650</div>
+                    <div class="impact-label">Meals Provided</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">📚</div>
+                    <div class="impact-value">90</div>
+                    <div class="impact-label">Days of Education</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">🏥</div>
+                    <div class="impact-value">16</div>
+                    <div class="impact-label">Medical Checkups</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

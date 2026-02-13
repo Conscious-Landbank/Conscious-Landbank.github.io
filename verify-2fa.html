@@ -58,6 +58,85 @@
                 gap: 0.5rem;
             }
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        .modal-body { padding: 1.5rem; }
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            color: white;
+            font-size: 2rem;
+        }
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        .notification-icon.info {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+        }
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #475569;
+            margin: 0;
+        }
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #E2E8F0;
+        }
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
     </style>
 </head>
 <body>
@@ -122,11 +201,46 @@
                 <p style="color: var(--text-secondary); margin-bottom: 0.75rem;">Having trouble?</p>
                 <div style="display: flex; justify-content: center; gap: 1.5rem;">
                     <a href="#" class="auth-link" onclick="useBackupCode(); return false;">Use backup code</a>
-                    <a href="#" class="auth-link" onclick="alert('Contact support at support@unera.io'); return false;">Contact support</a>
+                    <a href="#" class="auth-link" onclick="showNotification('For assistance, please contact our support team at support@unera.io', 'info', 'Contact Support'); return false;">Contact support</a>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">✓</div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Prompt Modal -->
+    <div class="modal-overlay" id="promptModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="promptTitle" class="modal-title">Input Required</h2>
+                <button class="modal-close" onclick="closePromptModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="notification-message" id="promptMessage"></p>
+                <input type="text" id="promptInput" class="form-input" style="margin-top: 1rem;">
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-secondary" onclick="closePromptModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-primary" id="promptSubmitButton" style="flex: 1;">Submit</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Auth Flow Manager -->
     <script src="auth-flow.js"></script>
@@ -195,7 +309,7 @@
             const code = Array.from(digits).map(d => d.value).join('');
             
             if (code.length !== 6) {
-                alert('Please enter all 6 digits');
+                showNotification('Please enter all 6 digits of your verification code.', 'warning', 'Code Required');
                 return;
             }
             
@@ -240,7 +354,7 @@
             } catch (error) {
                 verifyBtn.classList.remove('loading');
                 verifyBtn.disabled = false;
-                alert('Invalid code. Please try again.');
+                showNotification('The code you entered is invalid. Please check and try again.', 'error', 'Invalid Code');
                 
                 // Clear codes
                 digits.forEach(d => {
@@ -258,12 +372,50 @@
 
         // Use backup code
         function useBackupCode() {
-            const backupCode = prompt('Enter your backup code (format: XXXX-XXXX-XXXX):');
-            if (backupCode && backupCode.length > 0) {
-                // Simulate verification
-                alert('Backup code verified! Logging you in...');
-                window.location.href = 'dashboard-enhanced.html';
-            }
+            showPrompt(
+                'Enter your backup code in the format XXXX-XXXX-XXXX',
+                'Use Backup Code',
+                'XXXX-XXXX-XXXX',
+                (backupCode) => {
+                    if (backupCode && backupCode.length > 0) {
+                        // Simulate verification
+                        showNotification('Your backup code has been verified successfully. Logging you in...', 'success', 'Backup Code Verified');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard-enhanced.html';
+                        }, 1500);
+                    }
+                }
+            );
+        }
+
+        // Modal Functions
+        function showNotification(message, type, title) {
+            const modal = document.getElementById('notificationModal');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            document.getElementById('notificationIcon').className = 'notification-icon ' + (type || '');
+            modal.classList.add('active');
+        }
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+        }
+        function showPrompt(message, title, placeholder, onSubmit) {
+            const modal = document.getElementById('promptModal');
+            const input = document.getElementById('promptInput');
+            document.getElementById('promptTitle').textContent = title;
+            document.getElementById('promptMessage').textContent = message;
+            input.placeholder = placeholder || '';
+            input.value = '';
+            document.getElementById('promptSubmitButton').onclick = () => {
+                const value = input.value.trim();
+                closePromptModal();
+                if (onSubmit) onSubmit(value);
+            };
+            modal.classList.add('active');
+            setTimeout(() => input.focus(), 100);
+        }
+        function closePromptModal() {
+            document.getElementById('promptModal').classList.remove('active');
         }
     </script>
 </body>

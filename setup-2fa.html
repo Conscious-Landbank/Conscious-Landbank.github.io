@@ -319,6 +319,82 @@
             font-weight: 700;
             font-size: 1.25rem;
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        .modal-body { padding: 1.5rem; }
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            color: white;
+            font-size: 2rem;
+        }
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #475569;
+            margin: 0;
+        }
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #E2E8F0;
+        }
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
     </style>
 </head>
 <body>
@@ -497,6 +573,41 @@
         </div>
     </main>
 
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">✓</div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon warning" id="confirmationIcon">⚠️</div>
+                <p class="notification-message" id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-secondary" onclick="closeConfirmationModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-primary" id="confirmButton" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script>
         let selectedMethod = null;
@@ -529,7 +640,7 @@
             const countryCode = document.getElementById('countryCode').value;
             
             if (!phone) {
-                alert('Please enter your phone number');
+                showNotification('Please enter your phone number to continue.', 'warning', 'Phone Required');
                 return;
             }
             
@@ -583,7 +694,7 @@
             const code = Array.from(digits).map(d => d.value).join('');
             
             if (code.length !== 6) {
-                alert('Please enter all 6 digits');
+                showNotification('Please enter all 6 digits of your verification code.', 'warning', 'Code Required');
                 return;
             }
             
@@ -613,14 +724,43 @@
         }
 
         function skip2FA() {
-            if (confirm('Skip two-factor authentication?\n\nYou can enable it later in your account settings for better security.')) {
-                // Store skip status
-                localStorage.setItem('2faEnabled', 'false');
-                localStorage.setItem('2faSkipped', 'true');
-                
-                // Go to next step (KYC)
-                window.location.href = 'kyc-verify.html?from=signup';
-            }
+            showConfirmation(
+                'Skip two-factor authentication? You can enable it later in your account settings for better security.',
+                'Skip 2FA Setup',
+                () => {
+                    // Store skip status
+                    localStorage.setItem('2faEnabled', 'false');
+                    localStorage.setItem('2faSkipped', 'true');
+                    
+                    // Go to next step (KYC)
+                    window.location.href = 'kyc-verify.html?from=signup';
+                }
+            );
+        }
+
+        // Modal Functions
+        function showNotification(message, type, title) {
+            const modal = document.getElementById('notificationModal');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            document.getElementById('notificationIcon').className = 'notification-icon ' + (type || '');
+            modal.classList.add('active');
+        }
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+        }
+        function showConfirmation(message, title, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmButton').onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+            modal.classList.add('active');
+        }
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
         }
     </script>
 </body>

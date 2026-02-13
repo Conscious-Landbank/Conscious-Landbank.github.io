@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Security - UNERA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --error: #EF4444;
+            --warning: #F59E0B;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-600: #6B7280;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .nav {
+            background: white;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.5rem;
+            color: var(--neutral-900);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .btn-link {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Login Activity */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: all 0.2s;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: var(--neutral-100);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.failed {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--neutral-600);
+        }
+
+        .report-link {
+            color: var(--error);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .report-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--neutral-300);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -2.25rem;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background: var(--neutral-100);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-time {
+            font-size: 0.75rem;
+            color: var(--neutral-600);
+        }
+
+        /* Active Sessions */
+        .session-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .session-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .session-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .session-info {
+            flex: 1;
+        }
+
+        .session-device {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .session-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .current-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .btn-signout {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-signout:hover {
+            background: var(--neutral-300);
+        }
+
+        .btn-signout-all {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-signout-all:hover {
+            background: #DC2626;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .timeline {
+                padding-left: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <h1 style="font-family: var(--font-display); font-size: 1.125rem; font-weight: 700;">Account Security</h1>
+        <a href="account-settings.html" class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Settings
+        </a>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title">Security & Activity</h1>
+            <p class="page-subtitle">Monitor your account activity and manage active sessions</p>
+        </div>
+
+        <!-- Recent Activity -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Login Activity</h2>
+            </div>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-icon">🖥️</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Successful Login</div>
+                        <div class="activity-details">Chrome on macOS • San Francisco, CA • 172.16.254.1</div>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon">📱</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Successful Login</div>
+                        <div class="activity-details">Safari on iPhone • San Francisco, CA • 192.168.1.100</div>
+                        <div class="activity-time">1 day ago</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon failed">⚠️</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Failed Login Attempt</div>
+                        <div class="activity-details">Unknown Device • Los Angeles, CA • 198.51.100.42</div>
+                        <div class="activity-time">3 days ago</div>
+                    </div>
+                    <a href="#" class="report-link">This wasn't me</a>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon">🖥️</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Successful Login</div>
+                        <div class="activity-details">Firefox on Windows • Seattle, WA • 203.0.113.7</div>
+                        <div class="activity-time">5 days ago</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon">📱</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Successful Login</div>
+                        <div class="activity-details">Chrome on Android • Portland, OR • 192.0.2.146</div>
+                        <div class="activity-time">1 week ago</div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Security Timeline -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Security Timeline</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker">🔐</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Login from New Device</div>
+                        <div class="timeline-desc">Successfully logged in from Chrome on macOS</div>
+                        <div class="timeline-time">February 11, 2026 at 2:30 PM</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">🔑</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Password Changed</div>
+                        <div class="timeline-desc">Your password was successfully updated for enhanced security</div>
+                        <div class="timeline-time">February 8, 2026 at 10:15 AM</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">📧</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Email Verified</div>
+                        <div class="timeline-desc">Email address verified: user@example.com</div>
+                        <div class="timeline-time">February 5, 2026 at 3:45 PM</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">🔐</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">2FA Enabled</div>
+                        <div class="timeline-desc">Two-factor authentication activated via SMS</div>
+                        <div class="timeline-time">February 1, 2026 at 9:20 AM</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">🔗</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Wallet Connected</div>
+                        <div class="timeline-desc">Metamask wallet connected: 0x742d...4a23</div>
+                        <div class="timeline-time">January 28, 2026 at 4:30 PM</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">✓</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">KYC Verified</div>
+                        <div class="timeline-desc">Identity verification completed successfully</div>
+                        <div class="timeline-time">January 25, 2026 at 11:00 AM</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">🆕</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Account Created</div>
+                        <div class="timeline-desc">Welcome to UNERA!</div>
+                        <div class="timeline-time">January 20, 2026 at 2:15 PM</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Sessions -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Active Sessions</h2>
+                <button class="btn-signout-all" onclick="signOutAll()">Sign Out All Devices</button>
+            </div>
+            <div>
+                <div class="session-card">
+                    <div class="session-icon">🖥️</div>
+                    <div class="session-info">
+                        <div class="session-device">Chrome on macOS</div>
+                        <div class="session-details">San Francisco, CA • Last active: Now</div>
+                        <span class="current-badge">Current Session</span>
+                    </div>
+                </div>
+                <div class="session-card">
+                    <div class="session-icon">📱</div>
+                    <div class="session-info">
+                        <div class="session-device">Safari on iPhone 15 Pro</div>
+                        <div class="session-details">San Francisco, CA • Last active: 1 day ago</div>
+                    </div>
+                    <button class="btn-signout">Sign Out</button>
+                </div>
+                <div class="session-card">
+                    <div class="session-icon">💻</div>
+                    <div class="session-info">
+                        <div class="session-device">Firefox on Windows 11</div>
+                        <div class="session-details">Seattle, WA • Last active: 3 days ago</div>
+                    </div>
+                    <button class="btn-signout">Sign Out</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function signOutAll() {
+            if (confirm('Are you sure you want to sign out of all devices? You will need to log in again on this device.')) {
+                alert('All sessions have been terminated. You will be redirected to the login page.');
+                // In production: window.location.href = 'login_2.html';
+            }
+        }
+    </script>
+</body>
+</html>

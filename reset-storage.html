@@ -315,12 +315,40 @@
 
         // Clear all storage
         function clearAll() {
-            if (confirm('Clear ALL localStorage and sessionStorage?')) {
-                localStorage.clear();
-                sessionStorage.clear();
-                showToast('✓ All storage cleared!');
-                refreshDisplay();
-            }
+            showConfirmation(
+                'Clear ALL localStorage and sessionStorage? This action cannot be undone.',
+                'Clear All Storage',
+                () => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    showToast('✓ All storage cleared!');
+                    refreshDisplay();
+                }
+            );
+        }
+        
+        // Modal Functions
+        function showConfirmation(message, title, onConfirm) {
+            const modalHTML = `
+                <div class="modal-overlay" id="confirmationModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: white; border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                        <h2 style="margin-bottom: 1rem;">${title}</h2>
+                        <p style="color: #475569; line-height: 1.6;">${message}</p>
+                        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                            <button onclick="closeConfirmationModal()" style="flex: 1; padding: 0.75rem; background: #E5E7EB; color: #374151; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
+                            <button id="confirmBtn" style="flex: 1; padding: 0.75rem; background: #10B981; color: white; border: none; border-radius: 8px; cursor: pointer;">Confirm</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.getElementById('confirmBtn').onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+        }
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            if (modal) modal.remove();
         }
 
         // Clear wallet-related items only

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - UNERA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-600: #6B7280;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.5rem;
+            color: var(--neutral-900);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--neutral-200);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: var(--neutral-100);
+        }
+
+        .tab.active {
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Notification Cards */
+        .notification-list {
+            list-style: none;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-green);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notification-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .notification-card.unread {
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .notification-card.transaction {
+            border-left-color: var(--primary-blue);
+        }
+
+        .notification-card.security {
+            border-left-color: var(--error);
+        }
+
+        .notification-card.donation {
+            border-left-color: var(--accent-pink);
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .notification-time {
+            font-size: 0.75rem;
+            color: var(--neutral-600);
+        }
+
+        .unread-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-green);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 1rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .notification-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <h1 style="font-family: var(--font-display); font-size: 1.125rem; font-weight: 700;">Notifications</h1>
+        <a href="dashboard-enhanced.html" class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </a>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title">Notifications</h1>
+            <p class="page-subtitle">Stay updated on your transactions and account activity</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="filterNotifications('all')">All</button>
+            <button class="tab" onclick="filterNotifications('unread')">Unread</button>
+            <button class="tab" onclick="filterNotifications('transaction')">Transactions</button>
+            <button class="tab" onclick="filterNotifications('security')">Security</button>
+        </div>
+
+        <!-- Notification List -->
+        <ul class="notification-list" id="notification-list">
+            <!-- Will be populated by JavaScript -->
+        </ul>
+
+        <!-- Empty State (hidden by default) -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <div class="empty-icon">🔔</div>
+            <h2 class="empty-title">You're all caught up!</h2>
+            <p class="empty-text">No new notifications at this time</p>
+        </div>
+    </main>
+
+    <script>
+        // Mock notifications
+        const notifications = [
+            { id: 1, type: 'transaction', title: 'Purchase Confirmed', desc: 'Your purchase of $250 hCAD has been confirmed and delivered to your wallet', time: '2 hours ago', unread: true, icon: '💰' },
+            { id: 2, type: 'donation', title: 'Donation Successful', desc: 'Your donation of $100 to Nairobi Hope Centre has been processed', time: '5 hours ago', unread: true, icon: '❤️' },
+            { id: 3, type: 'security', title: 'New Login Detected', desc: 'A new login was detected from Chrome on macOS', time: '1 day ago', unread: false, icon: '🔐' },
+            { id: 4, type: 'transaction', title: 'Transfer Complete', desc: 'You sent $50 hCAD to 0x742d...4a23', time: '1 day ago', unread: false, icon: '➡️' },
+            { id: 5, type: 'transaction', title: 'Withdrawal Processed', desc: 'Your withdrawal of $100 CAD has been completed', time: '2 days ago', unread: false, icon: '💵' },
+            { id: 6, type: 'security', title: 'Password Changed', desc: 'Your password was successfully updated', time: '3 days ago', unread: false, icon: '🔑' },
+            { id: 7, type: 'transaction', title: 'Purchase Confirmed', desc: 'Your purchase of $500 hCAD has been confirmed', time: '4 days ago', unread: false, icon: '💰' },
+            { id: 8, type: 'donation', title: 'Donation Receipt', desc: 'Receipt for your $50 donation is now available', time: '5 days ago', unread: false, icon: '📄' }
+        ];
+
+        let currentFilter = 'all';
+
+        // Render notifications
+        function renderNotifications() {
+            const list = document.getElementById('notification-list');
+            const emptyState = document.getElementById('empty-state');
+            
+            const filtered = notifications.filter(n => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'unread') return n.unread;
+                return n.type === currentFilter;
+            });
+
+            if (filtered.length === 0) {
+                list.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            list.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            list.innerHTML = filtered.map(notif => `
+                <li class="notification-card ${notif.type} ${notif.unread ? 'unread' : ''}" onclick="markAsRead(${notif.id})">
+                    <div class="notification-header">
+                        <div style="display: flex; align-items: flex-start; flex: 1;">
+                            <div class="notification-icon">${notif.icon}</div>
+                            <div class="notification-content">
+                                <div class="notification-title">${notif.title}</div>
+                                <div class="notification-desc">${notif.desc}</div>
+                                <div class="notification-time">${notif.time}</div>
+                            </div>
+                        </div>
+                        ${notif.unread ? '<div class="unread-dot"></div>' : ''}
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // Filter notifications
+        function filterNotifications(filter) {
+            currentFilter = filter;
+            
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderNotifications();
+        }
+
+        // Mark as read
+        function markAsRead(id) {
+            const notif = notifications.find(n => n.id === id);
+            if (notif) {
+                notif.unread = false;
+                renderNotifications();
+            }
+        }
+
+        // Initialize
+        renderNotifications();
+    </script>
+</body>
+</html>
