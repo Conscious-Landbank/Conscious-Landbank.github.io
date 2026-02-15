@@ -1022,7 +1022,7 @@
         }
 
         /* Transaction Detail Modal */
-        .modal-overlay {
+        /* .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -1035,6 +1035,27 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
             animation: fadeIn 0.2s ease-out;
+        } */
+
+        .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+
+        display: none; /* ✅ hide by default */
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.active {
+        display: flex; /* ✅ only show when active */
         }
 
         .modal {
@@ -1834,82 +1855,6 @@
             .token-network td {
                 padding: 0.625rem 0.5rem;
             }
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal {
-            background: white;
-            border-radius: 16px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #E2E8F0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        .modal-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-        .modal-body { padding: 1.5rem; }
-        .notification-modal .modal-body {
-            text-align: center;
-            padding: 2rem 1.5rem;
-        }
-        .notification-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
-            color: white;
-            font-size: 2rem;
-        }
-        .notification-icon.error {
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-        }
-        .notification-icon.warning {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-        }
-        .notification-message {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-        .modal-footer {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-subtle);
-        }
-        .notification-modal .modal-footer {
-            padding: 0 1.5rem 1.5rem 1.5rem;
-            border-top: none;
         }
     </style>
 </head>
@@ -2846,9 +2791,9 @@
                 // Show success notification
                 if (typeof showNotification === 'function') {
                     if (newNickname) {
-                        showNotification('Wallet nickname updated', 'success');
+                        showStatusDialog('Wallet nickname updated', 'Wallet Nickname');
                     } else {
-                        showNotification('Wallet nickname removed', 'success');
+                        showStatusDialog('Wallet nickname removed', 'Wallet Nickname');
                     }
                 }
             }
@@ -3797,6 +3742,7 @@
             `;
 
             document.body.appendChild(modal);
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
 
             modal.addEventListener('click', (e) => {
@@ -4448,8 +4394,48 @@
         </div>
     </div>
 
+    <!-- Simple Status Dialog (matches preset-dialog style) -->
+    <div class="preset-dialog" id="statusDialog" role="dialog" aria-modal="true" aria-labelledby="statusDialogTitle" aria-hidden="true">
+        <div class="preset-dialog-overlay" onclick="closeStatusDialog()"></div>
+        <div class="preset-dialog-content" onclick="event.stopPropagation()">
+        <h3 id="statusDialogTitle">Success</h3>
+        <p id="statusDialogMessage">Done</p>
+        <div class="preset-dialog-actions">
+            <button type="button" class="btn btn-primary" onclick="closeStatusDialog()">OK</button>
+        </div>
+        </div>
+    </div>
+  
+    <script>
+        function showStatusDialog(message, title = 'Success') {
+          const dialog = document.getElementById('statusDialog');
+          document.getElementById('statusDialogTitle').textContent = title;
+          document.getElementById('statusDialogMessage').textContent = message;
+      
+          dialog.classList.add('active');
+          dialog.setAttribute('aria-hidden', 'false');
+      
+          // ESC to close (nice-to-have)
+          const onEsc = (e) => {
+            if (e.key === 'Escape') {
+              closeStatusDialog();
+              document.removeEventListener('keydown', onEsc);
+            }
+          };
+          document.addEventListener('keydown', onEsc);
+        }
+      
+        function closeStatusDialog() {
+          const dialog = document.getElementById('statusDialog');
+          dialog.classList.remove('active');
+          dialog.setAttribute('aria-hidden', 'true');
+        }
+      </script>
+      
+    
+
     <!-- Custom Notification Modal -->
-    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true">
+    <!-- <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true">
         <div class="modal notification-modal">
             <div class="modal-header">
                 <h2 id="notificationTitle" class="modal-title">Notification</h2>
@@ -4463,10 +4449,11 @@
                 <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Custom Confirmation Modal -->
-    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true">
+    <!-- <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true"> -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true" aria-hidden="true">    
         <div class="modal notification-modal">
             <div class="modal-header">
                 <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
@@ -4485,13 +4472,13 @@
 
     <script>
         // Modal Functions
-        function showNotification(message, type, title) {
-            const modal = document.getElementById('notificationModal');
-            document.getElementById('notificationTitle').textContent = title;
-            document.getElementById('notificationMessage').textContent = message;
-            document.getElementById('notificationIcon').className = 'notification-icon ' + (type || '');
-            modal.classList.add('active');
-        }
+        // function showNotification(message, type, title) {
+        //     const modal = document.getElementById('notificationModal');
+        //     document.getElementById('notificationTitle').textContent = title;
+        //     document.getElementById('notificationMessage').textContent = message;
+        //     document.getElementById('notificationIcon').className = 'notification-icon ' + (type || '');
+        //     modal.classList.add('active');
+        // }
         function closeNotificationModal() {
             document.getElementById('notificationModal').classList.remove('active');
         }

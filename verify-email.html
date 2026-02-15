@@ -160,6 +160,15 @@
         }
 
         .modal {
+            display: block;
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content {
             background: white;
             border-radius: 16px;
             max-width: 400px;
@@ -332,7 +341,7 @@
 
     <!-- Custom Confirmation Modal -->
     <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
-        <div class="modal notification-modal">
+        <div class="modal-content notification-modal">
             <div class="modal-header">
                 <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
                 <button class="modal-close" onclick="closeConfirmationModal()" aria-label="Close confirmation">
@@ -622,10 +631,18 @@
 
         // Custom Modal Functions
         function showNotification(message, type = 'success', title = 'Success') {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'verify-email.html:625',message:'showNotification called',data:{message,type,title},timestamp:Date.now(),hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
+            
             const modal = document.getElementById('notificationModal');
             const icon = document.getElementById('notificationIcon');
             const messageEl = document.getElementById('notificationMessage');
             const titleEl = document.getElementById('notificationTitle');
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'verify-email.html:633',message:'Modal elements found',data:{modalExists:!!modal,iconExists:!!icon,messageElExists:!!messageEl,titleElExists:!!titleEl},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
+            // #endregion
             
             titleEl.textContent = title;
             messageEl.textContent = message;
@@ -636,6 +653,13 @@
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // #region agent log
+            const computedStyle = window.getComputedStyle(modal);
+            const modalInner = modal.querySelector('.modal');
+            const computedInnerStyle = modalInner ? window.getComputedStyle(modalInner) : null;
+            fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'verify-email.html:648',message:'Modal activated with computed styles',data:{hasActiveClass:modal.classList.contains('active'),bodyOverflow:document.body.style.overflow,overlayDisplay:computedStyle.display,overlayZIndex:computedStyle.zIndex,overlayOpacity:computedStyle.opacity,overlayVisibility:computedStyle.visibility,innerDisplay:computedInnerStyle?.display,innerOpacity:computedInnerStyle?.opacity,innerVisibility:computedInnerStyle?.visibility},timestamp:Date.now(),hypothesisId:'C,F,G,H,I'})}).catch(()=>{});
+            // #endregion
         }
 
         function closeNotificationModal() {
@@ -644,10 +668,18 @@
         }
 
         function showConfirmation(message, title, onConfirm) {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'verify-email.html:655',message:'showConfirmation called',data:{message,title,hasCallback:!!onConfirm},timestamp:Date.now(),hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
+            
             const modal = document.getElementById('confirmationModal');
             const messageEl = document.getElementById('confirmationMessage');
             const titleEl = document.getElementById('confirmationTitle');
             const confirmBtn = document.getElementById('confirmButton');
+            
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'verify-email.html:666',message:'Confirmation modal elements',data:{modalExists:!!modal,messageElExists:!!messageEl,titleElExists:!!titleEl,confirmBtnExists:!!confirmBtn},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
+            // #endregion
             
             titleEl.textContent = title;
             messageEl.textContent = message;
@@ -671,6 +703,20 @@
                 closeConfirmationModal();
             }
         });
+        
+        // #region agent log
+        // Log page load completion
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'verify-email.html:680',message:'Page loaded',data:{notificationModalExists:!!document.getElementById('notificationModal'),confirmationModalExists:!!document.getElementById('confirmationModal'),showNotificationDefined:typeof showNotification,showConfirmationDefined:typeof showConfirmation},timestamp:Date.now(),hypothesisId:'A,B,E'})}).catch(()=>{});
+            
+            // Add click listeners to help links
+            document.querySelectorAll('.help-links a').forEach((link, idx) => {
+                link.addEventListener('click', (e) => {
+                    fetch('http://127.0.0.1:7242/ingest/ddba5613-fccf-45b4-b75a-9ef8e853bb73',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'verify-email.html:686',message:'Help link clicked',data:{linkIndex:idx,linkText:link.textContent,onclickExists:!!link.onclick,onclickType:typeof link.onclick},timestamp:Date.now(),hypothesisId:'J'})}).catch(()=>{});
+                });
+            });
+        });
+        // #endregion
     </script>
 </body>
 </html>
