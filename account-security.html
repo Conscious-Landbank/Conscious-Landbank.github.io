@@ -3,41 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Security - UNERA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Account Security – UNERA | One Flow. Many Lives.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* -------------------- BASE & VARIABLES (copied from dashboard/wallet) -------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         :root {
             --primary-green: #10B981;
             --primary-blue: #0EA5E9;
             --accent-pink: #EC4899;
-            --error: #EF4444;
-            --warning: #F59E0B;
             --neutral-900: #1F2937;
             --neutral-800: #374151;
+            --neutral-700: #4B5563;
             --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
             --neutral-400: #D1D5DB;
             --neutral-300: #E5E7EB;
             --neutral-200: #F3F4F6;
             --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
-            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
-            --font-display: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', sans-serif;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
         body {
             font-family: var(--font-body);
             background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
             color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
         }
 
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+        .skip-link:focus { top: 0; }
+
+        /* Navigation – exact match to dashboard */
         .nav {
-            background: white;
+            background: #FFFFFF;
             padding: 0 2.75rem;
             height: 44px;
             display: flex;
@@ -48,490 +88,963 @@
             z-index: 100;
             border-bottom: 1px solid var(--border-subtle);
         }
+        .nav-left { display: flex; align-items: center; gap: 2.75rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .nav-brand:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-icon { width: 28px; height: 28px; }
+        .logo { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
+        .nav-links { display: flex; gap: 1.375rem; list-style: none; align-items: center; }
+        .nav-links li { display: flex; align-items: center; }
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-link:hover { color: var(--primary-green); }
+        .nav-link:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .nav-link.active { color: var(--primary-green); font-weight: 600; }
 
-        .back-btn {
+        .user-profile-nav {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            position: relative;
+            padding: 0.375rem 0.75rem;
             border-radius: 0.5rem;
-            color: var(--neutral-900);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
-
-        .back-btn:hover {
-            background: rgba(0, 0, 0, 0.04);
+        .user-profile-nav:hover { background: rgba(0, 0, 0, 0.04); }
+        .user-avatar-nav {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 0.813rem;
         }
+        .user-name-nav { font-size: 0.875rem; font-weight: 500; color: var(--neutral-800); }
 
+        /* Main Container */
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
+        /* Page Header (dashboard style) */
+        .page-header { margin-bottom: 3rem; text-align: left; }
+        .welcome-text { font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
         .page-title {
             font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
         }
+        .page-subtitle { font-size: 1.125rem; color: var(--text-secondary); line-height: 1.6; }
 
-        .page-subtitle {
-            color: var(--text-secondary);
-        }
-
-        /* Section */
-        .section {
+        /* Cards */
+        .card {
             background: white;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             padding: 2rem;
             margin-bottom: 2rem;
-            border: 1px solid var(--border-subtle);
+            border: 2px solid var(--border-subtle);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
-
-        .section-header {
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-subtle);
         }
-
-        .section-title {
+        .card-title {
             font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
+            color: var(--text-primary);
+        }
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 0.25rem;
         }
 
-        .btn-link {
+        /* Security Status Card */
+        .security-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .status-icon {
+            width: 48px; height: 48px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .status-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .status-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .status-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .status-badge {
+            display: inline-block;
+            background: rgba(5, 150, 105, 0.1);
+            color: #047857;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
+            margin-top: 0.375rem;
+        }
+
+        /* Search & Filter Controls (from wallet) */
+        .history-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .search-bar {
+            flex: 1;
+            position: relative;
+            min-width: 240px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem 0.875rem 3.5rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px; height: 20px;
+            color: var(--neutral-500);
+            pointer-events: none;
+        }
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .filter-btn.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Active Filter Chips */
+        .active-filters {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--primary-green);
+            border-radius: 980px;
+            font-size: 0.875rem;
             color: var(--primary-green);
-            text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+        }
+        .filter-chip button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .filter-chip button:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+        .filter-chip-clear-all {
+            background: none;
+            border: 2px solid var(--neutral-300);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 980px;
+            cursor: pointer;
             font-size: 0.875rem;
         }
-
-        .btn-link:hover {
-            text-decoration: underline;
+        .filter-chip-clear-all:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
         }
 
-        /* Login Activity */
+        /* Activity Timeline (card list) */
         .activity-list {
-            list-style: none;
+            display: flex;
+            flex-direction: column;
         }
-
         .activity-item {
             display: flex;
             align-items: flex-start;
-            gap: 1rem;
-            padding: 1.25rem;
+            gap: 1.25rem;
+            padding: 1.5rem;
             border-bottom: 1px solid var(--border-subtle);
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-item:hover {
-            background: var(--neutral-100);
-        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item:hover { background: rgba(16, 185, 129, 0.02); }
+        .activity-item:focus { outline: 3px solid var(--primary-green); outline-offset: -3px; }
 
         .activity-icon {
-            width: 40px;
-            height: 40px;
+            width: 48px; height: 48px;
             border-radius: 50%;
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+            display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
+            font-size: 1.25rem;
         }
+        .activity-icon.login { background: rgba(16, 185, 129, 0.1); color: var(--primary-green); border: 2px solid rgba(16, 185, 129, 0.3); }
+        .activity-icon.security { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 2px solid rgba(245, 158, 11, 0.3); }
+        .activity-icon.failed { background: rgba(239, 68, 68, 0.1); color: var(--error); border: 2px solid rgba(239, 68, 68, 0.3); }
+        .activity-icon.settings { background: rgba(99, 102, 241, 0.1); color: #6366F1; border: 2px solid rgba(99, 102, 241, 0.3); }
+        .activity-icon.alert { background: rgba(236, 72, 153, 0.1); color: var(--accent-pink); border: 2px solid rgba(236, 72, 153, 0.3); }
 
-        .activity-icon.failed {
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
+        .activity-details { flex: 1; min-width: 0; }
         .activity-title {
             font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-details {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-time {
-            font-size: 0.75rem;
-            color: var(--neutral-600);
-        }
-
-        .report-link {
-            color: var(--error);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .report-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 3rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 20px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--neutral-300);
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 2rem;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: -2.25rem;
-            top: 0;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-green);
+            color: var(--text-primary);
+            margin-bottom: 0.375rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            z-index: 1;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
-
-        .timeline-content {
+        .activity-change {
+            font-family: monospace;
             background: var(--neutral-100);
-            padding: 1.25rem;
-            border-radius: 0.75rem;
-        }
-
-        .timeline-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-desc {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
             font-size: 0.875rem;
             color: var(--text-secondary);
-            margin-bottom: 0.5rem;
         }
-
-        .timeline-time {
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+        .activity-time { font-size: 0.813rem; color: var(--neutral-500); }
+        .activity-source {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.625rem;
+            background: var(--neutral-100);
+            border-radius: 0.375rem;
             font-size: 0.75rem;
-            color: var(--neutral-600);
+            font-weight: 600;
         }
 
-        /* Active Sessions */
-        .session-card {
+        /* Suspicious Alerts Section */
+        .alert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .alert-card {
+            background: rgba(239, 68, 68, 0.05);
+            border: 2px solid rgba(239, 68, 68, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
             display: flex;
             align-items: flex-start;
             gap: 1rem;
-            padding: 1.25rem;
-            border: 1px solid var(--border-subtle);
-            border-radius: 0.75rem;
-            margin-bottom: 1rem;
         }
-
-        .session-card:last-child {
-            margin-bottom: 0;
-        }
-
-        .session-icon {
-            width: 48px;
-            height: 48px;
+        .alert-icon {
+            width: 40px; height: 40px;
+            background: rgba(239, 68, 68, 0.1);
             border-radius: 0.75rem;
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+            display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem;
             flex-shrink: 0;
         }
-
-        .session-info {
-            flex: 1;
+        .alert-content { flex: 1; }
+        .alert-title {
+            font-weight: 700;
+            color: var(--error);
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
         }
+        .alert-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .alert-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn-link {
+            background: none;
+            border: none;
+            color: var(--primary-green);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .btn-link:hover { color: #059669; }
 
+        /* Session Cards */
+        .session-list { display: flex; flex-direction: column; gap: 1rem; }
+        .session-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            transition: all 0.2s;
+        }
+        .session-card:hover { border-color: var(--primary-green); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1); }
+        .session-icon {
+            width: 48px; height: 48px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .session-info { flex: 1; }
         .session-device {
             font-weight: 600;
+            color: var(--text-primary);
             margin-bottom: 0.25rem;
+            font-size: 1rem;
         }
-
         .session-details {
             font-size: 0.875rem;
             color: var(--text-secondary);
         }
-
         .current-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
             background: rgba(16, 185, 129, 0.1);
             color: var(--primary-green);
-            border-radius: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
             font-size: 0.75rem;
             font-weight: 600;
             margin-top: 0.5rem;
         }
-
         .btn-signout {
             padding: 0.5rem 1rem;
-            background: var(--neutral-200);
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            font-weight: 600;
+            color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s;
         }
-
         .btn-signout:hover {
-            background: var(--neutral-300);
+            border-color: var(--error);
+            color: var(--error);
+            background: rgba(239, 68, 68, 0.02);
         }
-
         .btn-signout-all {
-            width: 100%;
-            padding: 0.75rem;
+            padding: 0.75rem 1.5rem;
             background: var(--error);
             color: white;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 980px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
+        .btn-signout-all:hover { background: #DC2626; transform: translateY(-2px); }
 
-        .btn-signout-all:hover {
-            background: #DC2626;
+        /* Drawer Modal (contextual activity details) */
+        .drawer-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+        .drawer-overlay.active { display: flex; }
+        .drawer {
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            animation: slideInRight 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+        .drawer-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .drawer-close {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .drawer-close:hover { background: var(--neutral-100); color: var(--text-primary); }
+        .drawer-body { padding: 2rem; flex: 1; }
+        .drawer-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border-subtle);
+            background: var(--neutral-100);
+        }
+        .drawer-nav-btn {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .drawer-nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .drawer-nav-btn:hover:not(:disabled) { border-color: var(--primary-green); color: var(--primary-green); }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.938rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+        }
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border: 2px solid var(--border-subtle);
+        }
+        .btn-secondary:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
         }
 
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            pointer-events: none;
+        }
+        .toast {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            min-width: 300px;
+            max-width: 400px;
+            pointer-events: auto;
+            animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 2.7s forwards;
+        }
+        @keyframes slideInRight { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateX(400px); } }
+        .toast.success .toast-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .toast.error .toast-icon { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .toast.info .toast-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .nav {
-                padding: 0 1rem;
-            }
-
-            .container {
-                padding: 1rem;
-            }
-
-            .section {
-                padding: 1.5rem;
-            }
-
-            .timeline {
-                padding-left: 2.5rem;
-            }
+            .nav { padding: 0 1rem; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; }
+            .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; }
+            .container { padding: 2rem 1rem; }
+            .page-title { font-size: 2rem; }
+            .security-status-grid { grid-template-columns: 1fr; }
+            .activity-item { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+            .history-controls { flex-direction: column; }
+            .filter-btn { width: 100%; justify-content: center; }
+            .session-card { flex-direction: column; align-items: flex-start; }
+            .session-card .btn-signout { width: 100%; }
+            .drawer { max-width: 100%; }
         }
+
+        /* Hidden hamburger on desktop */
+        .hamburger { display: none; }
     </style>
 </head>
 <body>
-    <nav class="nav">
-        <h1 style="font-family: var(--font-display); font-size: 1.125rem; font-weight: 700;">Account Security</h1>
-        <a href="account-settings.html" class="back-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Settings
-        </a>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation (exact match to dashboard) -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+                <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+                <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+                <li><a href="account-settings.html" class="nav-link active" aria-current="page">SECURITY</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="user-profile-nav">
+                <div class="user-avatar-nav">JS</div>
+                <div class="user-name-nav">Jane Smith</div>
+            </div>
+            <button class="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
     </nav>
 
-    <main class="container">
-        <div class="page-header">
-            <h1 class="page-title">Security & Activity</h1>
-            <p class="page-subtitle">Monitor your account activity and manage active sessions</p>
+    <!-- Main Content -->
+    <main id="main-content" class="container">
+        <!-- Page Header (dashboard style) -->
+        <header class="page-header">
+            <p class="welcome-text">🔒 Security & Audit</p>
+            <h1 class="page-title">Account Security</h1>
+            <p class="page-subtitle">Monitor your account activity, manage active sessions, and stay alerted to suspicious events.</p>
+        </header>
+
+        <!-- Security Status Card (new) -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Security Status</h2>
+            </div>
+            <div class="security-status-grid">
+                <div class="status-item">
+                    <div class="status-icon">🛡️</div>
+                    <div class="status-content">
+                        <span class="status-label">Overall Protection</span>
+                        <span class="status-value">Strong</span>
+                        <span class="status-badge">✅ 2FA enabled</span>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">📱</div>
+                    <div class="status-content">
+                        <span class="status-label">Trusted Devices</span>
+                        <span class="status-value">3 active</span>
+                        <span class="status-badge">➕ 2 pending</span>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">🔐</div>
+                    <div class="status-content">
+                        <span class="status-label">Recovery methods</span>
+                        <span class="status-value">Email + SMS</span>
+                        <span class="status-badge">📧 verified</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Recent Activity -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">Recent Login Activity</h2>
+        <!-- Activity Log with Search & Filters -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Activity Log</h2>
+                <span class="card-description">Track every important action</span>
             </div>
-            <ul class="activity-list">
-                <li class="activity-item">
-                    <div class="activity-icon">🖥️</div>
-                    <div class="activity-content">
-                        <div class="activity-title">Successful Login</div>
-                        <div class="activity-details">Chrome on macOS • San Francisco, CA • 172.16.254.1</div>
-                        <div class="activity-time">2 hours ago</div>
-                    </div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon">📱</div>
-                    <div class="activity-content">
-                        <div class="activity-title">Successful Login</div>
-                        <div class="activity-details">Safari on iPhone • San Francisco, CA • 192.168.1.100</div>
-                        <div class="activity-time">1 day ago</div>
-                    </div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon failed">⚠️</div>
-                    <div class="activity-content">
-                        <div class="activity-title">Failed Login Attempt</div>
-                        <div class="activity-details">Unknown Device • Los Angeles, CA • 198.51.100.42</div>
-                        <div class="activity-time">3 days ago</div>
-                    </div>
-                    <a href="#" class="report-link">This wasn't me</a>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon">🖥️</div>
-                    <div class="activity-content">
-                        <div class="activity-title">Successful Login</div>
-                        <div class="activity-details">Firefox on Windows • Seattle, WA • 203.0.113.7</div>
-                        <div class="activity-time">5 days ago</div>
-                    </div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon">📱</div>
-                    <div class="activity-content">
-                        <div class="activity-title">Successful Login</div>
-                        <div class="activity-details">Chrome on Android • Portland, OR • 192.0.2.146</div>
-                        <div class="activity-time">1 week ago</div>
-                    </div>
-                </li>
-            </ul>
-        </section>
 
-        <!-- Security Timeline -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">Security Timeline</h2>
+            <!-- Search and Filter Controls (from wallet) -->
+            <div class="history-controls">
+                <div class="search-bar">
+                    <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="search" class="search-input" placeholder="Search by event, IP, or device..." id="searchInput" oninput="searchActivity()">
+                </div>
+                <button class="filter-btn" id="filterBtn" onclick="toggleFilterPanel()">📅 Filter</button>
             </div>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-marker">🔐</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Login from New Device</div>
-                        <div class="timeline-desc">Successfully logged in from Chrome on macOS</div>
-                        <div class="timeline-time">February 11, 2026 at 2:30 PM</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-marker">🔑</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Password Changed</div>
-                        <div class="timeline-desc">Your password was successfully updated for enhanced security</div>
-                        <div class="timeline-time">February 8, 2026 at 10:15 AM</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-marker">📧</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Email Verified</div>
-                        <div class="timeline-desc">Email address verified: user@example.com</div>
-                        <div class="timeline-time">February 5, 2026 at 3:45 PM</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-marker">🔐</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">2FA Enabled</div>
-                        <div class="timeline-desc">Two-factor authentication activated via SMS</div>
-                        <div class="timeline-time">February 1, 2026 at 9:20 AM</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-marker">🔗</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Wallet Connected</div>
-                        <div class="timeline-desc">Metamask wallet connected: 0x742d...4a23</div>
-                        <div class="timeline-time">January 28, 2026 at 4:30 PM</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-marker">✓</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">KYC Verified</div>
-                        <div class="timeline-desc">Identity verification completed successfully</div>
-                        <div class="timeline-time">January 25, 2026 at 11:00 AM</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-marker">🆕</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Account Created</div>
-                        <div class="timeline-desc">Welcome to UNERA!</div>
-                        <div class="timeline-time">January 20, 2026 at 2:15 PM</div>
-                    </div>
-                </div>
+
+            <!-- Active filter chips (dynamic) -->
+            <div class="active-filters" id="activeFilters" style="display: none;">
+                <!-- will be populated by JS -->
             </div>
-        </section>
+
+            <!-- Activity List (improved with before/after and source) -->
+            <div class="activity-list" id="activityList">
+                <!-- Activity items will be injected via JS -->
+            </div>
+
+            <!-- Empty state (hidden by default) -->
+            <div class="empty-state" id="emptyState" style="display: none; text-align: center; padding: 4rem 2rem;">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-400)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+                <h3 style="font-size: 1.5rem; color: var(--neutral-600); margin-top: 1rem;">No activity found</h3>
+                <p style="color: var(--neutral-500);">Try adjusting your filters.</p>
+            </div>
+        </div>
+
+        <!-- Suspicious Activity Alerts (new section) -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">⚠️ Suspicious Activity Alerts</h2>
+            </div>
+            <div class="alert-grid" id="alertGrid">
+                <!-- Alert cards dynamically populated -->
+            </div>
+        </div>
 
         <!-- Active Sessions -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">Active Sessions</h2>
-                <button class="btn-signout-all" onclick="signOutAll()">Sign Out All Devices</button>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Active Sessions</h2>
+                <button class="btn-signout-all" onclick="signOutAll()">Sign Out All</button>
             </div>
-            <div>
-                <div class="session-card">
-                    <div class="session-icon">🖥️</div>
-                    <div class="session-info">
-                        <div class="session-device">Chrome on macOS</div>
-                        <div class="session-details">San Francisco, CA • Last active: Now</div>
-                        <span class="current-badge">Current Session</span>
-                    </div>
-                </div>
-                <div class="session-card">
-                    <div class="session-icon">📱</div>
-                    <div class="session-info">
-                        <div class="session-device">Safari on iPhone 15 Pro</div>
-                        <div class="session-details">San Francisco, CA • Last active: 1 day ago</div>
-                    </div>
-                    <button class="btn-signout">Sign Out</button>
-                </div>
-                <div class="session-card">
-                    <div class="session-icon">💻</div>
-                    <div class="session-info">
-                        <div class="session-device">Firefox on Windows 11</div>
-                        <div class="session-details">Seattle, WA • Last active: 3 days ago</div>
-                    </div>
-                    <button class="btn-signout">Sign Out</button>
-                </div>
+            <div class="session-list" id="sessionList">
+                <!-- Sessions dynamically populated -->
             </div>
-        </section>
+        </div>
     </main>
 
+    <!-- Contextual Activity Drawer (right-side details) -->
+    <div class="drawer-overlay" id="activityDrawer" onclick="closeDrawer(event)">
+        <div class="drawer" onclick="event.stopPropagation()">
+            <div class="drawer-header">
+                <h2 class="drawer-title">Activity Details</h2>
+                <button class="drawer-close" onclick="closeDrawer()" aria-label="Close">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="drawer-body" id="drawerContent">
+                <!-- filled by JS -->
+            </div>
+            <div class="drawer-nav">
+                <button class="drawer-nav-btn" id="prevActivityBtn" onclick="navigateActivity(-1)">
+                    ← Previous
+                </button>
+                <button class="drawer-nav-btn" id="nextActivityBtn" onclick="navigateActivity(1)">
+                    Next →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container for notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
-        function signOutAll() {
-            if (confirm('Are you sure you want to sign out of all devices? You will need to log in again on this device.')) {
-                alert('All sessions have been terminated. You will be redirected to the login page.');
-                // In production: window.location.href = 'login_2.html';
+        // ---------- MOCK DATA ----------
+        const activityData = [
+            { id: 1, type: 'login', icon: '🔑', title: 'Successful login', description: 'Chrome on macOS', location: 'San Francisco, CA', ip: '172.16.254.1', time: '2 hours ago', timestamp: Date.now() - 7200000, status: 'success', source: 'Browser', before: null, after: null },
+            { id: 2, type: 'login', icon: '📱', title: 'Successful login', description: 'Safari on iPhone', location: 'San Francisco, CA', ip: '192.168.1.100', time: '1 day ago', timestamp: Date.now() - 86400000, status: 'success', source: 'Mobile', before: null, after: null },
+            { id: 3, type: 'failed', icon: '⚠️', title: 'Failed login attempt', description: 'Unknown browser on Windows', location: 'Los Angeles, CA', ip: '198.51.100.42', time: '3 days ago', timestamp: Date.now() - 259200000, status: 'failed', source: 'Unknown', before: null, after: null },
+            { id: 4, type: 'security', icon: '🔐', title: 'Password changed', description: 'Password updated', location: 'Seattle, WA', ip: '203.0.113.7', time: '5 days ago', timestamp: Date.now() - 432000000, status: 'success', source: 'Chrome', before: 'old-password-hash', after: 'new-password-hash' },
+            { id: 5, type: 'security', icon: '📧', title: 'Recovery email updated', description: 'Email changed from jane.old@example.com to jane@example.com', location: 'Portland, OR', ip: '192.0.2.146', time: '1 week ago', timestamp: Date.now() - 604800000, status: 'success', source: 'Firefox', before: 'jane.old@example.com', after: 'jane@example.com' },
+            { id: 6, type: 'settings', icon: '⚙️', title: '2FA disabled', description: 'Two‑factor authentication turned off', location: 'Austin, TX', ip: '104.16.25.1', time: '8 days ago', timestamp: Date.now() - 691200000, status: 'warning', source: 'Safari', before: 'enabled', after: 'disabled' },
+            { id: 7, type: 'alert', icon: '🚨', title: 'Unusual location detected', description: 'Login from new city (Moscow, RU)', location: 'Moscow, Russia', ip: '95.108.213.1', time: '12 days ago', timestamp: Date.now() - 1036800000, status: 'alert', source: 'Chrome', before: null, after: null },
+        ];
+
+        const alertData = [
+            { id: 'a1', title: 'Multiple failed logins', desc: '5 failed attempts from IP 198.51.100.42 in the last hour.', severity: 'high' },
+            { id: 'a2', title: 'New device login', desc: 'First login from Firefox on Windows 11 (Seattle, WA).', severity: 'medium' },
+            { id: 'a3', title: '2FA disabled', desc: 'Two‑factor authentication was turned off. If this wasn’t you, take action.', severity: 'high' },
+        ];
+
+        const sessionsData = [
+            { device: 'Chrome on macOS', location: 'San Francisco, CA', lastActive: 'Now', current: true },
+            { device: 'Safari on iPhone 15 Pro', location: 'San Francisco, CA', lastActive: '1 day ago', current: false },
+            { device: 'Firefox on Windows 11', location: 'Seattle, WA', lastActive: '3 days ago', current: false },
+        ];
+
+        // ---------- RENDER FUNCTIONS ----------
+        function renderActivityList(filtered = activityData) {
+            const container = document.getElementById('activityList');
+            if (!container) return;
+            if (filtered.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                container.innerHTML = '';
+                return;
+            }
+            document.getElementById('emptyState').style.display = 'none';
+            container.innerHTML = filtered.map(item => {
+                const iconClass = item.type === 'login' ? 'login' : item.type === 'failed' ? 'failed' : item.type === 'security' ? 'security' : item.type === 'settings' ? 'settings' : 'alert';
+                const changeHtml = (item.before && item.after) ? `<span class="activity-change">${item.before} → ${item.after}</span>` : '';
+                return `
+                    <div class="activity-item" tabindex="0" role="button" data-id="${item.id}" onclick="openDrawerWithId(${item.id})">
+                        <div class="activity-icon ${iconClass}">${item.icon}</div>
+                        <div class="activity-details">
+                            <div class="activity-title">
+                                ${item.title}
+                                ${changeHtml}
+                            </div>
+                            <div class="activity-meta">
+                                <span>${item.description} • ${item.location}</span>
+                                <span class="activity-time">${item.time}</span>
+                                <span class="activity-source">${item.source}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAlerts() {
+            const grid = document.getElementById('alertGrid');
+            if (!grid) return;
+            grid.innerHTML = alertData.map(alert => `
+                <div class="alert-card">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <div class="alert-title">${alert.title}</div>
+                        <div class="alert-desc">${alert.desc}</div>
+                        <div class="alert-actions">
+                            <button class="btn-link" onclick="acknowledgeAlert('${alert.id}')">Acknowledge</button>
+                            <button class="btn-link" onclick="investigateAlert('${alert.id}')">Investigate</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSessions() {
+            const list = document.getElementById('sessionList');
+            if (!list) return;
+            list.innerHTML = sessionsData.map(s => `
+                <div class="session-card">
+                    <div class="session-icon">${s.device.includes('macOS') ? '🖥️' : s.device.includes('iPhone') ? '📱' : '💻'}</div>
+                    <div class="session-info">
+                        <div class="session-device">${s.device}</div>
+                        <div class="session-details">${s.location} • Last active: ${s.lastActive}</div>
+                        ${s.current ? '<span class="current-badge">Current Session</span>' : ''}
+                    </div>
+                    ${!s.current ? '<button class="btn-signout" onclick="signOutDevice(\'' + s.device + '\')">Sign Out</button>' : ''}
+                </div>
+            `).join('');
+        }
+
+        // ---------- DRAWER & DETAILS ----------
+        let currentActivityIndex = 0;
+        let filteredActivities = [...activityData];
+
+        function openDrawerWithId(id) {
+            const index = filteredActivities.findIndex(a => a.id === id);
+            if (index === -1) return;
+            currentActivityIndex = index;
+            updateDrawerContent();
+            document.getElementById('activityDrawer').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer(e) {
+            if (e && e.target.classList.contains('drawer-overlay')) {
+                document.getElementById('activityDrawer').classList.remove('active');
+                document.body.style.overflow = '';
+            } else if (!e) {
+                document.getElementById('activityDrawer').classList.remove('active');
+                document.body.style.overflow = '';
             }
         }
+
+        function navigateActivity(direction) {
+            const newIndex = currentActivityIndex + direction;
+            if (newIndex < 0 || newIndex >= filteredActivities.length) return;
+            currentActivityIndex = newIndex;
+            updateDrawerContent();
+        }
+
+        function updateDrawerContent() {
+            const item = filteredActivities[currentActivityIndex];
+            const prevBtn = document.getElementById('prevActivityBtn');
+            const nextBtn = document.getElementById('nextActivityBtn');
+            prevBtn.disabled = currentActivityIndex === 0;
+            nextBtn.disabled = currentActivityIndex === filteredActivities.length - 1;
+
+            const changeHtml = (item.before && item.after) ? `
+                <div style="background: var(--neutral-100); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Field change</div>
+                    <div style="font-family: monospace; display: flex; align-items: center; gap: 1rem;">
+                        <span style="background: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem;">${item.before}</span>
+                        <span>→</span>
+                        <span style="background: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem;">${item.after}</span>
+                    </div>
+                </div>
+            ` : '';
+
+            document.getElementById('drawerContent').innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">${item.icon}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700;">${item.title}</h3>
+                </div>
+                ${changeHtml}
+                <div style="display: grid; gap: 1rem;">
+                    <div><strong>Description</strong><br>${item.description}</div>
+                    <div><strong>Location</strong><br>${item.location}</div>
+                    <div><strong>IP address</strong><br>${item.ip}</div>
+                    <div><strong>Source</strong><br>${item.source}</div>
+                    <div><strong>Time</strong><br>${item.time}</div>
+                </div>
+            `;
+        }
+
+        // ---------- FILTER & SEARCH ----------
+        function searchActivity() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            filteredActivities = activityData.filter(a =>
+                a.title.toLowerCase().includes(query) ||
+                a.description.toLowerCase().includes(query) ||
+                a.location.toLowerCase().includes(query) ||
+                a.ip.includes(query)
+            );
+            renderActivityList(filteredActivities);
+            // reset drawer index if needed
+            if (filteredActivities.length > 0) currentActivityIndex = 0;
+        }
+
+        function toggleFilterPanel() {
+            alert('Filter panel would open – in a real implementation, this would show date/type filters. For demo, try searching.');
+        }
+
+        // ---------- ACTIONS ----------
+        function signOutAll() {
+            showToast('All other devices signed out.', 'success');
+        }
+        function signOutDevice(device) {
+            showToast(`Signed out from ${device}`, 'success');
+        }
+        function acknowledgeAlert(id) {
+            showToast(`Alert ${id} acknowledged.`, 'info');
+        }
+        function investigateAlert(id) {
+            showToast(`Investigating alert ${id}...`, 'info');
+        }
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<div class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</div>
+                               <div class="toast-content"><div class="toast-message">${msg}</div></div>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ---------- INIT ----------
+        document.addEventListener('DOMContentLoaded', () => {
+            renderActivityList();
+            renderAlerts();
+            renderSessions();
+
+            // keyboard navigation: ESC closes drawer
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeDrawer();
+                }
+            });
+        });
     </script>
 </body>
 </html>
