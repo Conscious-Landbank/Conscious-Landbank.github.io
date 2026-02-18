@@ -39,8 +39,15 @@
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
-            /* Added for success icon */
             --impact-green: #10B981;
+            /* Typography scale (brand-style-guide aligned) */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -57,7 +64,9 @@
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Skip link (WCAG) */
@@ -104,6 +113,11 @@
             gap: 0.5rem;
             text-decoration: none;
         }
+        .nav-brand:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
         .nav-logo-icon {
             width: 28px;
             height: 28px;
@@ -119,8 +133,12 @@
             display: flex;
             gap: 1.375rem;
             list-style: none;
+            align-items: center;
         }
+        .nav-links li { display: flex; align-items: center; }
         .nav-link {
+            display: inline-flex;
+            align-items: center;
             color: var(--text-primary);
             text-decoration: none;
             font-size: 0.75rem;
@@ -130,7 +148,8 @@
             letter-spacing: 0.02em;
         }
         .nav-link:hover { color: var(--primary-green); }
-        .nav-link:focus {
+        .nav-link:focus,
+        .nav-link:focus-visible {
             outline: 2px solid var(--primary-green);
             outline-offset: 2px;
         }
@@ -165,7 +184,7 @@
             color: var(--neutral-800);
         }
 
-        /* Hamburger (simplified) */
+        /* Hamburger */
         .hamburger {
             display: none;
             flex-direction: column;
@@ -177,16 +196,77 @@
             border-radius: 4px;
         }
         .hamburger:hover { background: var(--neutral-200); }
+        .hamburger:focus,
+        .hamburger:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
         .hamburger span {
             display: block;
             width: 24px;
             height: 2px;
             background: var(--text-primary);
             border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%; max-width: 320px; height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 2rem; padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .mobile-menu-close {
+            background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px;
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus,
+        .mobile-menu-close:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .mobile-nav-links {
+            display: flex; flex-direction: column; gap: 0.5rem; list-style: none;
+        }
+        .mobile-nav-links .nav-link {
+            display: block; padding: 1rem; font-size: 1rem; border-radius: 8px;
+        }
+        .mobile-nav-links .nav-link:hover { background: var(--neutral-200); }
+        .mobile-nav-links .nav-link.active { background: rgba(16,185,129,0.1); color: var(--primary-green); }
+        @media (max-width: 480px) {
+            .nav { padding: 0 1rem; }
+            .page-title { font-size: 1.75rem; }
         }
         @media (max-width: 768px) {
+            .nav { padding: 0 1.5rem; }
             .nav-links, .user-profile-nav { display: none; }
             .hamburger { display: flex; }
+            .container { padding: 2rem 1.5rem; }
+            .send-options { grid-template-columns: repeat(2, 1fr); }
         }
 
         /* Container */
@@ -369,12 +449,35 @@
             margin-bottom: 2rem;
         }
 
-        /* Section title */
+        /* Section title (match add-money) */
         .section-title {
             font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+        .divider {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .form-label {
+            display: block;
             font-weight: 600;
             color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.938rem;
+        }
+        .form-group {
             margin-bottom: 1.5rem;
         }
 
@@ -503,12 +606,18 @@
         .option-title {
             font-family: var(--font-display);
             font-weight: 700;
+            font-size: var(--text-lg);
             color: var(--text-primary);
             margin-bottom: 0.25rem;
         }
         .option-desc {
-            font-size: 0.875rem;
+            font-size: var(--text-sm);
             color: var(--text-secondary);
+        }
+        .send-option:focus,
+        .send-option:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
         }
         .fee-badge {
             display: inline-block;
@@ -714,6 +823,12 @@
             color: var(--text-secondary);
             font-size: 0.875rem;
         }
+        .method-reason { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.35rem; }
+        .address-input-group { display: flex; gap: 0.5rem; align-items: flex-start; flex-wrap: wrap; }
+        .address-input-group .input-wrapper { flex: 1; min-width: 200px; }
+        .address-action-btn { padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1.5px solid var(--border-subtle); background: var(--neutral-100); cursor: pointer; font-size: 0.8rem; white-space: nowrap; transition: all 0.2s; }
+        .address-action-btn:hover { border-color: var(--primary-green); background: rgba(16,185,129,0.05); }
+        .verified-badge { font-size: 0.8rem; color: var(--primary-green); font-weight: 600; display: flex; align-items: center; gap: 0.25rem; margin-top: 0.35rem; }
         .method-check {
             width: 20px;
             height: 20px;
@@ -821,8 +936,21 @@
             font-size: 1.125rem;
             padding-top: 1.5rem;
         }
-        .summary-label { color: var(--text-secondary); }
-        .summary-value { color: var(--text-primary); font-weight: 600; }
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+        .summary-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: var(--text-base);
+        }
+        .summary-item.highlight-total .summary-value {
+            color: var(--primary-green);
+            font-size: var(--text-xl);
+            font-weight: 700;
+        }
 
         /* Note textarea */
         textarea.form-input {
@@ -831,12 +959,77 @@
             font-family: var(--font-body);
         }
 
-        /* ========== BUTTONS ========== */
-        .btn-group {
-            display: flex;
+        /* ========== BUTTONS (btn-actions match add-money) ========== */
+        .btn-actions, .btn-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-top: 2rem;
         }
+        .processing-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .processing-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        .input-hint {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        .benefits-note {
+            background: rgba(16,185,129,0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .benefits-note strong { font-size: 1.1rem; }
+        .benefits-note p { color: var(--text-secondary); margin-top: 0.25rem; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 0.75rem;
+            width: min(400px, 90%);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+        .modal-close {
+            background: none; border: none; width: 32px; height: 32px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:hover { background: var(--neutral-100); }
+        .modal-body { padding: 1.5rem; text-align: center; }
+        .notification-icon {
+            width: 64px; height: 64px; margin: 0 auto 1rem;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: var(--gradient-primary); color: white;
+        }
+        .notification-icon.error { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+        .notification-icon.warning { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+        .notification-message { font-size: 1rem; color: var(--text-secondary); margin: 0; }
+        .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border-subtle); }
 
         .btn {
             flex: 1;
@@ -865,7 +1058,8 @@
             transform: translateY(-1px);
         }
 
-        .btn-primary:focus {
+        .btn-primary:focus,
+        .btn-primary:focus-visible {
             outline: 3px solid rgba(16, 185, 129, 0.5);
             outline-offset: 2px;
         }
@@ -886,8 +1080,9 @@
             color: var(--primary-green);
         }
 
-        .btn-secondary:focus {
-            outline: 3px solid rgba(16, 185, 129, 0.3);
+        .btn-secondary:focus,
+        .btn-secondary:focus-visible {
+            outline: 2px solid var(--primary-green);
             outline-offset: 2px;
         }
 
@@ -977,31 +1172,12 @@
             margin-bottom: 2rem;
         }
 
-        /* Modal (simplified for notifications) */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal {
-            background: white;
-            border-radius: 0.75rem;
-            width: min(400px, 90%);
-            padding: 2rem;
-            text-align: center;
-        }
-
         /* Responsive adjustments */
         @media (max-width: 640px) {
             .send-options { grid-template-columns: 1fr; }
             .stepper { display: none; }
             .mobile-stepper-compact { display: flex; }
-            .btn-group { flex-direction: column-reverse; }
+            .btn-actions, .btn-actions { flex-direction: column-reverse; grid-template-columns: 1fr; }
             .page-title { font-size: 2rem; }
         }
 
@@ -1064,6 +1240,8 @@
                 <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
                 <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
                 <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+                <li><a href="exchange.html" class="nav-link">EXCHANGE</a></li>
+                <li><a href="stake.html" class="nav-link">STAKE</a></li>
                 <li><a href="send-enhanced.html" class="nav-link active" aria-current="page">SEND</a></li>
             </ul>
         </div>
@@ -1072,13 +1250,34 @@
                 <div class="user-avatar-nav">JS</div>
                 <div class="user-name-nav">Jane Smith</div>
             </div>
-            <button class="hamburger" aria-label="Toggle menu">
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
         </div>
     </nav>
+
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="#99F6E4"/><circle cx="70" cy="70" r="45" fill="#14B8A6"/><circle cx="70" cy="70" r="30" fill="#0F766E"/><circle cx="70" cy="70" r="15" fill="#FFFFFF"/></svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+            <li><a href="exchange.html" class="nav-link">EXCHANGE</a></li>
+            <li><a href="stake.html" class="nav-link">STAKE</a></li>
+            <li><a href="send-enhanced.html" class="nav-link active">SEND</a></li>
+        </ul>
+    </div>
 
     <main id="main-content" class="container">
         <!-- Page Header with gradient title -->
@@ -1132,7 +1331,7 @@
         <div class="step-content active" id="step1">
             <div class="card">
                 <h2 class="section-title">Before You Send</h2>
-                <p class="section-desc" style="color: var(--text-secondary); margin-bottom: 1.5rem;">Complete these steps to start sending funds.</p>
+                <p class="section-desc">Complete these steps to start sending funds.</p>
 
                 <div class="prereq-grid">
                     <!-- KYC Card -->
@@ -1169,7 +1368,15 @@
                     </ul>
                 </div>
 
-                <div class="btn-group">
+                <div class="benefits-note" style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <span style="font-size: 2rem;">✨</span>
+                    <div>
+                        <strong>Why complete these steps?</strong>
+                        <p>Verified users get higher send limits. A connected wallet ensures secure transfers.</p>
+                    </div>
+                </div>
+
+                <div class="btn-actions">
                     <button class="btn btn-secondary" onclick="window.location.href='dashboard-enhanced.html'">Cancel</button>
                     <button class="btn btn-primary" onclick="goToStep(2)" id="continueFromStep1" disabled>
                         Continue
@@ -1189,25 +1396,28 @@
                     <div class="send-option" data-option="unera" onclick="selectOption('unera', this)">
                         <span class="recommended-badge">⭐ RECOMMENDED</span>
                         <div class="option-icon">👤</div>
-                        <div class="option-title">Unera User</div>
+                        <div class="option-title">UNERA User</div>
                         <div class="option-desc">Send to someone on UNERA</div>
+                        <div class="method-reason">No fees · Instant · Recipient notified by email</div>
                         <div class="fee-badge free">No fees</div>
                     </div>
                     <div class="send-option" data-option="external" onclick="selectOption('external', this)">
                         <div class="option-icon">⛓️</div>
                         <div class="option-title">External Wallet</div>
                         <div class="option-desc">Send to crypto wallet</div>
+                        <div class="method-reason">Network fee applies · On-chain · Irreversible</div>
                         <div class="fee-badge">Network fee applies</div>
                     </div>
                     <div class="send-option" data-option="bank" onclick="selectOption('bank', this)">
                         <div class="option-icon">🏦</div>
                         <div class="option-title">Bank Account</div>
                         <div class="option-desc">Withdraw to your bank</div>
+                        <div class="method-reason">Withdrawal fee · 1–3 business days · Reversible within 24h</div>
                         <div class="fee-badge">Withdrawal fee</div>
                     </div>
                 </div>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(1)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1228,7 +1438,7 @@
             <div class="card" id="step3Card">
                 <!-- Content injected by JS -->
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(2)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1258,6 +1468,7 @@
                         <span class="input-prefix">$</span>
                         <input type="number" id="amountInput" class="amount-input" placeholder="0.00" min="0.01" step="0.01" oninput="validateAmount()">
                     </div>
+                    <p class="input-hint" id="sendUsdEquiv">≈ $<span id="sendUsdEquivVal">0.00</span> USD</p>
                     <p class="input-error" id="amountError">Please enter a valid amount</p>
                 </div>
                 <div class="presets">
@@ -1271,8 +1482,9 @@
                     <span class="summary-label">Transaction Fee</span>
                     <span class="summary-value" id="feePreview">$0.00</span>
                 </div>
+                <p class="input-hint" style="margin-top: 1rem;">💡 UNERA-to-UNERA sends are free. External and bank transfers incur fees.</p>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(3)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1308,7 +1520,7 @@
                     <span class="summary-label">Transaction Fee</span>
                     <span class="summary-value" id="reviewFee">-</span>
                 </div>
-                <div class="summary-item">
+                <div class="summary-item highlight-total">
                     <span class="summary-label">Total</span>
                     <span class="summary-value" id="reviewTotal">-</span>
                 </div>
@@ -1316,8 +1528,12 @@
                     <span class="summary-label">Note</span>
                     <span class="summary-value" id="reviewNote">-</span>
                 </div>
+                <div style="background: rgba(239,68,68,0.05); border-radius:0.75rem; padding:1rem; margin-top:1.5rem;">
+                    <p style="font-size:var(--text-base); color:var(--error);"><strong>⚠️ Once sent, this cannot be undone.</strong> <span style="font-size:var(--text-sm); color:var(--neutral-600);">Please review carefully.</span></p>
+                    <p style="font-size:var(--text-sm); color:var(--success); margin-top:0.5rem;">✅ 2FA enabled – extra security</p>
+                </div>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(4)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1360,9 +1576,10 @@
                         <strong id="successDestination"></strong>
                         <br>Transaction ID: <span id="transactionId">TX-2026-XXXX</span>
                     </p>
+                    <p class="input-hint" style="margin-top: 1.5rem; text-align: center;">💡 The recipient will see the transfer in their wallet. You can send again anytime.</p>
                 </div>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="window.location.href='wallet-enhanced.html'">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1379,11 +1596,20 @@
         </div>
     </main>
 
-    <!-- Notification Modal -->
-    <div class="modal-overlay" id="notificationModal">
-        <div class="modal">
-            <p id="notificationMessage"></p>
-            <button class="btn btn-primary" onclick="closeNotification()" style="margin-top:1rem;">OK</button>
+    <!-- Notification Modal (ARIA, match add-money) -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotification()" aria-label="Close notification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">✓</div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer"><button class="btn btn-primary" onclick="closeNotification()" style="width:100%;">OK</button></div>
         </div>
     </div>
 
@@ -1583,7 +1809,8 @@
             let html = '';
             if (appState.sendOption === 'unera') {
                 html = `
-                    <h2 class="section-title">Send to Unera User</h2>
+                    <h2 class="section-title">Send to UNERA User</h2>
+                    <p class="input-hint" style="margin-bottom: 1rem;">💡 Send to any UNERA user by email – no wallet address needed. Recent contacts save time.</p>
                     <div class="search-wrapper">
                         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                         <input type="text" id="uneraSearch" class="search-input" placeholder="Search by name or email" oninput="searchUneraUser(this.value)">
@@ -1607,7 +1834,8 @@
             } else if (appState.sendOption === 'external') {
                 html = `
                     <h2 class="section-title">Send to External Wallet</h2>
-                    <div class="network-select">
+                    <p class="input-hint" style="margin-bottom: 1rem; color: var(--error);">⚠️ Double-check the address. Transfers to wrong addresses cannot be reversed.</p>
+                    <div class="form-group network-select">
                         <label class="form-label">Select Network</label>
                         <div class="network-grid">
                             <div class="network-card" onclick="selectNetwork('Ethereum', this)">
@@ -1630,7 +1858,14 @@
                     </div>
                     <div class="form-group">
                         <label for="walletAddress" class="form-label">Wallet Address</label>
-                        <input type="text" id="walletAddress" class="wallet-address-input" placeholder="0x..." oninput="updateWalletAddress(this.value)">
+                        <div class="address-input-group">
+                            <div class="input-wrapper" style="flex:1; min-width:0;">
+                                <input type="text" id="walletAddress" class="wallet-address-input" placeholder="0x..." oninput="updateWalletAddress(this.value)" onblur="checkAddressFormat()">
+                            </div>
+                            <button type="button" class="address-action-btn" onclick="pasteWalletAddress()" title="Paste from clipboard">Paste</button>
+                            <button type="button" class="address-action-btn" onclick="openQRScanner()" title="Scan QR code">QR</button>
+                        </div>
+                        <span class="verified-badge" id="addressVerifiedBadge" style="display:none;">✓ Address format valid</span>
                     </div>
                 `;
             } else if (appState.sendOption === 'bank') {
@@ -1704,6 +1939,25 @@
             document.getElementById('continueFromStep3').disabled = !valid;
         }
 
+        function pasteWalletAddress() {
+            navigator.clipboard.readText().then(text => {
+                const input = document.getElementById('walletAddress');
+                if (input) { input.value = text; updateWalletAddress(text); checkAddressFormat(); }
+            }).catch(() => {});
+        }
+
+        function openQRScanner() {
+            alert('QR scanner coming soon');
+        }
+
+        function checkAddressFormat() {
+            const input = document.getElementById('walletAddress');
+            const badge = document.getElementById('addressVerifiedBadge');
+            if (!input || !badge) return;
+            const addr = input.value.trim();
+            badge.style.display = (addr.length >= 20 && (addr.startsWith('0x') || addr.length >= 32)) ? 'flex' : 'none';
+        }
+
         function selectBankMethod(id, name, info, el) {
             document.querySelectorAll('.saved-method-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
@@ -1737,11 +1991,16 @@
                 error.textContent = amount > balance ? 'Amount exceeds balance' : 'Enter a positive amount';
                 continueBtn.disabled = true;
                 appState.amount = 0;
+                const usdEl = document.getElementById('sendUsdEquiv');
+                const usdVal = document.getElementById('sendUsdEquivVal');
+                if (usdEl && usdVal) { usdVal.textContent = '0.00'; }
             } else {
                 input.classList.remove('error');
                 error.classList.remove('active');
                 continueBtn.disabled = false;
                 appState.amount = amount;
+                const usdVal = document.getElementById('sendUsdEquivVal');
+                if (usdVal) usdVal.textContent = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 calculateFee();
                 updateFeePreview();
             }
@@ -1784,7 +2043,7 @@
             let destinationText = '';
             if (appState.sendOption === 'unera') {
                 destinationText = `${appState.selectedRecipient} (${appState.selectedRecipientEmail})`;
-                document.getElementById('reviewType').textContent = 'Unera User';
+                document.getElementById('reviewType').textContent = 'UNERA User';
             } else if (appState.sendOption === 'external') {
                 destinationText = `${appState.selectedNetwork}: ${appState.walletAddress.substring(0,10)}...`;
                 document.getElementById('reviewType').textContent = 'External Wallet';
@@ -1855,6 +2114,9 @@
         window.searchUneraUser = searchUneraUser;
         window.selectNetwork = selectNetwork;
         window.updateWalletAddress = updateWalletAddress;
+        window.pasteWalletAddress = pasteWalletAddress;
+        window.openQRScanner = openQRScanner;
+        window.checkAddressFormat = checkAddressFormat;
         window.selectBankMethod = selectBankMethod;
         window.showAddBankMock = showAddBankMock;
         window.validateAmount = validateAmount;
@@ -1865,6 +2127,33 @@
         window.closeNotification = closeNotification;
         window.startKYC = startKYC;
         window.connectWallet = connectWallet;
+    </script>
+
+    <script>
+        (function() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
+            const closeBtn = document.querySelector('.mobile-menu-close');
+            function openMenu() {
+                hamburger.classList.add('active');
+                mobileMenu.classList.add('active');
+                overlay.classList.add('active');
+                hamburger.setAttribute('aria-expanded','true');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                hamburger.setAttribute('aria-expanded','false');
+                document.body.style.overflow = '';
+            }
+            hamburger.addEventListener('click', () => mobileMenu.classList.contains('active') ? closeMenu() : openMenu());
+            closeBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+        })();
     </script>
 </body>
 </html>

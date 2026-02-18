@@ -39,8 +39,15 @@
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
-            /* Added for success icon */
             --impact-green: #10B981;
+            /* Typography scale (brand-style-guide aligned) */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -57,7 +64,9 @@
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Skip link (WCAG) */
@@ -104,6 +113,11 @@
             gap: 0.5rem;
             text-decoration: none;
         }
+        .nav-brand:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
         .nav-logo-icon {
             width: 28px;
             height: 28px;
@@ -119,8 +133,12 @@
             display: flex;
             gap: 1.375rem;
             list-style: none;
+            align-items: center;
         }
+        .nav-links li { display: flex; align-items: center; }
         .nav-link {
+            display: inline-flex;
+            align-items: center;
             color: var(--text-primary);
             text-decoration: none;
             font-size: 0.75rem;
@@ -130,7 +148,8 @@
             letter-spacing: 0.02em;
         }
         .nav-link:hover { color: var(--primary-green); }
-        .nav-link:focus {
+        .nav-link:focus,
+        .nav-link:focus-visible {
             outline: 2px solid var(--primary-green);
             outline-offset: 2px;
         }
@@ -165,7 +184,7 @@
             color: var(--neutral-800);
         }
 
-        /* Hamburger (simplified) */
+        /* Hamburger */
         .hamburger {
             display: none;
             flex-direction: column;
@@ -177,16 +196,76 @@
             border-radius: 4px;
         }
         .hamburger:hover { background: var(--neutral-200); }
+        .hamburger:focus,
+        .hamburger:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
         .hamburger span {
             display: block;
             width: 24px;
             height: 2px;
             background: var(--text-primary);
             border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%; max-width: 320px; height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 2rem; padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .mobile-menu-close {
+            background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px;
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus,
+        .mobile-menu-close:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .mobile-nav-links {
+            display: flex; flex-direction: column; gap: 0.5rem; list-style: none;
+        }
+        .mobile-nav-links .nav-link {
+            display: block; padding: 1rem; font-size: 1rem; border-radius: 8px;
+        }
+        .mobile-nav-links .nav-link:hover { background: var(--neutral-200); }
+        .mobile-nav-links .nav-link.active { background: rgba(16,185,129,0.1); color: var(--primary-green); }
+        @media (max-width: 480px) {
+            .nav { padding: 0 1rem; }
+            .page-title { font-size: 1.75rem; }
         }
         @media (max-width: 768px) {
+            .nav { padding: 0 1.5rem; }
             .nav-links, .user-profile-nav { display: none; }
             .hamburger { display: flex; }
+            .container { padding: 2rem 1.5rem; }
         }
 
         /* Container */
@@ -369,13 +448,18 @@
             margin-bottom: 2rem;
         }
 
-        /* Section title */
+        /* Section title (match add-money) */
         .section-title {
             font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 2rem;
         }
 
         /* Prerequisite cards (KYC/Wallet) */
@@ -442,6 +526,8 @@
             border-color: var(--primary-green);
             color: var(--primary-green);
         }
+        .prereq-action:focus,
+        .prereq-action:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; }
         .prereq-action.completed {
             background: rgba(16,185,129,0.1);
             border-color: var(--primary-green);
@@ -475,6 +561,8 @@
             background: rgba(16,185,129,0.05);
             box-shadow: 0 4px 16px rgba(16,185,129,0.15);
         }
+        .token-card:focus,
+        .token-card:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; }
         .token-info {
             display: flex;
             align-items: center;
@@ -493,14 +581,30 @@
         }
         .token-details h3 {
             font-family: var(--font-display);
-            font-size: 1.125rem;
-            font-weight: 600;
+            font-size: var(--text-xl);
+            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
         }
         .token-details p {
-            font-size: 0.875rem;
+            font-size: var(--text-sm);
             color: var(--text-secondary);
+        }
+        .token-balance-label,
+        .token-apy-label { color: var(--text-secondary); }
+        .token-sep { color: var(--neutral-400); }
+        .token-balance-value { color: var(--text-primary); font-weight: 600; }
+        .token-apy-value { color: var(--primary-green); font-weight: 600; }
+        .token-tip { font-size: var(--text-sm) !important; color: var(--text-secondary) !important; }
+        .pool-status-badge {
+            display: inline-block;
+            font-size: var(--text-xs);
+            background: rgba(16,185,129,0.1);
+            color: var(--primary-green);
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
         }
         .token-check {
             width: 24px;
@@ -617,6 +721,11 @@
             border-color: var(--primary-green);
             background: rgba(16,185,129,0.05);
         }
+        .preset-btn:focus,
+        .preset-btn:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
 
         /* Available balance */
         .available-balance {
@@ -732,8 +841,17 @@
             font-size: 1.125rem;
             padding-top: 1.5rem;
         }
-        .summary-label { color: var(--text-secondary); }
-        .summary-value { color: var(--text-primary); font-weight: 600; }
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+        .summary-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: var(--text-base);
+        }
+        .summary-item:last-child .summary-value { color: var(--primary-green); font-size: var(--text-lg); font-weight: 700; }
 
         /* Security note */
         .security-note {
@@ -756,9 +874,10 @@
             margin-top: 2px;
         }
 
-        /* ========== BUTTON STYLES ========== */
-        .btn-group {
-            display: flex;
+        /* ========== BUTTON STYLES (btn-actions match add-money) ========== */
+        .btn-actions, .btn-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-top: 2rem;
         }
@@ -786,6 +905,11 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
             transform: translateY(-1px);
         }
+        .btn-primary:focus,
+        .btn-primary:focus-visible {
+            outline: 3px solid rgba(16, 185, 129, 0.5);
+            outline-offset: 2px;
+        }
         .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -799,12 +923,41 @@
             border-color: var(--primary-green);
             color: var(--primary-green);
         }
+        .btn-secondary:focus,
+        .btn-secondary:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
 
         /* Processing & success (enhanced with lightning badge - matches kyc-verify.html) */
         .processing-state, .success-state {
             text-align: center;
             padding: 3rem 2.5rem;
         }
+        .processing-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .processing-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        .input-hint {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        .benefits-note {
+            background: rgba(16,185,129,0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .benefits-note strong { font-size: 1.1rem; }
+        .benefits-note p { color: var(--text-secondary); margin-top: 0.25rem; }
         .spinner {
             width: 64px;
             height: 64px;
@@ -914,8 +1067,17 @@
             font-weight: 600;
             color: var(--text-primary);
         }
+        .usd-equiv { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem; }
+        .apy-compare { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem; }
+        .apy-compare-item { text-align: center; padding: 0.75rem 0.5rem; border-radius: 0.75rem; border: 1.5px solid var(--border-subtle); }
+        .apy-compare-item .apy-val { font-size: 1.1rem; font-weight: 700; color: var(--primary-green); }
+        .pool-bar { height: 6px; border-radius: 3px; background: var(--neutral-300); margin-top: 0.5rem; }
+        .pool-bar-fill { height: 100%; border-radius: 3px; background: var(--gradient-primary); width: 68%; }
+        .penalty-warning { background: rgba(245,158,11,0.08); border-left: 3px solid #F59E0B; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-top: 1rem; font-size: 0.875rem; color: var(--text-secondary); }
+        .success-breakdown { font-size: 0.875rem; color: var(--text-secondary); margin-top: 1rem; padding: 0.75rem; background: var(--neutral-100); border-radius: 0.5rem; }
+        @media (max-width: 640px) { .apy-compare { grid-template-columns: repeat(2, 1fr); } }
 
-        /* Modal (reused from account-settings.html) */
+        /* Responsive */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -924,24 +1086,42 @@
             align-items: center;
             justify-content: center;
             z-index: 2000;
+            padding: 1rem;
         }
         .modal-overlay.active { display: flex; }
         .modal {
             background: white;
             border-radius: 0.75rem;
             width: min(400px, 90%);
-            padding: 2rem;
-            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        .modal .btn {
-            width: 100%;
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
-        /* Responsive */
+        .modal-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+        .modal-close {
+            background: none; border: none; width: 32px; height: 32px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:hover { background: var(--neutral-100); }
+        .modal-body { padding: 1.5rem; text-align: center; }
+        .notification-icon {
+            width: 64px; height: 64px; margin: 0 auto 1rem;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: var(--gradient-primary); color: white;
+        }
+        .notification-icon.error { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+        .notification-icon.warning { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+        .notification-message { font-size: 1rem; color: var(--text-secondary); margin: 0; }
+        .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border-subtle); }
         @media (max-width: 640px) {
             .stepper { display: none; }
             .mobile-stepper-compact { display: flex; }
-            .btn-group { flex-direction: column-reverse; }
+            .btn-actions { flex-direction: column-reverse; grid-template-columns: 1fr; }
             .amount-presets { grid-template-columns: repeat(2, 1fr); }
             .page-title { font-size: 2rem; }
         }
@@ -966,7 +1146,9 @@
                 <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
                 <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
                 <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+                <li><a href="exchange.html" class="nav-link">EXCHANGE</a></li>
                 <li><a href="stake.html" class="nav-link active" aria-current="page">STAKE</a></li>
+                <li><a href="send-enhanced.html" class="nav-link">SEND</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -974,13 +1156,34 @@
                 <div class="user-avatar-nav">JS</div>
                 <div class="user-name-nav">Jane Smith</div>
             </div>
-            <button class="hamburger" aria-label="Toggle menu">
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
         </div>
     </nav>
+
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="#99F6E4"/><circle cx="70" cy="70" r="45" fill="#14B8A6"/><circle cx="70" cy="70" r="30" fill="#0F766E"/><circle cx="70" cy="70" r="15" fill="#FFFFFF"/></svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+            <li><a href="exchange.html" class="nav-link">EXCHANGE</a></li>
+            <li><a href="stake.html" class="nav-link active">STAKE</a></li>
+            <li><a href="send-enhanced.html" class="nav-link">SEND</a></li>
+        </ul>
+    </div>
 
     <main id="main-content" class="container">
         <!-- Page Header with gradient title -->
@@ -1034,7 +1237,7 @@
         <div class="step-content active" id="step1">
             <div class="card">
                 <h2 class="section-title">Before You Stake</h2>
-                <p class="section-desc" style="color: var(--text-secondary); margin-bottom: 1.5rem;">Complete these steps to start earning yield.</p>
+                <p class="section-desc">Complete these steps to start earning yield.</p>
 
                 <div class="prereq-grid">
                     <!-- KYC Card -->
@@ -1071,7 +1274,15 @@
                     </ul>
                 </div>
 
-                <div class="btn-group">
+                <div class="benefits-note" style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <span style="font-size: 2rem;">✨</span>
+                    <div>
+                        <strong>Verified users enjoy higher staking limits.</strong>
+                        <p>A connected wallet is required to hold staked tokens.</p>
+                    </div>
+                </div>
+
+                <div class="btn-actions">
                     <button class="btn btn-secondary" onclick="window.location.href='wallet-enhanced.html'">Cancel</button>
                     <button class="btn btn-primary" onclick="goToStep(2)" id="continueFromStep1" disabled>
                         Continue
@@ -1094,7 +1305,7 @@
                             <div class="token-icon">🇨🇦</div>
                             <div class="token-details">
                                 <h3>hCAD</h3>
-                                <p>Balance: 1,250.50 • APY: 5.2%</p>
+                                <p><span class="token-balance-label">Balance:</span> <span class="token-balance-value">1,250.50</span> <span class="token-sep">•</span> <span class="token-apy-label">APY:</span> <span class="token-apy-value">5.2%</span></p>
                             </div>
                         </div>
                         <div class="token-check">
@@ -1107,7 +1318,7 @@
                             <div class="token-icon">🇺🇸</div>
                             <div class="token-details">
                                 <h3>hUSD</h3>
-                                <p>Balance: 2,850.75 • APY: 4.8%</p>
+                                <p><span class="token-balance-label">Balance:</span> <span class="token-balance-value">2,850.75</span> <span class="token-sep">•</span> <span class="token-apy-label">APY:</span> <span class="token-apy-value">4.8%</span></p>
                             </div>
                         </div>
                         <div class="token-check">
@@ -1120,7 +1331,7 @@
                             <div class="token-icon">🇪🇺</div>
                             <div class="token-details">
                                 <h3>hEUR</h3>
-                                <p>Balance: 950.00 • APY: 3.9%</p>
+                                <p><span class="token-balance-label">Balance:</span> <span class="token-balance-value">950.00</span> <span class="token-sep">•</span> <span class="token-apy-label">APY:</span> <span class="token-apy-value">3.9%</span></p>
                             </div>
                         </div>
                         <div class="token-check">
@@ -1133,7 +1344,7 @@
                             <div class="token-icon">H</div>
                             <div class="token-details">
                                 <h3>HUMA</h3>
-                                <p>Balance: 425.50 • APY: 8.0%</p>
+                                <p><span class="token-balance-label">Balance:</span> <span class="token-balance-value">425.50</span> <span class="token-sep">•</span> <span class="token-apy-label">APY:</span> <span class="token-apy-value">8.0%</span></p>
                             </div>
                         </div>
                         <div class="token-check">
@@ -1141,8 +1352,13 @@
                         </div>
                     </div>
                 </div>
+                <p class="input-hint token-tip" style="margin-top: 1rem;">💡 Most users stake hCAD or hUSD for stable returns. HUMA offers higher APY for governance participation.</p>
+                <div class="pool-bar" style="margin-top: 1rem;">
+                    <div class="pool-bar-fill"></div>
+                </div>
+                <p class="pool-status-badge">Pool 68% full</p>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(1)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1164,12 +1380,16 @@
                 <h2 class="section-title">How much do you want to stake?</h2>
                 <div class="available-balance">
                     <span class="available-balance-label">Available</span>
-                    <span class="available-balance-value" id="availableBalance">0.00</span>
+                    <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                        <span class="available-balance-value" id="availableBalance">0.00</span>
+                        <span class="usd-equiv" id="availableUsd">≈ $0.00 USD</span>
+                    </div>
                 </div>
                 <div class="amount-wrapper">
                     <span class="currency-symbol" id="currencySymbol">$</span>
                     <input type="number" id="amountInput" class="amount-input" placeholder="0.00" min="10" step="0.01" oninput="validateAmount()">
                 </div>
+                <p class="input-hint" id="amountUsdEquiv" style="display:none;">≈ $<span id="amountUsd">0.00</span> USD</p>
                 <p class="input-error" id="amountError">Minimum stake is 10.</p>
                 <div class="amount-presets">
                     <button class="preset-btn" onclick="setAmount(100)">100</button>
@@ -1177,6 +1397,8 @@
                     <button class="preset-btn" onclick="setAmount(1000)">1000</button>
                     <button class="preset-btn" onclick="setMaxAmount()">Max</button>
                 </div>
+
+                <p class="input-hint" style="margin-top: 0.5rem;">Longer lock periods earn higher APY. 90 days is popular for balance of yield and flexibility.</p>
 
                 <!-- Reward preview -->
                 <div class="info-box" style="margin-top: 1rem;">
@@ -1188,7 +1410,7 @@
                     <p style="font-size: 0.813rem; margin-top: 0.5rem;">Rewards are calculated based on the APY of the selected token and lock period. Longer locks = higher APY.</p>
                 </div>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(2)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1208,7 +1430,7 @@
         <div class="step-content" id="step4">
             <div class="card">
                 <h2 class="section-title">Select lock period</h2>
-                <p class="section-desc" style="margin-bottom: 1.5rem; color: var(--text-secondary);">Longer locks earn higher APY. ⭐ Recommended for most users.</p>
+                <p class="section-desc">Longer locks earn higher APY. ⭐ Recommended for most users.</p>
                 <div class="duration-grid">
                     <!-- Flexible (no lock) -->
                     <div class="duration-card" data-duration="flexible" data-apy="3.0" onclick="selectDuration('flexible', this)">
@@ -1260,8 +1482,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="penalty-warning input-hint">
+                    ⚠️ Fixed lock periods cannot be broken early. Funds are unavailable until the term ends.
+                </div>
+                <div class="apy-compare" id="apyCompareGrid"></div>
+                <p class="input-hint" style="margin-top: 1rem;">Flexible = withdraw anytime but lower APY. Fixed terms = higher yield, funds locked until end date.</p>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(3)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1310,6 +1537,14 @@
                     <span class="summary-value" id="reviewTotal">—</span>
                 </div>
 
+                <div class="benefits-note" style="display: flex; gap: 1rem; align-items: flex-start; margin-top: 1rem;">
+                    <span style="font-size: 1.5rem;">✨</span>
+                    <div>
+                        <strong>Staking supports community initiatives.</strong>
+                        <p>Your yield contributes to financial inclusion programs.</p>
+                    </div>
+                </div>
+
                 <!-- Security note -->
                 <div class="security-note">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1318,7 +1553,7 @@
                     <span>Staking is secured by smart contracts audited by CertiK. Funds are always redeemable (subject to lock terms).</span>
                 </div>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(4)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1379,10 +1614,12 @@
                             <span class="detail-label">Transaction ID</span>
                             <span class="detail-value" id="successTxId">TX-2026-XXXX</span>
                         </div>
+                        <div class="success-breakdown" id="successBreakdown"></div>
                     </div>
+                    <p class="input-hint" style="margin-top: 1.5rem; text-align: center;">💡 Your staked tokens are earning yield. Track rewards in your wallet or dashboard.</p>
                 </div>
             </div>
-            <div class="btn-group">
+            <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="window.location.href='wallet-enhanced.html'">View Wallet</button>
                 <button class="btn btn-primary" onclick="resetFlow()">
                     Stake Again
@@ -1394,11 +1631,20 @@
         </div>
     </main>
 
-    <!-- Notification Modal (reused from account-settings.html) -->
-    <div class="modal-overlay" id="notificationModal">
-        <div class="modal">
-            <p id="notificationMessage"></p>
-            <button class="btn btn-primary" onclick="closeNotification()" style="margin-top:1rem;">OK</button>
+    <!-- Notification Modal (ARIA, match add-money) -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotification()" aria-label="Close notification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">✓</div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer"><button class="btn btn-primary" onclick="closeNotification()" style="width:100%;">OK</button></div>
         </div>
     </div>
 
@@ -1429,6 +1675,11 @@
 
         // Mock fiat conversion (1 HUMA = $2.00 for display)
         const humaToFiat = 2.0;
+        const tokenToUsdRate = { hCAD: 0.74, hUSD: 1, hEUR: 1.08, HUMA: humaToFiat };
+        function toUSD(amount, token) {
+            const rate = tokenToUsdRate[token] || 1;
+            return amount * rate;
+        }
 
         const stepTitles = {
             1: 'Prerequisites',
@@ -1606,6 +1857,7 @@
             if (appState.selectedToken) {
                 const bal = tokenData[appState.selectedToken].balance;
                 document.getElementById('availableBalance').textContent = `${bal.toFixed(2)} ${appState.selectedToken}`;
+                document.getElementById('availableUsd').textContent = `≈ $${toUSD(bal, appState.selectedToken).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
                 const symbol = tokenData[appState.selectedToken].symbol;
                 document.getElementById('currencySymbol').textContent = symbol;
             }
@@ -1624,11 +1876,19 @@
                 error.textContent = amount > balance ? 'Amount exceeds available balance' : 'Minimum stake is 10';
                 continueBtn.disabled = true;
                 appState.amount = 0;
+                const usdEl = document.getElementById('amountUsdEquiv');
+                if (usdEl) usdEl.style.display = 'none';
             } else {
                 input.classList.remove('error');
                 error.classList.remove('active');
                 continueBtn.disabled = false;
                 appState.amount = amount;
+                const usdEl = document.getElementById('amountUsdEquiv');
+                const usdSpan = document.getElementById('amountUsd');
+                if (usdEl && usdSpan) {
+                    usdEl.style.display = 'block';
+                    usdSpan.textContent = toUSD(amount, appState.selectedToken).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
                 updateEstimatedReward();
             }
         }
@@ -1673,10 +1933,10 @@
             const isHUMA = token === 'HUMA';
 
             const durations = [
-                { id: 'flexible', apy: 3.0 },
-                { id: '30days', apy: 4.5 },
-                { id: '90days', apy: 5.5 },
-                { id: '1year', apy: 7.0 }
+                { id: 'flexible', apy: 3.0, label: 'Flexible' },
+                { id: '30days', apy: 4.5, label: '30d' },
+                { id: '90days', apy: 5.5, label: '90d' },
+                { id: '1year', apy: 7.0, label: '1yr' }
             ];
 
             durations.forEach(d => {
@@ -1691,6 +1951,12 @@
                 const rewardEl = document.getElementById(`reward${d.id.charAt(0).toUpperCase() + d.id.slice(1)}`);
                 if (rewardEl) rewardEl.textContent = rewardText;
             });
+
+            // APY comparison grid
+            const grid = document.getElementById('apyCompareGrid');
+            if (grid) {
+                grid.innerHTML = durations.map(d => `<div class="apy-compare-item"><div class="apy-val">${d.apy}%</div><div style="font-size:0.75rem; color:var(--text-secondary);">${d.label}</div></div>`).join('');
+            }
         }
 
         // ========== STEP 5: REVIEW ==========
@@ -1709,17 +1975,18 @@
             const symbol = tokenData[token]?.symbol || '$';
             const isHUMA = token === 'HUMA';
 
+            const amountUsd = toUSD(amount, token);
             document.getElementById('reviewToken').textContent = token;
-            document.getElementById('reviewAmount').textContent = isHUMA ? `${amount.toFixed(2)} HUMA` : `${symbol}${amount.toFixed(2)}`;
+            document.getElementById('reviewAmount').innerHTML = (isHUMA ? `${amount.toFixed(2)} HUMA` : `${symbol}${amount.toFixed(2)}`) + ` <span class="usd-equiv">≈ $${amountUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD</span>`;
             document.getElementById('reviewDuration').textContent = durationLabel;
             document.getElementById('reviewAPY').textContent = `${apy.toFixed(1)}%`;
             if (isHUMA) {
                 const fiatValue = reward * humaToFiat;
                 document.getElementById('reviewReward').textContent = `${reward.toFixed(2)} HUMA (≈ $${fiatValue.toFixed(2)})`;
-                document.getElementById('reviewTotal').textContent = `${amount.toFixed(2)} HUMA`;
+                document.getElementById('reviewTotal').innerHTML = `${amount.toFixed(2)} HUMA <span class="usd-equiv">≈ $${amountUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD</span>`;
             } else {
                 document.getElementById('reviewReward').textContent = `${symbol}${reward.toFixed(2)}`;
-                document.getElementById('reviewTotal').textContent = `${symbol}${amount.toFixed(2)}`;
+                document.getElementById('reviewTotal').innerHTML = `${symbol}${amount.toFixed(2)} <span class="usd-equiv">≈ $${amountUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD</span>`;
             }
         }
 
@@ -1742,7 +2009,8 @@
                 const symbol = tokenData[token]?.symbol || '$';
                 const isHUMA = token === 'HUMA';
 
-                document.getElementById('successAmount').textContent = isHUMA ? `${amount.toFixed(2)} HUMA` : `${symbol}${amount.toFixed(2)}`;
+                const amountUsd = toUSD(amount, token);
+                document.getElementById('successAmount').innerHTML = (isHUMA ? `${amount.toFixed(2)} HUMA` : `${symbol}${amount.toFixed(2)}`) + ` <span class="usd-equiv" style="display:block; margin-top:0.5rem;">≈ $${amountUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD</span>`;
                 document.getElementById('successToken').textContent = token;
                 document.getElementById('successDuration').textContent = durationLabel;
                 document.getElementById('successAPY').textContent = `${apy.toFixed(1)}%`;
@@ -1754,6 +2022,14 @@
                 }
                 const txId = 'TX-' + Math.random().toString(36).substring(2,10).toUpperCase();
                 document.getElementById('successTxId').textContent = txId;
+                const breakdown = document.getElementById('successBreakdown');
+                if (breakdown) {
+                    const locked = amount;
+                    const claimableAtMaturity = reward;
+                    const totalYield = reward;
+                    const sym = isHUMA ? ' HUMA' : '';
+                    breakdown.innerHTML = `Locked: ${locked.toFixed(2)}${sym} &bull; Claimable at maturity: ${claimableAtMaturity.toFixed(2)}${sym} &bull; Total yield: ${totalYield.toFixed(2)}${sym}`;
+                }
 
                 goToStep(7);
             }, 2000);
@@ -1804,6 +2080,33 @@
         window.closeNotification = closeNotification;
         window.startKYC = startKYC;
         window.connectWallet = connectWallet;
+    </script>
+
+    <script>
+        (function() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
+            const closeBtn = document.querySelector('.mobile-menu-close');
+            function openMenu() {
+                hamburger.classList.add('active');
+                mobileMenu.classList.add('active');
+                overlay.classList.add('active');
+                hamburger.setAttribute('aria-expanded','true');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                hamburger.setAttribute('aria-expanded','false');
+                document.body.style.overflow = '';
+            }
+            hamburger.addEventListener('click', () => mobileMenu.classList.contains('active') ? closeMenu() : openMenu());
+            closeBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+        })();
     </script>
 </body>
 </html>
