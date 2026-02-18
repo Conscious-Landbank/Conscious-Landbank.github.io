@@ -552,18 +552,21 @@
             pointer-events: none;
         }
 
+        /* Step 2 card: more breathing room */
+        #step2 .section-title { margin-bottom: 1.25rem; }
+
         /* Option cards (three send types) */
         .send-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
         .send-option {
             background: white;
             border: 2px solid var(--border-subtle);
             border-radius: 1rem;
-            padding: 1.5rem 1rem;
+            padding: 1.75rem 1.25rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
@@ -611,8 +614,19 @@
             margin-bottom: 0.25rem;
         }
         .option-desc {
-            font-size: var(--text-sm);
-            color: var(--text-secondary);
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--neutral-800);
+            margin-top: 0.375rem;
+            line-height: 1.35;
+        }
+        .method-reason {
+            font-size: 0.813rem;
+            color: var(--neutral-500);
+            font-weight: 400;
+            margin-top: 0.5rem;
+            line-height: 1.4;
         }
         .send-option:focus,
         .send-option:focus-visible {
@@ -823,11 +837,35 @@
             color: var(--text-secondary);
             font-size: 0.875rem;
         }
-        .method-reason { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.35rem; }
-        .address-input-group { display: flex; gap: 0.5rem; align-items: flex-start; flex-wrap: wrap; }
+        .address-input-group { display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; }
         .address-input-group .input-wrapper { flex: 1; min-width: 200px; }
-        .address-action-btn { padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1.5px solid var(--border-subtle); background: var(--neutral-100); cursor: pointer; font-size: 0.8rem; white-space: nowrap; transition: all 0.2s; }
-        .address-action-btn:hover { border-color: var(--primary-green); background: rgba(16,185,129,0.05); }
+        .address-action-btn {
+            height: 54px;
+            padding: 0 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border-subtle);
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .address-action-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--primary-green);
+        }
+        .address-action-btn:focus,
+        .address-action-btn:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
         .verified-badge { font-size: 0.8rem; color: var(--primary-green); font-weight: 600; display: flex; align-items: center; gap: 0.25rem; margin-top: 0.35rem; }
         .method-check {
             width: 20px;
@@ -936,11 +974,6 @@
             font-size: 1.125rem;
             padding-top: 1.5rem;
         }
-        .summary-label {
-            color: var(--text-secondary);
-            font-size: var(--text-sm);
-            font-weight: 500;
-        }
         .summary-value {
             color: var(--text-primary);
             font-weight: 600;
@@ -981,6 +1014,39 @@
             font-size: 0.875rem;
             color: var(--text-secondary);
             margin-top: 0.5rem;
+        }
+        /* Address warning: high contrast (brand: functional error) */
+        .input-hint.input-hint-warning {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--error);
+            padding: 0.75rem 1rem;
+            background: rgba(239, 68, 68, 0.06);
+            border-left: 4px solid var(--error);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-bottom: 1rem;
+        }
+        /* Pro tip: insight-card style (brand: left border primary-green) */
+        .input-hint.amount-tip {
+            font-size: 0.938rem;
+            color: var(--neutral-700);
+            padding: 1rem 1.25rem;
+            background: rgba(16, 185, 129, 0.06);
+            border-left: 4px solid var(--primary-green);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-top: 1rem;
+        }
+        .input-hint.amount-tip strong {
+            font-weight: 600;
+            color: var(--neutral-800);
+        }
+        /* Summary label: caption style for hierarchy */
+        .summary-label {
+            font-size: 0.813rem;
+            font-weight: 600;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .benefits-note {
             background: rgba(16,185,129,0.05);
@@ -1482,7 +1548,7 @@
                     <span class="summary-label">Transaction Fee</span>
                     <span class="summary-value" id="feePreview">$0.00</span>
                 </div>
-                <p class="input-hint" style="margin-top: 1rem;">💡 UNERA-to-UNERA sends are free. External and bank transfers incur fees.</p>
+                <p class="input-hint amount-tip">💡 <strong>UNERA-to-UNERA</strong> sends are free. External and bank transfers incur fees.</p>
             </div>
             <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(3)">
@@ -1834,7 +1900,7 @@
             } else if (appState.sendOption === 'external') {
                 html = `
                     <h2 class="section-title">Send to External Wallet</h2>
-                    <p class="input-hint" style="margin-bottom: 1rem; color: var(--error);">⚠️ Double-check the address. Transfers to wrong addresses cannot be reversed.</p>
+                    <p class="input-hint input-hint-warning">⚠️ Double-check the address. Transfers to wrong addresses cannot be reversed.</p>
                     <div class="form-group network-select">
                         <label class="form-label">Select Network</label>
                         <div class="network-grid">

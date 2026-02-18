@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Humanity Centre - UNERA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --primary-green: #10B981;
@@ -29,16 +28,13 @@
             --warning: #F59E0B;
             --error: #EF4444;
             --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
-            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
-            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
             --font-display: 'Space Grotesk', sans-serif;
             --font-body: 'Inter', sans-serif;
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
+            --spacing-unit: 8px;
         }
-
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -54,15 +50,12 @@
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
         }
 
-        /* Skip Link */
         .skip-link {
             position: absolute;
-            top: -40px;
-            left: 0;
+            top: -40px; left: 0;
             background: var(--primary-green);
             color: white;
             padding: 8px 16px;
@@ -71,10 +64,7 @@
             border-radius: 0 0 8px 0;
             font-weight: 600;
         }
-
-        .skip-link:focus {
-            top: 0;
-        }
+        .skip-link:focus { top: 0; }
 
         /* Navigation */
         .nav {
@@ -89,59 +79,139 @@
             z-index: 100;
             border-bottom: 1px solid var(--border-subtle);
         }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 2.75rem;
-        }
-
+        .nav-left { display: flex; align-items: center; gap: 2.75rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
         .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            display: flex; align-items: center; gap: 0.5rem;
             text-decoration: none;
         }
-
-        .nav-logo-icon {
-            width: 28px;
-            height: 28px;
+        .nav-brand:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
-
+        .nav-logo-icon { width: 28px; height: 28px; }
         .logo {
             font-family: var(--font-display);
             font-size: 0.875rem;
             font-weight: 600;
-            color: var(--neutral-900);
+            color: var(--text-primary);
             letter-spacing: -0.02em;
         }
-
-        .back-btn {
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--primary-green); }
+        .nav-link:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .nav-link.active { color: var(--primary-green); font-weight: 600; }
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 0.5rem;
-            color: var(--neutral-900);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            transition: color 0.2s;
         }
+        .back-link:hover { color: var(--primary-green); }
 
-        .back-btn:hover {
-            background: rgba(0, 0, 0, 0.04);
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
         }
+        .hamburger:hover { background: var(--neutral-200); }
+        .hamburger:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%; max-width: 320px; height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            list-style: none;
+        }
+        .mobile-nav-links .nav-link {
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        .mobile-nav-links .nav-link:hover { background: var(--neutral-200); }
+        .mobile-nav-links .nav-link.active { background: rgba(16,185,129,0.1); color: var(--primary-green); }
 
         /* Breadcrumb */
         .breadcrumb {
-            padding: 1.5rem 2.75rem;
+            padding: 1rem 2.75rem;
             background: white;
             border-bottom: 1px solid var(--border-subtle);
         }
-
         .breadcrumb-list {
             display: flex;
             align-items: center;
@@ -149,75 +219,71 @@
             list-style: none;
             font-size: 0.875rem;
         }
-
         .breadcrumb-list a {
             color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.2s;
         }
+        .breadcrumb-list a:hover { color: var(--primary-green); }
+        .breadcrumb-separator { color: var(--neutral-400); }
+        .breadcrumb-current { color: var(--text-primary); font-weight: 500; }
 
-        .breadcrumb-list a:hover {
-            color: var(--primary-green);
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 3);
         }
 
-        .breadcrumb-separator {
-            color: var(--neutral-400);
-        }
-
-        .breadcrumb-current {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* Hero Section */
+        /* Hero */
         .hero {
             position: relative;
-            height: 400px;
+            height: 420px;
+            border-radius: 1.5rem;
             overflow: hidden;
+            margin-bottom: calc(var(--spacing-unit) * 4);
+            background-color: var(--neutral-900);
         }
-
         .hero-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 80%);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 3rem;
+            padding: calc(var(--spacing-unit) * 4);
         }
-
         .hero-content {
             color: white;
+            max-width: 700px;
         }
-
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 2rem;
-            font-size: 0.813rem;
+            backdrop-filter: blur(8px);
+            border-radius: 980px;
+            font-size: 0.875rem;
             font-weight: 600;
             color: var(--primary-green);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            width: fit-content;
         }
-
         .hero-title {
             font-family: var(--font-display);
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 3rem;
+            font-weight: 800;
             margin-bottom: 0.75rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            line-height: 1.1;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-
         .hero-location {
             display: flex;
             align-items: center;
@@ -225,64 +291,203 @@
             font-size: 1.125rem;
             opacity: 0.95;
         }
-
-        /* Main Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 2.75rem;
+        .hero-trust-line {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
         }
 
-        /* Quick Stats */
-        .quick-stats {
+        /* Two-column layout */
+        .detail-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: calc(var(--spacing-unit) * 4);
+            align-items: start;
+        }
+        @media (max-width: 1024px) {
+            .detail-layout {
+                grid-template-columns: 1fr;
+                gap: calc(var(--spacing-unit) * 3);
+            }
+        }
+
+        /* Left column */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--spacing-unit) * 3);
+        }
+
+        /* Impact cards */
+        .impact-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            gap: 1rem;
         }
-
-        .stat-card {
+        .impact-card {
             background: white;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             padding: 1.5rem;
-            text-align: center;
-            border: 1px solid var(--border-subtle);
+            border: 2px solid var(--border-subtle);
+            transition: all 0.3s;
         }
-
-        .stat-value {
+        .impact-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 8px 24px rgba(16,185,129,0.12);
+        }
+        .impact-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        .impact-value {
             font-family: var(--font-display);
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
         }
-
-        .stat-label {
+        .impact-label {
             font-size: 0.875rem;
             color: var(--text-secondary);
         }
-
-        /* Section */
-        .section {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-subtle);
+        .tooltip-icon {
+            cursor: help;
+            border-bottom: 1px dotted var(--neutral-500);
+            font-size: 0.875rem;
+            color: var(--neutral-500);
+        }
+        @media (max-width: 640px) {
+            .impact-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
+        /* Section card */
+        .section-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 2px solid var(--border-subtle);
+        }
         .section-title {
             font-family: var(--font-display);
             font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
             color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        /* Donation Statistics */
+        /* Benefits note */
+        .benefits-note {
+            background: rgba(16,185,129,0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .benefits-note strong { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+        .benefits-note p { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+        /* Info box */
+        .info-box {
+            background: rgba(16,185,129,0.05);
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .info-box p { font-size: 0.875rem; color: var(--neutral-700); }
+
+        /* Amount tip */
+        .amount-tip {
+            font-size: 0.938rem;
+            color: var(--neutral-700);
+            padding: 1rem 1.25rem;
+            background: rgba(16,185,129,0.06);
+            border-left: 4px solid var(--primary-green);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-top: 1rem;
+        }
+        .amount-tip strong { font-weight: 600; color: var(--neutral-800); }
+
+        /* Program list */
+        .program-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .program-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .program-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(16,185,129,0.1);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .program-content { flex: 1; }
+        .program-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            align-items: center;
+        }
+        .program-bar {
+            height: 8px;
+            background: var(--neutral-200);
+            border-radius: 980px;
+            overflow: hidden;
+        }
+        .program-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 980px;
+        }
+
+        /* Testimonial */
+        .testimonial {
+            background: var(--neutral-100);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0 0;
+            border-left: 4px solid var(--primary-green);
+        }
+        .testimonial-text {
+            font-style: italic;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Stats tabs */
         .stats-tabs {
             display: flex;
             gap: 0.5rem;
@@ -290,7 +495,6 @@
             border-bottom: 2px solid var(--neutral-200);
             padding-bottom: 0.5rem;
         }
-
         .stats-tab {
             padding: 0.5rem 1rem;
             background: none;
@@ -302,20 +506,16 @@
             transition: all 0.2s;
             border-radius: 0.5rem;
         }
-
-        .stats-tab:hover {
-            background: var(--neutral-100);
-        }
-
+        .stats-tab:hover { background: var(--neutral-100); }
         .stats-tab.active {
             color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(16,185,129,0.1);
         }
 
+        /* Chart */
         .chart-container {
             margin-bottom: 2rem;
         }
-
         .chart-bars {
             display: flex;
             align-items: flex-end;
@@ -323,7 +523,6 @@
             height: 200px;
             padding: 1rem 0;
         }
-
         .chart-bar {
             flex: 1;
             display: flex;
@@ -331,19 +530,14 @@
             align-items: center;
             gap: 0.5rem;
         }
-
         .bar-fill {
             width: 100%;
             background: var(--gradient-primary);
             border-radius: 0.5rem 0.5rem 0 0;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             position: relative;
         }
-
-        .bar-fill:hover {
-            opacity: 0.8;
-        }
-
+        .bar-fill:hover { opacity: 0.8; }
         .bar-value {
             position: absolute;
             top: -1.5rem;
@@ -353,24 +547,15 @@
             font-size: 0.875rem;
             color: var(--text-primary);
         }
+        .bar-label { font-size: 0.75rem; color: var(--text-secondary); }
 
-        .bar-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        /* Top Donors & Recent Donations */
+        /* Donations grid */
         .donations-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
-
-        .donation-list {
-            list-style: none;
-        }
-
+        .donation-list { list-style: none; }
         .donation-item {
             display: flex;
             align-items: center;
@@ -378,88 +563,27 @@
             padding: 1rem;
             border-bottom: 1px solid var(--border-subtle);
         }
-
-        .donation-item:last-child {
-            border-bottom: none;
-        }
-
+        .donation-item:last-child { border-bottom: none; }
         .donor-info {
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
-
         .donor-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             background: var(--gradient-primary);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             font-weight: 600;
             font-size: 0.875rem;
         }
-
-        .donor-details p {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .donor-details span {
-            font-size: 0.813rem;
-            color: var(--text-secondary);
-        }
-
-        .donation-amount {
-            font-weight: 700;
-            color: var(--primary-green);
-        }
-
-        /* About Section */
-        .about-content {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        .programs-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-        }
-
-        .program-card {
-            padding: 1.5rem;
-            background: var(--neutral-50);
-            border-radius: 0.75rem;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .program-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .program-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .program-desc {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
+        .donor-details p { font-weight: 500; }
+        .donor-details span { font-size: 0.813rem; color: var(--text-secondary); }
+        .donation-amount { font-weight: 700; color: var(--primary-green); }
 
         /* Gallery */
         .gallery-grid {
@@ -467,218 +591,305 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
         }
-
         .gallery-item {
-            aspect-ratio: 1;
+            aspect-ratio: 3/2;
             border-radius: 0.75rem;
             overflow: hidden;
             cursor: pointer;
-            position: relative;
         }
-
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.3s;
         }
+        .gallery-item:hover img { transform: scale(1.05); }
 
-        .gallery-item:hover img {
-            transform: scale(1.05);
+        /* Right column - donation */
+        .right-column {
+            position: sticky;
+            top: calc(44px + 2rem);
+            align-self: start;
         }
-
-        /* Inline Donation Widget */
-        .donation-widget {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
-            border-radius: 1rem;
-            padding: 2.5rem;
-            border: 2px solid rgba(16, 185, 129, 0.2);
+        .donation-container {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 2px solid var(--border-subtle);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
         }
-
-        .widget-title {
-            font-family: var(--font-display);
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
+        .donation-header {
             text-align: center;
+            margin-bottom: 2rem;
         }
-
-        .amount-input-group {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-
-        .currency-symbol {
-            position: absolute;
-            left: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .donation-title {
+            font-family: var(--font-display);
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--neutral-600);
+            margin-bottom: 0.5rem;
         }
-
-        .amount-input {
-            width: 100%;
-            padding: 1.25rem 1.25rem 1.25rem 3rem;
-            border: 2px solid var(--border-subtle);
-            border-radius: 0.75rem;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            transition: all 0.2s;
+        .donation-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
         }
-
-        .amount-input:focus {
-            outline: none;
-            border-color: var(--primary-green);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .amount-presets {
+        .suggested-amounts {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
-
-        .preset-btn {
-            padding: 0.75rem;
-            border: 2px solid var(--border-subtle);
-            border-radius: 0.5rem;
+        .amount-btn {
+            padding: 1rem 0.5rem;
             background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.3;
+        }
+        .amount-btn:hover {
+            border-color: var(--primary-green);
+            background: rgba(16,185,129,0.02);
+            transform: translateY(-2px);
+        }
+        .amount-btn.selected {
+            border-color: var(--primary-green);
+            background: rgba(16,185,129,0.08);
+        }
+        .amount-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
             color: var(--text-primary);
+        }
+        .amount-impact {
+            font-size: 0.75rem;
+            color: var(--primary-green);
+            font-weight: 500;
+        }
+        .custom-amount { margin-bottom: 1.5rem; }
+        .amount-input-wrapper { position: relative; }
+        .currency-symbol {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--neutral-600);
+        }
+        .amount-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.5rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            font-family: var(--font-display);
+            transition: border 0.2s;
+        }
+        .amount-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+        }
+        .input-hint {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        .input-error {
+            font-size: 0.875rem;
+            color: var(--error);
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .input-error.active { display: block; }
+        .frequency-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--neutral-100);
+            padding: 0.25rem;
+            border-radius: 980px;
+            margin-bottom: 1.5rem;
+        }
+        .freq-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            border-radius: 980px;
+            font-weight: 600;
+            font-size: 0.938rem;
             cursor: pointer;
             transition: all 0.2s;
         }
-
-        .preset-btn:hover {
-            border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.05);
+        .freq-btn.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            color: var(--primary-green);
         }
-
-        .btn-primary {
-            width: 100%;
-            padding: 1rem 2rem;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
+        .impact-meter {
+            background: rgba(16,185,129,0.05);
             border-radius: 0.75rem;
-            font-size: 1.125rem;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .meter-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .meter-bar {
+            height: 8px;
+            background: var(--neutral-200);
+            border-radius: 980px;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+        .meter-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 980px;
+        }
+        .recent-donation {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            padding: 0.75rem 0 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .btn {
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
             font-weight: 600;
+            font-size: 1rem;
+            border: none;
             cursor: pointer;
             transition: all 0.2s;
             font-family: var(--font-body);
+            width: 100%;
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        /* Sticky Donate Button (Mobile) */
-        .sticky-donate {
-            display: none;
-            position: fixed;
-            bottom: 1rem;
-            left: 1rem;
-            right: 1rem;
-            padding: 1rem;
-            background: var(--gradient-primary);
+        .btn-primary {
+            background: #0d9668;
             color: white;
-            border: none;
-            border-radius: 0.75rem;
-            font-size: 1.125rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-            z-index: 50;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.25);
+        }
+        .btn-primary:hover {
+            background: #0b7d56;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16,185,129,0.35);
         }
 
-        /* Responsive */
+        /* Mobile donation - fixed bottom sheet */
+        @media (max-width: 1024px) {
+            .right-column { position: static; }
+            .donation-container {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 50;
+                border-radius: 1.5rem 1.5rem 0 0;
+                padding: 1.5rem;
+                box-shadow: 0 -8px 32px rgba(0,0,0,0.1);
+            }
+            .mobile-donation-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+                cursor: pointer;
+            }
+        }
+
         @media (max-width: 768px) {
-            .nav {
-                padding: 0 1rem;
-            }
+            .nav { padding: 0 1rem; }
+            .nav-links, .back-link { display: none; }
+            .hamburger { display: flex; }
+            .container { padding: 2rem 1rem; }
+            .hero { height: 300px; }
+            .hero-title { font-size: 2rem; }
+            .hero-overlay { padding: 2rem 1rem; }
+            .donations-grid { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+        }
 
-            .hero {
-                height: 300px;
-            }
-
-            .hero-overlay {
-                padding: 2rem 1rem;
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .container {
-                padding: 2rem 1rem;
-            }
-
-            .quick-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .donations-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .programs-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .amount-presets {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .sticky-donate {
-                display: block;
-            }
-
-            .donation-widget {
-                display: none;
-            }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+        *:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Navigation -->
     <nav class="nav">
         <div class="nav-left">
-            <a href="index.html" class="nav-brand">
-                <svg class="nav-logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="16" cy="16" r="16" fill="url(#gradient)"/>
-                    <path d="M16 8L20 16L16 24L12 16L16 8Z" fill="white"/>
-                    <defs>
-                        <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
-                            <stop offset="0%" stop-color="#10B981"/>
-                            <stop offset="100%" stop-color="#0EA5E9"/>
-                        </linearGradient>
-                    </defs>
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
                 </svg>
                 <span class="logo">UNERA</span>
             </a>
-            <a href="explore-centres.html" class="back-btn">
+            <ul class="nav-links">
+                <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+                <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+                <li><a href="explore-centres.html" class="nav-link active" aria-current="page">CENTRES</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="explore-centres.html" class="back-link">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
                 Back to Centres
             </a>
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </nav>
 
-    <!-- Breadcrumb -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="#99F6E4"/><circle cx="70" cy="70" r="45" fill="#14B8A6"/><circle cx="70" cy="70" r="30" fill="#0F766E"/><circle cx="70" cy="70" r="15" fill="#FFFFFF"/></svg>
+                <span class="logo">UNERA</span>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="explore-centres.html" class="nav-link active">CENTRES</a></li>
+        </ul>
+    </div>
+
     <div class="breadcrumb">
         <ul class="breadcrumb-list">
             <li><a href="index.html">Home</a></li>
@@ -689,236 +900,356 @@
         </ul>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200" alt="Humanity Centre" class="hero-image" id="hero-image">
-        <div class="hero-overlay">
-            <div class="hero-content">
-                <div class="status-badge">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM10 15.17L6.83 12L5.42 13.41L10 18L19 9L17.59 7.59L10 15.17Z"/>
-                    </svg>
-                    Active & Verified
+    <main id="main-content" class="container">
+        <section class="hero">
+            <img src="" alt="" class="hero-image" id="hero-image">
+            <div class="hero-overlay">
+                <div class="hero-content">
+                    <div class="status-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                        <span id="status-badge-text">Verified · Top-Rated</span>
+                    </div>
+                    <h1 class="hero-title" id="centre-name">Loading...</h1>
+                    <div class="hero-location" id="centre-location">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        <span id="centre-location-text">Loading...</span>
+                    </div>
+                    <p class="hero-trust-line">100% of donations go directly to programs</p>
                 </div>
-                <h1 class="hero-title" id="centre-name">Loading...</h1>
-                <div class="hero-location" id="centre-location">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                    </svg>
-                    <span>Loading...</span>
+            </div>
+        </section>
+
+        <div class="detail-layout">
+            <div class="left-column">
+                <div class="impact-grid" id="impact-grid">
+                    <div class="impact-card">
+                        <div class="impact-card-header">
+                            <span class="impact-value" id="active-students">0</span>
+                            <span class="tooltip-icon" title="Current enrolled beneficiaries receiving program support">ⓘ</span>
+                        </div>
+                        <div class="impact-label">Active Students</div>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-card-header">
+                            <span class="impact-value" id="attendance-rate">0%</span>
+                            <span class="tooltip-icon" title="Average attendance/completion rate across programs">ⓘ</span>
+                        </div>
+                        <div class="impact-label">Attendance Rate</div>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-card-header">
+                            <span class="impact-value" id="meals-served">0</span>
+                            <span class="tooltip-icon" title="Total meals or services delivered in the last 12 months">ⓘ</span>
+                        </div>
+                        <div class="impact-label">Meals Served</div>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-card-header">
+                            <span class="impact-value" id="annual-impact">$0</span>
+                            <span class="tooltip-icon" title="Total funds deployed to programs in the last 12 months">ⓘ</span>
+                        </div>
+                        <div class="impact-label">Annual Impact</div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2 class="section-title">Our Mission</h2>
+                    <p class="section-desc" id="mission-desc">We serve over 500 children in Africa's largest urban slum. Every dollar you give goes directly to programs.</p>
+                    <div class="about-content" id="about-content"></div>
+
+                    <h3 class="section-title" style="margin-top: 2rem; margin-bottom: 0.5rem;">How your donation helps</h3>
+                    <p class="section-desc" style="margin-bottom: 1rem;">See where your support goes. These programs run on donor funding.</p>
+                    <div class="info-box">
+                        <p>💡 Costs are per beneficiary per month. Your gift scales with the number of people served.</p>
+                    </div>
+                    <div class="program-list" id="program-list"></div>
+
+                    <div class="testimonial" id="testimonial-block">
+                        <div class="testimonial-text" id="testimonial-quote">"Before the centre, my children often missed school due to hunger. Now they learn with full bellies and even teach me what they've learned."</div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar" id="testimonial-initials">MN</div>
+                            <div><strong id="testimonial-author">Mary N.</strong> · <span id="testimonial-role">mother of three, Kibera</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="section-card">
+                    <h2 class="section-title">Donation Statistics</h2>
+                    <p class="section-desc">Giving trends help us plan and show how the community supports this centre.</p>
+                    <div class="stats-tabs" role="tablist" aria-label="Donation period">
+                        <button class="stats-tab active" role="tab" aria-selected="true" aria-controls="chart-panel" data-period="daily">Daily</button>
+                        <button class="stats-tab" role="tab" aria-selected="false" aria-controls="chart-panel" data-period="weekly">Weekly</button>
+                        <button class="stats-tab" role="tab" aria-selected="false" aria-controls="chart-panel" data-period="monthly">Monthly</button>
+                        <button class="stats-tab" role="tab" aria-selected="false" aria-controls="chart-panel" data-period="yearly">Yearly</button>
+                    </div>
+                    <div class="chart-container" id="chart-panel" role="tabpanel" aria-label="Donation amounts by period">
+                        <div class="chart-bars" id="chart-bars" aria-label="Donation amounts by period"></div>
+                    </div>
+                    <div class="donations-grid">
+                        <div>
+                            <h3 style="margin-bottom: 1rem; font-weight: 600;">Top Donors</h3>
+                            <ul class="donation-list" id="top-donors-list"></ul>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: 1rem; font-weight: 600;">Recent Donations</h3>
+                            <ul class="donation-list" id="recent-donations-list"></ul>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="section-card">
+                    <h2 class="section-title">Gallery</h2>
+                    <div class="gallery-grid" id="gallery-grid"></div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="donation-container">
+                    <div class="donation-content">
+                        <div class="benefits-note">
+                            <span style="font-size: 2rem;">✨</span>
+                            <div>
+                                <strong>Why give to this centre?</strong>
+                                <p>Verified by UNERA · 100% to programs · Real-time impact tracking</p>
+                            </div>
+                        </div>
+                        <div class="donation-header">
+                            <h2 class="donation-title">Make an impact</h2>
+                            <p class="donation-subtitle">100% of your donation goes directly to programs. No platform fee.</p>
+                        </div>
+                        <div class="info-box">
+                            <p>💡 <strong>Popular amounts:</strong> $25, $50, $100. You can also enter any amount.</p>
+                        </div>
+                        <div class="suggested-amounts" id="suggested-amounts"></div>
+                        <div class="custom-amount">
+                            <label for="donation-amount" class="visually-hidden">Enter donation amount</label>
+                            <div class="amount-input-wrapper">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="donation-amount" class="amount-input" placeholder="Other" min="1" value="" aria-describedby="amount-hint amount-error" aria-invalid="false">
+                            </div>
+                            <p class="input-hint" id="amount-hint">💡 Monthly giving helps centres plan. Even $10/month makes a difference.</p>
+                            <p class="input-error" id="amount-error" role="alert">Please enter a valid amount (min $1)</p>
+                        </div>
+                        <div class="frequency-toggle">
+                            <button class="freq-btn active" data-freq="monthly" aria-pressed="true">Monthly</button>
+                            <button class="freq-btn" data-freq="onetime" aria-pressed="false">One time</button>
+                        </div>
+                        <div class="amount-tip">
+                            💡 UNERA-to-UNERA sends are free. Your full amount reaches the centre.
+                        </div>
+                        <button class="btn btn-primary" id="donate-cta" onclick="proceedToDonate()">Send to Centre</button>
+                        <div class="benefits-note" style="margin-top: 1.5rem;">
+                            <span style="font-size: 1.5rem;">✨</span>
+                            <div>
+                                <strong>Your donation counts.</strong>
+                                <p id="donor-count-text">Join 2,400+ donors who've helped this centre this year.</p>
+                            </div>
+                        </div>
+                        <div class="impact-meter">
+                            <div class="meter-header">
+                                <span id="meter-label">🎯 78% of monthly goal</span>
+                                <span id="meter-value">$40,560 / $52,000</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" id="meter-fill" style="width: 78%"></div>
+                            </div>
+                            <div class="recent-donation">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span id="recent-ticker">Sarah just donated $50 · 2 min ago</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <main id="main-content" class="container">
-        <!-- Quick Stats -->
-        <section class="quick-stats">
-            <div class="stat-card">
-                <div class="stat-value" id="total-donations">$0</div>
-                <div class="stat-label">Total Donations</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="beneficiaries">0</div>
-                <div class="stat-label">Active Beneficiaries</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="programs">0</div>
-                <div class="stat-label">Programs Running</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="established">0</div>
-                <div class="stat-label">Years Established</div>
-            </div>
-        </section>
-
-        <!-- Donation Statistics -->
-        <section class="section">
-            <h2 class="section-title">Donation Statistics</h2>
-            <div class="stats-tabs">
-                <button class="stats-tab active" data-period="daily">Daily</button>
-                <button class="stats-tab" data-period="weekly">Weekly</button>
-                <button class="stats-tab" data-period="monthly">Monthly</button>
-                <button class="stats-tab" data-period="yearly">Yearly</button>
-            </div>
-            <div class="chart-container">
-                <div class="chart-bars" id="chart-bars">
-                    <!-- Charts will be generated by JavaScript -->
-                </div>
-            </div>
-
-            <div class="donations-grid">
-                <div>
-                    <h3 style="margin-bottom: 1rem; font-weight: 600;">Top Donors</h3>
-                    <ul class="donation-list" id="top-donors-list">
-                        <!-- Will be populated by JavaScript -->
-                    </ul>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 1rem; font-weight: 600;">Recent Donations</h3>
-                    <ul class="donation-list" id="recent-donations-list">
-                        <!-- Will be populated by JavaScript -->
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- About Section -->
-        <section class="section">
-            <h2 class="section-title">About This Centre</h2>
-            <div class="about-content" id="about-content">
-                <p>Loading centre information...</p>
-            </div>
-
-            <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Programs Offered</h3>
-            <div class="programs-grid">
-                <div class="program-card">
-                    <div class="program-icon">🍲</div>
-                    <div class="program-title">Food Security</div>
-                    <div class="program-desc">Daily meals and nutrition programs for families in need</div>
-                </div>
-                <div class="program-card">
-                    <div class="program-icon">📚</div>
-                    <div class="program-title">Education</div>
-                    <div class="program-desc">After-school tutoring and literacy programs for children</div>
-                </div>
-                <div class="program-card">
-                    <div class="program-icon">🏥</div>
-                    <div class="program-title">Healthcare</div>
-                    <div class="program-desc">Basic medical services and health education</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gallery -->
-        <section class="section">
-            <h2 class="section-title">Photo Gallery</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400" alt="Centre activity">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=400" alt="Community gathering">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400" alt="Centre programs">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400" alt="Beneficiaries">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400" alt="Team">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1524186983913-e0c7afd5fabc?w=400" alt="Impact">
-                </div>
-            </div>
-        </section>
-
-        <!-- Inline Donation Widget -->
-        <section class="donation-widget">
-            <h2 class="widget-title">Support This Centre</h2>
-            <div class="amount-input-group">
-                <span class="currency-symbol">$</span>
-                <input type="number" class="amount-input" placeholder="0.00" id="donation-amount" min="1">
-            </div>
-            <div class="amount-presets">
-                <button class="preset-btn" onclick="setAmount(25)">$25</button>
-                <button class="preset-btn" onclick="setAmount(50)">$50</button>
-                <button class="preset-btn" onclick="setAmount(100)">$100</button>
-                <button class="preset-btn" onclick="setAmount(250)">$250</button>
-            </div>
-            <button class="btn-primary" onclick="proceedToDonate()">Donate Now</button>
-        </section>
     </main>
 
-    <!-- Sticky Donate Button (Mobile) -->
-    <button class="sticky-donate" onclick="scrollToDonation()">Donate to This Centre</button>
-
     <script>
-        // Mock data for different centres
         const centresData = {
             nairobi: {
                 name: "Nairobi Hope Centre",
-                location: "Nairobi, Kenya",
+                location: "Kibera, Nairobi, Kenya",
                 image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200",
-                totalDonations: "84,234",
-                beneficiaries: "1,247",
-                programs: "8",
-                established: "12",
-                about: "The Nairobi Hope Centre has been serving the Kibera community since 2012, providing essential services including food security, education, and healthcare to over 1,200 families. Our mission is to empower communities through sustainable development programs and direct assistance to those in greatest need.",
+                statusBadge: "Verified · Top-Rated",
+                about: "We provide quality education, essential healthcare, and nutrition programs to over 500 children in Africa's largest urban slum. Our holistic approach includes mental health support, family counseling, and community development initiatives.",
+                missionDesc: "We serve over 500 children in Africa's largest urban slum. Every dollar you give goes directly to programs.",
+                activeStudents: 542,
+                attendanceRate: "94%",
+                mealsServed: "12k+",
+                annualImpact: "$52k",
+                programs: [
+                    { icon: "📚", name: "Education & supplies", costPerBeneficiary: "$28/month per child", fundingPercent: 78 },
+                    { icon: "🍲", name: "Daily meals", costPerBeneficiary: "$15/month per child", fundingPercent: 92 },
+                    { icon: "🏥", name: "Healthcare & checkups", costPerBeneficiary: "$12/month per child", fundingPercent: 64 }
+                ],
+                testimonial: { quote: "Before the centre, my children often missed school due to hunger. Now they learn with full bellies and even teach me what they've learned.", author: "Mary N.", role: "mother of three, Kibera", initials: "MN" },
+                impactAmounts: [
+                    { amount: 25, impact: "Feeds 2 kids for a week" },
+                    { amount: 50, impact: "School supplies for 5" },
+                    { amount: 100, impact: "Health checkups for 10" },
+                    { amount: 250, impact: "Monthly teacher salary" }
+                ],
+                monthlyGoal: 52000,
+                raisedThisMonth: 40560,
+                recentDonationTicker: { name: "Sarah", amount: 50, time: "2 min ago" },
+                donorCount: "2,400+",
                 dailyData: [120, 95, 150, 110, 180, 145, 200],
                 weeklyData: [850, 920, 780, 1100, 950],
                 monthlyData: [3200, 3800, 3500, 4200, 3900, 4500, 4100],
                 yearlyData: [42000, 48000, 52000, 58000, 64000],
                 topDonors: [
-                    { initials: "JD", amount: 5000, time: "Regular donor" },
-                    { initials: "SM", amount: 3500, time: "Monthly supporter" },
-                    { initials: "AL", amount: 2800, time: "Annual donor" },
-                    { initials: "RK", amount: 2200, time: "Quarterly donor" },
-                    { initials: "MT", amount: 1800, time: "Monthly supporter" }
+                    { name: "James Donovan", initials: "JD", amount: 5000, time: "Regular donor" },
+                    { name: "Sophia Martinez", initials: "SM", amount: 3500, time: "Monthly supporter" },
+                    { name: "African Leadership", initials: "AL", amount: 2800, time: "Annual donor" },
+                    { name: "Rahul Kapoor", initials: "RK", amount: 2200, time: "Quarterly donor" },
+                    { name: "Maria T.", initials: "MT", amount: 1800, time: "Monthly supporter" }
                 ],
                 recentDonations: [
-                    { initials: "TW", amount: 150, time: "2 hours ago" },
-                    { initials: "KP", amount: 75, time: "5 hours ago" },
-                    { initials: "LM", amount: 250, time: "1 day ago" },
-                    { initials: "BN", amount: 100, time: "1 day ago" },
-                    { initials: "DH", amount: 50, time: "2 days ago" }
+                    { name: "Tom Wilson", initials: "TW", amount: 150, time: "2 hours ago" },
+                    { name: "Kim Parker", initials: "KP", amount: 75, time: "5 hours ago" },
+                    { name: "Lisa M.", initials: "LM", amount: 250, time: "1 day ago" },
+                    { name: "Brian N.", initials: "BN", amount: 100, time: "1 day ago" },
+                    { name: "David H.", initials: "DH", amount: 50, time: "2 days ago" }
+                ],
+                galleryImages: [
+                    { src: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400", alt: "Centre activity" },
+                    { src: "https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=400", alt: "Community gathering" },
+                    { src: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400", alt: "Centre programs" },
+                    { src: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400", alt: "Beneficiaries" },
+                    { src: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400", alt: "Team" },
+                    { src: "https://images.unsplash.com/photo-1524186983913-e0c7afd5fabc?w=400", alt: "Impact" }
                 ]
             },
             mumbai: {
                 name: "Mumbai Community Centre",
-                location: "Mumbai, India",
+                location: "Dharavi, Mumbai, India",
                 image: "https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=1200",
-                totalDonations: "62,890",
-                beneficiaries: "894",
-                programs: "6",
-                established: "8",
+                statusBadge: "Verified · Top-Rated",
                 about: "Mumbai Community Centre focuses on education and skill development for underprivileged youth in the Dharavi area. Since 2016, we've helped over 800 young people access quality education and vocational training.",
+                missionDesc: "We serve over 800 youth in Dharavi. Every dollar you give goes directly to programs.",
+                activeStudents: 894,
+                attendanceRate: "88%",
+                mealsServed: "8k+",
+                annualImpact: "$48k",
+                programs: [
+                    { icon: "📚", name: "Education & literacy", costPerBeneficiary: "$22/month per youth", fundingPercent: 71 },
+                    { icon: "🔧", name: "Skills training", costPerBeneficiary: "$35/month per youth", fundingPercent: 58 },
+                    { icon: "🍲", name: "Nutrition support", costPerBeneficiary: "$12/month per youth", fundingPercent: 85 }
+                ],
+                testimonial: { quote: "The centre gave me skills I never had. Now I have a job and can support my family.", author: "Raj K.", role: "graduate, Dharavi", initials: "RK" },
+                impactAmounts: [
+                    { amount: 25, impact: "Books for 3 students" },
+                    { amount: 50, impact: "Skills training for 2 youth" },
+                    { amount: 100, impact: "Monthly nutrition for 8" },
+                    { amount: 250, impact: "Vocational course for 1" }
+                ],
+                monthlyGoal: 48000,
+                raisedThisMonth: 35200,
+                recentDonationTicker: { name: "Priya", amount: 100, time: "15 min ago" },
+                donorCount: "1,800+",
                 dailyData: [90, 110, 85, 130, 95, 140, 120],
                 weeklyData: [650, 720, 680, 850, 780],
                 monthlyData: [2400, 2800, 2600, 3100, 2900, 3400, 3200],
                 yearlyData: [32000, 38000, 42000, 48000, 52000],
                 topDonors: [
-                    { initials: "AP", amount: 4000, time: "Major donor" },
-                    { initials: "RG", amount: 3000, time: "Annual supporter" },
-                    { initials: "SK", amount: 2500, time: "Monthly donor" }
+                    { name: "Amit Patel", initials: "AP", amount: 4000, time: "Major donor" },
+                    { name: "Ravi Gupta", initials: "RG", amount: 3000, time: "Annual supporter" },
+                    { name: "Sunita Kumar", initials: "SK", amount: 2500, time: "Monthly donor" }
                 ],
                 recentDonations: [
-                    { initials: "VS", amount: 200, time: "1 hour ago" },
-                    { initials: "NP", amount: 100, time: "4 hours ago" },
-                    { initials: "MK", amount: 150, time: "1 day ago" }
+                    { name: "Vikram S.", initials: "VS", amount: 200, time: "1 hour ago" },
+                    { name: "Neha P.", initials: "NP", amount: 100, time: "4 hours ago" },
+                    { name: "Manoj K.", initials: "MK", amount: 150, time: "1 day ago" }
+                ],
+                galleryImages: [
+                    { src: "https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=400", alt: "Youth learning" },
+                    { src: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400", alt: "Skills workshop" },
+                    { src: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400", alt: "Community" },
+                    { src: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400", alt: "Team" }
                 ]
             }
         };
 
-        // Get centre ID from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const centreId = urlParams.get('id') || 'nairobi'; // Default to nairobi if no parameter
+        const centreId = urlParams.get('id') || 'nairobi';
         const centreData = centresData[centreId] || centresData.nairobi;
-
-        // Current period for chart
         let currentPeriod = 'daily';
 
-        // Load centre data
         function loadCentreData() {
             document.getElementById('centre-name').textContent = centreData.name;
             document.getElementById('breadcrumb-name').textContent = centreData.name;
-            document.getElementById('centre-location').querySelector('span').textContent = centreData.location;
+            document.getElementById('centre-location-text').textContent = centreData.location;
             document.getElementById('hero-image').src = centreData.image;
-            document.getElementById('total-donations').textContent = '$' + centreData.totalDonations;
-            document.getElementById('beneficiaries').textContent = centreData.beneficiaries;
-            document.getElementById('programs').textContent = centreData.programs;
-            document.getElementById('established').textContent = centreData.established;
-            document.getElementById('about-content').innerHTML = `<p>${centreData.about}</p>`;
+            document.getElementById('hero-image').alt = centreData.name + ' community';
+            document.getElementById('status-badge-text').textContent = centreData.statusBadge || 'Verified · Top-Rated';
+            document.getElementById('mission-desc').textContent = centreData.missionDesc || centreData.about;
+            document.getElementById('about-content').innerHTML = `<p style="font-size:1.125rem; color:var(--text-secondary);">${centreData.about}</p>`;
             document.title = centreData.name + ' - UNERA';
 
+            document.getElementById('active-students').textContent = centreData.activeStudents || '0';
+            document.getElementById('attendance-rate').textContent = centreData.attendanceRate || '0%';
+            document.getElementById('meals-served').textContent = centreData.mealsServed || '0';
+            document.getElementById('annual-impact').textContent = centreData.annualImpact || '$0';
+
+            const meterPct = centreData.monthlyGoal ? Math.round((centreData.raisedThisMonth / centreData.monthlyGoal) * 100) : 0;
+            document.getElementById('meter-label').textContent = `🎯 ${meterPct}% of monthly goal`;
+            document.getElementById('meter-value').textContent = `$${Number(centreData.raisedThisMonth || 0).toLocaleString()} / $${Number(centreData.monthlyGoal || 0).toLocaleString()}`;
+            document.getElementById('meter-fill').style.width = meterPct + '%';
+            const ticker = centreData.recentDonationTicker;
+            document.getElementById('recent-ticker').textContent = ticker ? `${ticker.name} just donated $${ticker.amount} · ${ticker.time}` : 'Recent donations support this centre';
+            document.getElementById('donor-count-text').textContent = centreData.donorCount ? `Join ${centreData.donorCount} donors who've helped this centre this year.` : "Your donation counts.";
+
+            renderProgramList();
+            renderImpactAmounts();
             renderChart(currentPeriod);
             renderTopDonors();
             renderRecentDonations();
+            renderGallery();
         }
 
-        // Render chart based on period
+        function renderProgramList() {
+            const list = document.getElementById('program-list');
+            list.innerHTML = (centreData.programs || []).map(p => `
+                <div class="program-item">
+                    <div class="program-icon">${p.icon}</div>
+                    <div class="program-content">
+                        <div class="program-header">
+                            <span>${p.name}</span>
+                            <span>${p.costPerBeneficiary}</span>
+                        </div>
+                        <div class="program-bar">
+                            <div class="program-fill" style="width: ${p.fundingPercent}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderImpactAmounts() {
+            const container = document.getElementById('suggested-amounts');
+            const amounts = centreData.impactAmounts || [
+                { amount: 25, impact: "Feeds 2 kids for a week" },
+                { amount: 50, impact: "School supplies for 5" },
+                { amount: 100, impact: "Health checkups for 10" },
+                { amount: 250, impact: "Monthly teacher salary" }
+            ];
+            container.innerHTML = amounts.map((a, i) => `
+                <button type="button" class="amount-btn ${i === 0 ? 'selected' : ''}" data-amount="${a.amount}" aria-pressed="${i === 0}">
+                    <span class="amount-value">$${a.amount}</span>
+                    <span class="amount-impact">${a.impact}</span>
+                </button>
+            `).join('');
+            container.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    container.querySelectorAll('.amount-btn').forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+                    this.classList.add('selected');
+                    this.setAttribute('aria-pressed', 'true');
+                    document.getElementById('donation-amount').value = this.dataset.amount;
+                    document.getElementById('amount-error').classList.remove('active');
+                });
+            });
+        }
+
         function renderChart(period) {
             const dataMap = {
                 daily: { data: centreData.dailyData, labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
@@ -926,13 +1257,11 @@
                 monthly: { data: centreData.monthlyData, labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] },
                 yearly: { data: centreData.yearlyData, labels: ['2020', '2021', '2022', '2023', '2024'] }
             };
-
-            const chartData = dataMap[period];
+            const chartData = dataMap[period] || dataMap.daily;
             const maxValue = Math.max(...chartData.data);
             const chartBars = document.getElementById('chart-bars');
-            
             chartBars.innerHTML = chartData.data.map((value, index) => {
-                const height = (value / maxValue) * 100;
+                const height = maxValue > 0 ? (value / maxValue) * 100 : 0;
                 return `
                     <div class="chart-bar">
                         <div class="bar-fill" style="height: ${height}%">
@@ -944,15 +1273,14 @@
             }).join('');
         }
 
-        // Render top donors
         function renderTopDonors() {
             const list = document.getElementById('top-donors-list');
-            list.innerHTML = centreData.topDonors.map(donor => `
+            list.innerHTML = (centreData.topDonors || []).map(donor => `
                 <li class="donation-item">
                     <div class="donor-info">
                         <div class="donor-avatar">${donor.initials}</div>
                         <div class="donor-details">
-                            <p>Anonymous Donor</p>
+                            <p>${donor.name}</p>
                             <span>${donor.time}</span>
                         </div>
                     </div>
@@ -961,56 +1289,113 @@
             `).join('');
         }
 
-        // Render recent donations
         function renderRecentDonations() {
             const list = document.getElementById('recent-donations-list');
-            list.innerHTML = centreData.recentDonations.map(donation => `
+            list.innerHTML = (centreData.recentDonations || []).map(d => `
                 <li class="donation-item">
                     <div class="donor-info">
-                        <div class="donor-avatar">${donation.initials}</div>
+                        <div class="donor-avatar">${d.initials}</div>
                         <div class="donor-details">
-                            <p>Anonymous Donor</p>
-                            <span>${donation.time}</span>
+                            <p>${d.name}</p>
+                            <span>${d.time}</span>
                         </div>
                     </div>
-                    <div class="donation-amount">$${donation.amount}</div>
+                    <div class="donation-amount">$${d.amount}</div>
                 </li>
             `).join('');
         }
 
-        // Handle tab switching
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            const images = centreData.galleryImages || [
+                { src: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400", alt: "Centre activity" },
+                { src: "https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=400", alt: "Community gathering" },
+                { src: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400", alt: "Centre programs" }
+            ];
+            grid.innerHTML = images.map(img => `
+                <div class="gallery-item" tabindex="0" role="button" aria-label="View ${img.alt}">
+                    <img src="${img.src}" alt="${img.alt}" loading="lazy">
+                </div>
+            `).join('');
+        }
+
+        if (centreData.testimonial) {
+            document.getElementById('testimonial-quote').textContent = '"' + centreData.testimonial.quote + '"';
+            document.getElementById('testimonial-author').textContent = centreData.testimonial.author;
+            document.getElementById('testimonial-role').textContent = centreData.testimonial.role;
+            document.getElementById('testimonial-initials').textContent = centreData.testimonial.initials;
+        }
+
         document.querySelectorAll('.stats-tab').forEach(tab => {
             tab.addEventListener('click', function() {
-                document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.stats-tab').forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-selected', 'false');
+                });
                 this.classList.add('active');
+                this.setAttribute('aria-selected', 'true');
                 currentPeriod = this.dataset.period;
                 renderChart(currentPeriod);
             });
+            tab.addEventListener('keydown', function(e) {
+                const tabs = Array.from(document.querySelectorAll('.stats-tab'));
+                let idx = tabs.indexOf(this);
+                if (e.key === 'ArrowRight' && idx < tabs.length - 1) { tabs[idx + 1].click(); tabs[idx + 1].focus(); }
+                if (e.key === 'ArrowLeft' && idx > 0) { tabs[idx - 1].click(); tabs[idx - 1].focus(); }
+            });
         });
 
-        // Donation functions
-        function setAmount(amount) {
-            document.getElementById('donation-amount').value = amount;
-        }
+        document.getElementById('donation-amount').addEventListener('input', function() {
+            document.getElementById('amount-error').classList.remove('active');
+            document.getElementById('donation-amount').setAttribute('aria-invalid', 'false');
+        });
+
+        document.querySelectorAll('.freq-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.freq-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                this.classList.add('active');
+                this.setAttribute('aria-pressed', 'true');
+            });
+        });
 
         function proceedToDonate() {
-            const amount = document.getElementById('donation-amount').value;
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid donation amount');
+            let amount = parseFloat(document.getElementById('donation-amount').value) || 0;
+            const selected = document.querySelector('.amount-btn.selected');
+            if (amount <= 0 && selected) amount = parseFloat(selected.dataset.amount) || 25;
+            if (amount <= 0) amount = 25;
+
+            if (amount < 1) {
+                document.getElementById('amount-error').classList.add('active');
+                document.getElementById('donation-amount').setAttribute('aria-invalid', 'true');
                 return;
             }
-            // Redirect to donate page with pre-filled data
-            window.location.href = `donate.html?centre=${centreId}&amount=${amount}`;
+            window.location.href = `send-enhanced.html?mode=donate&centre=${centreId}&amount=${amount}`;
         }
 
-        function scrollToDonation() {
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-            });
+        function openMenu() {
+            document.querySelector('.hamburger').classList.add('active');
+            document.querySelector('.mobile-menu').classList.add('active');
+            document.querySelector('.mobile-menu-overlay').classList.add('active');
+            document.querySelector('.hamburger').setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
         }
+        function closeMenu() {
+            document.querySelector('.hamburger').classList.remove('active');
+            document.querySelector('.mobile-menu').classList.remove('active');
+            document.querySelector('.mobile-menu-overlay').classList.remove('active');
+            document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            if (document.querySelector('.mobile-menu').classList.contains('active')) closeMenu();
+            else openMenu();
+        });
+        document.querySelector('.mobile-menu-close').addEventListener('click', closeMenu);
+        document.querySelector('.mobile-menu-overlay').addEventListener('click', closeMenu);
 
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', loadCentreData);
     </script>
 </body>
