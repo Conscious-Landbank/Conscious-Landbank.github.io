@@ -6,7 +6,7 @@
     <title>Stake Tokens - UNERA | Earn Yield</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ========== RESET & VARIABLES ========== */
         * {
@@ -35,7 +35,7 @@
             --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
             --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
             --font-display: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
@@ -1089,6 +1089,20 @@
             padding: 1rem;
         }
         .modal-overlay.active { display: flex; }
+        #walletNavItem { position: relative; display: inline-block; }
+        .nav-connect-btn { display: inline-flex; align-items: center; gap: 0.25rem; background: transparent; border: none; cursor: pointer; color: var(--text-primary); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.02em; padding: 0.5rem; }
+        .nav-connect-btn:hover { color: var(--primary-green); }
+        .nav-connect-btn .connect-chevron { width: 12px; height: 12px; }
+        .hidden { display: none !important; }
+        .wallet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 1.5rem 0 1rem; }
+        .wallet-option-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 1rem 0.5rem; background: var(--neutral-50); border: 2px solid var(--border-subtle); border-radius: 1rem; cursor: pointer; transition: all 0.2s; min-height: 88px; }
+        .wallet-option-card:hover { border-color: var(--primary-green); background: rgba(16, 185, 129, 0.02); transform: translateY(-2px); }
+        .wallet-option-card .wallet-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--neutral-100); border-radius: 0.75rem; margin-bottom: 0.5rem; }
+        .wallet-option-card .wallet-icon svg { width: 28px; height: 28px; }
+        .wallet-option-card .wallet-name { font-weight: 600; font-size: 0.875rem; color: var(--text-primary); }
+        .wallet-option-card.recommended { background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(14, 165, 233, 0.05)); border-color: rgba(16, 185, 129, 0.3); }
+        .modal-desc { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .wallet-note { margin-top: 1rem; font-size: 0.75rem; color: var(--neutral-800); }
         .modal {
             background: white;
             border-radius: 0.75rem;
@@ -1144,7 +1158,12 @@
             </a>
             <ul class="nav-links">
                 <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
-                <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+                <li id="walletNavItem">
+                    <button class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()">
+                        CONNECT
+                    </button>
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
+                </li>
                 <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
                 <li><a href="exchange.html" class="nav-link">EXCHANGE</a></li>
                 <li><a href="stake.html" class="nav-link active" aria-current="page">STAKE</a></li>
@@ -1631,6 +1650,44 @@
         </div>
     </main>
 
+    <!-- Connect Wallet Modal -->
+    <div class="modal-overlay" id="connectModal" role="dialog" aria-modal="true" onclick="if(event.target===this)closeConnectModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Connect. Contribute. Change lives.</h2>
+                <button class="modal-close" onclick="closeConnectModal()" aria-label="Close modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Unera is your gateway to impact. Select a supported wallet to authenticate and continue.</p>
+                <div class="wallet-grid">
+                    <button class="wallet-option-card recommended" onclick="handleWalletConnect('metamask')">
+                        <div class="wallet-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M20.3 5.1L13.5 9.9l1.3-3L20.3 5.1z" fill="#E17726"/><path d="M3.7 5.1l6.7 4.9-1.2-3.1L3.7 5.1z" fill="#E27625"/><path d="M8.1 11.1l-1.1 1.6 3.8.2-.1-4.1-2.6 2.3zM15.9 11.1l-2.6-2.4-.2 4.2 3.9-.2-1.1-1.6z" fill="#E27625"/><path d="M13.6 20.2v-.7l-.2-.2h-2.8l-.2.2v.7l-2.1-1.1.7.6 1.5 1h2.9l1.5-1 .7-.6-2-1z" fill="#C0AC9D"/></svg></div>
+                        <span class="wallet-name">MetaMask</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('walletconnect')">
+                        <div class="wallet-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5.5 9.5c3.5-3.5 9.2-3.5 12.7 0l.4.4c.2.2.2.5 0 .7l-1.4 1.4c-.1.1-.3.1-.4 0l-.6-.6c-2.4-2.4-6.4-2.4-8.8 0l-.6.6c-.1.1-.3.1-.4 0L4.9 10.6c-.2-.2-.2-.5 0-.7l.6-.4zm15.7 2.9l1.3 1.3c.2.2.2.5 0 .7l-5.7 5.7c-.2.2-.5.2-.7 0l-4.1-4.1c-.1-.1-.2-.1-.2 0l-4.1 4.1c-.2.2-.5.2-.7 0l-5.7-5.7c-.2-.2-.2-.5 0-.7l1.3-1.3c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0z" fill="#3B99FC"/></svg></div>
+                        <span class="wallet-name">WalletConnect</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('coinbase')">
+                        <div class="wallet-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#0052FF"/><path d="M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
+                        <span class="wallet-name">Coinbase</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('brave')">
+                        <div class="wallet-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l2 9 8 6 8-6 2-9-10-5z" fill="#FB542B"/><path d="M12 2v20M22 7H2M20 16H4" stroke="white" stroke-width="1.5"/></svg></div>
+                        <span class="wallet-name">Brave</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('ledger')">
+                        <div class="wallet-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" fill="#333"/><path d="M7 7h3v3H7V7zM14 7h3v3h-3V7zM7 14h3v3H7v-3zM14 14h3v3h-3v-3z" fill="white"/></svg></div>
+                        <span class="wallet-name">Ledger</span>
+                    </button>
+                </div>
+                <div class="wallet-note"><small>⚡ Powered by MetaMask and compatible wallets</small></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Modal (ARIA, match add-money) -->
     <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
         <div class="modal notification-modal">
@@ -2107,6 +2164,62 @@
             overlay.addEventListener('click', closeMenu);
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
         })();
+
+        function openConnectModal() {
+            const m = document.getElementById('connectModal');
+            if (m) { m.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        }
+        function closeConnectModal() {
+            const m = document.getElementById('connectModal');
+            if (m) { m.classList.remove('active'); document.body.style.overflow = ''; }
+        }
+        function handleWalletConnect(provider) {
+            const providerNames = {
+                metamask: 'MetaMask',
+                walletconnect: 'WalletConnect',
+                coinbase: 'Coinbase Wallet',
+                brave: 'Brave Wallet',
+                ledger: 'Ledger'
+            };
+            const modalBody = document.querySelector('#connectModal .modal-body');
+            const originalContent = modalBody.innerHTML;
+            modalBody.innerHTML = `
+                <div class="modal-loading" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;gap:1rem;">
+                    <div class="spinner" style="width:40px;height:40px;border:3px solid rgba(16,185,129,0.2);border-top-color:#10b981;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+                    <p style="color:var(--text-secondary,#6b7280);">Connecting to ${providerNames[provider] || provider}...</p>
+                </div>
+            `;
+            setTimeout(() => {
+                closeConnectModal();
+                modalBody.innerHTML = originalContent;
+                const demoAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f';
+                const shortAddress = demoAddress.substring(0, 6) + '...' + demoAddress.substring(demoAddress.length - 4);
+                localStorage.setItem('walletConnected', 'true');
+                localStorage.setItem('walletAddress', demoAddress);
+                localStorage.setItem('walletProvider', provider);
+                const navConnectBtn = document.getElementById('navConnectBtn');
+                const walletNavLink = document.getElementById('walletNavLink');
+                const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+                const dropdownWallet = document.getElementById('dropdownWalletAddress');
+                const disconnectItem = document.getElementById('disconnectWalletItem');
+                if (navConnectBtn) navConnectBtn.classList.add('hidden');
+                if (walletNavLink) walletNavLink.style.display = 'inline-block';
+                if (walletAddressDisplay) walletAddressDisplay.textContent = shortAddress;
+                if (dropdownWallet) dropdownWallet.textContent = shortAddress;
+                if (disconnectItem) disconnectItem.style.display = 'flex';
+                appState.walletConnected = true;
+                if (typeof updatePrereqUIFromStorage === 'function') updatePrereqUIFromStorage();
+            }, 1500);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const wc = localStorage.getItem('walletConnected') === 'true';
+            const navBtn = document.getElementById('navConnectBtn');
+            const walletLink = document.getElementById('walletNavLink');
+            if (wc && navBtn && walletLink) {
+                navBtn.classList.add('hidden');
+                walletLink.style.display = 'inline-block';
+            }
+        });
     </script>
 </body>
 </html>

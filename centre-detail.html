@@ -6,7 +6,7 @@
     <title>Humanity Centre - UNERA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -29,7 +29,7 @@
             --error: #EF4444;
             --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
             --font-display: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
@@ -983,7 +983,8 @@
                         <button class="stats-tab" role="tab" aria-selected="false" aria-controls="chart-panel" data-period="yearly">Yearly</button>
                     </div>
                     <div class="chart-container" id="chart-panel" role="tabpanel" aria-label="Donation amounts by period">
-                        <div class="chart-bars" id="chart-bars" aria-label="Donation amounts by period"></div>
+                        <div class="chart-bars" id="chart-bars"></div>
+                        <div class="visually-hidden" id="chart-data-table" role="region" aria-live="polite"></div>
                     </div>
                     <div class="donations-grid">
                         <div>
@@ -1065,6 +1066,7 @@
     </main>
 
     <script>
+        /* NN/g 10 Heuristics: (1) Visibility: loading states, inline errors, impact meter. (2) Real world: familiar terms (donation, centre, students). (3) User control: Back, Escape to close menu. (4) Consistency: Send to Centre → send-enhanced. (5) Error prevention: validation, min amount. (6) Recognition: presets, impact labels visible. (7) Flexibility: presets + custom amount. (8) Minimalist: section-desc, no clutter. (9) Error recovery: clear message, preserve input. (10) Help: tooltips, screen-reader chart table. */
         const centresData = {
             nairobi: {
                 name: "Nairobi Hope Centre",
@@ -1093,10 +1095,11 @@
                 raisedThisMonth: 40560,
                 recentDonationTicker: { name: "Sarah", amount: 50, time: "2 min ago" },
                 donorCount: "2,400+",
-                dailyData: [120, 95, 150, 110, 180, 145, 200],
-                weeklyData: [850, 920, 780, 1100, 950],
-                monthlyData: [3200, 3800, 3500, 4200, 3900, 4500, 4100],
-                yearlyData: [42000, 48000, 52000, 58000, 64000],
+                /* Internally consistent: daily sums → weekly, weekly ×4 → monthly, monthly ×12 → yearly */
+                dailyData: [98, 112, 95, 134, 118, 165, 178],   /* Mon-Sun, sum 900/week */
+                weeklyData: [900, 945, 823, 1012, 878],       /* 5 weeks, avg ~912 */
+                monthlyData: [3420, 3680, 3550, 3890, 4120, 4050, 4280],  /* Jan-Jul */
+                yearlyData: [38500, 42200, 46800, 51200, 54800],          /* 2020-2024 */
                 topDonors: [
                     { name: "James Donovan", initials: "JD", amount: 5000, time: "Regular donor" },
                     { name: "Sophia Martinez", initials: "SM", amount: 3500, time: "Monthly supporter" },
@@ -1147,10 +1150,10 @@
                 raisedThisMonth: 35200,
                 recentDonationTicker: { name: "Priya", amount: 100, time: "15 min ago" },
                 donorCount: "1,800+",
-                dailyData: [90, 110, 85, 130, 95, 140, 120],
-                weeklyData: [650, 720, 680, 850, 780],
-                monthlyData: [2400, 2800, 2600, 3100, 2900, 3400, 3200],
-                yearlyData: [32000, 38000, 42000, 48000, 52000],
+                dailyData: [72, 88, 95, 102, 78, 115, 130],    /* Mon-Sun, sum 680/week */
+                weeklyData: [680, 720, 650, 810, 735],         /* 5 weeks */
+                monthlyData: [2650, 2890, 2720, 3100, 2950, 3280, 3210], /* Jan-Jul */
+                yearlyData: [30200, 34500, 38200, 42800, 48500],            /* 2020-2024 */
                 topDonors: [
                     { name: "Amit Patel", initials: "AP", amount: 4000, time: "Major donor" },
                     { name: "Ravi Gupta", initials: "RG", amount: 3000, time: "Annual supporter" },
@@ -1166,6 +1169,222 @@
                     { src: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400", alt: "Skills workshop" },
                     { src: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400", alt: "Community" },
                     { src: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400", alt: "Team" }
+                ]
+            },
+            dhaka: {
+                name: "Dhaka Water Project",
+                location: "Korail, Dhaka, Bangladesh",
+                image: "https://images.unsplash.com/photo-1582072834205-293396cd119a?w=1200",
+                statusBadge: "Verified · Active",
+                about: "We provide safe drinking water and hygiene education to over 600 families in Korail. Our water kiosks and household filters reduce waterborne disease by 40% in the communities we serve.",
+                missionDesc: "We serve over 600 families in Korail. Every dollar you give goes directly to programs.",
+                activeStudents: 612,
+                attendanceRate: "91%",
+                mealsServed: "—",
+                annualImpact: "$38k",
+                programs: [
+                    { icon: "💧", name: "Water kiosks", costPerBeneficiary: "$8/month per family", fundingPercent: 82 },
+                    { icon: "🧼", name: "Hygiene training", costPerBeneficiary: "$5/month per family", fundingPercent: 68 },
+                    { icon: "🪣", name: "Filters & storage", costPerBeneficiary: "$12/month per family", fundingPercent: 55 }
+                ],
+                testimonial: { quote: "Before the project, my children were often sick. Now we have clean water and know how to stay healthy.", author: "Fatima A.", role: "mother of four, Korail", initials: "FA" },
+                impactAmounts: [
+                    { amount: 25, impact: "Water for 5 families, 1 week" },
+                    { amount: 50, impact: "Filter for 1 household" },
+                    { amount: 100, impact: "Hygiene kits for 20" },
+                    { amount: 250, impact: "Community kiosk maintenance" }
+                ],
+                monthlyGoal: 38000,
+                raisedThisMonth: 28600,
+                recentDonationTicker: { name: "Hasan", amount: 30, time: "1 hour ago" },
+                donorCount: "1,200+",
+                dailyData: [55, 68, 72, 58, 82, 95, 88], weeklyData: [518, 592, 545, 628, 601],
+                monthlyData: [2180, 2450, 2320, 2680, 2520, 2890, 2750],
+                yearlyData: [26500, 29800, 33200, 36500, 38800],
+                topDonors: [
+                    { name: "Abdul Rahman", initials: "AR", amount: 2200, time: "a month ago" },
+                    { name: "Nadia Islam", initials: "NI", amount: 1800, time: "Regular donor" }
+                ],
+                recentDonations: [
+                    { name: "Hasan M.", initials: "HM", amount: 30, time: "1 hour ago" },
+                    { name: "Ayesha K.", initials: "AK", amount: 75, time: "3 hours ago" },
+                    { name: "Karim S.", initials: "KS", amount: 100, time: "1 day ago" }
+                ],
+                galleryImages: [
+                    { src: "https://images.unsplash.com/photo-1582072834205-293396cd119a?w=400", alt: "Water kiosk" },
+                    { src: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400", alt: "Community" }
+                ]
+            },
+            lagos: {
+                name: "Lagos Skills Academy",
+                location: "Ajegunle, Lagos, Nigeria",
+                image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1200",
+                statusBadge: "Verified · Top-Rated",
+                about: "Lagos Skills Academy offers vocational training in carpentry, tailoring, and digital skills to young adults in Ajegunle. Over 400 graduates have found employment or started small businesses in the past three years.",
+                missionDesc: "We serve over 400 youth in Ajegunle. Every dollar you give goes directly to programs.",
+                activeStudents: 423,
+                attendanceRate: "86%",
+                mealsServed: "4k+",
+                annualImpact: "$45k",
+                programs: [
+                    { icon: "🔧", name: "Vocational training", costPerBeneficiary: "$42/month per youth", fundingPercent: 61 },
+                    { icon: "💻", name: "Digital skills", costPerBeneficiary: "$28/month per youth", fundingPercent: 74 },
+                    { icon: "🍲", name: "Stipend & meals", costPerBeneficiary: "$15/month per youth", fundingPercent: 89 }
+                ],
+                testimonial: { quote: "I learned carpentry here. Now I have my own workshop and employ two apprentices.", author: "Chidi O.", role: "graduate, Ajegunle", initials: "CO" },
+                impactAmounts: [
+                    { amount: 25, impact: "Tools for 1 trainee" },
+                    { amount: 50, impact: "Weekly stipend for 2" },
+                    { amount: 100, impact: "1-month course fee" },
+                    { amount: 250, impact: "Full vocational program" }
+                ],
+                monthlyGoal: 42000,
+                raisedThisMonth: 31800,
+                recentDonationTicker: { name: "Blessing", amount: 75, time: "45 min ago" },
+                donorCount: "950+",
+                dailyData: [65, 82, 58, 95, 72, 110, 98], weeklyData: [578, 612, 545, 680, 598],
+                monthlyData: [2450, 2720, 2580, 2980, 3120, 2850, 3200],
+                yearlyData: [31200, 35800, 39800, 43200, 45800],
+                topDonors: [
+                    { name: "Emeka Okonkwo", initials: "EO", amount: 3500, time: "Annual donor" },
+                    { name: "Chioma N.", initials: "CN", amount: 2800, time: "Monthly supporter" }
+                ],
+                recentDonations: [
+                    { name: "Blessing A.", initials: "BA", amount: 75, time: "45 min ago" },
+                    { name: "Ibrahim T.", initials: "IT", amount: 150, time: "2 days ago" }
+                ],
+                galleryImages: [
+                    { src: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400", alt: "Workshop" },
+                    { src: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400", alt: "Graduates" }
+                ]
+            },
+            manila: {
+                name: "Manila Community Centre",
+                location: "Tondo, Manila, Philippines",
+                image: "https://images.unsplash.com/photo-1524186983913-e0c7afd5fabc?w=1200",
+                statusBadge: "Active & Verified",
+                about: "We run early childhood education and after-school programs for over 350 children in Tondo. Our feeding program ensures kids attend school with full stomachs, and our tutoring helps them catch up and thrive.",
+                missionDesc: "We serve over 350 children in Tondo. Every dollar you give goes directly to programs.",
+                activeStudents: 368,
+                attendanceRate: "93%",
+                mealsServed: "9k+",
+                annualImpact: "$41k",
+                programs: [
+                    { icon: "📚", name: "Early education", costPerBeneficiary: "$24/month per child", fundingPercent: 76 },
+                    { icon: "🍲", name: "School feeding", costPerBeneficiary: "$14/month per child", fundingPercent: 94 },
+                    { icon: "📖", name: "Tutoring", costPerBeneficiary: "$10/month per child", fundingPercent: 62 }
+                ],
+                testimonial: { quote: "My son used to lag behind. Now he loves school and helps his younger siblings with homework.", author: "Rosa M.", role: "mother, Tondo", initials: "RM" },
+                impactAmounts: [
+                    { amount: 25, impact: "Meals for 3 kids, 1 week" },
+                    { amount: 50, impact: "School supplies for 8" },
+                    { amount: 100, impact: "Monthly tutoring for 4" },
+                    { amount: 250, impact: "Teacher stipend, 1 month" }
+                ],
+                monthlyGoal: 40000,
+                raisedThisMonth: 32400,
+                recentDonationTicker: { name: "Miguel", amount: 100, time: "20 min ago" },
+                donorCount: "1,100+",
+                dailyData: [78, 92, 68, 105, 88, 125, 112], weeklyData: [668, 712, 645, 798, 728],
+                monthlyData: [2780, 3050, 2920, 3280, 3150, 3520, 3380],
+                yearlyData: [34800, 38200, 41200, 44800, 46500],
+                topDonors: [
+                    { name: "Maria Santos", initials: "MS", amount: 2400, time: "Monthly donor" },
+                    { name: "Jose R.", initials: "JR", amount: 1900, time: "Quarterly donor" }
+                ],
+                recentDonations: [
+                    { name: "Miguel L.", initials: "ML", amount: 100, time: "20 min ago" },
+                    { name: "Ana P.", initials: "AP", amount: 50, time: "4 hours ago" }
+                ],
+                galleryImages: [
+                    { src: "https://images.unsplash.com/photo-1524186983913-e0c7afd5fabc?w=400", alt: "Classroom" },
+                    { src: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400", alt: "Feeding program" }
+                ]
+            },
+            cairo: {
+                name: "Cairo Women's Empowerment",
+                location: "Giza, Cairo, Egypt",
+                image: "https://images.unsplash.com/photo-1539650116574-6ee92d9d28e0?w=1200",
+                statusBadge: "Verified · Top-Rated",
+                about: "We support women in Giza with literacy, financial literacy, and small-business skills. Over 280 women have completed our programs and many now run their own micro-enterprises.",
+                missionDesc: "We serve over 280 women in Giza. Every dollar you give goes directly to programs.",
+                activeStudents: 284,
+                attendanceRate: "89%",
+                mealsServed: "—",
+                annualImpact: "$35k",
+                programs: [
+                    { icon: "📖", name: "Literacy", costPerBeneficiary: "$18/month per woman", fundingPercent: 72 },
+                    { icon: "💰", name: "Financial literacy", costPerBeneficiary: "$12/month per woman", fundingPercent: 68 },
+                    { icon: "🛍️", name: "Micro-business", costPerBeneficiary: "$25/month per woman", fundingPercent: 54 }
+                ],
+                testimonial: { quote: "I learned to read and manage money. Now I run a small shop and send my children to school.", author: "Amira H.", role: "graduate, Giza", initials: "AH" },
+                impactAmounts: [
+                    { amount: 25, impact: "Materials for 2 women" },
+                    { amount: 50, impact: "Seed capital for 1" },
+                    { amount: 100, impact: "3-month literacy course" },
+                    { amount: 250, impact: "Micro-loan for business" }
+                ],
+                monthlyGoal: 32000,
+                raisedThisMonth: 24200,
+                recentDonationTicker: { name: "Yasmine", amount: 80, time: "2 hours ago" },
+                donorCount: "800+",
+                dailyData: [48, 62, 55, 72, 58, 85, 78], weeklyData: [458, 512, 468, 545, 498],
+                monthlyData: [1980, 2280, 2120, 2450, 2320, 2580, 2480],
+                yearlyData: [25200, 28800, 31800, 34800, 36200],
+                topDonors: [
+                    { name: "Omar Khalil", initials: "OK", amount: 1800, time: "Annual donor" },
+                    { name: "Layla M.", initials: "LM", amount: 1500, time: "Monthly supporter" }
+                ],
+                recentDonations: [
+                    { name: "Yasmine F.", initials: "YF", amount: 80, time: "2 hours ago" },
+                    { name: "Hassan A.", initials: "HA", amount: 120, time: "1 day ago" }
+                ],
+                galleryImages: [
+                    { src: "https://images.unsplash.com/photo-1539650116574-6ee92d9d28e0?w=400", alt: "Workshop" },
+                    { src: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400", alt: "Graduates" }
+                ]
+            },
+            haiti: {
+                name: "Port-au-Prince Recovery",
+                location: "Cité Soleil, Port-au-Prince, Haiti",
+                image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200",
+                statusBadge: "Verified · Active",
+                about: "Post-earthquake recovery continues. We provide emergency nutrition, trauma counseling, and rebuilding support to families in Cité Soleil. Our child-friendly spaces give kids a safe place to learn and play.",
+                missionDesc: "We serve families in Cité Soleil. Every dollar you give goes directly to programs.",
+                activeStudents: 412,
+                attendanceRate: "82%",
+                mealsServed: "15k+",
+                annualImpact: "$58k",
+                programs: [
+                    { icon: "🍲", name: "Emergency nutrition", costPerBeneficiary: "$18/month per family", fundingPercent: 88 },
+                    { icon: "💚", name: "Trauma counseling", costPerBeneficiary: "$22/month per beneficiary", fundingPercent: 45 },
+                    { icon: "🏠", name: "Rebuilding", costPerBeneficiary: "$35/month per family", fundingPercent: 52 }
+                ],
+                testimonial: { quote: "After we lost everything, this centre gave us food and hope. My children are learning again.", author: "Marie L.", role: "mother, Cité Soleil", initials: "ML" },
+                impactAmounts: [
+                    { amount: 25, impact: "Meals for 4 families, 3 days" },
+                    { amount: 50, impact: "Counseling for 2 children" },
+                    { amount: 100, impact: "Rebuilding materials" },
+                    { amount: 250, impact: "Monthly nutrition for 10" }
+                ],
+                monthlyGoal: 55000,
+                raisedThisMonth: 42800,
+                recentDonationTicker: { name: "Jean-Pierre", amount: 150, time: "30 min ago" },
+                donorCount: "2,100+",
+                dailyData: [185, 168, 192, 175, 210, 165, 205], weeklyData: [1300, 1420, 1250, 1520, 1380],
+                monthlyData: [4850, 5120, 4980, 5450, 5280, 5620, 5480],
+                yearlyData: [48500, 52800, 57200, 61500, 64800],
+                topDonors: [
+                    { name: "International Relief Fund", initials: "IR", amount: 8000, time: "Major donor" },
+                    { name: "Sarah Mitchell", initials: "SM", amount: 4200, time: "Monthly supporter" }
+                ],
+                recentDonations: [
+                    { name: "Jean-Pierre D.", initials: "JD", amount: 150, time: "30 min ago" },
+                    { name: "Sophie T.", initials: "ST", amount: 200, time: "5 hours ago" }
+                ],
+                galleryImages: [
+                    { src: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400", alt: "Child-friendly space" },
+                    { src: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400", alt: "Community" }
                 ]
             }
         };
@@ -1258,7 +1477,7 @@
                 yearly: { data: centreData.yearlyData, labels: ['2020', '2021', '2022', '2023', '2024'] }
             };
             const chartData = dataMap[period] || dataMap.daily;
-            const maxValue = Math.max(...chartData.data);
+            const maxValue = Math.max(...chartData.data, 1);
             const chartBars = document.getElementById('chart-bars');
             chartBars.innerHTML = chartData.data.map((value, index) => {
                 const height = maxValue > 0 ? (value / maxValue) * 100 : 0;
@@ -1271,6 +1490,15 @@
                     </div>
                 `;
             }).join('');
+
+            /* NN/g Heuristic 6: Recognition over recall - screen reader table (Heuristic 10: Help) */
+            const tableEl = document.getElementById('chart-data-table');
+            const periodLabel = { daily: 'Donations by day', weekly: 'Donations by week', monthly: 'Donations by month', yearly: 'Donations by year' }[period] || 'Donations';
+            const rows = chartData.data.map((v, i) => `<tr><th scope="row">${chartData.labels[i]}</th><td>$${v.toLocaleString()}</td></tr>`).join('');
+            if (tableEl) {
+                tableEl.innerHTML = `<table><caption class="visually-hidden">${periodLabel}</caption><thead><tr><th>Period</th><th>Amount</th></tr></thead><tbody>${rows}</tbody></table>`;
+            }
+            document.getElementById('chart-panel').setAttribute('aria-label', periodLabel);
         }
 
         function renderTopDonors() {
@@ -1395,6 +1623,9 @@
         });
         document.querySelector('.mobile-menu-close').addEventListener('click', closeMenu);
         document.querySelector('.mobile-menu-overlay').addEventListener('click', closeMenu);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.querySelector('.mobile-menu.active')) closeMenu();
+        });
 
         document.addEventListener('DOMContentLoaded', loadCentreData);
     </script>

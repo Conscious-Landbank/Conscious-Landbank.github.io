@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nairobi Hope Centre · UNERA</title>
-    <!-- Fonts & base styles (reused from dashboard-enhanced/wallet-enhanced) -->
+    <title>Dashboard - UNERA | One Flow. Many Lives.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Wallet Integration Libraries -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
     <style>
-        /* ==================== BASE & VARIABLES (copied from dashboard/wallet) ==================== */
         * {
             margin: 0;
             padding: 0;
@@ -17,6 +21,7 @@
         }
 
         :root {
+            /* UNERA Brand Colors */
             --primary-green: #10B981;
             --primary-blue: #0EA5E9;
             --accent-pink: #EC4899;
@@ -37,15 +42,15 @@
             --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
             --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
             --font-display: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
             
             /* Accessibility */
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
-            --spacing-unit: 8px; /* 8‑point grid system [citation:8] */
         }
 
+        /* Reduced Motion Support */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -77,9 +82,12 @@
             border-radius: 0 0 8px 0;
             font-weight: 600;
         }
-        .skip-link:focus { top: 0; }
 
-        /* Navigation – exact match to dashboard */
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
         .nav {
             background: #FFFFFF;
             padding: 0 2.75rem;
@@ -89,861 +97,2979 @@
             justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 10001;
             border-bottom: 1px solid var(--border-subtle);
+            pointer-events: auto;
         }
-        .nav-left { display: flex; align-items: center; gap: 2.75rem; }
-        .nav-right { display: flex; align-items: center; gap: 1rem; }
-        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
-        .nav-brand:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
-        .nav-logo-icon { width: 28px; height: 28px; }
-        .logo { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
 
-        .back-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.875rem;
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2.75rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-brand {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-brand:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+            align-items: center;
+        }
+        
+        .nav-links li {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
             transition: color 0.2s;
-        }
-        .back-link:hover { color: var(--primary-green); }
-
-        /* Main Container – uses 8‑point grid for spacing [citation:8] */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 3);
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
         }
 
-        /* ==================== HERO SECTION (Z‑pattern layout [citation:8]) ==================== */
-        .hero {
-            position: relative;
-            height: 420px;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            margin-bottom: calc(var(--spacing-unit) * 4);
-            background-color: var(--neutral-900);
+        .nav-link:hover {
+            color: var(--primary-green);
         }
-        .hero-image {
+
+        .nav-link:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .nav-link.active {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        /* Hamburger Menu Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .hamburger:hover {
+            background: var(--neutral-200);
+        }
+
+        .hamburger:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 80%);
+
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: block;
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-menu-close:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-links {
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            padding: calc(var(--spacing-unit) * 4);
+            gap: 0.5rem;
+            list-style: none;
         }
-        .hero-content {
-            color: white;
-            max-width: 700px;
+
+        .mobile-nav-links .nav-link {
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
-        .status-badge {
+
+        .mobile-nav-links .nav-link:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-nav-links .nav-link.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+        }
+
+        /* Network Badge */
+        .network-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            border-radius: 980px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--primary-green);
-            margin-bottom: 1.5rem;
-            width: fit-content;
-        }
-        .hero-title {
-            font-family: var(--font-display);
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            line-height: 1.1;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .hero-location {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.125rem;
-            opacity: 0.95;
+            padding: 0.5rem 0.875rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            font-size: 0.813rem;
+            font-weight: 500;
+            color: var(--neutral-900);
         }
 
-        /* ==================== LAYOUT: two‑column desktop, stacked mobile ==================== */
-        .detail-layout {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: calc(var(--spacing-unit) * 4);
-            align-items: start;
+        .network-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10B981;
+            animation: pulse-network 2s ease-in-out infinite;
         }
-        @media (max-width: 1024px) {
-            .detail-layout {
-                grid-template-columns: 1fr;
-                gap: calc(var(--spacing-unit) * 3);
+
+        @keyframes pulse-network {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
             }
         }
 
-        /* ==================== LEFT COLUMN – IMPACT & INFO ==================== */
-        .left-column {
-            display: flex;
-            flex-direction: column;
-            gap: calc(var(--spacing-unit) * 3);
+        .network-name {
+            font-family: var(--font-body);
         }
 
-        /* Impact Cards (quick stats) – from dashboard style */
-        .impact-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
+        /* User Profile in Nav */
+        .user-profile-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
         }
-        .impact-card {
+
+        .user-profile-nav:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .user-avatar-nav {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.813rem;
+        }
+
+        .user-name-nav {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-800);
+        }
+
+        /* User Dropdown in Nav */
+        .user-dropdown-nav {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            width: 280px;
             background: white;
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            border: 2px solid var(--border-subtle);
-            transition: all 0.3s;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 1000;
+            overflow: hidden;
         }
-        .impact-card:hover { border-color: var(--primary-green); box-shadow: 0 8px 24px rgba(16,185,129,0.12); }
-        .impact-value {
+
+        .user-dropdown-nav.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header-nav {
+            padding: 1.25rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .dropdown-user-info-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .dropdown-avatar-nav {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .dropdown-user-details-nav {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-user-name-nav {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--neutral-900);
+            margin-bottom: 0.125rem;
+        }
+
+        .dropdown-user-email-nav {
+            font-size: 0.813rem;
+            color: var(--neutral-600);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dropdown-wallet-badge-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-family: var(--font-body);
+            color: #0F766E;
+            font-weight: 600;
+        }
+
+        .dropdown-wallet-badge-nav svg {
+            stroke: #10B981;
+        }
+
+        .dropdown-menu-nav {
+            padding: 0.5rem;
+        }
+
+        .dropdown-section-nav {
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-section-title-nav {
+            font-size: 0.688rem;
+            font-weight: 700;
+            color: var(--neutral-600);
+            letter-spacing: 0.05em;
+            padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .dropdown-item-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item-nav:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: #0F766E;
+        }
+
+        .dropdown-item-nav svg {
+            stroke: currentColor;
+            flex-shrink: 0;
+        }
+
+        .dropdown-divider-nav {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.06);
+            margin: 0.5rem 0;
+        }
+
+        /* Connect Button in Nav (Uniswap-style) */
+        #walletNavItem {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #walletNavLink {
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .nav-connect-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: transparent;
+            border: none;
+            cursor: pointer !important;
+            position: relative;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 0.5rem;
+            border-radius: 4px;
+            color: var(--text-primary);
+            line-height: 1;
+            z-index: 10002;
+            pointer-events: auto !important;
+        }
+
+        .nav-connect-btn:hover {
+            color: var(--primary-green);
+        }
+
+        .connect-chevron {
+            transition: transform 0.2s;
+        }
+
+        .nav-connect-btn.active .connect-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Connect Wallet Dropdown (copied from user-dropdown-nav pattern) */
+        .connect-dropdown {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            left: 0;
+            width: 320px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .connect-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .connect-dropdown-header {
+            padding: 1.25rem 1.5rem 1rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .connect-dropdown-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            font-family: var(--font-display);
+        }
+
+        .connect-dropdown-options {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .connect-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: left;
+            font-size: 0.938rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+        }
+
+        .connect-option:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+            transform: translateY(-1px);
+        }
+
+        .connect-option-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--neutral-100);
+            border-radius: 0.5rem;
+        }
+
+        #walletNavItem {
+            position: relative;
+        }
+
+        /* Mobile User Profile Accordion */
+        .mobile-user-profile {
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.05);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .mobile-user-profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .mobile-user-profile-header:hover {
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .mobile-user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .mobile-user-details {
+            flex: 1;
+        }
+
+        .mobile-user-name {
+            font-weight: 600;
+            font-size: 0.938rem;
+            color: var(--neutral-900);
+            margin-bottom: 0.125rem;
+        }
+
+        .mobile-user-email {
+            font-size: 0.813rem;
+            color: var(--neutral-600);
+        }
+
+        .mobile-user-chevron {
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-user-chevron.open {
+            transform: rotate(180deg);
+        }
+
+        .mobile-user-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: white;
+        }
+
+        .mobile-user-dropdown.open {
+            max-height: 500px;
+        }
+
+        .mobile-user-dropdown-content {
+            padding: 0.5rem;
+        }
+
+        .mobile-wallet-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 0.5rem;
+            font-size: 0.813rem;
+            font-family: var(--font-body);
+            color: #0F766E;
+            font-weight: 600;
+            margin: 0.5rem 0.5rem 1rem;
+        }
+
+        .mobile-dropdown-section {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-dropdown-section-title {
+            font-size: 0.688rem;
+            font-weight: 700;
+            color: var(--neutral-600);
+            letter-spacing: 0.05em;
+            padding: 0.75rem 0.75rem 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .mobile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.938rem;
+        }
+
+        .mobile-dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: #0F766E;
+        }
+
+        .mobile-dropdown-item svg {
+            stroke: currentColor;
+            flex-shrink: 0;
+        }
+
+        .mobile-dropdown-divider {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.06);
+            margin: 0.5rem 0;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2.75rem 4rem;
+        }
+
+        /* KYC Alert Banner - System Status */
+        .alert-banner {
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-text {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            font-size: 0.938rem;
+            text-align: left;
+        }
+
+        .alert-description {
+            font-size: 0.875rem;
+            opacity: 0.95;
+            text-align: left;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .alert-cta {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #F97316;
+            border: none;
+            border-radius: 980px;
+            font-weight: 600;
+            font-size: 0.938rem;
+            min-height: 46px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .alert-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .alert-dismiss {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .alert-dismiss:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .welcome-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Impact Stats Section - Enhanced & Interactive */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
             font-family: var(--font-display);
             font-size: 1.75rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-        .impact-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-        @media (max-width: 640px) {
-            .impact-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* Section Cards */
-        .section-card {
+        .view-all-link {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.938rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: gap 0.2s;
+        }
+
+        .view-all-link:hover {
+            gap: 0.625rem;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Enhanced Impact Cards - Interactive & Accessible */
+        .impact-card {
             background: white;
-            border-radius: 1.5rem;
+            border-radius: 1.25rem;
             padding: 2rem;
             border: 2px solid var(--border-subtle);
-        }
-        .section-title {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-        }
-
-        /* Program breakdown (visual storytelling [citation:1][citation:6]) */
-        .program-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        .program-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .program-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(16,185,129,0.1);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        .program-content { flex: 1; }
-        .program-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        .program-bar {
-            height: 8px;
-            background: var(--neutral-200);
-            border-radius: 980px;
-            overflow: hidden;
-        }
-        .program-fill {
-            height: 100%;
-            background: var(--gradient-primary);
-            border-radius: 980px;
-            width: 0%;
-        }
-
-        /* Testimonial (social proof) */
-        .testimonial {
-            background: var(--neutral-100);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin: 1.5rem 0 0;
-            border-left: 4px solid var(--primary-green);
-        }
-        .testimonial-text {
-            font-style: italic;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        /* ==================== DONATION STATISTICS (exactly as requested) ==================== */
-        .stats-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--neutral-200);
-            padding-bottom: 0.5rem;
-        }
-        .stats-tab {
-            padding: 0.5rem 1rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.938rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 0.5rem;
-        }
-        .stats-tab:hover { background: var(--neutral-100); }
-        .stats-tab.active {
-            color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.1);
-        }
-        .chart-container { margin-bottom: 2rem; }
-        .chart-bars {
-            display: flex;
-            align-items: flex-end;
-            gap: 1rem;
-            height: 200px;
-            padding: 1rem 0;
-        }
-        .chart-bar {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .bar-fill {
-            width: 100%;
-            background: var(--gradient-primary);
-            border-radius: 0.5rem 0.5rem 0 0;
             transition: all 0.3s;
-            position: relative;
-        }
-        .bar-fill:hover { opacity: 0.8; }
-        .bar-value {
-            position: absolute;
-            top: -1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-        }
-        .bar-label { font-size: 0.75rem; color: var(--text-secondary); }
-
-        .donations-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        .donation-list { list-style: none; }
-        .donation-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        .donation-item:last-child { border-bottom: none; }
-        .donor-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .donor-avatar {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-        .donor-details p { font-weight: 500; }
-        .donor-details span { font-size: 0.813rem; color: var(--text-secondary); }
-        .donation-amount {
-            font-weight: 700;
-            color: var(--primary-green);
-        }
-
-        /* Gallery – 3:2 aspect ratio [citation:3] */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-        .gallery-item {
-            aspect-ratio: 3/2;
-            border-radius: 0.75rem;
-            overflow: hidden;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
-        .gallery-item img {
-            width: 100%; height: 100%;
-            object-fit: cover;
+
+        .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
             transition: transform 0.3s;
         }
-        .gallery-item:hover img { transform: scale(1.05); }
 
-        /* ==================== RIGHT COLUMN – STICKY DONATION CONTAINER ==================== */
-        .right-column {
-            position: sticky;
-            top: calc(44px + 2rem);
-            align-self: start;
-        }
-        .donation-container {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            border: 2px solid var(--border-subtle);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-        }
-        .donation-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .donation-title {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .donation-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.938rem;
+        .impact-card:hover::before {
+            transform: scaleX(1);
         }
 
-        /* Suggested amounts (impact‑linked, anchored higher [citation:1]) */
-        .suggested-amounts {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .amount-btn {
-            padding: 1rem 0.5rem;
-            background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            line-height: 1.3;
-        }
-        .amount-btn:hover {
+        .impact-card:hover {
             border-color: var(--primary-green);
-            background: rgba(16,185,129,0.02);
-            transform: translateY(-2px);
-        }
-        .amount-btn.selected {
-            border-color: var(--primary-green);
-            background: rgba(16,185,129,0.08);
-        }
-        .amount-value {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            color: var(--text-primary);
-        }
-        .amount-impact {
-            font-size: 0.75rem;
-            color: var(--primary-green);
-            font-weight: 500;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
+            transform: translateY(-6px);
         }
 
-        /* Custom amount input */
-        .custom-amount { margin-bottom: 1.5rem; }
-        .amount-input-wrapper { position: relative; }
-        .currency-symbol {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--neutral-600);
-        }
-        .amount-input {
-            width: 100%;
-            padding: 1rem 1rem 1rem 2.5rem;
-            border: 2px solid var(--border-subtle);
-            border-radius: 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            font-family: var(--font-display);
-            transition: border 0.2s;
-        }
-        .amount-input:focus {
-            outline: none;
-            border-color: var(--primary-green);
-            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
-        }
-
-        /* Monthly toggle – set as default [citation:1] */
-        .frequency-toggle {
-            display: flex;
-            gap: 0.5rem;
-            background: var(--neutral-100);
-            padding: 0.25rem;
-            border-radius: 980px;
-            margin-bottom: 1.5rem;
-        }
-        .freq-btn {
-            flex: 1;
-            padding: 0.75rem;
-            border: none;
-            background: transparent;
-            border-radius: 980px;
-            font-weight: 600;
-            font-size: 0.938rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .freq-btn.active {
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            color: var(--primary-green);
-        }
-
-        /* Payment methods – digital wallets first [citation:4][citation:9] */
-        .payment-methods {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .wallet-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            padding: 1rem;
-            border: 2px solid var(--border-subtle);
-            border-radius: 0.75rem;
-            background: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .wallet-btn:hover {
-            border-color: var(--primary-green);
-            background: rgba(16,185,129,0.02);
-        }
-        .wallet-btn.primary {
-            background: #000;
-            border-color: #000;
-            color: white;
-        }
-        .wallet-btn.primary:hover { background: #1a1a1a; }
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: var(--neutral-500);
-            font-size: 0.813rem;
-            margin: 0.5rem 0;
-        }
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: var(--border-subtle);
-        }
-
-        /* Impact meter (real-time social proof [citation:6]) */
-        .impact-meter {
-            background: rgba(16,185,129,0.05);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin-top: 1.5rem;
-        }
-        .meter-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-            font-size: 0.875rem;
-        }
-        .meter-bar {
-            height: 8px;
-            background: var(--neutral-200);
-            border-radius: 980px;
-            overflow: hidden;
-            margin-bottom: 0.75rem;
-        }
-        .meter-fill {
-            height: 100%;
-            width: 65%;
-            background: var(--gradient-primary);
-            border-radius: 980px;
-        }
-        .recent-donation {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.813rem;
-            color: var(--text-secondary);
-            padding: 0.75rem 0 0;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        /* ==================== MOBILE DONATION FLOW (progressive disclosure [citation:1]) ==================== */
-        @media (max-width: 1024px) {
-            .right-column { position: static; }
-            .donation-container {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 50;
-                border-radius: 1.5rem 1.5rem 0 0;
-                padding: 1.5rem;
-                box-shadow: 0 -8px 32px rgba(0,0,0,0.1);
-                transform: translateY(0);
-                transition: transform 0.3s;
-            }
-            body.donation-expanded .donation-container {
-                transform: translateY(0);
-            }
-            .mobile-donation-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 1rem;
-                cursor: pointer;
-            }
-        }
-
-        /* ==================== UTILITY CLASSES ==================== */
-        .btn {
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: var(--font-body);
-            width: 100%;
-        }
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: 0 4px 12px rgba(16,185,129,0.25);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(16,185,129,0.35);
-        }
-
-        /* Keyboard focus (accessibility) */
-        *:focus-visible {
+        .impact-card:focus {
             outline: 3px solid var(--primary-green);
             outline-offset: 2px;
         }
+
+        .impact-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .impact-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        .info-tooltip {
+            width: 24px;
+            height: 24px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: help;
+            position: relative;
+        }
+
+        .info-tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 12px);
+            right: 0;
+            padding: 0.75rem 1rem;
+            background: var(--neutral-900);
+            color: white;
+            font-size: 0.813rem;
+            font-weight: 400;
+            border-radius: 0.75rem;
+            white-space: nowrap;
+            max-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            line-height: 1.5;
+        }
+
+        .info-tooltip:hover::after,
+        .info-tooltip:focus::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .impact-value {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .impact-label {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .impact-detail {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .impact-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(5, 150, 105, 0.1);
+            border-radius: 980px;
+            font-size: 0.813rem;
+            font-weight: 700;
+            color: var(--success);
+            margin-top: 0.75rem;
+        }
+
+        /* Quick Actions Grid - Matching Wallet Style */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .action-card:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Primary CTA - Donate */
+        .action-card.primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .action-card.primary:hover {
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+            transform: translateY(-6px) scale(1.02);
+        }
+
+        .action-card.primary .action-card-icon {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .action-card.primary .action-card-title,
+        .action-card.primary .action-card-desc {
+            color: white;
+        }
+
+        /* Recommended Badge */
+        .recommended-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 980px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .action-card-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .action-card-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: currentColor;
+        }
+
+        .action-card-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Recent Activity Feed - Enhanced */
+        .activity-section {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            border: 2px solid var(--border-subtle);
+            margin-bottom: 3rem;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .activity-item:hover {
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+        }
+
+        .activity-icon.donation {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .activity-icon.yield {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* Confirmation modal icon – matches activity-icon style (48px, emoji, soft gradient) */
+        #confirmationModal .confirmation-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.375rem;
+            font-size: 1rem;
+        }
+
+        .activity-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.813rem;
+            color: var(--neutral-500);
+        }
+
+        .activity-amount {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .activity-amount-value {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-amount-detail {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+        }
+
+        /* Supported Centres - Enhanced & Clickable */
+        .centres-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .centre-card {
+            background: white;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            border: 2px solid var(--border-subtle);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .centre-card::after {
+            content: '→';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--primary-green);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .centre-card:hover::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .centre-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.2);
+            transform: translateY(-6px);
+        }
+
+        .centre-card:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .centre-image-wrapper {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .centre-image-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+            z-index: 1;
+        }
+
+        .centre-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .centre-card:hover .centre-image {
+            transform: scale(1.08);
+        }
+
+        .centre-info {
+            padding: 1.5rem;
+        }
+
+        .centre-name {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .centre-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .centre-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .centre-stat {
+            text-align: center;
+        }
+
+        .centre-stat-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .centre-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 1.25rem;
+            border: 2px dashed var(--border-subtle);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            opacity: 0.2;
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-text {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .empty-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 980px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: var(--font-body);
+        }
+
+        .empty-action:hover {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 1.5rem 1.5rem 3rem;
+            }
+
+            .page-title {
+                font-size: 2.25rem;
+            }
+
+            .impact-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .user-profile-nav {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .container {
+                padding: 1rem 1rem 2rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .alert-banner {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .alert-actions {
+                width: 100%;
+                justify-content: space-between;
+                padding-left: 2.5rem; /* Align with alert text (icon 24px + gap 16px) */
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .centres-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-item {
+                flex-direction: column;
+                text-align: left;
+            }
+
+            .activity-amount {
+                text-align: center;
+                width: 100%;
+            }
+
+            .activity-amount-value {
+                text-align: left;
+            }
+
+            .activity-amount-detail {
+                text-align: left;
+            }
+        }
+
+        /* ========================================
+           ENHANCED MOBILE RESPONSIVENESS  
+           ======================================== */
+
+        /* Small screens (480px and below) */
+        @media (max-width: 480px) {
+            .dashboard-header {
+                padding: 1rem;
+            }
+
+            .dashboard-title {
+                font-size: 1.25rem;
+            }
+
+            /* Single column for stats */
+            .impact-stats {
+                grid-template-columns: 1fr !important;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.25rem;
+            }
+
+            .stat-value {
+                font-size: 1.75rem;
+            }
+
+            /* Action cards in single column */
+            .actions-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem;
+            }
+
+            .action-card {
+                padding: 1.25rem;
+            }
+
+            /* Form inputs - prevent iOS zoom */
+            input,
+            select,
+            textarea,
+            .form-input {
+                font-size: 16px !important;
+            }
+
+            /* Touch targets minimum 44px */
+            button,
+            .btn,
+            a.action-link {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 375px) {
+            .dashboard-header {
+                padding: 0.75rem;
+            }
+
+            .dashboard-title {
+                font-size: 1.125rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .action-card {
+                padding: 1rem;
+            }
+
+            .action-title {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Images responsiveness */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* High Contrast Mode */
+        @media (prefers-contrast: high) {
+            .impact-card,
+            .action-card,
+            .centre-card {
+                border-width: 3px;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 3px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #64748B;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-100);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Connect modal: no scrollbar */
+        #connectModal .modal {
+            overflow: visible;
+            max-height: none;
+        }
+        #connectModal .modal-body {
+            overflow: visible;
+        }
+
+        /* Notification Modal Specific Styles */
+        .notification-modal .modal-body {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .notification-icon.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .notification-icon.info {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+        }
+
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: none;
+        }
+
+        .notification-modal .modal-footer .btn {
+            width: 100%;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .modal-desc {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .wallet-option-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1rem 0.5rem;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            gap: 0.5rem;
+        }
+
+        .wallet-option-card:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+
+        .wallet-option-card:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .wallet-option-card .wallet-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wallet-option-card .wallet-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .wallet-option-card .wallet-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .wallet-option-card.recommended {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(14, 165, 233, 0.05));
+            border-color: var(--primary-green);
+        }
+
+        .wallet-note {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 1rem 0 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .wallet-note small {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 480px) {
+            .wallet-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hide elements as needed */
+        .hidden {
+            display: none !important;
+        }
     </style>
+    
+    <!-- Wallet Prompt System -->
+    <script src="wallet-prompt.js"></script>
 </head>
 <body>
+    <!-- Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Navigation (exact match to dashboard) -->
-    <nav class="nav">
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-left">
-            <a href="index.html" class="nav-brand">
-                <svg class="nav-logo-icon" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="#99F6E4"/><circle cx="70" cy="70" r="45" fill="#14B8A6"/><circle cx="70" cy="70" r="30" fill="#0F766E"/><circle cx="70" cy="70" r="15" fill="#FFFFFF"/></svg>
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
                 <div class="logo">UNERA</div>
             </a>
+            <ul class="nav-links">
+                <li><a href="dashboard-enhanced.html" class="nav-link active" aria-current="page">DASHBOARD</a></li>
+                <li id="walletNavItem">
+                    <!-- Shown when wallet is NOT connected -->
+                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">
+                        CONNECT
+                    </button>
+                    <!-- Shown when wallet IS connected -->
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
+                </li>
+                <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+                <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+            </ul>
         </div>
-        <a href="explore-centres.html" class="back-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back to Centres
-        </a>
+        <div class="nav-right">
+            <!-- Network Badge (Shows when wallet connected) -->
+            <div class="network-badge" id="networkBadge" style="display: none;">
+                <span class="network-indicator"></span>
+                <span class="network-name"></span>
+            </div>
+            
+            <div class="user-profile-nav" onclick="toggleUserDropdown()" id="userProfile">
+                <div class="user-avatar-nav">JS</div>
+                <div class="user-name-nav">Jane Smith</div>
+                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                    <div class="dropdown-header-nav">
+                        <div class="dropdown-user-info-nav">
+                            <div class="dropdown-avatar-nav">JS</div>
+                            <div class="dropdown-user-details-nav">
+                                <div class="dropdown-user-name-nav">Jane Smith</div>
+                                <div class="dropdown-user-email-nav">jane@example.com</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-wallet-badge-nav">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <path d="M2 10h20"/>
+                            </svg>
+                            <span id="dropdownWalletAddress">0x742d...3a8f</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-menu-nav">
+                        <div class="dropdown-section-nav">
+                            <div class="dropdown-section-title-nav">ACCOUNT</div>
+                            <a href="account-settings.html" class="dropdown-item-nav">
+                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                My Profile
+                            </a>
+                            <a href="account-settings.html" class="dropdown-item-nav">
+                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Account Settings
+                            </a>
+                        </div>
+                        <div class="dropdown-divider-nav"></div>
+                        <a href="wallet-enhanced.html" class="dropdown-item-nav">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <path d="M2 10h20"/>
+                            </svg>
+                            My Wallet
+                        </a>
+                        <a href="dashboard-enhanced.html" class="dropdown-item-nav">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <div class="dropdown-divider-nav"></div>
+                        <!-- Disconnect Wallet (shown when wallet connected) -->
+                        <a href="#" class="dropdown-item-nav" id="disconnectWalletItem" onclick="disconnectWallet(); return false;" style="display: none;">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/>
+                            </svg>
+                            Disconnect Wallet
+                        </a>
+                        <a href="#" class="dropdown-item-nav" onclick="logout(); return false;">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Log Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
     </nav>
 
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link active" aria-current="page">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+            <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+        </ul>
+        <!-- Mobile User Profile Accordion -->
+        <div class="mobile-user-profile">
+            <div class="mobile-user-profile-header" onclick="toggleMobileUserDropdown()">
+                <div class="mobile-user-info">
+                    <div class="mobile-user-avatar">JS</div>
+                    <div class="mobile-user-details">
+                        <div class="mobile-user-name">Jane Smith</div>
+                        <div class="mobile-user-email">jane@example.com</div>
+                    </div>
+                </div>
+                <svg class="mobile-user-chevron" id="mobileUserChevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </div>
+            <div class="mobile-user-dropdown" id="mobileUserDropdown">
+                <div class="mobile-user-dropdown-content">
+                    <div class="mobile-wallet-badge">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <path d="M2 10h20"/>
+                        </svg>
+                        <span id="mobileDropdownWalletAddress">0x742d...3a8f</span>
+                    </div>
+                    <div class="mobile-dropdown-section">
+                        <div class="mobile-dropdown-section-title">ACCOUNT</div>
+                        <a href="account-settings.html" class="mobile-dropdown-item">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            My Profile
+                        </a>
+                        <a href="account-settings.html" class="mobile-dropdown-item">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Account Settings
+                        </a>
+                    </div>
+                    <div class="mobile-dropdown-divider"></div>
+                    <a href="wallet-enhanced.html" class="mobile-dropdown-item">
+                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <path d="M2 10h20"/>
+                        </svg>
+                        My Wallet
+                    </a>
+                    <a href="dashboard-enhanced.html" class="mobile-dropdown-item">
+                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <div class="mobile-dropdown-divider"></div>
+                    <!-- Disconnect Wallet (shown when wallet connected) -->
+                    <a href="#" class="mobile-dropdown-item" id="disconnectWalletItemMobile" onclick="disconnectWallet(); return false;" style="display: none;">
+                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/>
+                        </svg>
+                        Disconnect Wallet
+                    </a>
+                    <a href="#" class="mobile-dropdown-item" onclick="logout(); return false;">
+                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
     <main id="main-content" class="container">
-        <!-- Hero (Z‑pattern [citation:8]) -->
-        <div class="hero">
-            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1400&q=80" alt="Nairobi Hope Centre community" class="hero-image">
-            <div class="hero-overlay">
-                <div class="hero-content">
-                    <div class="status-badge">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                        Verified · Top‑Rated
-                    </div>
-                    <h1 class="hero-title">Nairobi Hope Centre</h1>
-                    <div class="hero-location">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                        <span>Kibera, Nairobi, Kenya</span>
-                    </div>
+        <!-- KYC Alert Banner - System Status Visibility -->
+        <div class="alert-banner" role="alert" aria-live="polite" id="kycAlert">
+            <div class="alert-content">
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <div class="alert-text">
+                    <div class="alert-title">🔒 Complete Your Verification</div>
+                    <div class="alert-description">Verify your identity to unlock full features and increase transaction limits</div>
                 </div>
+            </div>
+            <div class="alert-actions">
+                <button class="alert-cta" onclick="window.location.href='kyc-verify.html'" aria-label="Start verification process">
+                    Verify Now
+                </button>
+                <button class="alert-dismiss" onclick="dismissAlert()" aria-label="Dismiss alert">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
             </div>
         </div>
 
-        <!-- Two‑column layout -->
-        <div class="detail-layout">
-            <!-- LEFT COLUMN: Impact & Information -->
-            <div class="left-column">
-                <!-- Quick Impact Stats -->
-                <div class="impact-grid">
-                    <div class="impact-card"><div class="impact-value">542</div><div class="impact-label">Active Students</div></div>
-                    <div class="impact-card"><div class="impact-value">94%</div><div class="impact-label">Attendance Rate</div></div>
-                    <div class="impact-card"><div class="impact-value">12k+</div><div class="impact-label">Meals Served</div></div>
-                    <div class="impact-card"><div class="impact-value">$52k</div><div class="impact-label">Annual Impact</div></div>
-                </div>
+        <!-- Page Header -->
+        <header class="page-header">
+            <p class="welcome-text">Welcome back,</p>
+            <h1 class="page-title">Jane Smith</h1>
+            <p class="page-subtitle">One Flow. Many Lives. - Track your impact and manage your contributions</p>
+        </header>
 
-                <!-- About & Mission -->
-                <div class="section-card">
-                    <h2 class="section-title">Our Mission</h2>
-                    <p class="about-text" style="font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 1.5rem;">We provide quality education, essential healthcare, and nutrition programs to over 500 children in Africa’s largest urban slum. Our holistic approach includes mental health support, family counseling, and community development initiatives.</p>
-                    
-                    <!-- Program breakdown with impact bars -->
-                    <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin: 2rem 0 1rem;">How your donation helps</h3>
-                    <div class="program-list">
-                        <div class="program-item">
-                            <div class="program-icon">📚</div>
-                            <div class="program-content">
-                                <div class="program-header"><span>Education & supplies</span><span>$28/month per child</span></div>
-                                <div class="program-bar"><div class="program-fill" style="width: 78%"></div></div>
-                            </div>
-                        </div>
-                        <div class="program-item">
-                            <div class="program-icon">🍲</div>
-                            <div class="program-content">
-                                <div class="program-header"><span>Daily meals</span><span>$15/month per child</span></div>
-                                <div class="program-bar"><div class="program-fill" style="width: 92%"></div></div>
-                            </div>
-                        </div>
-                        <div class="program-item">
-                            <div class="program-icon">🏥</div>
-                            <div class="program-content">
-                                <div class="program-header"><span>Healthcare & checkups</span><span>$12/month per child</span></div>
-                                <div class="program-bar"><div class="program-fill" style="width: 64%"></div></div>
-                            </div>
-                        </div>
+        <!-- Impact Statistics Section - Enhanced & Interactive -->
+        <section aria-labelledby="impact-title">
+            <div class="impact-grid">
+                <!-- Total Balance Card - Interactive -->
+                <div class="impact-card" 
+                     role="button" 
+                     tabindex="0" 
+                     aria-label="Total balance: $10,240.00"
+                     onclick="showImpactDetail('balance')">
+                    <div class="impact-card-header">
+                        <div class="impact-icon" aria-hidden="true">💰</div>
+                        <span class="info-tooltip" 
+                              tabindex="0" 
+                              role="tooltip" 
+                              data-tooltip="Your total wallet balance across all assets"
+                              aria-label="Information about total balance">i</span>
                     </div>
-
-                    <!-- Beneficiary testimonial -->
-                    <div class="testimonial">
-                        <div class="testimonial-text">“Before the centre, my children often missed school due to hunger. Now they learn with full bellies and even teach me what they've learned.”</div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">MN</div>
-                            <div><strong>Mary N.</strong> · mother of three, Kibera</div>
-                        </div>
+                    <div class="impact-value">$10,240</div>
+                    <div class="impact-label">Total Balance</div>
+                    <div class="impact-detail">Available in wallet</div>
+                    <div class="impact-trend" role="status">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +$2,400 this month
                     </div>
                 </div>
 
-                <!-- Donation Statistics (kept exactly as requested) -->
-                <section class="section-card">
-                    <h2 class="section-title">Donation Statistics</h2>
-                    <div class="stats-tabs">
-                        <button class="stats-tab active" data-period="daily">Daily</button>
-                        <button class="stats-tab" data-period="weekly">Weekly</button>
-                        <button class="stats-tab" data-period="monthly">Monthly</button>
-                        <button class="stats-tab" data-period="yearly">Yearly</button>
+                <!-- Yield Generated Card -->
+                <div class="impact-card" 
+                     role="button" 
+                     tabindex="0" 
+                     aria-label="Yield generated: $486.50"
+                     onclick="showImpactDetail('yield')">
+                    <div class="impact-card-header">
+                        <div class="impact-icon" aria-hidden="true">📈</div>
+                        <span class="info-tooltip" 
+                              tabindex="0" 
+                              role="tooltip" 
+                              data-tooltip="Yield generated from your stablecoin reserves - 100% goes to impact"
+                              aria-label="Information about yield">i</span>
                     </div>
-                    <div class="chart-container">
-                        <div class="chart-bars" id="chart-bars">
-                            <!-- Dummy daily data -->
-                            <div class="chart-bar"><div class="bar-fill" style="height: 60%"><span class="bar-value">$120</span></div><div class="bar-label">Mon</div></div>
-                            <div class="chart-bar"><div class="bar-fill" style="height: 47.5%"><span class="bar-value">$95</span></div><div class="bar-label">Tue</div></div>
-                            <div class="chart-bar"><div class="bar-fill" style="height: 75%"><span class="bar-value">$150</span></div><div class="bar-label">Wed</div></div>
-                            <div class="chart-bar"><div class="bar-fill" style="height: 55%"><span class="bar-value">$110</span></div><div class="bar-label">Thu</div></div>
-                            <div class="chart-bar"><div class="bar-fill" style="height: 90%"><span class="bar-value">$180</span></div><div class="bar-label">Fri</div></div>
-                            <div class="chart-bar"><div class="bar-fill" style="height: 72.5%"><span class="bar-value">$145</span></div><div class="bar-label">Sat</div></div>
-                            <div class="chart-bar"><div class="bar-fill" style="height: 100%"><span class="bar-value">$200</span></div><div class="bar-label">Sun</div></div>
-                        </div>
-                    </div>
-
-                    <div class="donations-grid">
-                        <div>
-                            <h3 style="margin-bottom: 1rem; font-weight: 600;">Top Donors</h3>
-                            <ul class="donation-list">
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">JD</div><div class="donor-details"><p>James Donovan</p><span>Regular donor</span></div></div><div class="donation-amount">$5,000</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">SM</div><div class="donor-details"><p>Sophia Martinez</p><span>Monthly supporter</span></div></div><div class="donation-amount">$3,500</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">AL</div><div class="donor-details"><p>African Leadership</p><span>Annual donor</span></div></div><div class="donation-amount">$2,800</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">RK</div><div class="donor-details"><p>Rahul Kapoor</p><span>Quarterly donor</span></div></div><div class="donation-amount">$2,200</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">MT</div><div class="donor-details"><p>Maria T.</p><span>Monthly supporter</span></div></div><div class="donation-amount">$1,800</div></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 style="margin-bottom: 1rem; font-weight: 600;">Recent Donations</h3>
-                            <ul class="donation-list">
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">TW</div><div class="donor-details"><p>Tom Wilson</p><span>2 hours ago</span></div></div><div class="donation-amount">$150</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">KP</div><div class="donor-details"><p>Kim Parker</p><span>5 hours ago</span></div></div><div class="donation-amount">$75</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">LM</div><div class="donor-details"><p>Lisa M.</p><span>1 day ago</span></div></div><div class="donation-amount">$250</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">BN</div><div class="donor-details"><p>Brian N.</p><span>1 day ago</span></div></div><div class="donation-amount">$100</div></li>
-                                <li class="donation-item"><div class="donor-info"><div class="donor-avatar">DH</div><div class="donor-details"><p>David H.</p><span>2 days ago</span></div></div><div class="donation-amount">$50</div></li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Gallery -->
-                <div class="section-card">
-                    <h2 class="section-title">Gallery</h2>
-                    <div class="gallery-grid">
-                        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=400" alt="Children learning"></div>
-                        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400" alt="Community meal"></div>
-                        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400" alt="Healthcare visit"></div>
+                    <div class="impact-value">$486.50</div>
+                    <div class="impact-label">Yield Generated</div>
+                    <div class="impact-detail">Continuous support from reserves</div>
+                    <div class="impact-trend" role="status">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +$42 this week
                     </div>
                 </div>
-            </div>
 
-            <!-- RIGHT COLUMN: Sticky Donation Container -->
-            <div class="right-column">
-                <div class="donation-container">
-                    <!-- Mobile handle (shown on small screens) -->
-                    <div class="mobile-donation-header" style="display: none;">
-                        <span style="font-weight: 600;">Donate to this centre</span>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 10l5 5 5-5"/></svg>
+                <!-- Total Donations Card -->
+                <div class="impact-card" 
+                     role="button" 
+                     tabindex="0" 
+                     aria-label="Total donations: $5,240.00"
+                     onclick="showImpactDetail('donations')">
+                    <div class="impact-card-header">
+                        <div class="impact-icon" aria-hidden="true">💚</div>
+                        <span class="info-tooltip" 
+                              tabindex="0" 
+                              role="tooltip" 
+                              data-tooltip="Total amount donated to Humanity Centres"
+                              aria-label="Information about total donations">i</span>
                     </div>
+                    <div class="impact-value">$5,240</div>
+                    <div class="impact-label">Total Donations</div>
+                    <div class="impact-detail">3 centres supported</div>
+                    <div class="impact-trend" role="status">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +18% this month
+                    </div>
+                </div>
 
-                    <!-- Desktop/mobile content -->
-                    <div class="donation-content">
-                        <div class="donation-header">
-                            <h2 class="donation-title">Make an impact</h2>
-                            <p class="donation-subtitle">100% of your donation goes directly to programs</p>
-                        </div>
-
-                        <!-- Suggested amounts (impact‑linked) -->
-                        <div class="suggested-amounts">
-                            <button class="amount-btn selected" data-amount="25">
-                                <span class="amount-value">$25</span>
-                                <span class="amount-impact">Feeds 2 kids for a week</span>
-                            </button>
-                            <button class="amount-btn" data-amount="50">
-                                <span class="amount-value">$50</span>
-                                <span class="amount-impact">School supplies for 5</span>
-                            </button>
-                            <button class="amount-btn" data-amount="100">
-                                <span class="amount-value">$100</span>
-                                <span class="amount-impact">Health checkups for 10</span>
-                            </button>
-                            <button class="amount-btn" data-amount="250">
-                                <span class="amount-value">$250</span>
-                                <span class="amount-impact">Monthly teacher salary</span>
-                            </button>
-                        </div>
-
-                        <!-- Custom amount -->
-                        <div class="custom-amount">
-                            <div class="amount-input-wrapper">
-                                <span class="currency-symbol">$</span>
-                                <input type="number" class="amount-input" placeholder="Other" min="1" value="">
-                            </div>
-                        </div>
-
-                        <!-- Monthly vs one‑time (monthly default) -->
-                        <div class="frequency-toggle">
-                            <button class="freq-btn active">Monthly</button>
-                            <button class="freq-btn">One time</button>
-                        </div>
-
-                        <!-- Digital wallets first -->
-                        <div class="payment-methods">
-                            <button class="wallet-btn primary">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.7 3H5.3A2.3 2.3 0 003 5.3v13.4A2.3 2.3 0 005.3 21h13.4a2.3 2.3 0 002.3-2.3V5.3A2.3 2.3 0 0018.7 3zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg>
-                                Apple Pay
-                            </button>
-                            <button class="wallet-btn primary" style="background: #4285F4; border-color: #4285F4;">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.7 12c0-.5-.1-1-.2-1.5H12v3h4.3c-.2 1-.8 1.8-1.6 2.4v2h2.6c1.5-1.4 2.4-3.5 2.4-5.9z"/><path d="M12 21c2.2 0 4-.7 5.3-1.9l-2.6-2c-.7.5-1.6.7-2.7.7-2.1 0-3.9-1.4-4.6-3.4H4.5v2.1C6 18.7 8.8 21 12 21z"/><path d="M7.4 14.4c-.2-.5-.3-1-.3-1.6s.1-1.1.3-1.6V9.1H4.5C3.9 10.3 3.5 11.6 3.5 13s.4 2.7 1 3.9l2.9-2.5z"/><path d="M12 7.5c1.2 0 2.3.4 3.1 1.2l2.3-2.3C16.3 4.9 14.3 4 12 4 8.8 4 6 6.2 4.5 9.1l2.9 2.5c.7-2 2.5-3.4 4.6-3.4z"/></svg>
-                                Google Pay
-                            </button>
-                        </div>
-
-                        <div class="divider"><span class="divider-line"></span><span>or</span><span class="divider-line"></span></div>
-
-                        <button class="btn btn-primary" style="margin-bottom: 1rem;">Donate with Card</button>
-
-                        <!-- Impact meter (real‑time social proof) -->
-                        <div class="impact-meter">
-                            <div class="meter-header"><span>🎯 78% of monthly goal</span><span>$40,560 / $52,000</span></div>
-                            <div class="meter-bar"><div class="meter-fill" style="width: 78%"></div></div>
-                            <div class="recent-donation">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                <span>Sarah just donated $50 · 2 min ago</span>
-                            </div>
-                        </div>
+                <!-- Lives Impacted Card -->
+                <div class="impact-card" 
+                     role="button" 
+                     tabindex="0" 
+                     aria-label="Lives impacted: 1,240+"
+                     onclick="showImpactDetail('lives')">
+                    <div class="impact-card-header">
+                        <div class="impact-icon" aria-hidden="true">🌍</div>
+                        <span class="info-tooltip" 
+                              tabindex="0" 
+                              role="tooltip" 
+                              data-tooltip="Estimated number of lives positively impacted by your contributions"
+                              aria-label="Information about lives impacted">i</span>
+                    </div>
+                    <div class="impact-value">1,240+</div>
+                    <div class="impact-label">Lives Impacted</div>
+                    <div class="impact-detail">Through education, food & care</div>
+                    <div class="impact-trend" role="status">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        Growing daily
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Quick Actions - Matching Wallet Style -->
+        <section aria-labelledby="actions-title">
+            <div class="section-header">
+                <h2 id="actions-title" class="section-title">Quick Actions</h2>
+            </div>
+
+            <div class="quick-actions-grid">
+                <a href="wallet-enhanced.html" class="action-card" aria-label="View your wallet">
+                    <div class="action-card-icon">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="M6 10h.01M10 10h.01M14 10h.01"/>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">My Wallet</div>
+                    <div class="action-card-desc">View balances & transactions</div>
+                </a>
+
+                <a href="javascript:void(0)" onclick="handleActionClick('add-money.html', 'add money')" class="action-card primary" aria-label="Add money to wallet - Recommended action">
+                    <div class="action-card-icon">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Add Money</div>
+                    <div class="action-card-desc">Fund your wallet instantly</div>
+                </a>
+
+                <a href="javascript:void(0)" onclick="handleActionClick('exchange.html', 'exchange funds')" 
+                class="action-card" 
+                aria-label="Exchange or convert funds">
+
+                    <div class="action-card-icon">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h11M4 7l3-3m-3 3l3 3M20 17H9m11 0l-3-3m3 3l-3 3"/>
+                        </svg>
+                    </div>
+
+                    <div class="action-card-title">Exchange</div>
+                    <div class="action-card-desc">Convert between currencies</div>
+
+                </a>
+
+
+                <a href="explore-centres.html" class="action-card" aria-label="Explore centres">
+                    <div class="action-card-icon">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Explore Centres</div>
+                    <div class="action-card-desc">Discover where to donate</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Recent Activity Feed - Enhanced -->
+        <section class="activity-section" aria-labelledby="activity-title">
+            <div class="activity-header">
+                <h2 id="activity-title" class="section-title">Recent Activity</h2>
+                <a href="wallet-enhanced.html" class="view-all-link">
+                    View All
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <ul class="activity-list" role="list">
+                <li class="activity-item" role="listitem">
+                    <div class="activity-icon donation" aria-hidden="true">❤️</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Donation to Nairobi Humanity Centre</div>
+                        <div class="activity-description">Your donation helped provide meals and education to 20 families this week</div>
+                        <div class="activity-meta">
+                            <span>2 hours ago</span>
+                            <span aria-hidden="true">•</span>
+                            <span>hCAD</span>
+                        </div>
+                    </div>
+                    <div class="activity-amount">
+                        <div class="activity-amount-value">$250.00</div>
+                        <div class="activity-amount-detail">+25 HUMA earned</div>
+                    </div>
+                </li>
+
+                <li class="activity-item" role="listitem">
+                    <div class="activity-icon yield" aria-hidden="true">📈</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Yield Generated</div>
+                        <div class="activity-description">Weekly yield from your stablecoin reserves automatically donated</div>
+                        <div class="activity-meta">
+                            <span>Yesterday</span>
+                            <span aria-hidden="true">•</span>
+                            <span>Auto-donate</span>
+                        </div>
+                    </div>
+                    <div class="activity-amount">
+                        <div class="activity-amount-value">$42.50</div>
+                        <div class="activity-amount-detail">Continuous impact</div>
+                    </div>
+                </li>
+
+                <li class="activity-item" role="listitem">
+                    <div class="activity-icon donation" aria-hidden="true">❤️</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Donation to Toronto HC</div>
+                        <div class="activity-description">Supporting local community programs and youth education initiatives</div>
+                        <div class="activity-meta">
+                            <span>3 days ago</span>
+                            <span aria-hidden="true">•</span>
+                            <span>hUSD</span>
+                        </div>
+                    </div>
+                    <div class="activity-amount">
+                        <div class="activity-amount-value">$500.00</div>
+                        <div class="activity-amount-detail">+50 HUMA earned</div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Supported Centres - Enhanced & Clickable -->
+        <section aria-labelledby="centres-title">
+            <div class="section-header">
+                <h2 id="centres-title" class="section-title">Your Centres</h2>
+                <a href="explore-centres.html" class="view-all-link">
+                    Explore More
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="centres-grid">
+                <a href="explore-centres.html?centre=toronto" 
+                   class="centre-card" 
+                   aria-label="View Toronto Humanity Centre details">
+                    <div class="centre-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&q=80" 
+                             alt="Group of diverse people at Toronto Humanity Centre" 
+                             class="centre-image">
+                    </div>
+                    <div class="centre-info">
+                        <h3 class="centre-name">Toronto Humanity Centre</h3>
+                        <div class="centre-location">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            Toronto, Canada
+                        </div>
+                        <div class="centre-stats">
+                            <div class="centre-stat">
+                                <div class="centre-stat-value">$1,200</div>
+                                <div class="centre-stat-label">Donated</div>
+                            </div>
+                            <div class="centre-stat">
+                                <div class="centre-stat-value">450+</div>
+                                <div class="centre-stat-label">Lives Helped</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="explore-centres.html?centre=nairobi" 
+                   class="centre-card" 
+                   aria-label="View Nairobi Humanity Centre details">
+                    <div class="centre-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80" 
+                             alt="Community members at Nairobi Humanity Centre" 
+                             class="centre-image">
+                    </div>
+                    <div class="centre-info">
+                        <h3 class="centre-name">Nairobi Humanity Centre</h3>
+                        <div class="centre-location">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            Nairobi, Kenya
+                        </div>
+                        <div class="centre-stats">
+                            <div class="centre-stat">
+                                <div class="centre-stat-value">$3,040</div>
+                                <div class="centre-stat-label">Donated</div>
+                            </div>
+                            <div class="centre-stat">
+                                <div class="centre-stat-value">640+</div>
+                                <div class="centre-stat-label">Lives Helped</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="explore-centres.html?centre=mumbai" 
+                   class="centre-card" 
+                   aria-label="View Mumbai Humanity Centre details">
+                    <div class="centre-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80" 
+                             alt="Volunteers and community at Mumbai Humanity Centre" 
+                             class="centre-image">
+                    </div>
+                    <div class="centre-info">
+                        <h3 class="centre-name">Mumbai Humanity Centre</h3>
+                        <div class="centre-location">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            Mumbai, India
+                        </div>
+                        <div class="centre-stats">
+                            <div class="centre-stat">
+                                <div class="centre-stat-value">$1,000</div>
+                                <div class="centre-stat-label">Donated</div>
+                            </div>
+                            <div class="centre-stat">
+                                <div class="centre-stat-value">150+</div>
+                                <div class="centre-stat-label">Lives Helped</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
     </main>
 
-    <!-- JavaScript for interactivity (dummy, matches original pattern) -->
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close notification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connect Wallet Modal -->
+    <div class="modal-overlay" id="connectModal" role="dialog" aria-modal="true" aria-labelledby="connectModalTitle" aria-describedby="connectModalDesc" onclick="closeConnectModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="connectModalTitle">Connect. Contribute. Change lives.</h2>
+                <button class="modal-close" onclick="closeConnectModal()" aria-label="Close modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc" id="connectModalDesc">Unera is your gateway to impact. Select a supported wallet to authenticate and continue.</p>
+                <div class="wallet-grid">
+                    <button class="wallet-option-card recommended" onclick="handleWalletConnect('metamask')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M20.3 5.1L13.5 9.9l1.3-3L20.3 5.1z" fill="#E17726" stroke="#E17726" stroke-width="0.25"/>
+                                <path d="M3.7 5.1l6.7 4.9-1.2-3.1L3.7 5.1zM17.6 15.9l-1.8 2.8 3.9 1.1 1.1-3.8-3.2-.1zM3.3 16l1.1 3.8 3.9-1.1-1.8-2.8-3.2.1z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+                                <path d="M8.1 11.1l-1.1 1.6 3.8.2-.1-4.1-2.6 2.3zM15.9 11.1l-2.6-2.4-.2 4.2 3.9-.2-1.1-1.6zM8.3 18.7l2.3-1.1-2-1.5-.3 2.6zM13.4 17.6l2.3 1.1-.3-2.6-2 1.5z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+                                <path d="M15.7 18.7l-2.3-1.1.2 1.5v.7l2.1-1.1zM8.3 18.7l2.1 1.1v-.7l.2-1.5-2.3 1.1z" fill="#D5BFB2" stroke="#D5BFB2" stroke-width="0.25"/>
+                                <path d="M10.5 14.4l-1.9-.6 1.4-.6.5 1.2zM13.5 14.4l.5-1.2 1.4.6-1.9.6z" fill="#233447" stroke="#233447" stroke-width="0.25"/>
+                                <path d="M8.3 18.7l.3-2.8-2.1.1 1.8 2.7zM15.4 15.9l.3 2.8 1.8-2.7-2.1-.1zM17 12.7l-3.9.2.4 2 .5-1.2 1.4.6 1.6-1.6zM8.6 13.8l1.4-.6.5 1.2.4-2-3.9-.2 1.6 1.6z" fill="#CC6228" stroke="#CC6228" stroke-width="0.25"/>
+                                <path d="M7 12.7l1.7 3.3-.1-1.6L7 12.7zM15.4 14.4l-.1 1.6 1.7-3.3-1.6 1.7zM10.9 12.9l-.4 2 .5 2.6.1-3-.2-1.6zM13.1 12.9l-.2 1.5.1 3.1.5-2.6-.4-2z" fill="#E27525" stroke="#E27525" stroke-width="0.25"/>
+                                <path d="M13.5 14.4l-.5 2.6.4.3 2-1.5.1-1.6-2 .2zM8.6 13.8l.1 1.6 2 1.5.4-.3-.5-2.6-2-.2z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+                                <path d="M13.6 20.2v-.7l-.2-.2h-2.8l-.2.2v.7l-2.1-1.1.7.6 1.5 1h2.9l1.5-1 .7-.6-2-1z" fill="#C0AC9D" stroke="#C0AC9D" stroke-width="0.25"/>
+                                <path d="M13.4 17.6l-.4-.3h-2l-.4.3-.2 1.5.2-.2h2.8l.2.2-.2-1.5z" fill="#161616" stroke="#161616" stroke-width="0.25"/>
+                                <path d="M20.7 10.4l.6-2.8-1-2.5-7.9 5.9 3 2.5 4.3 1.2.9-1.1-.4-.3.6-.6-.5-.4.6-.5-.4-.3zM3.7 7.6l.6 2.8-.4.3.6.5-.5.4.6.6-.4.3.9 1.1 4.3-1.2 3-2.5L4.7 5.1l-1 2.5z" fill="#763E1A" stroke="#763E1A" stroke-width="0.25"/>
+                                <path d="M19.8 13.6l-4.3-1.2 1.3 1.6-1.7 3.3 2.3-.1h3.4l-1-3.6zM8.5 12.4l-4.3 1.2-1 3.6h3.4l2.3.1-1.7-3.3 1.3-1.6zM13.1 12.9l.3-4.7 1.4-3.8h-6.2l1.4 3.8.3 4.7.1 1.6v3.1h2l.1-3.1-.4-1.6z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">MetaMask</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('walletconnect')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M5.5 9.5c3.5-3.5 9.2-3.5 12.7 0l.4.4c.2.2.2.5 0 .7l-1.4 1.4c-.1.1-.3.1-.4 0l-.6-.6c-2.4-2.4-6.4-2.4-8.8 0l-.6.6c-.1.1-.3.1-.4 0L4.9 10.6c-.2-.2-.2-.5 0-.7l.6-.4zm15.7 2.9l1.3 1.3c.2.2.2.5 0 .7l-5.7 5.7c-.2.2-.5.2-.7 0l-4.1-4.1c-.1-.1-.2-.1-.2 0l-4.1 4.1c-.2.2-.5.2-.7 0l-5.7-5.7c-.2-.2-.2-.5 0-.7l1.3-1.3c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0z" fill="#3B99FC"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">WalletConnect</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('coinbase')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" fill="#0052FF"/>
+                                <path d="M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">Coinbase</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('brave')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L2 7l2 9 8 6 8-6 2-9-10-5z" fill="#FB542B"/>
+                                <path d="M12 2v20M22 7H2M20 16H4" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">Brave</span>
+                    </button>
+                    <button class="wallet-option-card" onclick="handleWalletConnect('ledger')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <rect x="4" y="4" width="16" height="16" rx="2" fill="#333"/>
+                                <path d="M7 7h3v3H7V7zM14 7h3v3h-3V7zM7 14h3v3H7v-3zM14 14h3v3h-3v-3z" fill="white"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">Ledger</span>
+                    </button>
+                </div>
+                <div class="wallet-note">
+                    <small>⚡ Powered by MetaMask and compatible wallets</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()" aria-label="Close confirmation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-icon" id="confirmationIcon" aria-hidden="true">🔌</div>
+                <p class="notification-message" id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-secondary" onclick="closeConfirmationModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-primary" id="confirmButton" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Simple amount selection
-        document.querySelectorAll('.amount-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
-                this.classList.add('selected');
-                document.querySelector('.amount-input').value = this.dataset.amount;
-            });
-        });
-
-        // Frequency toggle
-        document.querySelectorAll('.freq-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // Stats tabs (dummy)
-        document.querySelectorAll('.stats-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                // In a real app, you would re-render the chart here
-            });
-        });
-
-        // Mobile expand/collapse
-        const mobileHeader = document.querySelector('.mobile-donation-header');
-        if (mobileHeader) {
-            mobileHeader.addEventListener('click', () => {
-                document.body.classList.toggle('donation-expanded');
-            });
+        // ==================== HELPER FUNCTIONS ====================
+        function showNotification(message, type = 'success', title = 'Success') {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            const titleEl = document.getElementById('notificationTitle');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            icon.className = 'notification-icon';
+            if (type === 'error') {
+                icon.classList.add('error');
+            } else if (type === 'warning') {
+                icon.classList.add('warning');
+            } else if (type === 'info') {
+                icon.classList.add('info');
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            setTimeout(() => {
+                const closeBtn = modal.querySelector('.modal-close');
+                if (closeBtn) closeBtn.focus();
+            }, 100);
         }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showConfirmation(message, title, onConfirm, onCancel = null) {
+            const modal = document.getElementById('confirmationModal');
+            const messageEl = document.getElementById('confirmationMessage');
+            const titleEl = document.getElementById('confirmationTitle');
+            const confirmBtn = document.getElementById('confirmButton');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            confirmBtn.onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            setTimeout(() => confirmBtn.focus(), 100);
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ==================== CONNECT MODAL ====================
+        function openConnectModal() {
+            const modal = document.getElementById('connectModal');
+            if (!modal) return;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            modal.setAttribute('aria-hidden', 'false');
+            const closeBtn = modal.querySelector('.modal-close');
+            if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
+        }
+
+        function closeConnectModal(event) {
+            const modal = document.getElementById('connectModal');
+            if (!modal) return;
+            if (event && event.target !== modal) return;
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function handleWalletConnect(provider) {
+            const providerNames = {
+                metamask: 'MetaMask',
+                walletconnect: 'WalletConnect',
+                coinbase: 'Coinbase Wallet',
+                brave: 'Brave Wallet',
+                ledger: 'Ledger'
+            };
+            const modalBody = document.querySelector('#connectModal .modal-body');
+            const originalContent = modalBody.innerHTML;
+            modalBody.innerHTML = `
+                <div class="modal-loading">
+                    <div class="spinner"></div>
+                    <p>Connecting to ${providerNames[provider] || provider}...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                closeConnectModal();
+                // Restore modal body so wallet grid is available next time
+                modalBody.innerHTML = originalContent;
+
+                // Update UI to connected state
+                const demoAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f';
+                const shortAddress = demoAddress.substring(0, 6) + '...' + demoAddress.substring(demoAddress.length - 4);
+                
+                // Hide CONNECT button, show wallet link
+                document.getElementById('navConnectBtn').classList.add('hidden');
+                document.getElementById('walletNavLink').style.display = 'inline-block';
+
+                // Update dropdown wallet badge (desktop)
+                const dropdownWallet = document.getElementById('dropdownWalletAddress');
+                if (dropdownWallet) dropdownWallet.textContent = shortAddress;
+                
+                // Update mobile dropdown wallet badge
+                const mobileDropdownWallet = document.getElementById('mobileDropdownWalletAddress');
+                if (mobileDropdownWallet) mobileDropdownWallet.textContent = shortAddress;
+
+                // Show disconnect items
+                const disconnectItem = document.getElementById('disconnectWalletItem');
+                if (disconnectItem) disconnectItem.style.display = 'flex';
+                const disconnectItemMobile = document.getElementById('disconnectWalletItemMobile');
+                if (disconnectItemMobile) disconnectItemMobile.style.display = 'flex';
+                
+                // Store connection
+                localStorage.setItem('walletConnected', 'true');
+                localStorage.setItem('walletAddress', demoAddress);
+                localStorage.setItem('walletProvider', provider);
+                
+                showNotification(`${providerNames[provider] || provider} connected successfully!`, 'success');
+            }, 1500);
+        }
+
+        // ==================== DISCONNECT WALLET ====================
+        function doDisconnectWallet() {
+            localStorage.removeItem('walletConnected');
+            localStorage.removeItem('walletAddress');
+            localStorage.removeItem('walletProvider');
+            
+            const navConnectBtn = document.getElementById('navConnectBtn');
+            const walletNavLink = document.getElementById('walletNavLink');
+            const disconnectItem = document.getElementById('disconnectWalletItem');
+            const disconnectItemMobile = document.getElementById('disconnectWalletItemMobile');
+            const dropdownWallet = document.getElementById('dropdownWalletAddress');
+            const mobileDropdownWallet = document.getElementById('mobileDropdownWalletAddress');
+            
+            if (navConnectBtn) navConnectBtn.classList.remove('hidden');
+            if (walletNavLink) walletNavLink.style.display = 'none';
+            if (disconnectItem) disconnectItem.style.display = 'none';
+            if (disconnectItemMobile) disconnectItemMobile.style.display = 'none';
+            if (dropdownWallet) dropdownWallet.textContent = '0x742d...3a8f';
+            if (mobileDropdownWallet) mobileDropdownWallet.textContent = '0x742d...3a8f';
+            
+            const userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) userDropdown.classList.remove('show');
+            
+            showNotification('Wallet disconnected', 'success');
+        }
+
+        function disconnectWallet() {
+            const modal = document.getElementById('confirmationModal');
+            const confirmBtn = document.getElementById('confirmButton');
+            if (modal && confirmBtn) {
+                showConfirmation(
+                    'Are you sure you want to disconnect your wallet?',
+                    'Disconnect Wallet',
+                    doDisconnectWallet
+                );
+            } else {
+                doDisconnectWallet();
+            }
+        }
+
+        // ==================== OTHER FUNCTIONS ====================
+        function toggleUserDropdown() {
+            document.getElementById('userDropdown').classList.toggle('show');
+        }
+
+        function toggleMobileUserDropdown() {
+            const dropdown = document.getElementById('mobileUserDropdown');
+            const chevron = document.getElementById('mobileUserChevron');
+            dropdown.classList.toggle('open');
+            chevron.classList.toggle('open');
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        function handleActionClick(targetPage, actionName) {
+            const kycStatus = localStorage.getItem('kycStatus');
+            
+            if (kycStatus !== 'verified') {
+                showConfirmation(
+                    `You need to verify your identity before you can ${actionName}. Would you like to complete verification now?`,
+                    'KYC Verification Required',
+                    () => {
+                        window.location.href = 'kyc-verify.html';
+                    }
+                );
+                return;
+            }
+            
+            if (typeof WalletPrompt !== 'undefined') {
+                const hasWallet = WalletPrompt.checkAndPrompt({
+                    title: `💳 Wallet Required to ${actionName.charAt(0).toUpperCase() + actionName.slice(1)}`,
+                    message: `You need a wallet before you can ${actionName}. Create one now to continue.`,
+                    benefits: [
+                        'Secure digital account under your control',
+                        'Send and receive funds instantly',
+                        'Track all your transactions',
+                        'Earn rewards and track impact'
+                    ],
+                    page: 'dashboard'
+                });
+                
+                if (hasWallet) {
+                    window.location.href = targetPage;
+                }
+            } else {
+                window.location.href = targetPage;
+            }
+        }
+
+        function dismissAlert() {
+            const alert = document.getElementById('kycAlert');
+            alert.style.animation = 'slideUp 0.3s ease-out';
+            setTimeout(() => {
+                alert.style.display = 'none';
+                localStorage.setItem('kycAlertDismissed', 'true');
+                announceToScreenReader('Alert dismissed');
+            }, 300);
+        }
+
+        function announceToScreenReader(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('role', 'status');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.style.position = 'absolute';
+            announcement.style.left = '-10000px';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            setTimeout(() => announcement.remove(), 1000);
+        }
+
+        function showImpactDetail(type) {
+            const details = {
+                'balance': {
+                    title: 'Total Balance',
+                    value: '$10,240.00',
+                    description: 'Your total wallet balance across all assets.',
+                    breakdown: '• hCAD: $5,240\n• DAI: $3,500\n• USDC: $1,500',
+                    impact: 'This balance enables you to support Humanity Centres through yield generation.'
+                },
+                'yield': {
+                    title: 'Yield Generated',
+                    value: '$486.50',
+                    description: 'Yield generated from your stablecoin reserves - 100% automatically donated to centres.',
+                    breakdown: '• This week: $42.50\n• This month: $186.50\n• All time: $486.50',
+                    impact: 'This creates continuous, perpetual support without touching your principal.'
+                },
+                'donations': {
+                    title: 'Total Donations',
+                    value: '$5,240.00',
+                    description: 'Your donations have directly supported 120+ families across 3 Humanity Centres.',
+                    breakdown: '• Toronto HC: $1,200\n• Nairobi HC: $3,040\n• Mumbai HC: $1,000',
+                    impact: 'These funds provide meals, education, healthcare, and community programs.'
+                },
+                'lives': {
+                    title: 'Lives Impacted',
+                    value: '1,240+ People',
+                    description: 'Estimated number of individuals who have benefited from your contributions.',
+                    breakdown: '• Education programs: 580 students\n• Food security: 420 families\n• Healthcare: 240 individuals',
+                    impact: 'Every dollar creates ripples of positive change in real communities.'
+                }
+            };
+
+            const detail = details[type];
+            showNotification(`${detail.title}\n\n${detail.value}\n\n${detail.description}\n\n${detail.breakdown}\n\n💡 ${detail.impact}\n\nClick "View Details" for your complete impact report.`, 'info', detail.title);
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            const kycStatus = localStorage.getItem('kycStatus');
+            const hasWallet = !!localStorage.getItem('walletAddress');
+            const kycAlert = document.getElementById('kycAlert');
+            
+            if (kycStatus === 'verified') {
+                if (kycAlert) kycAlert.style.display = 'none';
+                localStorage.removeItem('kycAlertDismissed');
+                
+                if (!hasWallet) {
+                    console.log('💳 No wallet found - showing wallet banner (if WalletPrompt loaded)');
+                    if (typeof WalletPrompt !== 'undefined') {
+                        WalletPrompt.showDashboardBanner();
+                    }
+                }
+            } else {
+                if (localStorage.getItem('kycAlertDismissed') === 'true') {
+                    if (kycAlert) kycAlert.style.display = 'none';
+                }
+            }
+            
+            announceToScreenReader('Dashboard loaded. You have $10,240 total balance, $486.50 yield generated, $5,240 in donations supporting 3 centres, and 1,240+ lives impacted.');
+            
+            document.querySelectorAll('.impact-card, .centre-card').forEach(card => {
+                card.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const alert = document.getElementById('kycAlert');
+                    if (alert && alert.style.display !== 'none') {
+                        dismissAlert();
+                    }
+                    const confirmationModal = document.getElementById('confirmationModal');
+                    if (confirmationModal && confirmationModal.classList.contains('active')) {
+                        closeConfirmationModal();
+                    }
+                }
+            });
+
+            // Restore wallet UI if already connected
+            const walletConnected = localStorage.getItem('walletConnected') === 'true';
+            const walletAddress = localStorage.getItem('walletAddress');
+            
+            if (walletConnected && walletAddress) {
+                const shortAddress = walletAddress.substring(0, 6) + '...' + walletAddress.substring(walletAddress.length - 4);
+                document.getElementById('navConnectBtn').classList.add('hidden');
+                document.getElementById('walletNavLink').style.display = 'inline-block';
+                
+                const dropdownWallet = document.getElementById('dropdownWalletAddress');
+                if (dropdownWallet) dropdownWallet.textContent = shortAddress;
+                const mobileDropdownWallet = document.getElementById('mobileDropdownWalletAddress');
+                if (mobileDropdownWallet) mobileDropdownWallet.textContent = shortAddress;
+                
+                const disconnectItem = document.getElementById('disconnectWalletItem');
+                if (disconnectItem) disconnectItem.style.display = 'flex';
+                const disconnectItemMobile = document.getElementById('disconnectWalletItemMobile');
+                if (disconnectItemMobile) disconnectItemMobile.style.display = 'flex';
+            }
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (dropdown && dropdown.classList.contains('show')) {
+                if (!userProfile?.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        });
+
+        // Slideup animation for dismissed alert
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    
+    <!-- Auth Flow Manager -->
+    <script src="auth-flow.js"></script>
+
+    <!-- Hamburger Menu Script -->
+    <script>
+        (function() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            const body = document.body;
+
+            function openMenu() {
+                hamburger.classList.add('active');
+                mobileMenu.classList.add('active');
+                mobileMenuOverlay.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                body.style.overflow = 'hidden';
+            }
+
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                body.style.overflow = '';
+            }
+
+            hamburger.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('active')) closeMenu();
+                else openMenu();
+            });
+
+            mobileMenuClose.addEventListener('click', closeMenu);
+            mobileMenuOverlay.addEventListener('click', closeMenu);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu.classList.contains('active')) closeMenu();
+            });
+
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-links .nav-link');
+            mobileNavLinks.forEach(link => link.addEventListener('click', closeMenu));
+        })();
     </script>
 </body>
 </html>
