@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Enhanced Auth CSS -->
     <link rel="stylesheet" href="auth-enhanced.css">
@@ -17,11 +17,75 @@
     <script src="code-input-handler.js" defer></script>
     
     <style>
-        .icon-large {
-            font-size: 4rem;
-            text-align: center;
-            margin: 0 auto 1rem auto;
-            display: block;
+        /* Key message cards - match KYC introSection */
+        .kyc-key-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .key-message-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            transition: all 0.2s;
+        }
+        .key-message-card:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+            transform: translateX(4px);
+        }
+        .key-message-card.featured {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+            border-color: var(--primary-green);
+            border-width: 2px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        }
+        .message-icon {
+            flex-shrink: 0;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            border-radius: 14px;
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+        }
+        .key-message-card.featured .message-icon {
+            background: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+        }
+        .message-content {
+            flex: 1;
+        }
+        .message-content h3 {
+            font-size: 1.188rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+            font-family: var(--font-display);
+        }
+        .message-content p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.6;
+        }
+        .trust-bar-minimal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
         }
         
         .method-card {
@@ -35,6 +99,14 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+        }
+        .method-card-btn {
+            display: inline-flex;
+            align-items: center;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0;
         }
         
         .method-card:hover {
@@ -85,9 +157,10 @@
         
         .setup-section {
             margin-top: 2rem;
-            padding: 1.5rem;
+            padding: 2rem;
             background: var(--neutral-50);
-            border-radius: var(--radius-lg);
+            border-radius: 1rem;
+            border: 2px solid var(--border-subtle);
         }
         
         .setup-section h3 {
@@ -188,7 +261,7 @@
             text-align: center;
             border: 2px solid var(--border-subtle);
             border-radius: 12px;
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-body);
             transition: all 0.2s ease;
             background: white;
         }
@@ -248,7 +321,7 @@
             background: var(--neutral-100);
             padding: 0.75rem;
             border-radius: var(--radius-md);
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-body);
             font-size: 1rem;
             font-weight: 600;
             color: var(--primary-green);
@@ -284,40 +357,6 @@
             font-size: 0.875rem;
             color: var(--text-secondary);
             margin-top: 0.5rem;
-        }
-        
-        .benefits-list {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 1.5rem;
-        }
-        
-        .benefits-list h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-        
-        .benefits-list ul {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .benefits-list li {
-            padding: 0.5rem 0;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .benefits-list li::before {
-            content: '✓';
-            color: var(--primary-green);
-            font-weight: 700;
-            font-size: 1.25rem;
         }
 
         /* Modal Styles */
@@ -423,48 +462,74 @@
     </header>
 
     <!-- Main Content -->
-    <main id="main-content" class="auth-container">
+    <main id="main-content" class="auth-container-wide">
         <div class="auth-card">
-            <div class="icon-large">🔒</div>
-            
             <div class="auth-header">
+                <div class="logo-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
                 <h1 class="auth-title">Secure Your Account</h1>
-                <p class="auth-subtitle">Enable two-factor authentication for extra security</p>
+                <p class="auth-subtitle">Enable two-factor authentication for extra security — a second layer of protection for your account</p>
             </div>
 
-            <!-- Benefits -->
-            <div class="benefits-list">
-                <h3>Why enable 2FA?</h3>
-                <ul>
-                    <li>Protect your funds from unauthorized access</li>
-                    <li>Prevent account theft even if password is compromised</li>
-                    <li>Industry standard for financial apps</li>
-                    <li>Takes only 2 minutes to set up</li>
-                </ul>
+            <!-- Benefits - key message cards (match KYC introSection) -->
+            <div class="kyc-key-messages">
+                <div class="key-message-card">
+                    <div class="message-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Protect Your Funds</h3>
+                        <p>Prevent unauthorized access even if your password is compromised</p>
+                    </div>
+                </div>
+                <div class="key-message-card featured">
+                    <div class="message-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Industry Standard</h3>
+                        <p>Two-factor authentication is required by financial apps for your security</p>
+                    </div>
+                </div>
+                <div class="key-message-card">
+                    <div class="message-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Quick Setup</h3>
+                        <p>Takes only 2 minutes to complete</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Method Selection (Initially visible) -->
             <div id="methodSelection">
-                <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: var(--text-primary);">Choose a Method:</h3>
+                <!-- <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: var(--text-primary);">Choose a Method:</h3> -->
                 
                 <!-- SMS Method -->
-                <div class="method-card" onclick="selectMethod('sms')">
+<!--                 <div class="method-card" onclick="selectMethod('sms')">
                     <div class="method-icon">📱</div>
                     <div class="method-info">
                         <h4>SMS Text Message</h4>
                         <p>Get codes via text message</p>
                     </div>
                     <div class="method-badge recommended">Recommended</div>
-                </div>
+                </div> -->
                 
                 <!-- Email Method -->
-                <div class="method-card" onclick="selectMethod('email')">
-                    <div class="method-icon">📧</div>
-                    <div class="method-info">
-                        <h4>Email Codes</h4>
-                        <p>Get codes via email</p>
-                    </div>
-                </div>
+                <button type="button" class="btn-primary method-card-btn" onclick="selectMethod('email')" style="width: 100%; justify-content: center; gap: 0.5rem;">
+                    <span aria-hidden="true">📧</span>
+                    Get codes via email
+                </button>
                 
                 <!-- Authenticator App Method -->
                 <!-- <div class="method-card" onclick="selectMethod('app')">
@@ -479,6 +544,10 @@
 
             <!-- SMS Setup -->
             <div id="smsSetup" class="setup-section" style="display: none;">
+                <button class="btn-text" onclick="backToMethodSelection()" style="margin-bottom: 1rem; padding: 0; display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Go back">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Go back
+                </button>
                 <h3>Enter Your Phone Number</h3>
                 <div class="phone-input-group">
                     <select class="country-code" id="countryCode">
@@ -513,16 +582,24 @@
 
             <!-- Email Setup -->
             <div id="emailSetup" class="setup-section" style="display: none;">
+                <button class="btn-text" onclick="backToMethodSelection()" style="margin-bottom: 1rem; padding: 0; display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Go back">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Go back
+                </button>
                 <h3>Email Verification</h3>
                 <p style="margin-bottom: 1rem; color: var(--text-secondary);">
                     We'll send a 6-digit code to your registered email address.
                 </p>
-                <button class="btn-primary" onclick="sendEmailCode()">Send Verification Code</button>
+                <button class="btn-primary" id="sendEmailBtn" onclick="sendEmailCode()">Send Verification Code</button>
+                <div id="emailSendStatus" role="status" aria-live="polite" class="status-message" style="display: none; margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-secondary);"></div>
                 
                 <!-- Code verification -->
                 <div id="emailCodeVerification" style="display: none; margin-top: 1.5rem;">
-                    <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+                    <p id="emailCodeSentMessage" style="margin-bottom: 0.5rem; color: var(--text-secondary);">
                         Check your email for the verification code
+                    </p>
+                    <p class="email-hint" style="font-size: 0.875rem; color: var(--text-tertiary); margin-bottom: 1rem;">
+                        Check your spam folder if you don't see the email
                     </p>
                     <div class="code-input-group">
                         <input type="text" maxlength="1" class="code-digit" data-index="0" inputmode="numeric">
@@ -532,12 +609,20 @@
                         <input type="text" maxlength="1" class="code-digit" data-index="4" inputmode="numeric">
                         <input type="text" maxlength="1" class="code-digit" data-index="5" inputmode="numeric">
                     </div>
-                    <button class="btn-primary" onclick="verify2FACode('email')">Verify & Enable 2FA</button>
+                    <p id="codeErrorInline" class="error-message" style="display: none; margin: 0.5rem 0; text-align: center;"></p>
+                    <button class="btn-primary" id="verifyEmailBtn" onclick="verify2FACode('email')">Verify & Enable 2FA</button>
+                    <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-tertiary); text-align: center;">
+                        Code expired? <button type="button" class="btn-text" onclick="resendEmailCode()" style="padding: 0; font-size: inherit;">Request a new one</button>
+                    </p>
                 </div>
             </div>
 
             <!-- Authenticator App Setup -->
             <div id="appSetup" class="setup-section" style="display: none;">
+                <button class="btn-text" onclick="backToMethodSelection()" style="margin-bottom: 1rem; padding: 0; display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Go back">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Go back
+                </button>
                 <h3>Scan QR Code</h3>
                 <ol>
                     <li>Download Google Authenticator or Microsoft Authenticator</li>
@@ -567,6 +652,13 @@
                 </div>
                 
                 <button class="btn-primary" onclick="verify2FACode('app')">Enable 2FA</button>
+            </div>
+
+            <!-- Trust Bar (match KYC introSection) -->
+            <div class="trust-bar-minimal">
+                <span>🔒 256-bit encryption</span>
+                <span>•</span>
+                <span>✓ GDPR & CCPA compliant</span>
             </div>
 
             <!-- Skip Option -->
@@ -643,6 +735,23 @@
             }
         }
 
+        function backToMethodSelection() {
+            selectedMethod = null;
+            document.getElementById('methodSelection').style.display = 'block';
+            document.getElementById('smsSetup').style.display = 'none';
+            document.getElementById('emailSetup').style.display = 'none';
+            document.getElementById('appSetup').style.display = 'none';
+            // Reset email flow
+            const emailCodeVerification = document.getElementById('emailCodeVerification');
+            const sendEmailBtn = document.getElementById('sendEmailBtn');
+            if (emailCodeVerification && sendEmailBtn) {
+                emailCodeVerification.style.display = 'none';
+                sendEmailBtn.style.display = 'inline-flex';
+                sendEmailBtn.textContent = 'Send Verification Code';
+                document.querySelectorAll('#emailCodeVerification .code-digit').forEach(d => d.value = '');
+            }
+        }
+
         async function sendSMSCode() {
             const phone = document.getElementById('phoneNumber').value;
             const countryCode = document.getElementById('countryCode').value;
@@ -675,16 +784,39 @@
             }, 50);
         }
 
+        function getMaskedEmail() {
+            const signupEmail = localStorage.getItem('signupEmail');
+            const urlParams = new URLSearchParams(window.location.search);
+            const emailParam = urlParams.get('email');
+            const email = signupEmail || emailParam || 'your registered email';
+            if (email.includes('@')) {
+                const [local, domain] = email.split('@');
+                const masked = local.charAt(0) + '***' + (local.length > 2 ? local.slice(-1) : '') + '@' + domain;
+                return masked;
+            }
+            return email;
+        }
+
         async function sendEmailCode() {
-            const btn = event.target;
+            const btn = document.getElementById('sendEmailBtn');
+            const statusEl = document.getElementById('emailSendStatus');
             btn.classList.add('loading');
             btn.disabled = true;
+            statusEl.style.display = 'block';
+            statusEl.textContent = 'Sending...';
+            statusEl.setAttribute('aria-live', 'polite');
             
             await new Promise(resolve => setTimeout(resolve, 1500));
             
             btn.classList.remove('loading');
-            document.getElementById('emailCodeVerification').style.display = 'block';
+            btn.disabled = false;
             btn.style.display = 'none';
+            statusEl.textContent = '';
+            statusEl.style.display = 'none';
+            
+            document.getElementById('emailCodeVerification').style.display = 'block';
+            const msgEl = document.getElementById('emailCodeSentMessage');
+            if (msgEl) msgEl.textContent = 'We sent a 6-digit code to ' + getMaskedEmail() + '. Enter it below.';
             
             // Initialize code input handlers for Email inputs
             setTimeout(() => {
@@ -697,18 +829,37 @@
 
         // Old function removed - now using initCodeInputs() from code-input-handler.js
 
+        function clearCodeError() {
+            const errEl = document.getElementById('codeErrorInline');
+            if (errEl) {
+                errEl.style.display = 'none';
+                errEl.textContent = '';
+            }
+            document.querySelectorAll('.code-digit.error').forEach(d => d.classList.remove('error'));
+        }
+
         async function verify2FACode(method) {
             const digits = document.querySelectorAll('.code-digit[data-index]');
             const code = Array.from(digits).map(d => d.value).join('');
+            const codeErrorEl = document.getElementById('codeErrorInline');
+            const btn = event.target;
+            
+            clearCodeError();
             
             if (code.length !== 6) {
-                showNotification('Please enter all 6 digits of your verification code.', 'warning', 'Code Required');
+                if (codeErrorEl) {
+                    codeErrorEl.textContent = 'Please enter all 6 digits of your verification code.';
+                    codeErrorEl.style.display = 'block';
+                } else {
+                    showNotification('Please enter all 6 digits of your verification code.', 'warning', 'Code Required');
+                }
+                document.querySelectorAll('.code-digit[data-index]').forEach(d => d.classList.add('error'));
                 return;
             }
             
-            const btn = event.target;
             btn.classList.add('loading');
             btn.disabled = true;
+            btn.textContent = 'Verifying...';
             
             await new Promise(resolve => setTimeout(resolve, 1500));
             
@@ -729,6 +880,16 @@
             setTimeout(() => {
                 window.location.href = 'kyc-verify.html?from=signup';
             }, 1000);
+        }
+
+        async function resendEmailCode() {
+            document.getElementById('emailCodeVerification').style.display = 'none';
+            const sendBtn = document.getElementById('sendEmailBtn');
+            sendBtn.style.display = 'inline-flex';
+            sendBtn.textContent = 'Send Verification Code';
+            document.querySelectorAll('#emailCodeVerification .code-digit').forEach(d => d.value = '');
+            clearCodeError();
+            await sendEmailCode();
         }
 
         function skip2FA() {
