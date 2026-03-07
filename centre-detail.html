@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Humanity Centre - UNERA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,7 +69,8 @@
         /* Navigation */
         .nav {
             background: #FFFFFF;
-            padding: 0 2.75rem;
+            padding: 0;
+            padding-inline: max(clamp(1rem, 4vw, 2.75rem), env(safe-area-inset-left)) max(clamp(1rem, 4vw, 2.75rem), env(safe-area-inset-right));
             height: 44px;
             display: flex;
             align-items: center;
@@ -136,6 +137,10 @@
             border: none;
             cursor: pointer;
             padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
             border-radius: 4px;
         }
         .hamburger:hover { background: var(--neutral-200); }
@@ -208,16 +213,23 @@
 
         /* Breadcrumb */
         .breadcrumb {
-            padding: 1rem 2.75rem;
+            padding: 1rem 0;
+            padding-inline: max(clamp(1rem, 4vw, 2.75rem), env(safe-area-inset-left)) max(clamp(1rem, 4vw, 2.75rem), env(safe-area-inset-right));
             background: white;
             border-bottom: 1px solid var(--border-subtle);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+        .breadcrumb::-webkit-scrollbar { display: none; }
         .breadcrumb-list {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             list-style: none;
             font-size: 0.875rem;
+            flex-wrap: nowrap;
+            min-width: min-content;
         }
         .breadcrumb-list a {
             color: var(--text-secondary);
@@ -225,20 +237,29 @@
             transition: color 0.2s;
         }
         .breadcrumb-list a:hover { color: var(--primary-green); }
-        .breadcrumb-separator { color: var(--neutral-400); }
-        .breadcrumb-current { color: var(--text-primary); font-weight: 500; }
+        .breadcrumb-separator { color: var(--neutral-400); flex-shrink: 0; }
+        .breadcrumb-current {
+            color: var(--text-primary);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: clamp(120px, 40vw, 280px);
+        }
 
         /* Container */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 3);
+            padding: clamp(1rem, 4vw, 2rem) 0;
+            padding-inline: max(clamp(1rem, 4vw, 2.75rem), env(safe-area-inset-left)) max(clamp(1rem, 4vw, 2.75rem), env(safe-area-inset-right));
         }
 
         /* Hero */
         .hero {
             position: relative;
-            height: 420px;
+            min-height: clamp(200px, 50vw, 420px);
+            height: clamp(200px, 50vw, 420px);
             border-radius: 1.5rem;
             overflow: hidden;
             margin-bottom: calc(var(--spacing-unit) * 4);
@@ -256,11 +277,15 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: calc(var(--spacing-unit) * 4);
+            padding: clamp(1rem, 4vw, calc(var(--spacing-unit) * 4));
         }
         .hero-content {
             color: white;
             max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
         .status-badge {
             display: inline-flex;
@@ -273,12 +298,12 @@
             font-size: 0.875rem;
             font-weight: 600;
             color: var(--primary-green);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             width: fit-content;
         }
         .hero-title {
             font-family: var(--font-display);
-            font-size: 3rem;
+            font-size: clamp(1.5rem, 5vw, 3rem);
             font-weight: 800;
             margin-bottom: 0.75rem;
             line-height: 1.1;
@@ -288,8 +313,9 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 1.125rem;
+            font-size: clamp(0.938rem, 2vw, 1.125rem);
             opacity: 0.95;
+            flex-wrap: wrap;
         }
         .hero-trust-line {
             font-size: 0.875rem;
@@ -321,13 +347,19 @@
         /* Impact cards */
         .impact-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: clamp(0.5rem, 2vw, 1rem);
+        }
+        @media (min-width: 480px) {
+            .impact-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 768px) {
+            .impact-grid { grid-template-columns: repeat(4, 1fr); }
         }
         .impact-card {
             background: white;
             border-radius: 1.25rem;
-            padding: 1.5rem;
+            padding: clamp(1rem, 3vw, 1.5rem);
             border: 2px solid var(--border-subtle);
             transition: all 0.3s;
         }
@@ -342,7 +374,7 @@
         }
         .impact-value {
             font-family: var(--font-display);
-            font-size: 1.75rem;
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
@@ -357,62 +389,91 @@
             font-size: 0.875rem;
             color: var(--neutral-500);
         }
-        @media (max-width: 640px) {
-            .impact-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
         /* Section card */
         .section-card {
             background: white;
             border-radius: 1.5rem;
-            padding: 2rem;
+            padding: clamp(1rem, 4vw, 2rem);
             border: 2px solid var(--border-subtle);
         }
         .section-title {
             font-family: var(--font-display);
-            font-size: 1.5rem;
+            font-size: clamp(1.25rem, 2.5vw, 1.5rem);
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
         .section-desc {
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: clamp(0.875rem, 1.5vw, 1rem);
             margin-bottom: 1.5rem;
         }
 
-        /* Benefits note */
+        /* Benefits note - brand insight-card style */
         .benefits-note {
-            background: rgba(16,185,129,0.05);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
+            background: white;
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            margin: 1rem 0;
             display: flex;
+            flex-wrap: wrap;
             gap: 1rem;
             align-items: flex-start;
+            border-left: 5px solid var(--primary-blue);
+            transition: all 0.3s;
+        }
+        .benefits-note:hover {
+            border-left-width: 8px;
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+            transform: translateX(4px);
         }
         .benefits-note strong { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
         .benefits-note p { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem; }
 
-        /* Info box */
+        /* Info box - matches balance-fiat-value outline style */
         .info-box {
-            background: rgba(16,185,129,0.05);
-            border: 1px solid rgba(16,185,129,0.2);
-            border-radius: 0.75rem;
-            padding: 1rem;
+            padding: 1.125rem 1.25rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.08));
+            border-radius: 0.875rem;
+            border: 2px solid rgba(16, 185, 129, 0.25);
             margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .info-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .info-box:hover::before {
+            opacity: 1;
+        }
+        .info-box:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
         }
         .info-box p { font-size: 0.875rem; color: var(--neutral-700); }
 
-        /* Amount tip */
+        /* Amount tip - brand tagline-item style */
         .amount-tip {
             font-size: 0.938rem;
             color: var(--neutral-700);
             padding: 1rem 1.25rem;
-            background: rgba(16,185,129,0.06);
-            border-left: 4px solid var(--primary-green);
+            background: rgba(16,185,129,0.05);
+            border-left: 5px solid var(--primary-green);
             border-radius: 0 0.5rem 0.5rem 0;
             margin-top: 1rem;
+            transition: all 0.3s;
+        }
+        .amount-tip:hover {
+            border-left-width: 8px;
         }
         .amount-tip strong { font-weight: 600; color: var(--neutral-800); }
 
@@ -437,13 +498,18 @@
             justify-content: center;
             font-size: 1.5rem;
         }
-        .program-content { flex: 1; }
+        .program-content { flex: 1; min-width: 0; }
         .program-header {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
+            gap: 0.5rem;
             margin-bottom: 0.5rem;
             font-weight: 600;
             align-items: center;
+        }
+        @media (max-width: 480px) {
+            .program-header { flex-direction: column; align-items: flex-start; }
         }
         .program-bar {
             height: 8px;
@@ -457,13 +523,34 @@
             border-radius: 980px;
         }
 
-        /* Testimonial */
+        /* Testimonial - matches balance-fiat-value outline style */
         .testimonial {
-            background: var(--neutral-100);
-            border-radius: 1rem;
-            padding: 1.5rem;
+            padding: 1.125rem 1.25rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.08));
+            border-radius: 0.875rem;
+            border: 2px solid rgba(16, 185, 129, 0.25);
             margin: 1.5rem 0 0;
-            border-left: 4px solid var(--primary-green);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .testimonial::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .testimonial:hover::before {
+            opacity: 1;
+        }
+        .testimonial:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
         }
         .testimonial-text {
             font-style: italic;
@@ -490,13 +577,20 @@
         /* Stats tabs */
         .stats-tabs {
             display: flex;
+            flex-wrap: wrap;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--neutral-200);
             padding-bottom: 0.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+        .stats-tabs::-webkit-scrollbar { display: none; }
         .stats-tab {
             padding: 0.5rem 1rem;
+            min-height: 44px;
+            min-width: 44px;
             background: none;
             border: none;
             color: var(--text-secondary);
@@ -505,6 +599,7 @@
             cursor: pointer;
             transition: all 0.2s;
             border-radius: 0.5rem;
+            flex-shrink: 0;
         }
         .stats-tab:hover { background: var(--neutral-100); }
         .stats-tab.active {
@@ -515,23 +610,38 @@
         /* Chart */
         .chart-container {
             margin-bottom: 2rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+        .chart-container::-webkit-scrollbar { display: none; }
         .chart-bars {
             display: flex;
             align-items: flex-end;
             gap: 1rem;
-            height: 200px;
+            height: clamp(140px, 25vw, 200px);
             padding: 1rem 0;
+            min-width: min-content;
         }
         .chart-bar {
             flex: 1;
+            min-width: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.5rem;
         }
+        .bar-track {
+            width: 100%;
+            height: clamp(100px, 20vw, 160px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-width: 0;
+        }
         .bar-fill {
             width: 100%;
+            min-height: 6px;
             background: var(--gradient-primary);
             border-radius: 0.5rem 0.5rem 0 0;
             transition: all 0.3s;
@@ -560,8 +670,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 0.75rem;
             padding: 1rem;
             border-bottom: 1px solid var(--border-subtle);
+            min-width: 0;
         }
         .donation-item:last-child { border-bottom: none; }
         .donor-info {
@@ -581,21 +693,34 @@
             font-weight: 600;
             font-size: 0.875rem;
         }
-        .donor-details p { font-weight: 500; }
+        .donor-details { min-width: 0; }
+        .donor-details p {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
         .donor-details span { font-size: 0.813rem; color: var(--text-secondary); }
         .donation-amount { font-weight: 700; color: var(--primary-green); }
 
         /* Gallery */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: clamp(0.5rem, 2vw, 1rem);
+        }
+        @media (max-width: 480px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+        }
+        @media (min-width: 768px) {
+            .gallery-grid { grid-template-columns: repeat(3, 1fr); }
         }
         .gallery-item {
             aspect-ratio: 3/2;
             border-radius: 0.75rem;
             overflow: hidden;
             cursor: pointer;
+            min-height: 44px;
         }
         .gallery-item img {
             width: 100%;
@@ -610,27 +735,69 @@
             position: sticky;
             top: calc(44px + 2rem);
             align-self: start;
+            max-width: 380px;
         }
         .donation-container {
             background: white;
-            border-radius: 1.5rem;
+            border-radius: 1.25rem;
             padding: 2rem;
-            border: 2px solid var(--border-subtle);
+            border: 2px solid var(--neutral-200);
             box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .donation-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .donation-container:hover::before {
+            transform: scaleX(1);
+        }
+        .donation-container:hover {
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-green);
         }
         .donation-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .donation-trust-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .trust-badge {
+            font-size: 0.688rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-green);
+            background: rgba(16,185,129,0.1);
+            padding: 0.375rem 0.75rem;
+            border-radius: 980px;
         }
         .donation-title {
             font-family: var(--font-display);
-            font-size: 1.5rem;
+            font-size: clamp(1.25rem, 2.5vw, 1.5rem);
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
         .donation-subtitle {
             color: var(--text-secondary);
-            font-size: 0.938rem;
+            font-size: clamp(0.875rem, 1.5vw, 0.938rem);
+        }
+        .donation-trust-guidance {
+            margin-bottom: 1.25rem;
         }
         .suggested-amounts {
             display: grid;
@@ -640,25 +807,34 @@
         }
         .amount-btn {
             padding: 1rem 0.5rem;
+            min-height: 44px;
             background: white;
-            border: 2px solid var(--border-subtle);
+            border: 2px solid var(--neutral-200);
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             line-height: 1.3;
         }
         .amount-btn:hover {
             border-color: var(--primary-green);
-            background: rgba(16,185,129,0.02);
-            transform: translateY(-2px);
+            background: rgba(16,185,129,0.05);
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.15);
         }
         .amount-btn.selected {
             border-color: var(--primary-green);
-            background: rgba(16,185,129,0.08);
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.25);
+        }
+        .amount-btn.selected .amount-value,
+        .amount-btn.selected .amount-impact {
+            color: rgba(255,255,255,0.95);
         }
         .amount-value {
             font-family: var(--font-display);
@@ -684,7 +860,7 @@
         .amount-input {
             width: 100%;
             padding: 1rem 1rem 1rem 2.5rem;
-            border: 2px solid var(--border-subtle);
+            border: 2px solid var(--neutral-200);
             border-radius: 0.75rem;
             font-size: 1.25rem;
             font-weight: 600;
@@ -694,7 +870,7 @@
         .amount-input:focus {
             outline: none;
             border-color: var(--primary-green);
-            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
         }
         .input-hint {
             font-size: 0.875rem;
@@ -719,6 +895,7 @@
         .freq-btn {
             flex: 1;
             padding: 0.75rem;
+            min-height: 44px;
             border: none;
             background: transparent;
             border-radius: 980px;
@@ -733,16 +910,40 @@
             color: var(--primary-green);
         }
         .impact-meter {
-            background: rgba(16,185,129,0.05);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
+            padding: 1.125rem 1.25rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.08));
+            border-radius: 0.875rem;
+            border: 2px solid rgba(16, 185, 129, 0.25);
             margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .impact-meter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .impact-meter:hover::before {
+            opacity: 1;
+        }
+        .impact-meter:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
         }
         .meter-header {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
+            gap: 0.5rem;
             margin-bottom: 0.75rem;
-            font-size: 0.875rem;
+            font-size: clamp(0.813rem, 1.5vw, 0.875rem);
         }
         .meter-bar {
             height: 8px;
@@ -763,64 +964,163 @@
             font-size: 0.813rem;
             color: var(--text-secondary);
             padding: 0.75rem 0 0;
-            border-top: 1px solid var(--border-subtle);
+            border-top: 1px solid var(--neutral-200);
         }
         .btn {
             padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
+            min-height: 44px;
+            border-radius: 980px;
             font-weight: 600;
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             font-family: var(--font-body);
             width: 100%;
         }
         .btn-primary {
-            background: #0d9668;
+            background: var(--primary-green);
             color: white;
             box-shadow: 0 4px 12px rgba(16,185,129,0.25);
         }
         .btn-primary:hover {
-            background: #0b7d56;
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%);
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(16,185,129,0.35);
         }
 
-        /* Mobile donation - fixed bottom sheet */
+        /* Mobile donation - collapsible fixed bottom sheet */
+        .mobile-donation-header {
+            display: none;
+        }
+        .mobile-donation-peek,
+        .mobile-donation-expand-icon {
+            display: none;
+        }
         @media (max-width: 1024px) {
-            .right-column { position: static; }
+            .right-column { position: static; max-width: none; }
+            .donation-container:hover::before { transform: scaleX(0); }
+            .donation-container:hover { border-color: var(--neutral-200); box-shadow: 0 -8px 32px rgba(0,0,0,0.1); }
             .donation-container {
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
                 z-index: 50;
-                border-radius: 1.5rem 1.5rem 0 0;
-                padding: 1.5rem;
+                border-radius: 1.25rem 1.25rem 0 0;
+                padding: 0;
+                padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
                 box-shadow: 0 -8px 32px rgba(0,0,0,0.1);
+                max-height: 85vh;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                transition: max-height 0.3s ease, padding 0.3s ease;
+            }
+            .donation-container.collapsed {
+                max-height: 88px;
+                padding: 0;
+                padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+            }
+            .donation-container.collapsed .donation-content {
+                display: none;
             }
             .mobile-donation-header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-bottom: 1rem;
+                padding: 1rem 1.5rem;
                 cursor: pointer;
+                min-height: 88px;
+                flex-shrink: 0;
+                background: white;
+                border-radius: 1.25rem 1.25rem 0 0;
+            }
+            .mobile-donation-peek,
+            .mobile-donation-expand-icon {
+                display: flex;
+                align-items: center;
+            }
+            .mobile-donation-peek {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            .mobile-donation-peek-badges {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .mobile-peek-unera-icon {
+                width: 24px;
+                height: 24px;
+                flex-shrink: 0;
+            }
+            .mobile-donation-peek-label {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                font-weight: 500;
+            }
+            .mobile-donation-peek-amount {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--primary-green);
+                font-family: var(--font-display);
+            }
+            .mobile-donation-expand-icon {
+                transition: transform 0.3s ease;
+            }
+            .donation-container.expanded .mobile-donation-expand-icon {
+                transform: rotate(180deg);
+            }
+            .donation-content {
+                overflow-y: auto;
+                padding: 1.5rem 1.5rem 1.5rem;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+            .donation-container.collapsed .donation-content {
+                padding: 0;
+            }
+        }
+        @media (max-width: 1024px) {
+            main.container {
+                padding-bottom: calc(110px + max(1.5rem, env(safe-area-inset-bottom)));
+            }
+        }
+        @media (max-width: 768px) {
+            .donation-container.collapsed {
+                max-height: 92px;
+            }
+            .mobile-donation-header {
+                min-height: 92px;
+                padding: 1.25rem 1.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .suggested-amounts {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .amount-btn {
+                min-height: 48px;
+                padding: 1rem;
+            }
+            .freq-btn {
+                min-height: 48px;
+            }
+            .btn {
+                min-height: 48px;
             }
         }
 
         @media (max-width: 768px) {
-            .nav { padding: 0 1rem; }
             .nav-links, .back-link { display: none; }
             .hamburger { display: flex; }
-            .container { padding: 2rem 1rem; }
-            .hero { height: 300px; }
-            .hero-title { font-size: 2rem; }
-            .hero-overlay { padding: 2rem 1rem; }
             .donations-grid { grid-template-columns: 1fr; }
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
+        .donation-simplified-hide { display: none !important; }
         .visually-hidden {
             position: absolute;
             width: 1px;
@@ -1005,20 +1305,30 @@
             </div>
 
             <div class="right-column">
-                <div class="donation-container">
-                    <div class="donation-content">
-                        <div class="benefits-note">
-                            <span style="font-size: 2rem;">✨</span>
-                            <div>
-                                <strong>Why give to this centre?</strong>
-                                <p>Verified by UNERA · 100% to programs · Real-time impact tracking</p>
+                <div class="donation-container collapsed" id="donation-container">
+                    <div class="mobile-donation-header" id="mobile-donation-header" aria-expanded="false" aria-controls="donation-content">
+                        <div class="mobile-donation-peek">
+                            <div class="mobile-donation-peek-badges">
+                                <svg class="mobile-peek-unera-icon" viewBox="0 0 140 140" aria-hidden="true"><circle cx="70" cy="70" r="60" fill="#99F6E4"/><circle cx="70" cy="70" r="45" fill="#14B8A6"/><circle cx="70" cy="70" r="30" fill="#0F766E"/><circle cx="70" cy="70" r="15" fill="#FFFFFF"/></svg>
+                                <span class="mobile-donation-peek-label">Donate</span>
                             </div>
+                            <span class="mobile-donation-peek-amount" id="mobile-peek-amount">$25</span>
                         </div>
+                        <span class="mobile-donation-expand-icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+                        </span>
+                    </div>
+                    <div class="donation-content" id="donation-content">
                         <div class="donation-header">
+                            <div class="donation-trust-badges">
+                                <span class="trust-badge">Verified by UNERA</span>
+                                <span class="trust-badge">100% to programs</span>
+                                <span class="trust-badge">Real-time impact</span>
+                            </div>
                             <h2 class="donation-title">Make an impact</h2>
-                            <p class="donation-subtitle">100% of your donation goes directly to programs. No platform fee.</p>
+                            <p class="donation-subtitle">100% of your donation goes directly to programs. <strong>No platform fee.</strong></p>
                         </div>
-                        <div class="info-box">
+                        <div class="donation-trust-guidance info-box donation-simplified-hide">
                             <p>💡 <strong>Popular amounts:</strong> $25, $50, $100. You can also enter any amount.</p>
                         </div>
                         <div class="suggested-amounts" id="suggested-amounts"></div>
@@ -1035,11 +1345,11 @@
                             <button class="freq-btn active" data-freq="monthly" aria-pressed="true">Monthly</button>
                             <button class="freq-btn" data-freq="onetime" aria-pressed="false">One time</button>
                         </div>
-                        <div class="amount-tip">
+                        <div class="amount-tip donation-simplified-hide">
                             💡 UNERA-to-UNERA sends are free. Your full amount reaches the centre.
                         </div>
                         <button class="btn btn-primary" id="donate-cta" onclick="proceedToDonate()">Send to Centre</button>
-                        <div class="benefits-note" style="margin-top: 1.5rem;">
+                        <div class="benefits-note donation-simplified-hide" style="margin-top: 1.5rem;">
                             <span style="font-size: 1.5rem;">✨</span>
                             <div>
                                 <strong>Your donation counts.</strong>
@@ -1120,7 +1430,7 @@
                     { src: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400", alt: "Centre programs" },
                     { src: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400", alt: "Beneficiaries" },
                     { src: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400", alt: "Team" },
-                    { src: "https://images.unsplash.com/photo-1524186983913-e0c7afd5fabc?w=400", alt: "Impact" }
+                    { src: "https://images.unsplash.com/photo-1529390079861-591de354faf5?w=400", alt: "Impact" }
                 ]
             },
             mumbai: {
@@ -1483,8 +1793,10 @@
                 const height = maxValue > 0 ? (value / maxValue) * 100 : 0;
                 return `
                     <div class="chart-bar">
-                        <div class="bar-fill" style="height: ${height}%">
-                            <span class="bar-value">$${value.toLocaleString()}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="height: ${height}%">
+                                <span class="bar-value">$${value.toLocaleString()}</span>
+                            </div>
                         </div>
                         <div class="bar-label">${chartData.labels[index]}</div>
                     </div>
@@ -1627,7 +1939,57 @@
             if (e.key === 'Escape' && document.querySelector('.mobile-menu.active')) closeMenu();
         });
 
-        document.addEventListener('DOMContentLoaded', loadCentreData);
+        function initMobileDonationSheet() {
+            const container = document.getElementById('donation-container');
+            const header = document.getElementById('mobile-donation-header');
+            const content = document.getElementById('donation-content');
+            const peekAmount = document.getElementById('mobile-peek-amount');
+            const amountInput = document.getElementById('donation-amount');
+            const amountBtns = document.querySelectorAll('.amount-btn');
+
+            if (!container || !header || window.innerWidth > 1024) return;
+
+            function updatePeekAmount() {
+                const selected = document.querySelector('.amount-btn.selected');
+                const val = amountInput?.value;
+                if (val && parseFloat(val) >= 1) {
+                    peekAmount.textContent = '$' + parseFloat(val);
+                } else if (selected) {
+                    peekAmount.textContent = '$' + selected.dataset.amount;
+                } else {
+                    peekAmount.textContent = '$25';
+                }
+            }
+
+            function toggleSheet() {
+                const isExpanded = container.classList.contains('expanded');
+                container.classList.toggle('collapsed', isExpanded);
+                container.classList.toggle('expanded', !isExpanded);
+                header.setAttribute('aria-expanded', !isExpanded);
+            }
+
+            header.addEventListener('click', toggleSheet);
+            amountInput?.addEventListener('input', updatePeekAmount);
+            amountBtns.forEach(btn => btn.addEventListener('click', updatePeekAmount));
+
+            container.classList.add('collapsed');
+            container.classList.remove('expanded');
+            header.setAttribute('aria-expanded', 'false');
+            updatePeekAmount();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCentreData();
+            initMobileDonationSheet();
+        });
+        window.addEventListener('resize', function() {
+            const container = document.getElementById('donation-container');
+            if (container && window.innerWidth > 1024) {
+                container.classList.remove('collapsed', 'expanded');
+            } else if (container && window.innerWidth <= 1024) {
+                initMobileDonationSheet();
+            }
+        });
     </script>
 </body>
 </html>
