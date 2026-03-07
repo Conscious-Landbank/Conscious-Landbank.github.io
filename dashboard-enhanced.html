@@ -1935,6 +1935,16 @@
             color: white;
         }
 
+        /* Match impact-card icon exactly when showing impact detail */
+        .notification-icon.impact-style {
+            width: 56px;
+            height: 56px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+            color: inherit;
+            font-size: 1.75rem;
+        }
+
         .notification-icon.error {
             background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
         }
@@ -2521,23 +2531,23 @@
         <!-- Impact Statistics Section - Enhanced & Interactive -->
         <section aria-labelledby="impact-title">
             <div class="impact-grid">
-                <!-- Total Balance Card - Interactive -->
+                <!-- Total Portfolio Card - Interactive -->
                 <div class="impact-card" 
                      role="button" 
                      tabindex="0" 
-                     aria-label="Total balance: $10,240.00"
+                     aria-label="Total portfolio: $10,240.00"
                      onclick="showImpactDetail('balance')">
                     <div class="impact-card-header">
                         <div class="impact-icon" aria-hidden="true">💰</div>
                         <span class="info-tooltip" 
                               tabindex="0" 
                               role="tooltip" 
-                              data-tooltip="Your total wallet balance across all assets"
-                              aria-label="Information about total balance">i</span>
+                              data-tooltip="Your total portfolio value across all assets"
+                              aria-label="Information about total portfolio">i</span>
                     </div>
                     <div class="impact-value">$10,240</div>
-                    <div class="impact-label">Total Balance</div>
-                    <div class="impact-detail">Available in wallet</div>
+                    <div class="impact-label">Total Portfolio</div>
+                    <div class="impact-detail">🦊 0x742d...3a8f • Ethereum</div>
                     <div class="impact-trend" role="status">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
                             <path d="M18 15l-6-6-6 6"/>
@@ -2864,11 +2874,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="notification-icon" id="notificationIcon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 13l4 4L19 7"/>
-                    </svg>
-                </div>
+                <div class="notification-icon" id="notificationIcon" aria-hidden="true"></div>
                 <div class="notification-message" id="notificationMessage" role="status"></div>
             </div>
             <div class="modal-footer">
@@ -2977,6 +2983,7 @@
 
     <script>
         // ==================== HELPER FUNCTIONS ====================
+        const defaultCheckSvg = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>';
         function showNotification(message, type = 'success', title = 'Success', options = {}) {
             const modal = document.getElementById('notificationModal');
             const icon = document.getElementById('notificationIcon');
@@ -2992,13 +2999,19 @@
                 messageEl.classList.remove('impact-detail-wrapper');
             }
             
-            icon.className = 'notification-icon';
-            if (type === 'error') {
-                icon.classList.add('error');
-            } else if (type === 'warning') {
-                icon.classList.add('warning');
-            } else if (type === 'info') {
-                icon.classList.add('info');
+            if (options.icon) {
+                icon.className = 'notification-icon impact-style';
+                icon.textContent = options.icon;
+            } else {
+                icon.className = 'notification-icon';
+                if (type === 'error') {
+                    icon.classList.add('error');
+                } else if (type === 'warning') {
+                    icon.classList.add('warning');
+                } else if (type === 'info') {
+                    icon.classList.add('info');
+                }
+                icon.innerHTML = defaultCheckSvg;
             }
             
             modal.classList.add('active');
@@ -3358,6 +3371,7 @@
         }
 
         function showImpactDetail(type) {
+            const iconMap = { balance: '💰', yield: '📈', donations: '💚', lives: '🌍' };
             const details = {
                 'balance': {
                     title: 'Total Balance',
@@ -3417,7 +3431,7 @@
                     <p class="impact-detail-cta">Click "View Details" for your complete impact report.</p>
                 </div>
             `;
-            showNotification(html, 'info', detail.title, { useHtml: true });
+            showNotification(html, 'info', detail.title, { useHtml: true, icon: iconMap[type] });
         }
 
         // ==================== INITIALIZATION ====================
