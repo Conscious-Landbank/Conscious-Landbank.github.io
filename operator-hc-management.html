@@ -4,45 +4,466 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HC Management - UNERA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
             --accent-pink: #EC4899;
             --neutral-900: #1F2937;
             --neutral-800: #374151;
+            --neutral-700: #4B5563;
             --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
+            --neutral-400: #D1D5DB;
             --neutral-300: #E5E7EB;
             --neutral-200: #F3F4F6;
             --neutral-100: #F9FAFB;
             --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
-            --gradient-operator: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%);
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-operator: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
+            --accent-indigo: #6366F1;
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+            --gradient-operator-portal: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
             --font-display: 'Space Grotesk', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
         }
 
         body {
             font-family: var(--font-body);
-            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            background: linear-gradient(135deg, #F0F6FF 0%, #E8F0FE 100%);
             color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Top Navigation */
         .nav {
             background: white;
             border-bottom: 1px solid var(--border-subtle);
-            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
         }
 
-        .nav-header {
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            height: 64px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-brand:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .logo-text-block {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.25em;
+        }
+
+        .nav-brand .logo-text {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .logo-operator-text {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        /* Operator user profile (avatar + dropdown) */
+        .op-user-profile {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .op-user-profile:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .op-user-profile:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .op-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-operator-portal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.813rem;
+        }
+        .op-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 240px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+        .op-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .op-dropdown-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .op-dropdown-avatar-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-operator-portal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+        .op-dropdown-email {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+        .op-dropdown-menu {
+            padding: 0.5rem;
+        }
+        .op-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 100%;
+        }
+        .op-dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: #0F766E;
+        }
+        .op-dropdown-item svg {
+            stroke: currentColor;
+            flex-shrink: 0;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .logout-btn:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Hamburger - hidden on desktop */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            margin-left: auto;
+        }
+        .hamburger:hover { background: var(--neutral-200); }
+        .hamburger:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* Mobile Menu */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10002;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 10003;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+
+        .mobile-menu-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .mobile-nav-tabs .tab {
+            display: block;
+            padding: 1rem;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            text-align: left;
+        }
+        .mobile-nav-tabs .tab.tab-link {
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .mobile-nav-tabs .tab.tab-link:hover {
+            background: var(--neutral-100);
+        }
+        .mobile-nav-tabs .tab.active {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary-blue);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding-left: calc(1rem - 3px);
+        }
+        .mobile-nav-user {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .mobile-nav-email {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        .mobile-nav-user .logout-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Tabs */
+        .tabs {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            padding: 0 2rem;
+        }
+
+        .tab {
+            padding: 0 1.25rem;
+            height: 64px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            border-radius: 0;
+            text-decoration: none;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .tab:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: -2px;
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom-color: var(--primary-blue);
+            background: none;
+        }
+
+        .tab[aria-current="page"] {
+            cursor: default;
+        }
+
+        .tab-badge {
+            background: var(--warning);
+            color: white;
+            font-size: 0.688rem;
+            font-weight: 700;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            min-width: 1.25rem;
+            text-align: center;
         }
 
         .back-btn {
@@ -57,6 +478,7 @@
             cursor: pointer;
             text-decoration: none;
             color: var(--text-primary);
+            min-height: 46px;
         }
 
         .container {
@@ -68,7 +490,8 @@
         .page-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
@@ -76,6 +499,11 @@
             font-family: var(--font-display);
             font-size: 2rem;
             font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
         }
 
         .btn-primary {
@@ -91,7 +519,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
         }
 
         /* HC Table */
@@ -140,7 +568,7 @@
 
         .badge-active {
             background: rgba(16, 185, 129, 0.1);
-            color: #059669;
+            color: var(--success);
         }
 
         .badge-inactive {
@@ -161,6 +589,18 @@
 
         .btn-edit:hover {
             background: var(--neutral-300);
+        }
+
+        .btn-edit:focus-visible,
+        .back-btn:focus-visible,
+        .modal-close:focus-visible,
+        .btn-secondary:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .btn-edit {
+            min-height: 46px;
         }
 
         /* Modal */
@@ -240,28 +680,14 @@
 
         .form-input:focus, .form-textarea:focus {
             outline: none;
-            border-color: var(--accent-pink);
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .toggle-group {
             display: flex;
             align-items: center;
             gap: 1rem;
-        }
-
-        .toggle {
-            position: relative;
-            width: 48px;
-            height: 24px;
-            background: var(--neutral-300);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .toggle.active {
-            background: var(--primary-green);
         }
 
         .toggle-slider {
@@ -275,15 +701,75 @@
             transition: all 0.2s;
         }
 
-        .toggle.active .toggle-slider {
-            left: 26px;
-        }
-
         .modal-footer {
             padding: 1.5rem;
             border-top: 1px solid var(--border-subtle);
             display: flex;
             gap: 0.75rem;
+        }
+
+        /* HC Drawer (matches Activity Drawer layout) */
+        #hcModal.modal-overlay {
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+        #hcModal .drawer {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: none;
+            overflow-y: auto;
+            border-radius: 0;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            animation: slideInRight 0.3s ease-out;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        #hcModal .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+        #hcModal .drawer-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        #hcModal .drawer-close {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        #hcModal .drawer-close:hover {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+        #hcModal .drawer form {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        #hcModal .drawer-body {
+            padding: 2rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+        #hcModal .modal-footer {
+            padding: 1rem 2rem;
+            border-top: 2px solid var(--border-subtle);
         }
 
         .btn-secondary {
@@ -294,40 +780,488 @@
             border-radius: 0.5rem;
             font-weight: 600;
             cursor: pointer;
+            min-height: 46px;
         }
 
-        @media (max-width: 768px) {
-            .hc-table { display: block; overflow-x: auto; }
+        .form-error {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--error);
+            margin-top: 0.5rem;
+        }
+
+        .form-input.error, .form-textarea.error {
+            border-color: var(--error);
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-zone:hover, .upload-zone:focus-visible {
+            border-color: var(--primary-green);
+            outline: 3px solid rgba(16, 185, 129, 0.2);
+            outline-offset: 2px;
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--primary-green);
+            border-style: solid;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .upload-zone-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            color: var(--neutral-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text {
+            font-weight: 500;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .upload-hint {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .upload-preview {
+            width: 100%;
+        }
+
+        .upload-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 0.75rem;
+        }
+
+        .btn-replace, .btn-remove {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            min-height: 46px;
+        }
+
+        .btn-replace:hover, .btn-remove:hover {
+            background: var(--neutral-300);
+        }
+
+        .btn-remove {
+            color: var(--error);
+        }
+
+        .upload-progress {
+            width: 100%;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .upload-error {
+            color: var(--error);
+        }
+
+        .btn-retry {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10002;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: white;
+            border-left: 4px solid var(--success);
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            min-width: 280px;
+        }
+
+        .toast.toast-error {
+            border-left-color: var(--error);
+        }
+
+        .toast-dismiss {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--neutral-600);
+            padding: 0.25rem;
+        }
+
+        /* Confirm Dialog */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 10003;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirm-overlay.active {
+            display: flex;
+        }
+
+        .confirm-dialog {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .confirm-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirm-message {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .btn-confirm {
+            padding: 0.75rem 1.5rem;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 46px;
+        }
+
+        /* Skeleton */
+        .skeleton-row {
+            height: 48px;
+            background: linear-gradient(90deg, var(--neutral-200) 25%, var(--neutral-100) 50%, var(--neutral-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s infinite;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .hc-empty {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .hc-empty-text {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .hc-empty-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--neutral-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            padding: 0;
+        }
+
+        .toggle[aria-checked="true"] {
+            background: var(--primary-green);
+        }
+
+        .toggle[aria-checked="true"] .toggle-slider {
+            left: 26px;
+        }
+
+        .toggle.toggle-sm {
+            width: 36px;
+            height: 18px;
+        }
+
+        .toggle.toggle-sm .toggle-slider {
+            width: 14px;
+            height: 14px;
+        }
+
+        .toggle.toggle-sm[aria-checked="true"] .toggle-slider {
+            left: 20px;
+        }
+
+        @media (max-width: 960px) {
+            #operatorProfile,
+            .tabs {
+                display: none !important;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .hc-table, .hc-table thead, .hc-table tbody, .hc-table tr, .hc-table th, .hc-table td {
+                display: block;
+            }
+
+            .hc-table thead, .hc-table thead tr {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+            }
+
+            .hc-table tbody tr {
+                background: white;
+                border: 1px solid var(--border-subtle);
+                border-radius: 0.75rem;
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .hc-table td {
+                border: none;
+                padding: 0.5rem 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .hc-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+            }
+
+            .hc-table td:last-child {
+                flex-direction: row-reverse;
+                justify-content: flex-start;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--border-subtle);
+                margin-top: 0.5rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="nav">
-        <div class="nav-header">
-            <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;">UNERA - HC Management</h1>
-            <a href="operator-dashboard.html" class="back-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                Back to Dashboard
-            </a>
-        </div>
-    </nav>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <main class="container">
+    <header>
+        <nav class="nav" role="navigation" aria-label="Operator navigation">
+            <div class="nav-container">
+                <a href="operator-dashboard.html" class="nav-brand" aria-label="UNERA Operator Home">
+                    <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                        <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                        <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                        <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                        <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                    </svg>
+                    <span class="logo-text-block">
+                        <span class="logo-text">UNERA</span>
+                        <span class="logo-operator-text">OPERATOR</span>
+                    </span>
+                </a>
+
+                <div class="tabs" role="tablist" aria-label="Operator sections">
+                    <a href="operator-dashboard.html" class="tab tab-link">Dashboard</a>
+                    <a href="operator-issuance.html" class="tab tab-link">Stablecoin Issuance</a>
+                    <span class="tab active" aria-current="page" aria-label="HC Management, 2 pending items">HC Management <span class="tab-badge">2</span></span>
+                    <a href="operator-por.html" class="tab tab-link">Proof of Reserve</a>
+                </div>
+
+                <div class="op-user-profile" onclick="toggleOperatorDropdown()"
+                     id="operatorProfile" role="button" aria-expanded="false" aria-haspopup="true">
+                    <div class="op-avatar" id="operatorAvatar">OP</div>
+                    <div class="op-dropdown" id="operatorDropdown" onclick="event.stopPropagation()">
+                        <div class="op-dropdown-header">
+                            <div class="op-dropdown-avatar-lg" id="operatorDropdownAvatar">OP</div>
+                            <div class="op-dropdown-email" id="operatorEmail"></div>
+                        </div>
+                        <div class="op-dropdown-menu">
+                            <a href="#" class="op-dropdown-item" onclick="logout(); return false;">
+                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                Log Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <span class="logo-text" style="font-family: var(--font-display); font-weight: 600;">Operator Menu</span>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-nav-tabs">
+            <a href="operator-dashboard.html" class="tab tab-link">Dashboard</a>
+            <a href="operator-issuance.html" class="tab tab-link">Stablecoin Issuance</a>
+            <span class="tab active" aria-current="page" aria-label="HC Management, 2 pending items">HC Management <span class="tab-badge">2</span></span>
+            <a href="operator-por.html" class="tab tab-link">Proof of Reserve</a>
+        </div>
+        <div class="mobile-nav-user">
+            <div class="mobile-nav-email" id="mobileOperatorEmail"></div>
+            <button class="logout-btn" onclick="logout()" aria-label="Log out">Logout</button>
+        </div>
+    </div>
+
+    <main id="main-content" class="container" role="main">
         <div class="page-header">
-            <h1 class="page-title">Humanity Centre Management</h1>
-            <button class="btn-primary" onclick="openAddModal()">+ Add New HC</button>
+            <div>
+                <h2 class="page-title">Humanity Centre Management</h2>
+                <p class="page-subtitle">Create and manage Humanity Centre profiles visible in the public directory.</p>
+            </div>
+            <button class="btn-primary" onclick="openAddModal()" id="addHcBtn">+ Add New HC</button>
         </div>
 
         <div class="hc-section">
-            <table class="hc-table">
+            <div class="hc-skeleton" id="hcSkeleton">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+            </div>
+            <div class="hc-empty" id="hcEmpty" style="display: none;">
+                <p class="hc-empty-text">No Humanity Centres yet</p>
+                <p class="hc-empty-desc">Add your first Humanity Centre to get started.</p>
+                <button class="btn-primary" onclick="openAddModal()">Add your first Humanity Centre</button>
+            </div>
+            <table class="hc-table" id="hcTable" style="display: none;" aria-describedby="hc-table-caption">
+                <caption id="hc-table-caption" class="sr-only">List of Humanity Centres with name, location, status, and edit action</caption>
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody id="hc-list">
@@ -337,42 +1271,75 @@
         </div>
     </main>
 
-    <!-- Edit/Add HC Modal -->
-    <div class="modal-overlay" id="hcModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modal-title">Add Humanity Centre</h2>
-                <button class="modal-close" onclick="closeModal()">×</button>
+    <!-- Edit/Add HC Modal (drawer layout, matches Activity Drawer) -->
+    <div class="modal-overlay" id="hcModal" aria-hidden="true">
+        <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="drawer-header">
+                <h2 class="drawer-title" id="modal-title">Add Humanity Centre</h2>
+                <button class="drawer-close" onclick="closeModal()" aria-label="Close modal">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
             <form id="hcForm" onsubmit="handleSave(event)">
-                <div class="modal-body">
+                <div class="drawer-body">
                     <div class="form-group">
-                        <label class="form-label">Name</label>
-                        <input type="text" id="hc-name" class="form-input" placeholder="Nairobi Hope Centre" required>
+                        <label class="form-label" for="hc-name">Name</label>
+                        <input type="text" id="hc-name" class="form-input" placeholder="Nairobi Hope Centre" required aria-describedby="hc-name-error">
+                        <span id="hc-name-error" class="form-error" role="alert" aria-live="polite"></span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Location</label>
-                        <input type="text" id="hc-location" class="form-input" placeholder="Nairobi, Kenya" required>
+                        <label class="form-label" for="hc-location">Location</label>
+                        <input type="text" id="hc-location" class="form-input" placeholder="Nairobi, Kenya" required aria-describedby="hc-location-error">
+                        <span id="hc-location-error" class="form-error" role="alert" aria-live="polite"></span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Description</label>
-                        <textarea id="hc-description" class="form-textarea" placeholder="Describe the centre's mission and programs..." required></textarea>
+                        <label class="form-label" for="hc-description">Description</label>
+                        <textarea id="hc-description" class="form-textarea" placeholder="Describe the centre's mission and programs..." required aria-describedby="hc-description-error"></textarea>
+                        <span id="hc-description-error" class="form-error" role="alert" aria-live="polite"></span>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Image URL</label>
-                        <input type="url" id="hc-image" class="form-input" placeholder="https://example.com/image.jpg">
-                        <small style="color: var(--text-secondary); font-size: 0.813rem;">Enter a URL for the centre image</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <div class="toggle-group">
-                            <div class="toggle active" id="status-toggle" onclick="toggleStatus()">
-                                <div class="toggle-slider"></div>
+                    <div class="form-group" id="image-upload-group">
+                        <label class="form-label">Centre Image</label>
+                        <div id="image-upload-zone" class="upload-zone" role="button" tabindex="0" aria-label="Upload centre image. Drag and drop or click to browse. JPG, PNG, WebP. Max 5MB.">
+                            <input type="file" id="hc-image-file" accept="image/jpeg,image/png,image/webp" hidden>
+                            <input type="hidden" id="hc-image" name="hc-image">
+                            <div class="upload-zone-content" id="upload-zone-content">
+                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <span class="upload-text">Drag & drop or click to browse</span>
+                                <span class="upload-hint">JPG, PNG, WebP · Max 5MB</span>
                             </div>
+                            <div class="upload-preview" id="upload-preview" style="display: none;">
+                                <img id="upload-preview-img" src="" alt="Centre image preview">
+                                <div class="upload-actions">
+                                    <button type="button" class="btn-replace" onclick="replaceImage(event)">Replace</button>
+                                    <button type="button" class="btn-remove" onclick="removeImage(event)">Remove</button>
+                                </div>
+                            </div>
+                            <div class="upload-progress" id="upload-progress" style="display: none;">
+                                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                                <span id="upload-filename"></span>
+                            </div>
+                            <div class="upload-error" id="upload-error" style="display: none;">
+                                <span id="upload-error-text"></span>
+                                <button type="button" class="btn-retry" onclick="retryUpload(event)">Retry</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="status-toggle">Status</label>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle" id="status-toggle" role="switch" aria-checked="true" aria-label="Centre status. Currently active." onclick="toggleStatus()" onkeydown="toggleStatusKeydown(event)">
+                                <span class="toggle-slider"></span>
+                            </button>
                             <span id="status-label">Active</span>
                         </div>
                     </div>
@@ -386,123 +1353,538 @@
         </div>
     </div>
 
+    <!-- Deactivation Confirm Dialog -->
+    <div class="confirm-overlay" id="confirmOverlay" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="confirm-dialog">
+            <h3 class="confirm-title" id="confirm-title">Deactivate Humanity Centre?</h3>
+            <p class="confirm-message" id="confirm-message">This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.</p>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" onclick="cancelDeactivate()">Cancel</button>
+                <button type="button" class="btn-confirm" onclick="confirmDeactivate()">Deactivate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- Cropper Modal -->
+    <div class="modal-overlay" id="cropperModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cropper-title">
+            <div class="modal-header">
+                <h2 class="modal-title" id="cropper-title">Crop Image</h2>
+                <button class="modal-close" onclick="closeCropper()" aria-label="Close crop modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="cropper-container" style="max-height: 400px; min-height: 300px;">
+                    <img id="cropperImage" src="" alt="Image to crop" style="max-width: 100%; display: block;">
+                </div>
+                <p class="cropper-hint" style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-secondary);">Crop to 16:9 aspect ratio for best display.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeCropper()">Cancel</button>
+                <button type="button" class="btn-primary" onclick="applyCrop()">Apply Crop</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
     <script>
+        // Auth guard
+        const urlParams = new URLSearchParams(window.location.search);
+        const devMode = urlParams.has('dev') || urlParams.has('test');
+        if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
+            window.location.href = 'operator-login.html';
+        }
+        var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
+        var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
+        var avatarEl = document.getElementById('operatorAvatar');
+        var dropdownAvatarEl = document.getElementById('operatorDropdownAvatar');
+        var emailEl = document.getElementById('operatorEmail');
+        if (avatarEl) avatarEl.textContent = initial;
+        if (dropdownAvatarEl) dropdownAvatarEl.textContent = initial;
+        if (emailEl) emailEl.textContent = operatorEmailVal;
+        var mobileEmailEl = document.getElementById('mobileOperatorEmail');
+        if (mobileEmailEl) mobileEmailEl.textContent = operatorEmailVal;
+
+        function toggleOperatorDropdown() {
+            var dropdown = document.getElementById('operatorDropdown');
+            var btn = document.getElementById('operatorProfile');
+            if (dropdown && btn) {
+                var isOpen = dropdown.classList.toggle('show');
+                btn.setAttribute('aria-expanded', isOpen);
+            }
+        }
+        document.addEventListener('click', function(e) {
+            var profile = document.getElementById('operatorProfile');
+            var dropdown = document.getElementById('operatorDropdown');
+            if (profile && dropdown && !profile.contains(e.target)) {
+                dropdown.classList.remove('show');
+                profile.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        (function() {
+            var hamburger = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var mobileOverlay = document.querySelector('.mobile-menu-overlay');
+            var mobileClose = document.querySelector('.mobile-menu-close');
+            function openMenu() {
+                hamburger.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            if (hamburger) hamburger.addEventListener('click', function() {
+                mobileMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+            if (mobileOverlay) mobileOverlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+            });
+        })();
+
+        function logout() {
+            localStorage.removeItem('operatorAuth');
+            localStorage.removeItem('operatorEmail');
+            window.location.href = 'operator-login.html';
+        }
+
         // Mock HC data
-        const humanityCentres = [
-            { id: 1, name: 'Nairobi Hope Centre', location: 'Nairobi, Kenya', status: 'Active' },
-            { id: 2, name: 'Mumbai Community Centre', location: 'Mumbai, India', status: 'Active' },
-            { id: 3, name: 'São Paulo Care Centre', location: 'São Paulo, Brazil', status: 'Active' },
-            { id: 4, name: 'Dhaka Relief Centre', location: 'Dhaka, Bangladesh', status: 'Active' },
-            { id: 5, name: 'Lagos Community Hub', location: 'Lagos, Nigeria', status: 'Active' },
-            { id: 6, name: 'Manila Support Centre', location: 'Manila, Philippines', status: 'Inactive' },
-            { id: 7, name: 'Cairo Aid Centre', location: 'Cairo, Egypt', status: 'Active' },
-            { id: 8, name: 'Port-au-Prince Centre', location: 'Haiti', status: 'Active' },
-            { id: 9, name: 'Jakarta Hope Centre', location: 'Jakarta, Indonesia', status: 'Active' },
-            { id: 10, name: 'Karachi Community Centre', location: 'Karachi, Pakistan', status: 'Active' },
-            { id: 11, name: 'Lima Support Centre', location: 'Lima, Peru', status: 'Active' },
-            { id: 12, name: 'Kampala Care Centre', location: 'Kampala, Uganda', status: 'Active' }
+        let humanityCentres = [
+            { id: 1, name: 'Nairobi Hope Centre', location: 'Nairobi, Kenya', description: 'Community support centre.', status: 'Active', image: '' },
+            { id: 2, name: 'Mumbai Community Centre', location: 'Mumbai, India', description: 'Local outreach programs.', status: 'Active', image: '' },
+            { id: 3, name: 'São Paulo Care Centre', location: 'São Paulo, Brazil', description: 'Healthcare and education.', status: 'Active', image: '' },
+            { id: 4, name: 'Dhaka Relief Centre', location: 'Dhaka, Bangladesh', description: 'Disaster relief and support.', status: 'Active', image: '' },
+            { id: 5, name: 'Lagos Community Hub', location: 'Lagos, Nigeria', description: 'Youth and skills training.', status: 'Active', image: '' },
+            { id: 6, name: 'Manila Support Centre', location: 'Manila, Philippines', description: 'Family support services.', status: 'Inactive', image: '' },
+            { id: 7, name: 'Cairo Aid Centre', location: 'Cairo, Egypt', description: 'Emergency aid distribution.', status: 'Active', image: '' },
+            { id: 8, name: 'Port-au-Prince Centre', location: 'Haiti', description: 'Rebuilding and recovery.', status: 'Active', image: '' },
+            { id: 9, name: 'Jakarta Hope Centre', location: 'Jakarta, Indonesia', description: 'Education and shelter.', status: 'Active', image: '' },
+            { id: 10, name: 'Karachi Community Centre', location: 'Karachi, Pakistan', description: 'Community development.', status: 'Active', image: '' },
+            { id: 11, name: 'Lima Support Centre', location: 'Lima, Peru', description: 'Healthcare access.', status: 'Active', image: '' },
+            { id: 12, name: 'Kampala Care Centre', location: 'Kampala, Uganda', description: 'Child and family care.', status: 'Active', image: '' }
         ];
 
         let currentHC = null;
+        let lastFocusBeforeModal = null;
+        let pendingDeactivateHC = null;
+        let cropperInstance = null;
+        let pendingCropFile = null;
+        const MAX_FILE_SIZE = 5 * 1024 * 1024;
+        const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-        // Load HCs into table
-        function loadHCs() {
-            const tbody = document.getElementById('hc-list');
-            tbody.innerHTML = humanityCentres.map(hc => `
-                <tr>
-                    <td style="font-weight: 500;">${hc.name}</td>
-                    <td style="color: var(--text-secondary);">${hc.location}</td>
-                    <td>
-                        <span class="badge ${hc.status === 'Active' ? 'badge-active' : 'badge-inactive'}">
-                            ${hc.status}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn-edit" onclick="openEditModal(${hc.id})">Edit</button>
-                    </td>
-                </tr>
-            `).join('');
+        // Toast
+        function showToast(message, isError = false) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (isError ? ' toast-error' : '');
+            toast.innerHTML = `<span>${message}</span><button class="toast-dismiss" aria-label="Dismiss">×</button>`;
+            container.appendChild(toast);
+            const dismiss = () => {
+                toast.remove();
+            };
+            toast.querySelector('.toast-dismiss').onclick = dismiss;
+            setTimeout(dismiss, 4000);
         }
 
-        .badge-active {
-            background: rgba(16, 185, 129, 0.1);
-            color: #059669;
+        // Form validation
+        function validateField(id) {
+            const input = document.getElementById(id);
+            const errorEl = document.getElementById(id + '-error');
+            const val = input.value.trim();
+            let msg = '';
+            if (id === 'hc-name' && !val) msg = 'Centre name is required. Enter a name to continue.';
+            if (id === 'hc-location' && !val) msg = 'Location is required. Enter a location to continue.';
+            if (id === 'hc-description' && !val) msg = 'Description is required. Describe the centre to continue.';
+            errorEl.textContent = msg;
+            input.classList.toggle('error', !!msg);
+            return !msg;
         }
 
-        .badge-inactive {
-            background: rgba(107, 114, 128, 0.1);
-            color: var(--neutral-600);
+        function validateForm() {
+            const fields = ['hc-name', 'hc-location', 'hc-description'];
+            let valid = true;
+            for (const id of fields) {
+                if (!validateField(id)) valid = false;
+            }
+            if (!valid) {
+                const firstError = document.querySelector('.form-input.error, .form-textarea.error');
+                if (firstError) {
+                    firstError.focus();
+                    firstError.scrollIntoView({ block: 'center' });
+                }
+            }
+            return valid;
         }
 
-        // Open add modal
-        function openAddModal() {
-            currentHC = null;
-            document.getElementById('modal-title').textContent = 'Add Humanity Centre';
-            document.getElementById('hcForm').reset();
-            document.getElementById('status-toggle').classList.add('active');
-            document.getElementById('status-label').textContent = 'Active';
-            document.getElementById('hcModal').classList.add('active');
+        // Upload zone
+        function resetUploadZone() {
+            const zone = document.getElementById('image-upload-zone');
+            const content = document.getElementById('upload-zone-content');
+            const preview = document.getElementById('upload-preview');
+            const progress = document.getElementById('upload-progress');
+            const err = document.getElementById('upload-error');
+            zone.classList.remove('drag-over');
+            content.style.display = 'flex';
+            preview.style.display = 'none';
+            progress.style.display = 'none';
+            err.style.display = 'none';
+            document.getElementById('hc-image').value = '';
+            document.getElementById('hc-image-file').value = '';
         }
 
-        // Open edit modal
-        function openEditModal(id) {
-            currentHC = humanityCentres.find(hc => hc.id === id);
-            if (!currentHC) return;
+        function showUploadPreview(dataUrl) {
+            document.getElementById('upload-zone-content').style.display = 'none';
+            document.getElementById('upload-progress').style.display = 'none';
+            document.getElementById('upload-error').style.display = 'none';
+            const preview = document.getElementById('upload-preview');
+            document.getElementById('upload-preview-img').src = dataUrl;
+            preview.style.display = 'block';
+            document.getElementById('hc-image').value = dataUrl;
+        }
 
-            document.getElementById('modal-title').textContent = 'Edit Humanity Centre';
-            document.getElementById('hc-name').value = currentHC.name;
-            document.getElementById('hc-location').value = currentHC.location;
-            document.getElementById('hc-description').value = currentHC.description || '';
-            document.getElementById('hc-image').value = currentHC.image || '';
-            
+        function showUploadError(text) {
+            document.getElementById('upload-zone-content').style.display = 'none';
+            document.getElementById('upload-preview').style.display = 'none';
+            document.getElementById('upload-progress').style.display = 'none';
+            const err = document.getElementById('upload-error');
+            document.getElementById('upload-error-text').textContent = text;
+            err.style.display = 'block';
+        }
+
+        function processFile(file) {
+            if (!ACCEPTED_TYPES.includes(file.type)) {
+                showUploadError('Only JPG, PNG, and WebP images are accepted.');
+                return;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                showUploadError('File too large. Maximum size is 5MB.');
+                return;
+            }
+            document.getElementById('upload-zone-content').style.display = 'none';
+            document.getElementById('upload-error').style.display = 'none';
+            document.getElementById('upload-progress').style.display = 'block';
+            document.getElementById('upload-filename').textContent = file.name;
+            document.getElementById('progress-fill').style.width = '30%';
+            pendingCropFile = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('progress-fill').style.width = '100%';
+                setTimeout(() => {
+                    openCropper(e.target.result);
+                    document.getElementById('upload-progress').style.display = 'none';
+                }, 200);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setupUploadZone() {
+            const zone = document.getElementById('image-upload-zone');
+            const fileInput = document.getElementById('hc-image-file');
+            zone.addEventListener('click', () => fileInput.click());
+            zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]);
+            });
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) processFile(fileInput.files[0]);
+            });
+        }
+
+        function replaceImage(e) {
+            e.stopPropagation();
+            document.getElementById('hc-image-file').click();
+        }
+
+        function removeImage(e) {
+            e.stopPropagation();
+            resetUploadZone();
+        }
+
+        function retryUpload(e) {
+            e.stopPropagation();
+            document.getElementById('upload-error').style.display = 'none';
+            document.getElementById('upload-zone-content').style.display = 'flex';
+            document.getElementById('hc-image-file').click();
+        }
+
+        // Cropper
+        function openCropper(src) {
+            const img = document.getElementById('cropperImage');
+            img.src = src;
+            document.getElementById('cropperModal').classList.add('active');
+            document.getElementById('cropperModal').setAttribute('aria-hidden', 'false');
+            if (typeof Cropper !== 'undefined') {
+                setTimeout(() => {
+                    if (cropperInstance) cropperInstance.destroy();
+                    cropperInstance = new Cropper(img, { aspectRatio: 16/9, viewMode: 1 });
+                }, 100);
+            } else {
+                const reader = new FileReader();
+                reader.onload = (e) => showUploadPreview(e.target.result);
+                if (pendingCropFile) reader.readAsDataURL(pendingCropFile);
+                closeCropper();
+            }
+        }
+
+        function closeCropper() {
+            document.getElementById('cropperModal').classList.remove('active');
+            document.getElementById('cropperModal').setAttribute('aria-hidden', 'true');
+            if (cropperInstance) {
+                cropperInstance.destroy();
+                cropperInstance = null;
+            }
+        }
+
+        function applyCrop() {
+            if (cropperInstance) {
+                const canvas = cropperInstance.getCroppedCanvas();
+                if (canvas) showUploadPreview(canvas.toDataURL('image/jpeg', 0.9));
+            }
+            closeCropper();
+        }
+
+        // Deactivation confirm
+        function requestDeactivate() {
+            document.getElementById('confirm-message').textContent = 'This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.';
+            document.getElementById('confirmOverlay').classList.add('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'false');
+            pendingDeactivateHC = { fromModal: true };
+            document.addEventListener('keydown', handleConfirmEscape);
+            setTimeout(() => document.querySelector('.confirm-actions .btn-secondary').focus(), 50);
+        }
+
+        function cancelDeactivate() {
+            document.getElementById('confirmOverlay').classList.remove('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'true');
+            pendingDeactivateHC = null;
+            document.removeEventListener('keydown', handleConfirmEscape);
+        }
+
+        function handleConfirmEscape(e) {
+            if (e.key === 'Escape') cancelDeactivate();
+        }
+
+        function confirmDeactivate() {
+            document.removeEventListener('keydown', handleConfirmEscape);
             const toggle = document.getElementById('status-toggle');
             const label = document.getElementById('status-label');
-            if (currentHC.status === 'Active') {
-                toggle.classList.add('active');
-                label.textContent = 'Active';
-            } else {
-                toggle.classList.remove('active');
-                label.textContent = 'Inactive';
+            toggle.setAttribute('aria-checked', 'false');
+            toggle.setAttribute('aria-label', 'Centre status. Currently inactive.');
+            label.textContent = 'Inactive';
+            document.getElementById('confirmOverlay').classList.remove('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'true');
+            if (pendingDeactivateHC && pendingDeactivateHC.rowId) {
+                const hc = humanityCentres.find(h => h.id === pendingDeactivateHC.rowId);
+                if (hc) {
+                    hc.status = 'Inactive';
+                    loadHCs();
+                    showToast(`${hc.name} deactivated.`);
+                }
             }
-
-            document.getElementById('hcModal').classList.add('active');
+            pendingDeactivateHC = null;
         }
 
-        // Close modal
-        function closeModal() {
-            document.getElementById('hcModal').classList.remove('active');
+        function toggleRowStatus(id) {
+            const hc = humanityCentres.find(h => h.id === id);
+            if (!hc) return;
+            if (hc.status === 'Inactive') {
+                hc.status = 'Active';
+                loadHCs();
+                showToast(`${hc.name} activated.`);
+                return;
+            }
+            pendingDeactivateHC = { rowId: id };
+            document.getElementById('confirm-message').textContent = 'This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.';
+            document.getElementById('confirmOverlay').classList.add('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'false');
+            document.addEventListener('keydown', handleConfirmEscape);
+            setTimeout(() => document.querySelector('.confirm-actions .btn-secondary').focus(), 50);
         }
 
         // Toggle status
         function toggleStatus() {
             const toggle = document.getElementById('status-toggle');
             const label = document.getElementById('status-label');
-            
-            if (toggle.classList.contains('active')) {
-                toggle.classList.remove('active');
-                label.textContent = 'Inactive';
-            } else {
-                toggle.classList.add('active');
-                label.textContent = 'Active';
+            const isActive = toggle.getAttribute('aria-checked') === 'true';
+            if (isActive) {
+                requestDeactivate();
+                return;
             }
+            toggle.setAttribute('aria-checked', 'true');
+            toggle.setAttribute('aria-label', 'Centre status. Currently active.');
+            label.textContent = 'Active';
+        }
+
+        function toggleStatusKeydown(e) {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleStatus();
+            }
+        }
+
+        // Modal focus trap
+        function trapFocus(modal) {
+            const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            first && first.focus();
+            modal.addEventListener('keydown', function handler(e) {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey) {
+                    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+                } else {
+                    if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+                }
+            });
+        }
+
+        // Load HCs into table
+        function loadHCs() {
+            const skeleton = document.getElementById('hcSkeleton');
+            const empty = document.getElementById('hcEmpty');
+            const table = document.getElementById('hcTable');
+            const tbody = document.getElementById('hc-list');
+
+            skeleton.style.display = 'block';
+            empty.style.display = 'none';
+            table.style.display = 'none';
+
+            setTimeout(() => {
+                skeleton.style.display = 'none';
+                if (humanityCentres.length === 0) {
+                    empty.style.display = 'block';
+                } else {
+                    table.style.display = 'table';
+                    tbody.innerHTML = humanityCentres.map(hc => `
+                        <tr>
+                            <td data-label="Name" style="font-weight: 500;">${hc.name}</td>
+                            <td data-label="Location" style="color: var(--text-secondary);">${hc.location}</td>
+                            <td data-label="Status">
+                                <span class="badge ${hc.status === 'Active' ? 'badge-active' : 'badge-inactive'}">${hc.status}</span>
+                                <button type="button" class="toggle toggle-sm" role="switch" aria-checked="${hc.status === 'Active'}" aria-label="${hc.status === 'Active' ? 'Deactivate' : 'Activate'} ${hc.name}" onclick="toggleRowStatus(${hc.id})" style="margin-left: 0.5rem;"><span class="toggle-slider"></span></button>
+                            </td>
+                            <td data-label="Action">
+                                <button class="btn-edit" onclick="openEditModal(${hc.id})">Edit</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }, 300);
+        }
+
+        // Open add modal
+        function openAddModal() {
+            currentHC = null;
+            lastFocusBeforeModal = document.activeElement;
+            document.getElementById('modal-title').textContent = 'Add Humanity Centre';
+            document.getElementById('hcForm').reset();
+            clearFormErrors();
+            resetUploadZone();
+            document.getElementById('status-toggle').setAttribute('aria-checked', 'true');
+            document.getElementById('status-toggle').setAttribute('aria-label', 'Centre status. Currently active.');
+            document.getElementById('status-label').textContent = 'Active';
+            document.getElementById('hcModal').classList.add('active');
+            document.getElementById('hcModal').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => trapFocus(document.getElementById('hcModal')), 50);
+            document.addEventListener('keydown', handleModalEscape);
+        }
+
+        function clearFormErrors() {
+            ['hc-name', 'hc-location', 'hc-description'].forEach(id => {
+                document.getElementById(id).classList.remove('error');
+                document.getElementById(id + '-error').textContent = '';
+            });
+        }
+
+        // Open edit modal
+        function openEditModal(id) {
+            currentHC = humanityCentres.find(hc => hc.id === id);
+            if (!currentHC) return;
+            lastFocusBeforeModal = document.activeElement;
+            document.getElementById('modal-title').textContent = 'Edit Humanity Centre';
+            document.getElementById('hc-name').value = currentHC.name;
+            document.getElementById('hc-location').value = currentHC.location;
+            document.getElementById('hc-description').value = currentHC.description || '';
+            clearFormErrors();
+            resetUploadZone();
+            if (currentHC.image) {
+                showUploadPreview(currentHC.image);
+            }
+            const toggle = document.getElementById('status-toggle');
+            const label = document.getElementById('status-label');
+            const isActive = currentHC.status === 'Active';
+            toggle.setAttribute('aria-checked', isActive ? 'true' : 'false');
+            toggle.setAttribute('aria-label', 'Centre status. Currently ' + (isActive ? 'active' : 'inactive') + '.');
+            label.textContent = currentHC.status;
+            document.getElementById('hcModal').classList.add('active');
+            document.getElementById('hcModal').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => trapFocus(document.getElementById('hcModal')), 50);
+            document.addEventListener('keydown', handleModalEscape);
+        }
+
+        function handleModalEscape(e) {
+            if (e.key === 'Escape') closeModal();
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('hcModal').classList.remove('active');
+            document.getElementById('hcModal').setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleModalEscape);
+            if (lastFocusBeforeModal && lastFocusBeforeModal.focus) lastFocusBeforeModal.focus();
         }
 
         // Handle save
         function handleSave(event) {
             event.preventDefault();
-            
-            const name = document.getElementById('hc-name').value;
-            const location = document.getElementById('hc-location').value;
-            const isActive = document.getElementById('status-toggle').classList.contains('active');
-            
-            // Simulate save
+            if (!validateForm()) return;
+            const name = document.getElementById('hc-name').value.trim();
+            const location = document.getElementById('hc-location').value.trim();
+            const description = document.getElementById('hc-description').value.trim();
+            const image = document.getElementById('hc-image').value;
+            const isActive = document.getElementById('status-toggle').getAttribute('aria-checked') === 'true';
+
+            if (currentHC) {
+                currentHC.name = name;
+                currentHC.location = location;
+                currentHC.description = description;
+                currentHC.image = image;
+                currentHC.status = isActive ? 'Active' : 'Inactive';
+            } else {
+                const newId = Math.max(...humanityCentres.map(h => h.id), 0) + 1;
+                humanityCentres.push({ id: newId, name, location, description, image, status: isActive ? 'Active' : 'Inactive' });
+            }
             closeModal();
-            alert(`HC "${name}" saved successfully!`);
-            
-            // In real app, would update table here
+            loadHCs();
+            showToast(`${name} saved successfully.`);
         }
 
+        // Blur validation
+        ['hc-name', 'hc-location', 'hc-description'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', () => validateField(id));
+        });
+
         // Initialize
+        setupUploadZone();
         loadHCs();
     </script>
 </body>

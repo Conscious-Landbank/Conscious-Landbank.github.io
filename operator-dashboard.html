@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operator Dashboard - UNERA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -25,20 +27,55 @@
             --neutral-300: #E5E7EB;
             --neutral-200: #F3F4F6;
             --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
             --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
-            --gradient-operator: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%);
+            --gradient-operator-portal: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --accent-indigo: #6366F1;
+            --gradient-burn: linear-gradient(135deg, #6366F1 0%, #3B82F6 100%);
             --font-display: 'Space Grotesk', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
         }
 
         body {
             font-family: var(--font-body);
-            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            background: linear-gradient(135deg, #F0F6FF 0%, #E8F0FE 100%);
             color: var(--text-primary);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
         /* Top Navigation */
@@ -47,85 +84,392 @@
             border-bottom: 1px solid var(--border-subtle);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 10001;
         }
 
         .nav-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
-        }
-
-        .nav-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            height: 60px;
+            height: 64px;
         }
 
         .nav-brand {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .operator-badge {
+        .nav-brand:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .logo-text-block {
             display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--gradient-operator);
-            color: white;
-            border-radius: 2rem;
-            font-size: 0.813rem;
-            font-weight: 600;
+            align-items: baseline;
+            gap: 0.25em;
         }
 
-        .nav-user {
+        .nav-brand .logo-text {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .logo-operator-text {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        /* Operator user profile (avatar + dropdown) */
+        .op-user-profile {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            position: relative;
+            cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .op-user-profile:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .op-user-profile:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .op-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-operator-portal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.813rem;
+        }
+        .op-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 240px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+        .op-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .op-dropdown-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .op-dropdown-avatar-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-operator-portal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+        .op-dropdown-email {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+        .op-dropdown-menu {
+            padding: 0.5rem;
+        }
+        .op-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 100%;
+        }
+        .op-dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: #0F766E;
+        }
+        .op-dropdown-item svg {
+            stroke: currentColor;
+            flex-shrink: 0;
         }
 
         .logout-btn {
             padding: 0.5rem 1rem;
-            background: var(--neutral-200);
-            border: none;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
             border-radius: 0.5rem;
             font-weight: 500;
+            font-family: var(--font-body);
+            color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
         }
 
         .logout-btn:hover {
-            background: var(--neutral-300);
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .logout-btn:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Hamburger - hidden on desktop */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            margin-left: auto;
+        }
+        .hamburger:hover { background: var(--neutral-200); }
+        .hamburger:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* Mobile Menu */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10002;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 10003;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .mobile-nav-tabs .tab {
+            display: block;
+            padding: 1rem;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            text-align: left;
+        }
+        .mobile-nav-tabs .tab.tab-link {
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .mobile-nav-tabs .tab.tab-link:hover {
+            background: var(--neutral-100);
+        }
+        .mobile-nav-tabs .tab.active {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary-blue);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding-left: calc(1rem - 3px);
+        }
+        .mobile-nav-user {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .mobile-nav-email {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        .mobile-nav-user .logout-btn {
+            width: 100%;
+            justify-content: center;
         }
 
         /* Tabs */
         .tabs {
+            flex: 1;
             display: flex;
-            gap: 0.5rem;
-            padding: 0.5rem 0;
+            align-items: stretch;
+            gap: 0;
+            padding: 0 2rem;
         }
 
         .tab {
-            padding: 0.75rem 1.5rem;
+            padding: 0 1.25rem;
+            height: 64px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             background: none;
             border: none;
+            border-bottom: 2px solid transparent;
             color: var(--text-secondary);
             font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
             cursor: pointer;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
+            border-radius: 0;
+            text-decoration: none;
+            transition: all 0.15s;
+            white-space: nowrap;
         }
 
         .tab:hover {
             background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .tab:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: -2px;
         }
 
         .tab.active {
-            background: var(--gradient-operator);
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom-color: var(--primary-blue);
+            background: none;
+        }
+
+        .tab[aria-current="page"] {
+            cursor: default;
+        }
+
+        .tab.tab-link {
+            text-decoration: none;
+        }
+
+        .tab.tab-link:hover {
+            background: var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .tab.tab-link:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: -2px;
+        }
+
+        .tab-badge {
+            background: var(--warning);
             color: white;
+            font-size: 0.688rem;
+            font-weight: 700;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            min-width: 1.25rem;
+            text-align: center;
         }
 
         /* Main Container */
@@ -150,6 +494,94 @@
             color: var(--text-secondary);
         }
 
+        /* Needs Attention Alert Banner */
+        .alert-banner {
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .alert-banner.alert-reserve {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-text {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            font-size: 0.938rem;
+            text-align: left;
+        }
+
+        .alert-description {
+            font-size: 0.875rem;
+            opacity: 0.95;
+            text-align: left;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .alert-cta {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #F97316;
+            border: none;
+            border-radius: 980px;
+            font-weight: 600;
+            font-size: 0.938rem;
+            min-height: 46px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .alert-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .alert-cta.alert-reserve-cta {
+            color: #DC2626;
+        }
+
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -163,6 +595,33 @@
             border-radius: 1rem;
             padding: 1.5rem;
             border: 1px solid var(--border-subtle);
+        }
+
+        .stat-card.stat-card-link {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.2s;
+        }
+
+        .stat-card.stat-card-link:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        }
+
+        .stat-card.stat-card-link:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .stat-card.has-pending {
+            border-color: rgba(245, 158, 11, 0.5);
+            background: rgba(245, 158, 11, 0.03);
+        }
+
+        .stat-card.reserve-warning .stat-value {
+            color: var(--error);
         }
 
         .stat-header {
@@ -182,7 +641,7 @@
             width: 40px;
             height: 40px;
             border-radius: 0.5rem;
-            background: var(--gradient-operator);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -203,7 +662,7 @@
         }
 
         .stat-change.negative {
-            color: var(--accent-pink);
+            color: var(--error);
         }
 
         /* Activity Table */
@@ -247,7 +706,61 @@
         }
 
         .activity-table tbody tr:hover {
-            background: var(--neutral-50);
+            background: var(--neutral-100);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .activity-empty {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .activity-empty-text {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-empty-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+        }
+
+        .activity-skeleton {
+            padding: 1rem 0;
+        }
+
+        .skeleton-row {
+            height: 48px;
+            background: linear-gradient(90deg, var(--neutral-200) 25%, var(--neutral-100) 50%, var(--neutral-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s infinite;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton-row {
+                animation: none;
+                background: var(--neutral-200);
+            }
         }
 
         .badge {
@@ -273,53 +786,111 @@
             color: #0284C7;
         }
 
-        /* Quick Actions */
+        .badge-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #DC2626;
+        }
+
+        /* Quick Actions - Action Card Style */
         .quick-actions {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .action-btn {
-            padding: 1.5rem;
+        .action-card {
             background: white;
             border: 2px solid var(--border-subtle);
-            border-radius: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-radius: 1.25rem;
+            padding: 2rem;
             text-decoration: none;
             color: var(--text-primary);
+            transition: all 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.75rem;
+            text-align: center;
         }
 
-        .action-btn:hover {
-            border-color: var(--accent-pink);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+        .action-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+            transform: translateY(-4px);
         }
 
-        .action-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 0.75rem;
-            background: var(--gradient-operator);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .action-card:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .action-card.primary {
+            background: var(--gradient-operator-portal);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+        }
+
+        .action-card.primary:hover {
+            box-shadow: 0 12px 32px rgba(14, 165, 233, 0.4);
+            transform: translateY(-6px) scale(1.02);
+        }
+
+        .action-card.primary .action-card-icon {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .action-card.primary .action-card-title,
+        .action-card.primary .action-card-desc {
             color: white;
         }
 
-        .action-label {
-            font-weight: 600;
+        .action-card-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        .action-card-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: currentColor;
+        }
+
+        .action-card-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .action-card.primary .action-card-desc {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (max-width: 960px) {
+            #operatorProfile,
+            .tabs {
+                display: none !important;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .nav-container {
+                padding: 0 1rem;
+            }
+
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -331,6 +902,31 @@
             .activity-table {
                 display: block;
                 overflow-x: auto;
+            }
+
+            .alert-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .alert-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1.5rem;
             }
         }
 
@@ -345,41 +941,103 @@
     </style>
 </head>
 <body>
-    <!-- Top Navigation -->
-    <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-header">
-                <div class="nav-brand">
-                    <span class="operator-badge">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                        </svg>
-                        Operator Portal
-                    </span>
-                    <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;">UNERA</h1>
-                </div>
-                <div class="nav-user">
-                    <span style="color: var(--text-secondary); font-size: 0.875rem;" id="operatorEmail"></span>
-                    <button class="logout-btn" onclick="logout()">Logout</button>
-                </div>
-            </div>
-            
-            <!-- Horizontal Tabs -->
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab(event, 'dashboard')">Dashboard</button>
-                <button class="tab" onclick="switchTab(event, 'issuance')">Stablecoin Issuance</button>
-                <button class="tab" onclick="switchTab(event, 'hc-management')">HC Management</button>
-                <button class="tab" onclick="switchTab(event, 'por')">Proof of Reserve</button>
-            </div>
-        </div>
-    </nav>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <main class="container">
-        <!-- Dashboard Tab -->
+    <!-- Top Navigation -->
+    <header>
+        <nav class="nav" role="navigation" aria-label="Operator navigation">
+            <div class="nav-container">
+                <a href="operator-dashboard.html" class="nav-brand" aria-label="UNERA Operator Home">
+                    <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                        <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                        <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                        <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                        <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                    </svg>
+                    <span class="logo-text-block">
+                        <span class="logo-text">UNERA</span>
+                        <span class="logo-operator-text">OPERATOR</span>
+                    </span>
+                </a>
+
+                <div class="tabs" role="tablist" aria-label="Operator sections">
+                    <span class="tab active" aria-current="page">Dashboard</span>
+                    <a href="operator-issuance.html" class="tab tab-link">Stablecoin Issuance</a>
+                    <a href="operator-hc-management.html" class="tab tab-link" id="tab-hc" aria-label="HC Management, 2 pending items">HC Management <span class="tab-badge" id="tabHcBadge">2</span></a>
+                    <a href="operator-por.html" class="tab tab-link">Proof of Reserve</a>
+                </div>
+
+                <div class="op-user-profile" onclick="toggleOperatorDropdown()"
+                     id="operatorProfile" role="button" aria-expanded="false" aria-haspopup="true">
+                    <div class="op-avatar" id="operatorAvatar">OP</div>
+                    <div class="op-dropdown" id="operatorDropdown" onclick="event.stopPropagation()">
+                        <div class="op-dropdown-header">
+                            <div class="op-dropdown-avatar-lg" id="operatorDropdownAvatar">OP</div>
+                            <div class="op-dropdown-email" id="operatorEmail"></div>
+                        </div>
+                        <div class="op-dropdown-menu">
+                            <a href="#" class="op-dropdown-item" onclick="logout(); return false;">
+                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                Log Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <span class="logo-text" style="font-family: var(--font-display); font-weight: 600;">Operator Menu</span>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-nav-tabs">
+            <span class="tab active" aria-current="page">Dashboard</span>
+            <a href="operator-issuance.html" class="tab tab-link">Stablecoin Issuance</a>
+            <a href="operator-hc-management.html" class="tab tab-link" aria-label="HC Management, 2 pending items">HC Management <span class="tab-badge">2</span></a>
+            <a href="operator-por.html" class="tab tab-link">Proof of Reserve</a>
+        </div>
+        <div class="mobile-nav-user">
+            <div class="mobile-nav-email" id="mobileOperatorEmail"></div>
+            <button class="logout-btn" onclick="logout()" aria-label="Log out">Logout</button>
+        </div>
+    </div>
+
+    <main id="main-content" class="container" role="main">
+        <!-- Dashboard Content -->
         <div id="dashboard" class="tab-content active">
             <div class="page-header">
                 <h2 class="page-title">Operator Dashboard</h2>
                 <p class="page-subtitle">Monitor system status and recent activities</p>
+            </div>
+
+            <!-- Needs Attention Banner (shown when pending HCs exist) -->
+            <div class="alert-banner" id="needsAttentionBanner" role="alert" aria-live="polite">
+                <div class="alert-content">
+                    <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <div class="alert-text">
+                        <div class="alert-title">2 HC applications pending approval</div>
+                        <div class="alert-description">Review and approve Humanity Centre applications</div>
+                    </div>
+                </div>
+                <div class="alert-actions">
+                    <a href="operator-hc-management.html" class="alert-cta" aria-label="Review HC applications now">Review now</a>
+                </div>
             </div>
 
             <!-- Stats Grid -->
@@ -400,7 +1058,7 @@
                     <div class="stat-change">+12.5% this month</div>
                 </div>
 
-                <div class="stat-card">
+                <a href="operator-hc-management.html" class="stat-card stat-card-link has-pending" aria-label="View Active HCs - 2 pending approval">
                     <div class="stat-header">
                         <div>
                             <div class="stat-label">Active HCs</div>
@@ -416,9 +1074,9 @@
                     </div>
                     <div class="stat-value">12</div>
                     <div class="stat-change">2 pending approval</div>
-                </div>
+                </a>
 
-                <div class="stat-card">
+                <div class="stat-card" id="reserveStatCard">
                     <div class="stat-header">
                         <div>
                             <div class="stat-label">Reserve Ratio</div>
@@ -433,7 +1091,7 @@
                     <div class="stat-change">Above minimum (100%)</div>
                 </div>
 
-                <div class="stat-card">
+                <a href="operator-issuance.html" class="stat-card stat-card-link" aria-label="View issuance - Last mint 2 hours ago">
                     <div class="stat-header">
                         <div>
                             <div class="stat-label">Last Mint</div>
@@ -447,92 +1105,148 @@
                     </div>
                     <div class="stat-value" style="font-size: 1.25rem;">2 hours ago</div>
                     <div class="stat-change">$50,000 hCAD</div>
-                </div>
+                </a>
             </div>
 
             <!-- Quick Actions -->
-            <div class="quick-actions">
-                <a href="#" class="action-btn" onclick="switchTab(event, 'issuance')">
-                    <div class="action-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 8v8M8 12h8"/>
-                        </svg>
-                    </div>
-                    <span class="action-label">Mint Tokens</span>
-                </a>
-                <a href="#" class="action-btn" onclick="switchTab(event, 'hc-management')">
-                    <div class="action-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="8.5" cy="7" r="4"/>
-                            <path d="M20 8v6M23 11h-6"/>
-                        </svg>
-                    </div>
-                    <span class="action-label">Add HC</span>
-                </a>
-                <a href="#" class="action-btn" onclick="switchTab(event, 'por')">
-                    <div class="action-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 11l3 3L22 4"/>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                        </svg>
-                    </div>
-                    <span class="action-label">View PoR</span>
-                </a>
-            </div>
+            <section aria-labelledby="actions-title">
+                <h2 id="actions-title" class="section-title">Quick Actions</h2>
+                <div class="quick-actions">
+                    <a href="operator-issuance.html" class="action-card" aria-label="Mint tokens - Issue new hCAD stablecoins">
+                        <div class="action-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 8v8M8 12h8"/>
+                            </svg>
+                        </div>
+                        <div class="action-card-title">Mint Tokens</div>
+                        <div class="action-card-desc">Issue new hCAD stablecoins</div>
+                    </a>
+                    <a href="operator-hc-management.html" class="action-card primary" aria-label="Review HC applications - 2 pending approval">
+                        <div class="action-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <path d="M20 8v6M23 11h-6"/>
+                            </svg>
+                        </div>
+                        <div class="action-card-title">Review HC Applications</div>
+                        <div class="action-card-desc">2 pending approval</div>
+                    </a>
+                    <a href="operator-por.html" class="action-card" aria-label="View Proof of Reserve">
+                        <div class="action-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </div>
+                        <div class="action-card-title">View PoR</div>
+                        <div class="action-card-desc">Proof of Reserve audit</div>
+                    </a>
+                </div>
+            </section>
 
             <!-- Recent Activity -->
-            <div class="activity-section">
-                <h3 class="section-title">Recent Activity</h3>
-                <table class="activity-table">
+            <div class="activity-section" aria-labelledby="activity-title">
+                <h3 id="activity-title" class="section-title">Recent Activity</h3>
+                <table class="activity-table" aria-describedby="activity-caption">
+                    <caption id="activity-caption" class="sr-only">Recent operator activity including token mints, HC changes, and PoR updates</caption>
                     <thead>
                         <tr>
-                            <th>Timestamp</th>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Operator</th>
-                            <th>Status</th>
+                            <th scope="col">Timestamp</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Operator</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody id="activity-list">
-                        <!-- Will be populated by JavaScript -->
+                        <!-- Populated by JavaScript -->
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- Placeholder for other tabs -->
-        <div id="issuance" class="tab-content">
-            <div class="page-header">
-                <h2 class="page-title">Stablecoin Issuance</h2>
-                <p class="page-subtitle">View <a href="operator-issuance.html" style="color: var(--accent-pink);">full issuance dashboard →</a></p>
-            </div>
-        </div>
-
-        <div id="hc-management" class="tab-content">
-            <div class="page-header">
-                <h2 class="page-title">HC Management</h2>
-                <p class="page-subtitle">View <a href="operator-hc-management.html" style="color: var(--accent-pink);">full HC management →</a></p>
-            </div>
-        </div>
-
-        <div id="por" class="tab-content">
-            <div class="page-header">
-                <h2 class="page-title">Proof of Reserve</h2>
-                <p class="page-subtitle">View <a href="operator-por.html" style="color: var(--accent-pink);">full PoR dashboard →</a></p>
+                <div class="activity-empty" id="activityEmpty" style="display: none;">
+                    <p class="activity-empty-text">No recent activity</p>
+                    <p class="activity-empty-desc">Activity will appear here after mints, HC changes, or PoR updates.</p>
+                    <a href="operator-issuance.html" class="alert-cta" style="margin-top: 1rem; display: inline-block;">Mint Tokens</a>
+                </div>
+                <div class="activity-skeleton" id="activitySkeleton" style="display: none;">
+                    <div class="skeleton-row"></div>
+                    <div class="skeleton-row"></div>
+                    <div class="skeleton-row"></div>
+                    <div class="skeleton-row"></div>
+                    <div class="skeleton-row"></div>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Check auth
-        if (localStorage.getItem('operatorAuth') !== 'true') {
+        // Dev/test mode: bypass auth when ?dev=true or ?test=true (for prototyping)
+        const urlParams = new URLSearchParams(window.location.search);
+        const devMode = urlParams.has('dev') || urlParams.has('test');
+
+        if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
             window.location.href = 'operator-login.html';
         }
 
-        // Load operator email
-        document.getElementById('operatorEmail').textContent = localStorage.getItem('operatorEmail') || 'Operator';
+        // Load operator email and avatar (use placeholder in dev mode when not logged in)
+        var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
+        var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
+        var avatarEl = document.getElementById('operatorAvatar');
+        var dropdownAvatarEl = document.getElementById('operatorDropdownAvatar');
+        var emailEl = document.getElementById('operatorEmail');
+        if (avatarEl) avatarEl.textContent = initial;
+        if (dropdownAvatarEl) dropdownAvatarEl.textContent = initial;
+        if (emailEl) emailEl.textContent = operatorEmailVal;
+        var mobileEmailEl = document.getElementById('mobileOperatorEmail');
+        if (mobileEmailEl) mobileEmailEl.textContent = operatorEmailVal;
+
+        function toggleOperatorDropdown() {
+            var dropdown = document.getElementById('operatorDropdown');
+            var btn = document.getElementById('operatorProfile');
+            if (dropdown && btn) {
+                var isOpen = dropdown.classList.toggle('show');
+                btn.setAttribute('aria-expanded', isOpen);
+            }
+        }
+        document.addEventListener('click', function(e) {
+            var profile = document.getElementById('operatorProfile');
+            var dropdown = document.getElementById('operatorDropdown');
+            if (profile && dropdown && !profile.contains(e.target)) {
+                dropdown.classList.remove('show');
+                profile.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Mobile menu
+        (function() {
+            var hamburger = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var mobileOverlay = document.querySelector('.mobile-menu-overlay');
+            var mobileClose = document.querySelector('.mobile-menu-close');
+            function openMenu() {
+                hamburger.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            if (hamburger) hamburger.addEventListener('click', function() {
+                mobileMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+            if (mobileOverlay) mobileOverlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+            });
+        })();
 
         // Mock recent activity data
         const recentActivity = [
@@ -548,33 +1262,91 @@
             { time: '1 week ago', type: 'System Update', amount: '-', operator: 'system', status: 'Completed' }
         ];
 
-        // Populate activity table
+        // Populate activity table (with optional skeleton/empty state)
         function loadActivity() {
             const tbody = document.getElementById('activity-list');
-            tbody.innerHTML = recentActivity.map(activity => `
-                <tr>
-                    <td style="color: var(--text-secondary); font-size: 0.875rem;">${activity.time}</td>
-                    <td style="font-weight: 500;">${activity.type}</td>
-                    <td style="font-weight: 600; font-family: var(--font-body);">${activity.amount}</td>
-                    <td style="color: var(--text-secondary); font-size: 0.875rem;">${activity.operator}</td>
-                    <td><span class="badge badge-success">${activity.status}</span></td>
-                </tr>
-            `).join('');
+            const emptyEl = document.getElementById('activityEmpty');
+            const skeletonEl = document.getElementById('activitySkeleton');
+            const table = document.querySelector('.activity-table');
+
+            // Simulate loading: show skeleton briefly (skip if data loads fast)
+            const showSkeleton = false; // Set true to demo skeleton; in production use real async
+            if (showSkeleton) {
+                table.style.visibility = 'hidden';
+                skeletonEl.style.display = 'block';
+                setTimeout(() => {
+                    skeletonEl.style.display = 'none';
+                    table.style.visibility = '';
+                    renderActivity();
+                }, 800);
+            } else {
+                renderActivity();
+            }
+
+            function renderActivity() {
+                if (recentActivity.length === 0) {
+                    table.style.display = 'none';
+                    emptyEl.style.display = 'block';
+                } else {
+                    table.style.display = 'table';
+                    emptyEl.style.display = 'none';
+                    tbody.innerHTML = recentActivity.map(activity => `
+                        <tr>
+                            <td style="color: var(--text-secondary); font-size: 0.875rem;">${activity.time}</td>
+                            <td style="font-weight: 500;">${activity.type}</td>
+                            <td style="font-weight: 600; font-family: var(--font-body);">${activity.amount}</td>
+                            <td style="color: var(--text-secondary); font-size: 0.875rem;">${activity.operator}</td>
+                            <td><span class="badge badge-success">${activity.status}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            }
         }
 
-        // Tab switching
-        function switchTab(event, tabId) {
-            event.preventDefault();
-            
-            // Remove active class from all tabs and contents
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            // Add active class to clicked tab
-            event.currentTarget.classList.add('active');
-            
-            // Show corresponding content
-            document.getElementById(tabId).classList.add('active');
+        // Update needs-attention banner and tab badge based on pending count
+        const pendingHcCount = 2; // In production, fetch from API
+        const reserveRatio = 105.2; // In production, fetch from API
+
+        if (pendingHcCount === 0) {
+            const banner = document.getElementById('needsAttentionBanner');
+            if (banner) banner.style.display = 'none';
+            const badge = document.getElementById('tabHcBadge');
+            if (badge) badge.style.display = 'none';
+            // Also remove primary from Review HC action card
+            document.querySelector('.action-card.primary')?.classList.remove('primary');
+        }
+
+        if (reserveRatio < 100) {
+            const reserveCard = document.getElementById('reserveStatCard');
+            if (reserveCard) reserveCard.classList.add('reserve-warning');
+            reserveCard.querySelector('.stat-value').style.color = 'var(--error)';
+            reserveCard.querySelector('.stat-change').textContent = 'Below minimum (100%)';
+            reserveCard.querySelector('.stat-change').classList.add('negative');
+            // Add reserve banner if not already showing pending
+            const banner = document.getElementById('needsAttentionBanner');
+            if (banner && banner.style.display !== 'none') {
+                // Prepend reserve alert - for now we show reserve as higher priority
+                banner.classList.add('alert-reserve');
+                banner.querySelector('.alert-title').textContent = 'Reserve ratio below minimum';
+                banner.querySelector('.alert-description').textContent = 'Action required to restore reserve ratio';
+                const cta = banner.querySelector('.alert-cta');
+                if (cta) {
+                    cta.href = 'operator-por.html';
+                    cta.textContent = 'View PoR';
+                    cta.classList.add('alert-reserve-cta');
+                }
+            } else if (banner) {
+                banner.style.display = 'flex';
+                banner.classList.add('alert-reserve');
+                banner.querySelector('.alert-title').textContent = 'Reserve ratio below minimum';
+                banner.querySelector('.alert-description').textContent = 'Action required to restore reserve ratio';
+                const cta = banner.querySelector('.alert-cta');
+                if (cta) {
+                    cta.href = 'operator-por.html';
+                    cta.textContent = 'View PoR';
+                    cta.classList.add('alert-reserve-cta');
+                }
+            }
         }
 
         // Logout

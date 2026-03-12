@@ -4,39 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction Receipt - UNERA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --primary-green: #10B981;
             --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
             --neutral-900: #1F2937;
             --neutral-800: #374151;
+            --neutral-700: #4B5563;
             --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
             --neutral-400: #D1D5DB;
             --neutral-300: #E5E7EB;
             --neutral-200: #F3F4F6;
             --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
             --text-primary: #0F172A;
             --text-secondary: #475569;
             --border-subtle: #E2E8F0;
-            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
-            --font-display: 'Space Grotesk', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
         body {
             font-family: var(--font-body);
             background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
             color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
-            padding: 2rem;
+            overflow-x: hidden;
         }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+        .skip-link:focus { top: 0; }
+
+        .nav {
+            background: #FFFFFF;
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .nav-left { display: flex; align-items: center; gap: 2.75rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .nav-brand:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-icon { width: 28px; height: 28px; }
+        .logo { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
+        .nav-links { display: flex; align-items: center; gap: 1.375rem; list-style: none; }
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--primary-green); }
+        .nav-link:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .nav-link.active { color: var(--primary-green); font-weight: 600; }
+        .user-profile-nav { display: flex; align-items: center; gap: 0.5rem; }
+        .user-avatar-nav {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 0.813rem;
+        }
+        .user-name-nav {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-800);
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            min-height: 44px;
+            min-width: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        .hamburger:hover { background: var(--neutral-200); }
+        .hamburger:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); transition: all 0.3s ease; border-radius: 2px; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); }
+        .mobile-menu-close { background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; }
+        .mobile-nav-links .nav-link { display: block; padding: 1rem; }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
+            padding: 2rem;
         }
 
         .actions-bar {
@@ -47,54 +191,63 @@
         }
 
         .back-btn {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            border: 1px solid var(--border-subtle);
-            border-radius: 0.5rem;
-            color: var(--neutral-900);
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
+            font-size: 0.938rem;
+            font-weight: 600;
             cursor: pointer;
+            min-height: 46px;
+            font-family: var(--font-body);
         }
+        .back-btn:hover { border-color: var(--primary-green); color: var(--primary-green); background: rgba(16, 185, 129, 0.02); }
+        .back-btn:focus { outline: 3px solid rgba(16, 185, 129, 0.3); outline-offset: 2px; }
 
-        .actions {
-            display: flex;
-            gap: 0.75rem;
-        }
+        .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
         .btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.938rem;
+            font-weight: 600;
             border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
             cursor: pointer;
-            font-size: 0.875rem;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 46px;
+            text-decoration: none;
         }
-
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn:focus { outline: 3px solid rgba(16, 185, 129, 0.3); outline-offset: 2px; }
         .btn-secondary {
-            background: white;
-            border: 1px solid var(--border-subtle);
-            color: var(--neutral-900);
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-subtle);
         }
-
+        .btn-secondary:hover { border-color: var(--primary-green); color: var(--primary-green); background: rgba(16, 185, 129, 0.02); }
         .btn-primary {
-            background: var(--gradient-primary);
+            background: var(--primary-green);
             color: white;
         }
+        .btn-primary:hover { background: #059669; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 
         /* Receipt Card */
         .receipt-card {
             background: white;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             padding: 3rem;
-            border: 1px solid var(--border-subtle);
+            border: 2px solid var(--border-subtle);
             margin-bottom: 2rem;
         }
 
@@ -134,10 +287,42 @@
             margin-bottom: 0.5rem;
         }
 
+        .receipt-number-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
         .receipt-number {
             font-size: 0.875rem;
             color: var(--neutral-600);
             font-family: var(--font-body);
+        }
+        .btn-copy {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.375rem 0.75rem;
+            min-height: 36px;
+            background: var(--neutral-100);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+        .btn-copy:hover {
+            background: var(--neutral-200);
+            color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+        .btn-copy:focus {
+            outline: 3px solid rgba(16, 185, 129, 0.3);
+            outline-offset: 2px;
         }
 
         /* Status Tracker */
@@ -173,7 +358,7 @@
             top: 20px;
             left: 0;
             height: 2px;
-            background: var(--primary-green);
+            background: var(--success);
             z-index: 1;
             transition: width 0.3s;
         }
@@ -201,8 +386,8 @@
         }
 
         .step-icon.completed {
-            background: var(--primary-green);
-            border-color: var(--primary-green);
+            background: var(--success);
+            border-color: var(--success);
             color: white;
         }
 
@@ -230,6 +415,16 @@
             border-bottom: 1px solid var(--border-subtle);
         }
 
+        .detail-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .detail-list dt, .detail-list dd {
+            margin: 0;
+        }
+
         .detail-row {
             display: flex;
             justify-content: space-between;
@@ -250,11 +445,31 @@
             font-weight: 600;
             text-align: right;
         }
+        .detail-value-hash {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+        .link-explorer {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        .link-explorer:hover {
+            text-decoration: underline;
+        }
+        .link-explorer:focus {
+            outline: 3px solid rgba(14, 165, 233, 0.3);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
 
         .detail-value.large {
             font-family: var(--font-display);
             font-size: 1.5rem;
-            color: var(--primary-green);
+            color: var(--success);
         }
 
         /* QR Code */
@@ -288,68 +503,177 @@
             body {
                 background: white;
                 padding: 0;
+                color: var(--text-primary);
             }
-
-            .actions-bar {
-                display: none;
+            .skip-link,
+            .nav,
+            .actions-bar,
+            .mobile-menu-overlay,
+            .mobile-menu {
+                display: none !important;
             }
-
+            .container {
+                padding: 0;
+                max-width: 100%;
+            }
             .receipt-card {
                 box-shadow: none;
-                border: none;
+                border: 1px solid var(--border-subtle);
+                padding: 2rem;
+            }
+            .btn-copy {
+                display: none;
+            }
+            .qr-section {
+                break-inside: avoid;
             }
         }
 
         @media (max-width: 768px) {
-            body {
+            .nav { padding: 0 1rem; }
+            .nav-links,
+            .user-profile-nav {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .container {
                 padding: 1rem;
             }
-
             .receipt-card {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
             }
-
             .tracker-steps {
                 flex-direction: column;
                 gap: 1.5rem;
             }
-
             .tracker-line, .tracker-progress {
                 display: none;
             }
-
             .tracker-step {
                 flex-direction: row;
                 justify-content: flex-start;
             }
-
             .step-label {
                 text-align: left;
                 max-width: none;
+            }
+            .actions-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            .actions {
+                justify-content: stretch;
+            }
+            .actions .btn {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .qr-code {
+                width: 120px;
+                height: 120px;
+            }
+            .qr-code svg {
+                width: 90px;
+                height: 90px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+                <li><a href="wallet-enhanced.html" class="nav-link active" aria-current="page">WALLET</a></li>
+                <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+                <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="user-profile-nav">
+                <div class="user-avatar-nav">JS</div>
+                <span class="user-name-nav">Jane Smith</span>
+            </div>
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link active">WALLET</a></li>
+            <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+            <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+        </ul>
+    </div>
+
+    <main id="main-content" class="container">
         <!-- Actions Bar -->
         <div class="actions-bar">
             <a href="wallet-enhanced.html" class="back-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
                 Back to Wallet
             </a>
             <div class="actions">
-                <button class="btn btn-secondary" onclick="window.print()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button class="btn btn-secondary" onclick="window.print()" aria-label="Print receipt">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
                         <path d="M6 14h12v8H6z"/>
                     </svg>
                     Print
                 </button>
-                <button class="btn btn-primary" onclick="downloadPDF()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button class="btn btn-secondary" onclick="shareReceipt()" aria-label="Share receipt">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="18" cy="5" r="3"/>
+                        <circle cx="6" cy="12" r="3"/>
+                        <circle cx="18" cy="19" r="3"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                    </svg>
+                    Share
+                </button>
+                <button class="btn btn-primary" onclick="downloadPDF()" aria-label="Download receipt as PDF">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                         <polyline points="7 10 12 15 17 10"/>
                         <line x1="12" y1="15" x2="12" y2="3"/>
@@ -360,19 +684,28 @@
         </div>
 
         <!-- Receipt Card -->
-        <div class="receipt-card">
+        <div class="receipt-card" role="region" aria-label="Transaction receipt">
             <!-- Header -->
             <div class="receipt-header">
                 <div class="logo-section">
-                    <div class="logo-icon"></div>
+                    <div class="logo-icon" aria-hidden="true"></div>
                     <div class="logo-text">UNERA</div>
                 </div>
                 <div class="receipt-title">Transaction Receipt</div>
-                <div class="receipt-number">Receipt #: RCP-2026-02-11-7f2a9c4d</div>
+                <div class="receipt-number-row">
+                    <span class="receipt-number">Receipt #: RCP-2026-02-11-7f2a9c4d</span>
+                    <button type="button" class="btn-copy" onclick="copyReceiptId()" aria-label="Copy receipt ID">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
             </div>
 
             <!-- Status Tracker -->
-            <div class="status-tracker">
+            <div class="status-tracker" aria-live="polite" aria-label="Transaction status">
                 <div class="tracker-title">Transaction Status</div>
                 <div class="tracker-steps">
                     <div class="tracker-line"></div>
@@ -402,59 +735,66 @@
             </div>
 
             <!-- Transaction Details -->
-            <div class="details-section">
-                <h3 class="section-title">Transaction Details</h3>
-                <div class="detail-row">
-                    <span class="detail-label">Date & Time</span>
-                    <span class="detail-value">February 11, 2026 at 2:30 PM</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Transaction Type</span>
-                    <span class="detail-value">Purchase Stablecoins</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Amount (Fiat)</span>
-                    <span class="detail-value large">$250.00 CAD</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Amount (Stablecoin)</span>
-                    <span class="detail-value">250.00 hCAD</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Exchange Rate</span>
-                    <span class="detail-value">1.0000</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Transaction Fee</span>
-                    <span class="detail-value">$0.00</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Payment Method</span>
-                    <span class="detail-value">Bank Transfer</span>
-                </div>
-            </div>
+            <section class="details-section" aria-labelledby="tx-details-title">
+                <h3 id="tx-details-title" class="section-title">Transaction Details</h3>
+                <dl class="detail-list">
+                    <div class="detail-row">
+                        <dt class="detail-label">Date & Time</dt>
+                        <dd class="detail-value">February 11, 2026 at 2:30 PM</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Transaction Type</dt>
+                        <dd class="detail-value">Purchase Stablecoins</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Amount (Fiat)</dt>
+                        <dd class="detail-value large">$250.00 CAD</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Amount (Stablecoin)</dt>
+                        <dd class="detail-value">250.00 hCAD</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Exchange Rate</dt>
+                        <dd class="detail-value">1.0000</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Transaction Fee</dt>
+                        <dd class="detail-value">$0.00</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Payment Method</dt>
+                        <dd class="detail-value">Bank Transfer</dd>
+                    </div>
+                </dl>
+            </section>
 
             <!-- Blockchain Details -->
-            <div class="details-section">
-                <h3 class="section-title">Blockchain Details</h3>
-                <div class="detail-row">
-                    <span class="detail-label">Transaction Hash</span>
-                    <span class="detail-value" style="font-family: var(--font-body); font-size: 0.813rem;">0x7f2a...9c4d</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Network</span>
-                    <span class="detail-value">Ethereum Mainnet</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status</span>
-                    <span class="detail-value" style="color: var(--primary-green);">✓ Completed</span>
-                </div>
-            </div>
+            <section class="details-section" aria-labelledby="chain-details-title">
+                <h3 id="chain-details-title" class="section-title">Blockchain Details</h3>
+                <dl class="detail-list">
+                    <div class="detail-row">
+                        <dt class="detail-label">Transaction Hash</dt>
+                        <dd class="detail-value detail-value-hash">
+                            <span style="font-family: var(--font-body); font-size: 0.813rem;">0x7f2a...9c4d</span>
+                            <a href="https://etherscan.io/tx/0x7f2a9c4d" target="_blank" rel="noopener noreferrer" class="link-explorer" aria-label="View transaction on Etherscan">View on Explorer</a>
+                        </dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Network</dt>
+                        <dd class="detail-value">Ethereum Mainnet</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt class="detail-label">Status</dt>
+                        <dd class="detail-value" style="color: var(--success);">✓ Completed</dd>
+                    </div>
+                </dl>
+            </section>
 
             <!-- QR Code -->
-            <div class="qr-section">
+            <div class="qr-section" role="img" aria-label="QR code to verify transaction on blockchain explorer">
                 <div class="qr-code">
-                    <svg width="120" height="120" viewBox="0 0 100 100">
+                    <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
                         <rect width="100" height="100" fill="white"/>
                         <g fill="black">
                             <rect x="10" y="10" width="10" height="10"/>
@@ -483,12 +823,61 @@
                 <p style="margin-top: 0.5rem;">If you have any questions, contact support@unera.io</p>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
         function downloadPDF() {
             alert('PDF download functionality would be implemented here.\n\nIn production, this would generate and download a PDF version of this receipt.');
         }
+        function copyReceiptId() {
+            const id = 'RCP-2026-02-11-7f2a9c4d';
+            navigator.clipboard.writeText(id).then(function() {
+                alert('Receipt ID copied to clipboard: ' + id);
+            }).catch(function() {
+                alert('Could not copy. Receipt ID: ' + id);
+            });
+        }
+        function shareReceipt() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'UNERA Transaction Receipt',
+                    text: 'Receipt #: RCP-2026-02-11-7f2a9c4d - $250.00 CAD → 250.00 hCAD',
+                    url: window.location.href
+                }).catch(function() {});
+            } else {
+                alert('Share receipt: ' + window.location.href);
+            }
+        }
+        (function() {
+            var hamburger = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            var mobileMenuClose = document.querySelector('.mobile-menu-close');
+            if (hamburger && mobileMenu && mobileMenuOverlay && mobileMenuClose) {
+                function openMenu() {
+                    hamburger.classList.add('active');
+                    mobileMenu.classList.add('active');
+                    mobileMenuOverlay.classList.add('active');
+                    hamburger.setAttribute('aria-expanded', 'true');
+                    mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                }
+                function closeMenu() {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
+                    hamburger.setAttribute('aria-expanded', 'false');
+                    mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                }
+                hamburger.addEventListener('click', function() {
+                    if (mobileMenu.classList.contains('active')) closeMenu();
+                    else openMenu();
+                });
+                mobileMenuClose.addEventListener('click', closeMenu);
+                mobileMenuOverlay.addEventListener('click', closeMenu);
+            }
+        })();
     </script>
 </body>
 </html>

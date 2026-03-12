@@ -1,0 +1,310 @@
+---
+description: UNERA UI standards — reuse components, patterns, brand tokens, and accessibility requirements consistent with all existing pages.
+globs: **/*.html
+alwaysApply: false
+---
+
+# UNERA UI Standards
+
+Every new HTML page or UI change MUST match the quality, components, and patterns established in `dashboard-enhanced.html`, `wallet-enhanced.html`, `add-money.html`, `send-enhanced.html`, `exchange.html`, `stake.html`, and `centre-detail.html`. The canonical brand reference is `brand-style-guide.html`.
+
+---
+
+## 1. CSS Variables — Copy Exactly
+
+Every page MUST open its `:root` block with this exact token set:
+
+```css
+:root {
+    --primary-green: #10B981;
+    --primary-blue: #0EA5E9;
+    --accent-pink: #EC4899;
+    --neutral-900: #1F2937;   --neutral-800: #374151;
+    --neutral-700: #4B5563;   --neutral-600: #6B7280;
+    --neutral-500: #9CA3AF;   --neutral-400: #D1D5DB;
+    --neutral-300: #E5E7EB;   --neutral-200: #F3F4F6;
+    --neutral-100: #F9FAFB;   --neutral-50: #FFFFFF;
+    --success: #059669;  --warning: #F59E0B;  --error: #EF4444;
+    --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+    --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+    --gradient-operator-portal: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    --gradient-operator: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
+    --gradient-burn: linear-gradient(135deg, #6366F1 0%, #3B82F6 100%);
+    --accent-indigo: #6366F1;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --border-subtle: #E2E8F0;
+    /* Type scale */
+    --text-xs: 0.75rem;   --text-sm: 0.875rem;
+    --text-base: 1rem;    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;   --text-2xl: 1.5rem;
+    --text-3xl: 2rem;
+}
+```
+
+Never hardcode hex values that map to a token — always reference the variable.
+
+---
+
+## 2. Font & Body Defaults
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+```
+
+```css
+body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+    /* Operator portal: use #F0F6FF → #E8F0FE for cool-blue wash */
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+```
+
+---
+
+## 3. Accessibility — Non-Negotiable
+
+**Every page requires:**
+
+```html
+<!-- Skip link — first element inside <body> -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+```
+
+```css
+.skip-link {
+    position: absolute; top: -40px; left: 0;
+    background: var(--primary-green); color: white;
+    padding: 8px 16px; text-decoration: none;
+    z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600;
+}
+.skip-link:focus { top: 0; }
+```
+
+**Reduced motion — always include:**
+```css
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+```
+
+**Focus styles — all interactive elements:**
+- Links/buttons: `outline: 3px solid var(--primary-green); outline-offset: 2px;`
+- Never use `outline: none` without a visible custom focus replacement
+- Min touch target: `min-height: 46px` on buttons; `44px` on nav items
+
+**ARIA requirements:**
+- `<html lang="en">` always
+- `role`, `aria-label`, `aria-expanded`, `aria-current` on all interactive components
+- `alt` text on all meaningful images; `alt=""` on decorative ones
+- WCAG AA minimum contrast (4.5:1 text, 3:1 UI components)
+
+---
+
+## 4. Navigation Component
+
+Exact nav structure used across all pages:
+
+```css
+.nav {
+    background: #FFFFFF; padding: 0 2.75rem; height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10001;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.nav-left  { display: flex; align-items: center; gap: 2.75rem; }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+
+.nav-logo-icon { width: 28px; height: 28px; }
+.logo { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600;
+        color: var(--text-primary); letter-spacing: -0.02em; }
+
+.nav-link {
+    color: var(--text-primary); text-decoration: none;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.02em;
+    padding: 0.5rem; border-radius: 4px;
+    display: inline-flex; align-items: center; transition: color 0.2s;
+}
+.nav-link:hover  { color: var(--primary-green); }
+.nav-link:focus  { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+.nav-link.active { color: var(--primary-green); font-weight: 600; }
+```
+
+At `≤768px`: hide `.nav-links` and `.user-profile-nav`; show `.hamburger`.
+
+---
+
+## 5. Buttons
+
+```css
+.btn {
+    padding: 0.75rem 1.5rem; border-radius: 0.75rem;
+    font-size: 0.938rem; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.2s;
+    font-family: var(--font-body);
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 46px; text-decoration: none;
+}
+.btn:hover  { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn:focus  { outline: 3px solid rgba(16,185,129,0.3); outline-offset: 2px; }
+
+.btn-primary { background: var(--primary-green); color: white; }
+.btn-primary:hover { background: #059669; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+
+.btn-secondary { background: transparent; color: var(--text-secondary);
+                 border: 2px solid var(--border-subtle); }
+.btn-secondary:hover { border-color: var(--primary-green);
+                       color: var(--primary-green);
+                       background: rgba(16,185,129,0.02); }
+```
+
+Gradient CTA buttons use `background: var(--gradient-primary)`.
+
+---
+
+## 6. Cards
+
+Standard white card pattern:
+
+```css
+.card {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    border: 2px solid var(--border-subtle);
+    transition: all 0.3s;
+}
+.card:hover {
+    border-color: var(--primary-green);
+    box-shadow: 0 12px 32px rgba(16,185,129,0.15);
+    transform: translateY(-4px);
+}
+.card:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; }
+```
+
+Top-accent pattern (used on impact/stat cards):
+```css
+.card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: var(--gradient-primary);
+    transform: scaleX(0); transition: transform 0.3s;
+    border-radius: 1.25rem 1.25rem 0 0;
+}
+.card:hover::before { transform: scaleX(1); }
+```
+
+---
+
+## 7. Page Header & Section Headers
+
+```css
+/* Page-level header */
+.page-title {
+    font-family: var(--font-display); font-size: 3rem; font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.1; margin-bottom: 0.75rem;
+}
+.page-subtitle { font-size: 1.125rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* Section headers */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.section-title  { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
+.view-all-link  { color: var(--primary-green); font-weight: 600; font-size: 0.938rem;
+                  display: inline-flex; align-items: center; gap: 0.375rem; transition: gap 0.2s; }
+.view-all-link:hover { gap: 0.625rem; }
+```
+
+At `≤768px`: `.page-title` → `font-size: 2rem`.
+
+---
+
+## 8. Forms & Inputs
+
+```css
+.form-group  { margin-bottom: 1.5rem; }
+.input-label { display: block; font-size: 0.875rem; font-weight: 600;
+               color: var(--text-primary); margin-bottom: 0.5rem; }
+.input-wrapper { position: relative; display: flex; align-items: center; }
+input, select, textarea {
+    width: 100%; padding: 0.75rem 1rem;
+    border: 2px solid var(--border-subtle); border-radius: 0.75rem;
+    font-family: var(--font-body); font-size: 1rem; color: var(--text-primary);
+    background: white; transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+}
+/* Prevent iOS zoom — minimum 16px on mobile */
+@media (max-width: 768px) { input, select, textarea { font-size: 1rem; } }
+```
+
+---
+
+## 9. Responsive Breakpoints
+
+| Breakpoint | Behavior |
+|---|---|
+| `≤768px` | Nav collapses to hamburger, single-column grids, `padding: 0 1rem` |
+| `≤480px` | Single-column everything, larger tap targets, input `font-size: 1rem` |
+
+All grids use `grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))` with `gap: 1.5rem` as default; collapse to `1fr` at 768px.
+
+---
+
+## 10. Modals
+
+```css
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+                 backdrop-filter: blur(4px); z-index: 10000; display: flex;
+                 align-items: center; justify-content: center; }
+.modal { background: white; border-radius: 1.25rem;
+         box-shadow: 0 24px 64px rgba(0,0,0,0.15); max-width: 480px; width: 90%; }
+.modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+.modal-body   { padding: 1.5rem; }
+.modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-subtle);
+                display: flex; gap: 0.75rem; justify-content: flex-end; }
+```
+
+Always trap focus inside open modals and close on `Escape`.
+
+---
+
+## 11. Status / Badge Colors
+
+| State | Color | Usage |
+|---|---|---|
+| Positive / success | `var(--success)` #059669 | gains, confirmed |
+| Warning | `var(--warning)` #F59E0B | pending, low balance |
+| Error / negative | `var(--error)` #EF4444 | losses, failed |
+| Green brand accent | `var(--primary-green)` #10B981 | CTAs, active states |
+| Blue brand accent | `var(--primary-blue)` #0EA5E9 | info, secondary actions |
+
+---
+
+## 12. What NOT to Do
+
+- ❌ Never use a different font family — Space Grotesk only
+- ❌ Never hardcode hex colors that have a token equivalent
+- ❌ Never remove `prefers-reduced-motion` or the skip link
+- ❌ Never use `outline: none` without a visible replacement
+- ❌ Never create a new color not in the brand palette without flagging it
+- ❌ Never build a new layout pattern when an existing page already has one — copy it
+- ❌ Never make button `min-height` less than 46px
