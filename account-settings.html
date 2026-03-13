@@ -493,12 +493,18 @@
             cursor: pointer;
             font-size: 0.75rem;
             color: var(--primary-blue);
+            text-decoration: none;
             font-weight: 500;
             padding: 0;
         }
 
         .notif-action-link:hover {
             text-decoration: underline;
+        }
+
+        .notif-action-link.view-all-link {
+            color: var(--primary-green);
+            font-weight: 600;
         }
 
         .notif-close-btn {
@@ -592,9 +598,43 @@
             color: var(--accent-pink);
         }
 
+        .notif-type-donation {
+            background: rgba(236, 72, 153, 0.1);
+            color: var(--accent-pink);
+        }
+
+        .notif-type-remittance {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-green);
+        }
+
+        .notif-type-verification {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary-blue);
+        }
+
         .notif-item-body {
             flex: 1;
             min-width: 0;
+            cursor: pointer;
+        }
+
+        .notif-item-cta {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-green);
+            text-decoration: none;
+            margin-top: 0.25rem;
+            display: inline-block;
+        }
+
+        .notif-item-cta:hover {
+            text-decoration: underline;
+        }
+
+        .notif-item-cta:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
         }
 
         .notif-item-title {
@@ -3264,7 +3304,6 @@
                             d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
                     </svg>
                     <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
-                    <span class="sr-only" id="notifSrCount">3 unread notifications</span>
                 </button>
 
                 <!-- Desktop notification panel — mirrors #userDropdown structure -->
@@ -3279,6 +3318,7 @@
                             <span class="notif-unread-label" id="notifUnreadLabel">3 unread</span>
                         </div>
                         <div class="notif-panel-actions">
+                            <a href="notifications.html" class="notif-action-link view-all-link">View all</a>
                             <button type="button" class="notif-action-link"
                                     onclick="markAllNotificationsRead()">Mark all read</button>
                             <button type="button" class="notif-close-btn"
@@ -3498,97 +3538,99 @@
             <p class="card-description">Manage how you receive notifications</p>
             <div style="padding: 1.5rem 0;">
                 <!-- Transaction Updates -->
-                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                <div class="notif-pref-row" style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
                         <div>
                             <div style="font-weight: 600; margin-bottom: 0.25rem;">Transaction Updates</div>
                             <div style="font-size: 0.875rem; color: var(--text-secondary);">Get notified about your transaction status</div>
                         </div>
-                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
-                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
-                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        <label class="notif-pref-toggle" style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" id="prefTransactionEnabled" class="notif-pref-input" style="opacity: 0; width: 0; height: 0;">
+                            <span class="toggle-track" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: 0.4s; border-radius: 24px;"></span>
+                            <span class="toggle-thumb" style="position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
                         </label>
                     </div>
                     <div style="display: flex; gap: 1.5rem; margin-top: 0.75rem; padding-left: 0.5rem;">
                         <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
-                            <input type="checkbox" checked style="width: 16px; height: 16px; cursor: pointer;">
+                            <input type="checkbox" id="prefTransactionEmail" style="width: 16px; height: 16px; cursor: pointer;">
                             <span>Email</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
-                            <input type="checkbox" checked style="width: 16px; height: 16px; cursor: pointer;">
+                            <input type="checkbox" id="prefTransactionSms" style="width: 16px; height: 16px; cursor: pointer;">
                             <span>SMS</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
-                            <input type="checkbox" checked style="width: 16px; height: 16px; cursor: pointer;">
+                            <input type="checkbox" id="prefTransactionPush" style="width: 16px; height: 16px; cursor: pointer;">
                             <span>Push</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Donation Receipts -->
-                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                <div class="notif-pref-row" style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div>
                             <div style="font-weight: 600; margin-bottom: 0.25rem;">Donation Receipts</div>
                             <div style="font-size: 0.875rem; color: var(--text-secondary);">Receive receipts for your donations</div>
                         </div>
-                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
-                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
-                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        <label class="notif-pref-toggle" style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" id="prefDonationReceipts" class="notif-pref-input" style="opacity: 0; width: 0; height: 0;">
+                            <span class="toggle-track" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: 0.4s; border-radius: 24px;"></span>
+                            <span class="toggle-thumb" style="position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Security Alerts -->
-                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                <div class="notif-pref-row" style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div>
                             <div style="font-weight: 600; margin-bottom: 0.25rem;">Security Alerts</div>
                             <div style="font-size: 0.875rem; color: var(--text-secondary);">Important security updates and warnings</div>
                         </div>
-                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
-                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
-                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        <label class="notif-pref-toggle" style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" id="prefSecurityAlerts" class="notif-pref-input" style="opacity: 0; width: 0; height: 0;">
+                            <span class="toggle-track" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: 0.4s; border-radius: 24px;"></span>
+                            <span class="toggle-thumb" style="position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Marketing Emails -->
-                <div style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                <div class="notif-pref-row" style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div>
                             <div style="font-weight: 600; margin-bottom: 0.25rem;">Marketing Emails</div>
                             <div style="font-size: 0.875rem; color: var(--text-secondary);">Promotions, updates, and news</div>
                         </div>
-                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
-                            <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
-                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--neutral-300); transition: 0.4s; border-radius: 24px;"></span>
-                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        <label class="notif-pref-toggle" style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" id="prefMarketingEmails" class="notif-pref-input" style="opacity: 0; width: 0; height: 0;">
+                            <span class="toggle-track" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: 0.4s; border-radius: 24px;"></span>
+                            <span class="toggle-thumb" style="position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Weekly Summaries -->
-                <div style="padding: 1rem 0;">
+                <div class="notif-pref-row" style="padding: 1rem 0;">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div>
                             <div style="font-weight: 600; margin-bottom: 0.25rem;">Weekly Summaries</div>
                             <div style="font-size: 0.875rem; color: var(--text-secondary);">Weekly activity and impact reports</div>
                         </div>
-                        <label style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
-                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary-green); transition: 0.4s; border-radius: 24px;"></span>
-                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
+                        <label class="notif-pref-toggle" style="position: relative; display: inline-block; width: 48px; height: 24px; margin-left: 1rem; flex-shrink: 0;">
+                            <input type="checkbox" id="prefWeeklySummaries" class="notif-pref-input" style="opacity: 0; width: 0; height: 0;">
+                            <span class="toggle-track" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: 0.4s; border-radius: 24px;"></span>
+                            <span class="toggle-thumb" style="position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%;"></span>
                         </label>
                     </div>
                 </div>
 
+                <div id="notifPrefMessage" role="status" aria-live="polite" style="padding-top: 0.5rem; font-size: 0.875rem; color: var(--primary-green); min-height: 1.5rem;"></div>
+
                 <!-- Save Button -->
                 <div style="padding-top: 1rem;">
-                    <button style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;" onclick="saveNotificationPreferences()">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="saveNotificationPreferences()">
                         Save Preferences
                     </button>
                 </div>
@@ -3596,11 +3638,54 @@
         </div>
     </div>
 
+    <style>
+        .notif-pref-toggle input:checked + .toggle-track { background-color: var(--primary-green) !important; }
+        .notif-pref-toggle input:not(:checked) + .toggle-track { background-color: var(--neutral-300) !important; }
+        .notif-pref-toggle input:checked + .toggle-track + .toggle-thumb { left: calc(100% - 21px) !important; }
+    </style>
     <script>
-        // Save notification preferences
-        function saveNotificationPreferences() {
-            alert('Notification preferences saved successfully!');
+        const NOTIF_PREFS_KEY = 'clb_notification_preferences';
+        const DEFAULT_PREFS = {
+            transactionUpdates: { enabled: true, email: true, sms: true, push: true },
+            donationReceipts: { enabled: true },
+            securityAlerts: { enabled: true },
+            marketingEmails: { enabled: false },
+            weeklySummaries: { enabled: true }
+        };
+
+        function loadNotificationPreferences() {
+            const stored = localStorage.getItem(NOTIF_PREFS_KEY);
+            const prefs = stored ? JSON.parse(stored) : DEFAULT_PREFS;
+            const t = prefs.transactionUpdates || DEFAULT_PREFS.transactionUpdates;
+            document.getElementById('prefTransactionEnabled').checked = t.enabled;
+            document.getElementById('prefTransactionEmail').checked = t.email;
+            document.getElementById('prefTransactionSms').checked = t.sms;
+            document.getElementById('prefTransactionPush').checked = t.push;
+            document.getElementById('prefDonationReceipts').checked = (prefs.donationReceipts || DEFAULT_PREFS.donationReceipts).enabled;
+            document.getElementById('prefSecurityAlerts').checked = (prefs.securityAlerts || DEFAULT_PREFS.securityAlerts).enabled;
+            document.getElementById('prefMarketingEmails').checked = (prefs.marketingEmails || DEFAULT_PREFS.marketingEmails).enabled;
+            document.getElementById('prefWeeklySummaries').checked = (prefs.weeklySummaries || DEFAULT_PREFS.weeklySummaries).enabled;
         }
+
+        function saveNotificationPreferences() {
+            const prefs = {
+                transactionUpdates: {
+                    enabled: document.getElementById('prefTransactionEnabled').checked,
+                    email: document.getElementById('prefTransactionEmail').checked,
+                    sms: document.getElementById('prefTransactionSms').checked,
+                    push: document.getElementById('prefTransactionPush').checked
+                },
+                donationReceipts: { enabled: document.getElementById('prefDonationReceipts').checked },
+                securityAlerts: { enabled: document.getElementById('prefSecurityAlerts').checked },
+                marketingEmails: { enabled: document.getElementById('prefMarketingEmails').checked },
+                weeklySummaries: { enabled: document.getElementById('prefWeeklySummaries').checked }
+            };
+            localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(prefs));
+            const msg = document.getElementById('notifPrefMessage');
+            if (msg) { msg.textContent = 'Preferences saved successfully.'; setTimeout(() => { msg.textContent = ''; }, 3000); }
+        }
+
+        loadNotificationPreferences();
     </script>
 
     <script>
@@ -4369,7 +4454,10 @@
             pending: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
             error: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
             system: '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-            listing: '<path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>'
+            listing: '<path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>',
+            donation: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>',
+            remittance: '<path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>',
+            verification: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>'
         };
 
         function formatRelativeTime(isoStr) {
@@ -4395,7 +4483,6 @@
         function updateNotificationBadges(count) {
             const badge = document.getElementById('notifBadge');
             const badgeMobile = document.getElementById('notifBadgeMobile');
-            const srCount = document.getElementById('notifSrCount');
             const bell = document.getElementById('notificationBell');
             const unreadLabel = document.getElementById('notifUnreadLabel');
             const label = count === 0 ? 'Notifications' : 'Notifications, ' + count + ' unread';
@@ -4408,7 +4495,6 @@
                 badgeMobile.textContent = badgeText;
                 badgeMobile.setAttribute('data-count', count);
             }
-            if (srCount) srCount.textContent = count === 0 ? 'No unread notifications' : count + ' unread notifications';
             if (bell) bell.setAttribute('aria-label', label);
             if (unreadLabel) {
                 unreadLabel.textContent = count === 0 ? '' : count + ' unread';
@@ -4416,20 +4502,30 @@
             }
         }
 
+        function handleNotificationItemClick(e, id) {
+            if (e.target.closest('a.notif-item-cta') || e.target.closest('button.notif-item-dismiss')) return;
+            const n = notifications.find(x => x.id === id);
+            if (!n) return;
+            markNotificationRead(id);
+            if (n.ctaUrl) window.location.href = n.ctaUrl;
+        }
+
         function renderNotificationItem(n) {
             const type = n.type || 'system';
             const iconSvg = NOTIFICATION_ICONS[type] || NOTIFICATION_ICONS.system;
             const readClass = n.read ? ' read' : '';
             const dot = n.read ? '' : '<span class="notif-unread-dot" aria-hidden="true"></span>';
+            const ctaHtml = (n.ctaUrl && n.ctaLabel) ? `<a href="${n.ctaUrl}" class="notif-item-cta" aria-label="${n.ctaLabel}" onclick="event.stopPropagation(); markNotificationRead('${n.id}')">${n.ctaLabel}</a>` : '';
             return `<li class="notif-item${readClass}" role="listitem" data-id="${n.id}">
                 <span class="notif-item-icon notif-type-${type}" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">${iconSvg}</svg></span>
-                <div class="notif-item-body">
+                <div class="notif-item-body" role="button" tabindex="0" onclick="handleNotificationItemClick(event, '${n.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleNotificationItemClick(event,'${n.id}');}">
                     <p class="notif-item-title">${n.title}</p>
                     <p class="notif-item-msg">${n.message}</p>
                     <time class="notif-item-time" datetime="${n.timestamp}">${formatRelativeTime(n.timestamp)}</time>
+                    ${ctaHtml}
                 </div>
                 ${dot}
-                <button type="button" class="notif-item-dismiss" aria-label="Dismiss: ${n.title}" onclick="clearNotification('${n.id}')">
+                <button type="button" class="notif-item-dismiss" aria-label="Dismiss: ${n.title}" onclick="event.stopPropagation(); clearNotification('${n.id}')">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </li>`;
@@ -4470,6 +4566,7 @@
                     </div>
                     <div class="mobile-user-dropdown" id="mobileNotificationDropdown">
                         <div class="mobile-user-dropdown-content">
+                            ${notifications.length > 0 ? `<a href="notifications.html" class="dropdown-item-nav view-all-link" style="display:flex;align-items:center;gap:0.75rem;width:100%;margin-bottom:0.5rem;">View all</a>` : ''}
                             <ul class="notif-list" id="mobileNotificationList" role="list" aria-live="polite">${itemsHtml}</ul>
                             ${notifications.length > 0 ? `<div class="dropdown-divider-nav"></div><button type="button" class="btn btn-secondary" onclick="clearAllNotifications()" style="width:100%;margin-bottom:0.5rem;">Clear all</button><button type="button" class="dropdown-item-nav" onclick="markAllNotificationsRead()" style="display:flex;align-items:center;gap:0.75rem;width:100%;">Mark all read</button>` : ''}
                         </div>
@@ -6169,11 +6266,16 @@
         if (notifications.length === 0) {
             const twoMinAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
             const oneHrAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+            const fiveHrAgo = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString();
             const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+            const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
             notifications = [
-                { id: 'n1', type: 'transaction', title: 'Transaction Confirmed', message: 'Sent 12.5 CTC — confirmed on Ethereum', timestamp: twoMinAgo, read: false },
+                { id: 'n1', type: 'transaction', title: 'Transaction Confirmed', message: 'Sent 12.5 CTC — confirmed on Ethereum', timestamp: twoMinAgo, read: false, ctaUrl: 'wallet-enhanced.html', ctaLabel: 'View transaction' },
                 { id: 'n2', type: 'listing', title: 'New Listing Available', message: 'Lot 7B at Conscious Landbank is now open', timestamp: oneHrAgo, read: false },
-                { id: 'n3', type: 'system', title: 'Security Notice', message: 'New device login detected for your account', timestamp: yesterday, read: false },
+                { id: 'n3', type: 'system', title: 'Security Notice', message: 'New device login detected for your account', timestamp: yesterday, read: false, ctaUrl: 'account-settings.html', ctaLabel: 'View activity' },
+                { id: 'n4', type: 'donation', title: 'Donation Receipt Ready', message: 'Your $100 donation to Nairobi Hope Centre has been processed', timestamp: fiveHrAgo, read: false, ctaUrl: 'donation-history.html', ctaLabel: 'View receipt' },
+                { id: 'n5', type: 'remittance', title: 'Remittance Sent', message: 'You sent $50 hCAD to 0x742d...4a23 — confirmed', timestamp: twoDaysAgo, read: false, ctaUrl: 'wallet-enhanced.html', ctaLabel: 'View transaction' },
+                { id: 'n6', type: 'verification', title: 'KYC Verified', message: 'Your identity verification has been completed successfully', timestamp: twoDaysAgo, read: false, ctaUrl: 'kyc-verify.html', ctaLabel: 'View status' },
             ];
             saveNotifications();
         }
