@@ -84,9 +84,10 @@
         .nav-left { display: flex; align-items: center; gap: 2.75rem; }
         .nav-right { display: flex; align-items: center; gap: 1rem; }
         .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--text-primary); }
+        .nav-brand:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
         .nav-logo-icon { width: 28px; height: 28px; }
-        .logo { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; }
-        .nav-links { list-style: none; display: flex; gap: 0.5rem; }
+        .logo { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; letter-spacing: -0.02em; }
+        .nav-links { list-style: none; display: flex; gap: 1.375rem; align-items: center; }
         .nav-link {
             color: var(--text-primary);
             text-decoration: none;
@@ -102,6 +103,93 @@
         .nav-link:hover { color: var(--primary-green); }
         .nav-link:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
         .nav-link.active { color: var(--primary-green); font-weight: 600; }
+
+        /* Hamburger Menu Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .hamburger:hover { background: var(--neutral-200); }
+        .hamburger:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10002;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: white;
+            z-index: 10003;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; }
+        .mobile-nav-links .nav-link {
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .mobile-nav-links .nav-link:hover { background: var(--neutral-200); }
+        .mobile-nav-links .nav-link.active { background: rgba(16, 185, 129, 0.1); color: var(--primary-green); }
 
         /* User Profile in Nav */
         .user-profile-nav {
@@ -275,21 +363,22 @@
         .notif-footer-btn { width: 100%; padding: 0.875rem 1.5rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.938rem; border: 2px solid var(--border-subtle); background: transparent; cursor: pointer; font-family: inherit; }
         .notif-footer-btn:hover { border-color: var(--primary-green); color: var(--primary-green); }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
-        .page-header { margin-bottom: 2rem; }
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        .page-header { margin-bottom: 2.5rem; }
         .page-title {
             font-family: var(--font-display);
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 800;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.1;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
         }
-        .page-subtitle { font-size: 1.125rem; color: var(--text-secondary); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .page-subtitle { font-size: 1.125rem; color: var(--text-secondary); line-height: 1.6; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
         .bulk-actions { display: flex; gap: 0.75rem; }
         .btn {
             padding: 0.75rem 1.5rem;
@@ -306,48 +395,87 @@
             min-height: 46px;
             text-decoration: none;
         }
-        .btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .btn:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; }
         .btn-primary { background: var(--gradient-primary); color: white; }
         .btn-primary:hover { transform: translateY(-1px); }
-        .btn-secondary { background: transparent; color: var(--text-secondary); border: 2px solid var(--border-subtle); }
-        .btn-secondary:hover { border-color: var(--primary-green); color: var(--primary-green); }
+        .btn-secondary {
+            background: var(--neutral-50);
+            color: var(--text-primary);
+            border: 2px solid var(--border-subtle);
+            border-radius: 980px;
+        }
+        .btn-secondary:hover { border-color: var(--primary-green); color: var(--primary-green); background: rgba(16, 185, 129, 0.05); }
 
         .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
         .tab {
-            padding: 0.5rem 1rem;
-            background: none;
-            border: none;
+            padding: 0.875rem 1.5rem;
+            background: var(--neutral-50);
+            border: 2px solid var(--border-subtle);
             color: var(--text-secondary);
             font-weight: 500;
             cursor: pointer;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
+            border-radius: 980px;
             font-family: var(--font-body);
+            transition: all 0.2s;
+            min-height: 44px;
+            flex-shrink: 0;
         }
-        .tab:hover { background: var(--neutral-100); }
-        .tab.active { color: var(--primary-green); background: rgba(16, 185, 129, 0.1); }
+        .tab:hover { border-color: var(--primary-green); background: rgba(16, 185, 129, 0.05); }
+        .tab.active { color: white; background: var(--primary-green); border-color: var(--primary-green); }
         .tab:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
 
         .notification-list { list-style: none; }
         .notification-card {
             background: white;
             border-radius: 1.25rem;
-            padding: 1.5rem;
+            padding: 1.75rem;
             margin-bottom: 1rem;
             border: 2px solid var(--border-subtle);
-            border-left: 4px solid var(--primary-green);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
         }
-        .notification-card:hover { border-color: var(--primary-green); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
+        .notification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .notification-card:hover { border-color: var(--primary-green); box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15); transform: translateY(-4px); }
+        .notification-card:hover::before { transform: scaleX(1); }
+        .notification-card:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; }
         .notification-card.unread { background: rgba(255, 255, 255, 0.75); }
-        .notification-card.transaction { border-left-color: var(--primary-green); }
-        .notification-card.donation, .notification-card.listing { border-left-color: var(--accent-pink); }
-        .notification-card.remittance { border-left-color: var(--primary-green); }
-        .notification-card.verification { border-left-color: var(--primary-blue); }
-        .notification-card.system { border-left-color: var(--error); }
-        .notification-card-header { display: flex; align-items: flex-start; justify-content: space-between; }
-        .notification-card-body { flex: 1; }
+        .notification-card.transaction::before { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+        .notification-card.donation::before, .notification-card.listing::before { background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%); }
+        .notification-card.remittance::before { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+        .notification-card.verification::before { background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%); }
+        .notification-card.system::before { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+        .notification-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .notification-card.transaction .notification-card-icon { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%); color: var(--primary-green); }
+        .notification-card.donation .notification-card-icon, .notification-card.listing .notification-card-icon { background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(219, 39, 119, 0.15) 100%); color: var(--accent-pink); }
+        .notification-card.remittance .notification-card-icon { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%); color: var(--primary-green); }
+        .notification-card.verification .notification-card-icon { background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(2, 132, 199, 0.15) 100%); color: var(--primary-blue); }
+        .notification-card.system .notification-card-icon { background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%); color: var(--error); }
+        .notification-card-icon svg { width: 24px; height: 24px; stroke: currentColor; }
+        .notification-card-header { display: flex; align-items: flex-start; justify-content: space-between; flex: 1; min-width: 0; }
+        .notification-card-body { flex: 1; min-width: 0; }
         .notification-card-title { font-weight: 600; margin-bottom: 0.25rem; }
         .notification-card-msg { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.25rem; }
         .notification-card-time { font-size: 0.75rem; color: var(--neutral-600); }
@@ -358,21 +486,43 @@
 
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 5rem 2rem;
             background: white;
             border-radius: 1.25rem;
-            border: 2px solid var(--border-subtle);
+            border: 2px dashed var(--border-subtle);
         }
-        .empty-icon { font-size: 4rem; margin-bottom: 1rem; }
-        .empty-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .empty-text { color: var(--text-secondary); }
+        .empty-icon {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 2rem;
+            opacity: 0.2;
+        }
+        .empty-icon svg { width: 100%; height: 100%; stroke: var(--primary-green); }
+        .empty-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-primary); }
+        .empty-text { color: var(--text-secondary); max-width: 480px; margin: 0 auto; font-size: 1.063rem; line-height: 1.6; }
 
         @media (max-width: 768px) {
             .nav { padding: 0 1rem; }
             .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .user-profile-nav { display: none; }
             .container { padding: 1rem; }
             .page-title { font-size: 2rem; }
+            .page-header { margin-bottom: 1.5rem; }
             .notification-card { padding: 1rem; }
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                flex-wrap: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title { font-size: 1.75rem; }
+            .notification-card { padding: 0.875rem; gap: 0.875rem; }
+            .notification-card-icon { width: 40px; height: 40px; }
+            .notification-card-icon svg { width: 20px; height: 20px; }
         }
     </style>
 </head>
@@ -393,9 +543,15 @@
             <ul class="nav-links">
                 <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
                 <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+                <li><a href="notifications.html" class="nav-link active" aria-current="page">NOTIFICATIONS</a></li>
                 <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
                 <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
             </ul>
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
         <div class="nav-right">
             <div class="notification-bell-wrapper" id="notificationBellWrapper">
@@ -496,6 +652,35 @@
         </div>
     </nav>
 
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="notifications.html" class="nav-link active" aria-current="page">NOTIFICATIONS</a></li>
+            <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
+            <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+        </ul>
+    </div>
+
     <main id="main-content" class="container">
         <div class="page-header">
             <h1 class="page-title">Notifications</h1>
@@ -522,7 +707,11 @@
         <ul class="notification-list" id="notification-list" role="list"></ul>
 
         <div class="empty-state" id="empty-state" style="display: none;">
-            <div class="empty-icon" aria-hidden="true">🔔</div>
+            <div class="empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
+                </svg>
+            </div>
             <h2 class="empty-title">You're all caught up!</h2>
             <p class="empty-text">No new notifications at this time</p>
         </div>
@@ -645,6 +834,7 @@
                 const readClass = n.read ? '' : ' unread';
                 const ctaHtml = (n.ctaUrl && n.ctaLabel) ? `<a href="${n.ctaUrl}" class="notification-card-cta" onclick="event.stopPropagation(); markNotificationRead('${n.id}')">${n.ctaLabel}</a>` : '';
                 return `<li class="notification-card ${type}${readClass}" role="listitem" onclick="handleNotificationClick(event, '${n.id}')" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleNotificationClick(event,'${n.id}');}">
+                    <div class="notification-card-icon" aria-hidden="true"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconSvg}</svg></div>
                     <div class="notification-card-header">
                         <div class="notification-card-body">
                             <div class="notification-card-title">${n.title}</div>
@@ -741,6 +931,41 @@
                 if (dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
             }
         });
+
+        (function initMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            const body = document.body;
+            if (!hamburger || !mobileMenu || !mobileMenuOverlay) return;
+
+            function openMenu() {
+                hamburger.classList.add('active');
+                mobileMenu.classList.add('active');
+                mobileMenuOverlay.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                body.style.overflow = 'hidden';
+            }
+
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                body.style.overflow = '';
+            }
+
+            hamburger.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('active')) closeMenu();
+                else openMenu();
+            });
+            if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeMenu);
+            mobileMenuOverlay.addEventListener('click', closeMenu);
+            document.querySelectorAll('.mobile-nav-links .nav-link').forEach(link => link.addEventListener('click', closeMenu));
+        })();
 
         renderNotificationPanel();
         renderPageList();

@@ -39,7 +39,7 @@
 
         body {
             font-family: var(--font-body);
-            background: linear-gradient(135deg, #F0F6FF 0%, #E8F0FE 100%);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
             color: var(--text-primary);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
@@ -421,21 +421,36 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 2rem 2.75rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
         }
 
         .page-title {
             font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
         }
 
         .page-subtitle {
             color: var(--text-secondary);
-            margin-bottom: 2rem;
+            font-size: 1.125rem;
+            line-height: 1.6;
         }
 
         /* Reserve Overview Cards */
@@ -448,10 +463,32 @@
 
         .reserve-card {
             background: white;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             padding: 2rem;
-            border: 1px solid var(--border-subtle);
+            border: 2px solid var(--border-subtle);
             text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .reserve-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .reserve-card:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
+            transform: translateY(-6px);
+        }
+        .reserve-card:hover::before {
+            transform: scaleX(1);
         }
 
         .reserve-label {
@@ -478,9 +515,9 @@
             padding: 0.5rem 1rem;
             background: rgba(16, 185, 129, 0.1);
             color: var(--primary-green);
-            border-radius: 2rem;
+            border-radius: 980px;
             font-size: 0.875rem;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .ratio-dot {
@@ -493,20 +530,25 @@
         /* Sections */
         .section {
             background: white;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             padding: 2rem;
-            border: 1px solid var(--border-subtle);
+            border: 2px solid var(--border-subtle);
             margin-bottom: 2rem;
         }
 
         .section-title {
             font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
         }
 
         /* Table */
+        .reserve-table-wrapper {
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
         .reserve-table {
             width: 100%;
             border-collapse: collapse;
@@ -514,11 +556,13 @@
 
         .reserve-table th {
             text-align: left;
-            padding: 0.75rem 1rem;
+            padding: 1rem;
             background: var(--neutral-100);
             border-bottom: 2px solid var(--border-subtle);
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.813rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
             color: var(--text-secondary);
         }
 
@@ -538,6 +582,9 @@
         /* Audit List */
         .audit-list {
             list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .audit-item {
@@ -545,11 +592,16 @@
             align-items: center;
             justify-content: space-between;
             padding: 1.25rem;
-            border-bottom: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            transition: background 0.2s;
         }
 
-        .audit-item:last-child {
-            border-bottom: none;
+        .audit-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .audit-item:focus-within {
+            background: rgba(16, 185, 129, 0.06);
         }
 
         .audit-info {
@@ -575,33 +627,92 @@
         }
 
         .btn-view {
-            padding: 0.5rem 1rem;
-            background: var(--neutral-200);
-            border: none;
-            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
+            font-family: var(--font-body);
+            color: var(--text-primary);
             cursor: pointer;
             transition: all 0.2s;
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
         }
 
         .btn-view:hover {
-            background: var(--neutral-300);
+            border-color: var(--primary-green);
+            color: var(--primary-green);
         }
 
-        @media (max-width: 960px) {
+        .btn-view:focus-visible {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 768px) {
             #operatorProfile,
             .tabs { display: none !important; }
             .hamburger { display: flex; }
             .nav-container { padding: 0 1rem; }
 
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
             .reserve-overview {
                 grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .reserve-card {
+                padding: 1.5rem;
+            }
+
+            .reserve-value {
+                font-size: 2rem;
+            }
+
+            .reserve-table-wrapper {
+                overflow-x: auto;
             }
 
             .reserve-table {
                 display: block;
-                overflow-x: auto;
+                min-width: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .reserve-card {
+                padding: 1.25rem;
+            }
+
+            .reserve-value {
+                font-size: 1.75rem;
+            }
+
+            .section {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -681,8 +792,12 @@
     </div>
 
     <main id="main-content" class="container" role="main">
-        <h1 class="page-title">Proof of Reserve</h1>
-        <p class="page-subtitle">Real-time reserve backing and audit information</p>
+        <div class="page-header">
+            <div>
+                <h2 class="page-title">Proof of Reserve</h2>
+                <p class="page-subtitle">Real-time reserve backing and audit information</p>
+            </div>
+        </div>
 
         <!-- Reserve Overview -->
         <div class="reserve-overview">
@@ -709,6 +824,7 @@
         <!-- Reserve Breakdown -->
         <div class="section">
             <h2 class="section-title">Reserve Asset Breakdown</h2>
+            <div class="reserve-table-wrapper">
             <table class="reserve-table">
                 <thead>
                     <tr>
@@ -745,6 +861,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- Audit Records -->

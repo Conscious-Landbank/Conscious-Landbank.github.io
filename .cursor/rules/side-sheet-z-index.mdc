@@ -1,0 +1,42 @@
+---
+description: Z-index stacking for side sheets, drawers, and modal overlays — must always appear above the nav bar.
+globs: **/*.html
+alwaysApply: false
+---
+
+# Side Sheet / Modal Overlay Z-Index
+
+Side sheets, drawer overlays, and full-screen modal backdrops must **always** render on top of the sticky navigation bar and all page content.
+
+## Z-Index Ladder
+
+| Layer | z-index | Purpose |
+|-------|---------|---------|
+| Skip link | 10000 | Accessibility — first focusable element |
+| Nav (.nav) | 10001 | Sticky top navigation |
+| Nav dropdowns | 10002 | Menus, user profile dropdown |
+| **Modal overlay** | **10010** | Side sheets, drawers, modal backdrops |
+| Modal content | 10011+ | Dialog content inside overlay |
+
+## Rule
+
+`.modal-overlay` (and any equivalent full-screen backdrop for side sheets or drawers) **must** use `z-index: 10010` — never `10000` or lower.
+
+The drawer/modal content inside the overlay inherits correct stacking automatically; no separate `z-index` is needed on the drawer itself.
+
+## Example
+
+```css
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 10010;  /* Above nav (10001) and dropdowns (10002) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+```
+
+For side sheet layouts (e.g. `#hcModal`), use `align-items: flex-start; justify-content: flex-end;` — the z-index remains `10010`.
