@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swap History - UNERA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-green: #10B981;
+            --primary-blue: #0EA5E9;
+            --accent-pink: #EC4899;
+            --neutral-900: #1F2937;
+            --neutral-800: #374151;
+            --neutral-700: #4B5563;
+            --neutral-600: #6B7280;
+            --neutral-500: #9CA3AF;
+            --neutral-400: #D1D5DB;
+            --neutral-300: #E5E7EB;
+            --neutral-200: #F3F4F6;
+            --neutral-100: #F9FAFB;
+            --neutral-50: #FFFFFF;
+            --success: #059669;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-sky: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border-subtle: #E2E8F0;
+            --border-default: var(--border-subtle);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .skip-link {
+            position: absolute; top: -40px; left: 0;
+            background: var(--primary-green); color: white;
+            padding: 8px 16px; text-decoration: none;
+            z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600;
+        }
+        .skip-link:focus { top: 0; }
+
+        .nav {
+            background: #FFFFFF; padding: 0 2.75rem; height: 44px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 10001;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .nav-left { display: flex; align-items: center; gap: 2.75rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .nav-brand:focus { outline: 3px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-icon { width: 28px; height: 28px; }
+        .logo { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
+        .nav-links { display: flex; gap: 1.375rem; list-style: none; align-items: center; }
+        .nav-links li { display: flex; align-items: center; }
+        .nav-link {
+            color: var(--text-primary); text-decoration: none; font-size: 0.75rem; font-weight: 500;
+            letter-spacing: 0.02em; padding: 0.5rem; border-radius: 4px; display: inline-flex; align-items: center;
+        }
+        .nav-link:hover { color: var(--primary-green); }
+        .nav-link:focus, .nav-link:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .nav-link.active { color: var(--primary-green); font-weight: 600; }
+        .nav-connect-btn { background: transparent; border: none; cursor: pointer; font-family: var(--font-body); }
+        .user-profile-nav { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.5rem; }
+        .user-profile-nav:hover { background: rgba(0,0,0,0.04); }
+        .user-avatar-nav {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--gradient-primary);
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.813rem;
+        }
+        .user-name-nav { font-size: 0.875rem; font-weight: 500; color: var(--neutral-800); }
+        .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; }
+        .hamburger:focus, .hamburger:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: all 0.2s; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .mobile-menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10010; }
+        .mobile-menu-overlay.active { display: block; }
+        .mobile-menu {
+            display: none; position: fixed; top: 0; right: -100%; width: 80%; max-width: 320px; height: 100%;
+            background: white; z-index: 10011; padding: 1.5rem; box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease; overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); }
+        .mobile-menu-close { background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; }
+        .mobile-menu-close:focus, .mobile-menu-close:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; }
+        .mobile-nav-links .nav-link { display: block; padding: 1rem; font-size: 1rem; border-radius: 8px; }
+        .mobile-nav-links .nav-link:hover { background: var(--neutral-200); }
+        .mobile-nav-links .nav-link.active { background: rgba(16,185,129,0.1); color: var(--primary-green); }
+
+        .nav-dropdown-item { position: relative; list-style: none; }
+        .nav-dropdown-trigger {
+            color: var(--text-primary); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.02em;
+            padding: 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;
+            background: none; border: none; cursor: pointer; font-family: var(--font-body); min-height: 44px;
+        }
+        .nav-dropdown-trigger:hover { color: var(--primary-green); }
+        .nav-dropdown-trigger:focus, .nav-dropdown-trigger:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .nav-dropdown-trigger[aria-expanded="true"] { color: var(--primary-green); font-weight: 600; }
+        .nav-dropdown-chevron { width: 10px; height: 10px; stroke: currentColor; flex-shrink: 0; transition: transform 0.2s; }
+        .nav-dropdown-item.open .nav-dropdown-chevron { transform: rotate(180deg); }
+        .nav-dropdown-menu {
+            position: absolute; top: calc(100% + 4px); left: 0; min-width: 11.5rem;
+            background: var(--neutral-50); border: 1px solid var(--border-subtle); border-radius: 0.625rem;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12); list-style: none; padding: 0.35rem 0; margin: 0;
+            display: none; z-index: 10002;
+        }
+        .nav-dropdown-item.open .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a {
+            display: block; padding: 0.625rem 1rem; font-size: 0.75rem; font-weight: 500;
+            color: var(--text-primary); text-decoration: none; letter-spacing: 0.02em;
+        }
+        .nav-dropdown-menu a:hover { background: var(--neutral-100); color: var(--primary-green); }
+        .nav-dropdown-menu a:focus, .nav-dropdown-menu a:focus-visible { outline: 2px solid var(--primary-green); outline-offset: -2px; }
+        .nav-dropdown-menu a.active { color: var(--primary-green); font-weight: 600; background: rgba(16,185,129,0.08); }
+        .nav-dropdown-trigger.is-active-route { color: var(--primary-green); font-weight: 600; }
+        .nav-dropdown-menu .nav-menu-sep { list-style: none; padding: 0; margin: 0; }
+        .nav-dropdown-menu .nav-menu-sep hr { border: none; border-top: 1px solid var(--border-subtle); margin: 0.35rem 0; }
+
+        main.container {
+            max-width: 1200px; margin: 0 auto; padding: 2.75rem 1.375rem 4rem;
+        }
+        .page-header { margin-bottom: 2.5rem; }
+        .back-to-flow {
+            display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.875rem; font-weight: 600;
+            color: var(--primary-green); text-decoration: none; margin-bottom: 1rem;
+        }
+        .back-to-flow:hover { text-decoration: underline; }
+        .back-to-flow:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
+        .page-title {
+            font-family: var(--font-display); font-size: 3rem; font-weight: 800;
+            background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 0.75rem; line-height: 1.1;
+        }
+        .page-subtitle { font-size: 1.125rem; color: var(--text-secondary); }
+
+        .history-cross-nav {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
+            margin-top: 1.25rem;
+        }
+        .history-cross-nav-label {
+            font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.04em; width: 100%;
+        }
+        @media (min-width: 480px) {
+            .history-cross-nav-label { width: auto; margin-right: 0.25rem; }
+        }
+        .history-cross-pill {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.5rem 1rem; border-radius: 980px; font-size: 0.875rem; font-weight: 600;
+            text-decoration: none; border: 2px solid var(--border-subtle); color: var(--text-secondary);
+            background: white; min-height: 44px; transition: border-color 0.2s, color 0.2s;
+        }
+        .history-cross-pill:hover { border-color: var(--primary-green); color: var(--primary-green); }
+        .history-cross-pill:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .history-cross-pill.active {
+            background: rgba(16,185,129,0.1); border-color: var(--primary-green); color: var(--primary-green);
+        }
+
+        .tx-row-hash {
+            display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem 0.5rem;
+            margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);
+        }
+        .tx-row-hash code { font-family: ui-monospace, monospace; background: var(--neutral-100); padding: 0.15rem 0.4rem; border-radius: 0.25rem; }
+        .tx-row-hash .tx-mini-btn {
+            background: none; border: none; color: var(--primary-green); font-weight: 600; cursor: pointer;
+            font-size: 0.75rem; text-decoration: underline; font-family: var(--font-body); padding: 0.25rem;
+            min-height: 44px;
+        }
+        .tx-row-hash .tx-mini-btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
+        .tx-row-hash .tx-mini-link {
+            display: inline-flex; align-items: center; color: var(--primary-blue); font-weight: 600;
+            text-decoration: none; min-height: 44px; padding: 0.25rem 0.35rem;
+        }
+        .tx-row-hash .tx-mini-link:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .impact-card {
+            background: white; border-radius: 1.25rem; padding: 2rem; border: 2px solid var(--border-subtle);
+            position: relative; overflow: hidden; cursor: default;
+        }
+        .impact-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: var(--gradient-primary); transform: scaleX(0); transition: transform 0.3s;
+        }
+        .impact-card:hover::before { transform: scaleX(1); }
+        .impact-card:hover { border-color: var(--primary-green); box-shadow: 0 12px 32px rgba(16,185,129,0.12); }
+        .impact-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+        .impact-icon {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(14,165,233,0.15) 100%);
+            border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+        }
+        .info-tooltip {
+            width: 24px; height: 24px; background: rgba(14,165,233,0.1); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: var(--primary-blue);
+            font-size: 0.75rem; font-weight: 700; cursor: help; position: relative;
+        }
+        .info-tooltip::after {
+            content: attr(data-tooltip); position: absolute; bottom: calc(100% + 12px); right: 0;
+            padding: 0.75rem 1rem; background: var(--neutral-900); color: white; font-size: 0.813rem;
+            border-radius: 0.75rem; white-space: normal; min-width: 200px; max-width: 280px;
+            opacity: 0; visibility: hidden; transition: all 0.2s; z-index: 1000; line-height: 1.5;
+        }
+        .info-tooltip:hover::after, .info-tooltip:focus::after { opacity: 1; visibility: visible; }
+        .impact-value { font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem; line-height: 1.1; }
+        .impact-label { font-size: 0.938rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 0.75rem; }
+        .impact-detail { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; }
+        .impact-trend {
+            display: inline-flex; align-items: center; gap: 0.375rem; margin-top: 0.75rem;
+            padding: 0.375rem 0.75rem; background: rgba(5,150,105,0.1); border-radius: 980px;
+            font-size: 0.813rem; font-weight: 700; color: var(--success);
+        }
+
+        .history-section.card {
+            background: white; border-radius: 1.25rem; padding: 2rem; border: 2px solid var(--border-subtle);
+            width: 100%; box-sizing: border-box;
+        }
+        .history-section .card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .history-section .card-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+        .export-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem;
+            background: var(--primary-green); color: white; border: none; border-radius: 980px;
+            font-family: var(--font-body); font-size: 0.938rem; font-weight: 600; cursor: pointer; min-height: 46px;
+        }
+        .export-btn:hover { background: var(--success); transform: translateY(-1px); }
+        .export-btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+
+        .history-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+        .search-bar { flex: 1 1 220px; position: relative; min-width: min(200px, 100%); }
+        .search-input {
+            width: 100%; padding: 0.875rem 1.25rem 0.875rem 3.5rem; border: 2px solid var(--border-subtle);
+            border-radius: 980px; font-size: 1rem; font-family: var(--font-body); color: var(--text-primary);
+        }
+        .search-input:focus { outline: none; border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(16,185,129,0.1); }
+        .search-icon { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--neutral-500); pointer-events: none; }
+        .search-clear-btn {
+            position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--neutral-500); cursor: pointer; padding: 0.5rem; border-radius: 50%;
+        }
+        .search-clear-btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .filter-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1.5rem;
+            background: var(--neutral-50); border: 2px solid var(--border-subtle); border-radius: 980px;
+            font-family: var(--font-body); font-size: 1rem; font-weight: 600; color: var(--text-primary); cursor: pointer; min-height: 46px;
+        }
+        .filter-btn:hover { border-color: var(--primary-green); background: rgba(16,185,129,0.05); }
+        .filter-btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .filter-btn.active { background: var(--primary-green); border-color: var(--primary-green); color: white; }
+
+        .active-filters { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+        .filter-chip {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;
+            background: rgba(16,185,129,0.1); border: 2px solid var(--primary-green); border-radius: 980px;
+            font-size: 0.875rem; color: var(--primary-green); font-weight: 600;
+        }
+        .filter-chip button {
+            background: none; border: none; color: inherit; cursor: pointer; padding: 0; width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center; border-radius: 50%;
+        }
+        .filter-chip-clear-all {
+            background: none; border: 2px solid var(--neutral-300); color: var(--text-secondary);
+            font-weight: 600; padding: 0.5rem 1rem; border-radius: 980px; cursor: pointer; font-size: 0.875rem; min-height: 44px;
+        }
+        .filter-chip-clear-all:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+
+        .transaction-list-wrap {
+            overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .transaction-list-wrap::-webkit-scrollbar { display: none; }
+
+        .date-group { border-bottom: 1px solid var(--border-subtle); }
+        .date-group:last-child { border-bottom: none; }
+        .date-header {
+            padding: 1rem 1.5rem; background: var(--neutral-100); font-weight: 700; color: var(--text-primary);
+            font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 44px; z-index: 10; margin-bottom: 1.5rem;
+        }
+        @media (min-width: 769px) {
+            .date-header {
+                position: static;
+                top: auto;
+                z-index: auto;
+            }
+        }
+        .transaction-item {
+            display: flex; align-items: center; gap: 1.25rem; padding: 1.5rem; border-bottom: 1px solid var(--border-subtle);
+            cursor: pointer; transition: background 0.2s; flex-wrap: wrap;
+        }
+        .transaction-item:last-child { border-bottom: none; }
+        .transaction-item:hover { background: rgba(16,185,129,0.02); }
+        .transaction-item:focus { outline: 2px solid var(--primary-green); outline-offset: -2px; }
+        .transaction-icon {
+            width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 1.125rem; font-weight: 700; color: white;
+        }
+        .transaction-icon.swap {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+            border: 2px solid rgba(14,165,233,0.35);
+            color: white;
+        }
+        .transaction-details { flex: 1; min-width: 0; }
+        .transaction-title { font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem; }
+        .transaction-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-secondary); flex-wrap: wrap; }
+        .transaction-status {
+            display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 0.375rem;
+            font-size: 0.75rem; font-weight: 700;
+        }
+        .transaction-status.completed { background: rgba(5,150,105,0.15); color: var(--success); }
+        .transaction-status.pending { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .transaction-status.processing { background: rgba(14,165,233,0.12); color: var(--primary-blue); }
+        .transaction-status.failed { background: rgba(239,68,68,0.12); color: var(--error); }
+        .transaction-amount { text-align: right; flex-shrink: 0; min-width: 140px; }
+        .amount-primary { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--success); }
+        .amount-primary.muted-fail { color: var(--error); }
+        .amount-secondary { font-size: 0.875rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: flex-end; gap: 0.375rem; flex-wrap: wrap; }
+        .price-impact-pill {
+            display: inline-flex; align-items: center; font-size: 0.688rem; font-weight: 700;
+            padding: 0.1rem 0.4rem; border-radius: 999px; flex-shrink: 0;
+        }
+        .price-impact-pill.low { background: rgba(16,185,129,0.1); color: var(--primary-green); }
+        .price-impact-pill.medium { background: rgba(245,158,11,0.12); color: var(--warning); }
+        .price-impact-pill.high { background: rgba(239,68,68,0.1); color: var(--error); }
+
+        .load-more-container { text-align: center; padding: 2rem 0 1rem; }
+        .transaction-count { font-size: 0.938rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .transaction-count span { font-weight: 700; color: var(--text-primary); }
+        .load-more-btn {
+            display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: white;
+            border: 2px solid var(--border-subtle); border-radius: 980px; font-family: var(--font-display);
+            font-size: 1rem; font-weight: 600; cursor: pointer; min-height: 46px;
+        }
+        .load-more-btn:hover { border-color: var(--primary-green); background: rgba(16,185,129,0.05); }
+        .load-more-btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .load-more-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .empty-state { text-align: center; padding: 3rem 1.5rem; display: none; }
+        .empty-state.visible { display: block; }
+        .empty-icon {
+            width: 72px; height: 72px; margin: 0 auto 1rem; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--success));
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem; font-weight: 800;
+        }
+        .empty-state p { color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .empty-action {
+            display: inline-flex; align-items: center; justify-content: center; padding: 0.875rem 1.75rem;
+            background: var(--gradient-primary); color: white; text-decoration: none; border-radius: 0.75rem;
+            font-weight: 600; min-height: 46px;
+        }
+        .empty-action:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+
+        .filter-modal {
+            position: fixed; inset: 0; z-index: 10010; display: none; align-items: center; justify-content: center;
+            padding: 1rem; box-sizing: border-box;
+        }
+        .filter-modal.active { display: flex; }
+        .filter-modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .filter-modal-content {
+            position: relative; background: white; border-radius: 1.5rem; width: 90%; max-width: 600px; max-height: 85vh;
+            overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 0;
+        }
+        .filter-modal-header {
+            display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; border-bottom: 2px solid var(--border-subtle);
+        }
+        .filter-modal-header h2 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+        .modal-close-btn { background: none; border: none; color: var(--neutral-500); cursor: pointer; padding: 0.5rem; border-radius: 50%; }
+        .modal-close-btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .filter-modal-body { padding: 2rem; overflow-y: auto; flex: 1; }
+        .filter-section { margin-bottom: 2rem; }
+        .filter-section h3 { font-size: 1rem; font-weight: 700; margin: 0 0 1rem; }
+        .date-range-presets { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .date-preset-btn {
+            padding: 0.5rem 1rem; background: var(--neutral-100); border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+        }
+        .date-preset-btn.active { background: var(--primary-green); border-color: var(--primary-green); color: white; }
+        .date-preset-btn:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .date-range-custom { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .date-range-custom label { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); }
+        .date-range-custom input { padding: 0.75rem; border: 2px solid var(--border-subtle); border-radius: 0.5rem; font-size: 1rem; font-family: var(--font-body); }
+        .radio-group, .checkbox-group { display: flex; flex-direction: column; gap: 0.75rem; }
+        .radio-label, .checkbox-label {
+            display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; background: var(--neutral-50);
+            border: 2px solid var(--border-subtle); border-radius: 0.75rem; cursor: pointer; font-size: 0.938rem; min-height: 48px;
+        }
+        .radio-label input, .checkbox-label input { accent-color: var(--primary-green); width: 20px; height: 20px; flex-shrink: 0; }
+        .filter-modal-footer { display: flex; gap: 1rem; padding: 1.5rem 2rem; border-top: 2px solid var(--border-subtle); }
+        .filter-modal-footer.detail-modal-footer { flex-wrap: nowrap; }
+        .filter-modal-footer.detail-modal-footer button:only-child { flex: 1; }
+        .filter-modal-footer button { flex: 1; padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; border-radius: 0.75rem; cursor: pointer; min-height: 48px; font-family: var(--font-body); }
+        .btn-modal-secondary { background: white; border: 2px solid var(--border-subtle); color: var(--text-primary); }
+        .btn-modal-primary { background: var(--gradient-primary); border: none; color: white; }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); z-index: 10010;
+            display: none; align-items: center; justify-content: center;
+            padding: 1rem; box-sizing: border-box;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-sheet {
+            background: white; border-radius: 1.5rem; width: 100%; max-width: 520px; max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+        }
+        .modal-handle { width: 36px; height: 4px; background: var(--neutral-300); border-radius: 999px; margin: 0.75rem auto 0; }
+        @media (min-width: 769px) {
+            .modal-handle { display: none; }
+        }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+        .modal-title { font-family: var(--font-display); font-size: 1.063rem; font-weight: 700; }
+        .modal-close {
+            width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--neutral-100); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+        .modal-body { padding: 1.125rem 1.5rem 1.5rem; }
+        .confirm-summary-card {
+            background: var(--neutral-100); border-radius: 0.875rem; padding: 1rem; margin-bottom: 1.125rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+        }
+        .csb { display: flex; flex-direction: column; gap: 0.125rem; }
+        .csb-amount { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; color: var(--text-primary); }
+        .csb-amount.receive { color: var(--primary-green); }
+        .csb-code { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+        .confirm-arrow { font-size: 1.375rem; color: var(--neutral-400); flex-shrink: 0; }
+        .confirm-detail {
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+            padding: 0.625rem 0; border-bottom: 1px solid var(--border-subtle); font-size: 0.838rem;
+        }
+        .cd-label { color: var(--text-secondary); font-weight: 500; flex-shrink: 0; }
+        .cd-value { color: var(--text-primary); font-weight: 600; text-align: right; word-break: break-all; }
+        .cd-value.good { color: var(--success); }
+        .cd-value.warn { color: var(--warning); }
+        .cd-value.danger { color: var(--error); }
+        .tx-hash-row { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; flex-wrap: wrap; }
+        .btn-ghost {
+            background: none; border: none; color: var(--primary-green); font-weight: 600; cursor: pointer; font-size: 0.813rem; text-decoration: underline;
+        }
+        .btn-ghost:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; border-radius: 2px; }
+        .btn-secondary {
+            width: 100%; margin-top: 1rem; padding: 0.875rem 1.5rem; border-radius: 0.75rem; font-weight: 600;
+            border: 2px solid var(--border-subtle); background: white; cursor: pointer; font-family: var(--font-body); min-height: 46px;
+        }
+        .btn-secondary:hover { border-color: var(--primary-green); color: var(--primary-green); }
+        .btn-secondary:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+
+        @media (max-width: 1024px) {
+            .impact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 0 1rem; }
+            .nav-links, .user-profile-nav { display: none; }
+            .hamburger { display: flex; }
+            main.container { padding: 2rem 1.5rem; }
+            .page-title { font-size: 2rem; }
+            .impact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .filter-modal { padding: 0; }
+            .filter-modal.active { align-items: flex-end; }
+            .filter-modal-content { width: 100%; max-width: none; border-radius: 1.5rem 1.5rem 0 0; max-height: 90vh; }
+            .date-range-custom { grid-template-columns: 1fr; }
+            .modal-overlay { align-items: flex-end; padding: 0; }
+            .modal-sheet { border-radius: 1.5rem 1.5rem 0 0; max-height: 92vh; }
+            .modal-handle { display: block; }
+        }
+
+        @media (max-width: 640px) {
+            .history-section.card { padding: 1.5rem 1.5rem; }
+            .history-section .date-header {
+                padding: 0.875rem 1.25rem;
+                font-size: 0.8125rem;
+            }
+            .history-section .transaction-item {
+                display: grid;
+                grid-template-columns: 56px 1fr;
+                grid-template-rows: auto auto;
+                column-gap: 0.875rem;
+                align-items: start;
+                padding: 1.25rem;
+            }
+            .history-section .transaction-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 1.125rem;
+                grid-column: 1;
+                grid-row: 1 / span 2;
+                align-self: start;
+            }
+            .history-section .transaction-details {
+                grid-column: 2;
+                grid-row: 1;
+                min-width: 0;
+            }
+            .history-section .transaction-amount {
+                grid-column: 2;
+                grid-row: 2;
+                width: auto;
+                min-width: 0;
+                text-align: left;
+                margin-top: 0.4375rem;
+            }
+            .history-section .transaction-title {
+                font-size: 0.9375rem;
+                line-height: 1.35;
+            }
+            .history-section .transaction-meta {
+                font-size: 0.8125rem;
+                gap: 0.35rem 0.5rem;
+                row-gap: 0.25rem;
+            }
+            .history-section .amount-primary { font-size: 1.0625rem; }
+            .history-section .amount-secondary {
+                font-size: 0.8125rem;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main.container { padding: 1.5rem 1rem; }
+            .page-title { font-size: 1.75rem; }
+            .impact-grid { grid-template-columns: 1fr; }
+            .impact-value { font-size: 1.75rem; }
+
+            .history-section.card { padding: 1.25rem 1.25rem; }
+            .history-section .date-header {
+                padding: 0.75rem 1rem;
+                font-size: 0.8125rem;
+            }
+            .history-section .transaction-item {
+                grid-template-columns: 44px 1fr;
+                padding: 1rem;
+            }
+            .history-section .transaction-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+                <li id="walletNavItem">
+                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openModal('connectModal')">CONNECT</button>
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display:none;">WALLET</a>
+                </li>
+                <li class="nav-dropdown-item" id="navDdTransact">
+                    <button type="button" class="nav-dropdown-trigger" id="navDdTransactBtn" aria-expanded="false" aria-haspopup="true" aria-controls="navDdTransactMenu">
+                        TRANSACT
+                        <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu">
+                        <li><a href="add-money.html" role="menuitem">Add Money</a></li>
+                        <li><a href="exchange.html" role="menuitem">Exchange</a></li>
+                        <li><a href="send-enhanced.html" role="menuitem">Send</a></li>
+                    </ul>
+                </li>
+                <li><a href="stake.html" class="nav-link">STAKE</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="user-profile-nav">
+                <div class="user-avatar-nav">JS</div>
+                <div class="user-name-nav">Jane Smith</div>
+            </div>
+            <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" id="mobileOverlay" aria-hidden="true"></div>
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <svg class="nav-logo-icon" viewBox="0 0 140 140" aria-hidden="true">
+                    <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+                    <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+                    <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+                    <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+                </svg>
+                <div class="logo">UNERA</div>
+            </a>
+            <button type="button" class="mobile-menu-close" id="mobileClose" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
+            <li><a href="wallet-enhanced.html" class="nav-link">WALLET</a></li>
+            <li><a href="get-unera-cad.html" class="nav-link">GET UNERA CAD</a></li>
+            <li><a href="redeem-unera-cad.html" class="nav-link">REDEEM</a></li>
+            <li><a href="mint-history.html" class="nav-link">MINT HISTORY</a></li>
+            <li><a href="swap-history.html" class="nav-link active" aria-current="page">SWAP HISTORY</a></li>
+            <li><a href="add-money.html" class="nav-link">ADD MONEY</a></li>
+            <li><a href="exchange.html" class="nav-link">EXCHANGE</a></li>
+            <li><a href="send-enhanced.html" class="nav-link">SEND</a></li>
+            <li><a href="stake.html" class="nav-link">STAKE</a></li>
+        </ul>
+    </div>
+
+    <main id="main-content" class="container">
+        <header class="page-header">
+            <a href="get-unera-cad.html#swap" class="back-to-flow">← Back to Get UNERA CAD (Swap)</a>
+            <h1 class="page-title">Swap History</h1>
+            <p class="page-subtitle">Your complete token swap record</p>
+            <nav class="history-cross-nav" aria-label="Switch between mint and swap history">
+                <span class="history-cross-nav-label">History</span>
+                <a href="mint-history.html" class="history-cross-pill">Mint history</a>
+                <a href="swap-history.html" class="history-cross-pill active" aria-current="page">Swap history</a>
+            </nav>
+        </header>
+
+        <section class="impact-grid" aria-label="Swap statistics">
+            <div class="impact-card">
+                <div class="impact-card-header">
+                    <div class="impact-icon" aria-hidden="true">$</div>
+                </div>
+                <div class="impact-value" id="statVolume">—</div>
+                <div class="impact-label">Total volume swapped</div>
+                <div class="impact-detail">USD equivalent (design preview)</div>
+            </div>
+            <div class="impact-card">
+                <div class="impact-card-header">
+                    <div class="impact-icon" aria-hidden="true">#</div>
+                </div>
+                <div class="impact-value" id="statSwapCount">—</div>
+                <div class="impact-label">Total swaps</div>
+                <div class="impact-detail">All-time AMM swaps</div>
+            </div>
+            <div class="impact-card">
+                <div class="impact-card-header">
+                    <div class="impact-icon" aria-hidden="true">%</div>
+                </div>
+                <div class="impact-value" id="statAvgImpact">—</div>
+                <div class="impact-label">Avg. price impact</div>
+                <div class="impact-detail" id="statImpactNote">Across completed swaps</div>
+            </div>
+            <div class="impact-card">
+                <div class="impact-card-header">
+                    <div class="impact-icon" aria-hidden="true">🕐</div>
+                    <span class="info-tooltip" tabindex="0" data-tooltip="When your most recent swap was confirmed on-chain.">i</span>
+                </div>
+                <div class="impact-value" id="statLastDate">—</div>
+                <div class="impact-label">Last swap</div>
+                <div class="impact-detail" id="statLastRelative">—</div>
+            </div>
+        </section>
+
+        <section class="history-section card" aria-labelledby="history-title">
+            <div class="card-header">
+                <h2 id="history-title" class="card-title">Swap history</h2>
+                <button type="button" class="export-btn" id="exportCsvBtn" aria-label="Export swap history as CSV">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Export CSV
+                </button>
+            </div>
+
+            <div class="history-controls">
+                <div class="search-bar">
+                    <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="search" class="search-input" id="searchInput" placeholder="Search by TX hash or amount…" aria-label="Search swap transactions" autocomplete="off">
+                    <button type="button" class="search-clear-btn" id="searchClearBtn" aria-label="Clear search" hidden>&times;</button>
+                </div>
+                <button type="button" class="filter-btn" id="filterBtn" aria-expanded="false" aria-controls="filterModal" aria-label="Open filters">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                    Filters
+                </button>
+                <button type="button" class="filter-btn active" id="quick30d" aria-pressed="true">30D</button>
+            </div>
+            <div class="history-controls" role="group" aria-label="Quick pair filters" style="margin-top:-0.5rem;">
+                <button type="button" class="filter-btn active" data-pair-quick="all" aria-pressed="true">All pairs</button>
+                <button type="button" class="filter-btn" data-pair-quick="USDT_UCAD">USDT → UCAD</button>
+                <button type="button" class="filter-btn" data-pair-quick="USDC_UCAD">USDC → UCAD</button>
+                <button type="button" class="filter-btn" data-pair-quick="USDT_USDC">USDT → USDC</button>
+            </div>
+
+            <div class="active-filters" id="activeFilters" hidden role="region" aria-label="Active filters"></div>
+
+            <div class="transaction-list-wrap">
+                <div class="transaction-list" role="list" id="transactionList" aria-label="Swap transactions"></div>
+            </div>
+
+            <div class="load-more-container" id="loadMoreWrap">
+                <p class="transaction-count" id="transactionCount" aria-live="polite"></p>
+                <button type="button" class="load-more-btn" id="loadMoreBtn">Load more</button>
+            </div>
+
+            <div class="empty-state" id="emptyState" role="status">
+                <div class="empty-icon" aria-hidden="true">⇄</div>
+                <p>No swap transactions yet for this view.</p>
+                <a href="get-unera-cad.html#swap" class="empty-action">Swap tokens</a>
+                <p style="margin-top:1rem;"><a href="get-unera-cad.html" style="color:var(--primary-blue);font-weight:600;font-size:0.875rem;">What is mint vs swap?</a></p>
+            </div>
+        </section>
+    </main>
+
+    <div class="filter-modal" id="filterModal" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle" aria-hidden="true">
+        <div class="filter-modal-overlay" id="filterModalOverlay"></div>
+        <div class="filter-modal-content" onclick="event.stopPropagation()">
+            <div class="filter-modal-header">
+                <h2 id="filterModalTitle">Filters</h2>
+                <button type="button" class="modal-close-btn" id="filterModalClose" aria-label="Close filters">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="filter-modal-body">
+                <div class="filter-section">
+                    <h3>Time period</h3>
+                    <div class="date-range-presets" role="group" aria-label="Date presets">
+                        <button type="button" class="date-preset-btn" data-preset="today">Today</button>
+                        <button type="button" class="date-preset-btn" data-preset="7d">7D</button>
+                        <button type="button" class="date-preset-btn active" data-preset="30d">30D</button>
+                        <button type="button" class="date-preset-btn" data-preset="3m">3M</button>
+                        <button type="button" class="date-preset-btn" data-preset="custom">Custom</button>
+                    </div>
+                    <div class="date-range-custom" id="customDateRow" hidden>
+                        <label>From<input type="date" id="dateFrom"></label>
+                        <label>To<input type="date" id="dateTo"></label>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <h3>Status</h3>
+                    <div class="radio-group" role="radiogroup" aria-label="Transaction status">
+                        <label class="radio-label"><input type="radio" name="f-status" value="all" checked> <span>All</span></label>
+                        <label class="radio-label"><input type="radio" name="f-status" value="completed"> <span>Completed</span></label>
+                        <label class="radio-label"><input type="radio" name="f-status" value="processing"> <span>Processing</span></label>
+                        <label class="radio-label"><input type="radio" name="f-status" value="pending"> <span>Pending</span></label>
+                        <label class="radio-label"><input type="radio" name="f-status" value="failed"> <span>Failed</span></label>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <h3>Token pair</h3>
+                    <div class="radio-group" role="radiogroup" aria-label="Token pair">
+                        <label class="radio-label"><input type="radio" name="f-pair" value="all" checked> <span>All</span></label>
+                        <label class="radio-label"><input type="radio" name="f-pair" value="USDT_UCAD"> <span>USDT → UNERA CAD</span></label>
+                        <label class="radio-label"><input type="radio" name="f-pair" value="USDC_UCAD"> <span>USDC → UNERA CAD</span></label>
+                        <label class="radio-label"><input type="radio" name="f-pair" value="USDT_USDC"> <span>USDT → USDC</span></label>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <h3>Price impact</h3>
+                    <div class="radio-group" role="radiogroup" aria-label="Price impact band">
+                        <label class="radio-label"><input type="radio" name="f-impact" value="any" checked> <span>Any</span></label>
+                        <label class="radio-label"><input type="radio" name="f-impact" value="low"> <span>Low (&lt;0.5%)</span></label>
+                        <label class="radio-label"><input type="radio" name="f-impact" value="medium"> <span>Medium (0.5–2%)</span></label>
+                        <label class="radio-label"><input type="radio" name="f-impact" value="high"> <span>High (&gt;2%)</span></label>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-modal-footer">
+                <button type="button" class="btn-modal-secondary" id="filterClearAll">Clear all</button>
+                <button type="button" class="btn-modal-primary" id="filterApply">Apply filters</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-modal" id="swapDetailModal" role="dialog" aria-modal="true" aria-labelledby="swapDetailTitle" aria-hidden="true">
+        <div class="filter-modal-overlay" id="swapDetailModalOverlay"></div>
+        <div class="filter-modal-content" onclick="event.stopPropagation()">
+            <div class="filter-modal-header">
+                <h2 id="swapDetailTitle">Swap details</h2>
+                <button type="button" class="modal-close-btn" id="swapDetailClose" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="filter-modal-body">
+                <div class="confirm-summary-card">
+                    <div class="csb">
+                        <div class="csb-amount" id="d-payAmt">—</div>
+                        <div class="csb-code" id="d-payCode">USDT</div>
+                    </div>
+                    <div class="confirm-arrow" aria-hidden="true">→</div>
+                    <div class="csb" style="text-align:right;">
+                        <div class="csb-amount receive" id="d-recvAmt">—</div>
+                        <div class="csb-code" id="d-recvCode">UNERA CAD</div>
+                    </div>
+                </div>
+                <div class="confirm-detail">
+                    <span class="cd-label">Transaction hash</span>
+                    <div class="cd-value tx-hash-row">
+                        <code id="d-txHash">—</code>
+                        <button type="button" class="btn-ghost" id="d-copyHash" aria-label="Copy transaction hash">Copy</button>
+                        <a class="btn-ghost" id="d-explorer" href="#" target="_blank" rel="noopener noreferrer" aria-label="View transaction on block explorer">View on explorer ↗</a>
+                    </div>
+                </div>
+                <div class="confirm-detail"><span class="cd-label">Date &amp; time</span><span class="cd-value" id="d-datetime">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Quoted rate (at review)</span><span class="cd-value" id="d-exrate">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Executed rate (effective)</span><span class="cd-value" id="d-effective">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Price impact</span><span class="cd-value" id="d-impact">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Slippage</span><span class="cd-value" id="d-slip">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">DEX route</span><span class="cd-value" id="d-dex">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Block</span><span class="cd-value" id="d-block">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Network</span><span class="cd-value" id="d-network">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Network fee</span><span class="cd-value" id="d-gas">—</span></div>
+                <div class="confirm-detail"><span class="cd-label">Status</span><span class="cd-value" id="d-status">—</span></div>
+                <p style="font-size:0.813rem;margin-top:0.75rem;margin-bottom:0;">
+                    <button type="button" class="btn-ghost" id="openImpactLearn" style="padding:0;">What is price impact?</button>
+                </p>
+            </div>
+            <div class="filter-modal-footer detail-modal-footer">
+                <button type="button" class="btn-modal-secondary" id="d-receipt">Download receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-modal" id="impactModal" role="dialog" aria-modal="true" aria-labelledby="impactLearnTitle" aria-hidden="true">
+        <div class="filter-modal-overlay" id="impactModalOverlay"></div>
+        <div class="filter-modal-content" onclick="event.stopPropagation()">
+            <div class="filter-modal-header">
+                <h2 id="impactLearnTitle">Price impact</h2>
+                <button type="button" class="modal-close-btn" id="impactModalClose" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="filter-modal-body">
+                <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.55;margin:0;">Price impact estimates how much your trade size moves the pool price compared to the spot rate. Larger trades relative to liquidity typically show higher impact. Always review before confirming.</p>
+            </div>
+            <div class="filter-modal-footer detail-modal-footer">
+                <button type="button" class="btn-modal-primary" id="impactGotIt">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="connectModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Connect wallet"
+         onclick="if(event.target===this)closeModal('connectModal')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title">Connect wallet</span>
+                <button type="button" class="modal-close" onclick="closeModal('connectModal')" aria-label="Close">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-secondary);font-size:0.875rem;">Design preview — connect flow is unchanged from other UNERA pages.</p>
+                <button type="button" class="btn-secondary" onclick="closeModal('connectModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        const PAGE = 12;
+        let displayed = PAGE;
+        let applied = {
+            preset: '30d',
+            dateFrom: null,
+            dateTo: null,
+            status: 'all',
+            pair: 'all',
+            impactTier: 'any'
+        };
+
+        const MOCK = [
+            { id: 's1', ts: Date.now() - 3600000 * 1, payToken: 'USDT', recvToken: 'UNERA CAD', paid: 1200, recv: 1208.4, pairKey: 'USDT_UCAD', impact: 0.0012, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0x8a2f4c1d9e7b3a5f6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8f0a2', block: 19210445, network: 'Ethereum', gas: '0.0021 ETH' },
+            { id: 's2', ts: Date.now() - 3600000 * 6, payToken: 'USDC', recvToken: 'UNERA CAD', paid: 500, recv: 501.1, pairKey: 'USDC_UCAD', impact: 0.0035, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0x1b3c5d7e9f1a3c5d7e9f1a3c5d7e9f1a3c5d7e9f1a3c5d7e9f1a3c5d7e9f1a3c5d7', block: 19209812, network: 'Ethereum', gas: '0.0018 ETH' },
+            { id: 's3', ts: Date.now() - 86400000 * 1, payToken: 'USDT', recvToken: 'USDC', paid: 10000, recv: 9991, pairKey: 'USDT_USDC', impact: 0.0088, slip: 0.01, dex: 'Curve', status: 'completed', hash: '0xdeadbeef00000000000000000000000000000000000000000000000000000001', block: 19200001, network: 'Ethereum', gas: '0.004 ETH' },
+            { id: 's4', ts: Date.now() - 86400000 * 2, payToken: 'USDT', recvToken: 'UNERA CAD', paid: 250, recv: 248.9, pairKey: 'USDT_UCAD', impact: 0.025, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0xdeadbeef00000000000000000000000000000000000000000000000000000002', block: 19199100, network: 'Ethereum', gas: '0.002 ETH' },
+            { id: 's5', ts: Date.now() - 86400000 * 3, payToken: 'USDC', recvToken: 'UNERA CAD', paid: 400, recv: 0, pairKey: 'USDC_UCAD', impact: 0.04, slip: 0.01, dex: 'Uniswap V3', status: 'failed', hash: '0xdeadbeef00000000000000000000000000000000000000000000000000000003', block: '—', network: 'Ethereum', gas: '0.0005 ETH' },
+            { id: 's6', ts: Date.now() - 86400000 * 4, payToken: 'USDT', recvToken: 'UNERA CAD', paid: 88, recv: 88.05, pairKey: 'USDT_UCAD', impact: 0.0004, slip: 0.005, dex: 'Uniswap V3', status: 'pending', hash: '0xabc123def4567890abc123def4567890abc123def4567890abc123def4567890', block: '—', network: 'Ethereum', gas: '—' },
+            { id: 's7', ts: Date.now() - 86400000 * 5 - 3600000 * 3, payToken: 'USDC', recvToken: 'UNERA CAD', paid: 2100, recv: 2104.2, pairKey: 'USDC_UCAD', impact: 0.001, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0x1111111111111111111111111111111111111111111111111111111111111111', block: 19192000, network: 'Ethereum', gas: '0.0022 ETH' },
+            { id: 's8', ts: Date.now() - 86400000 * 7, payToken: 'USDT', recvToken: 'UNERA CAD', paid: 50, recv: 50.01, pairKey: 'USDT_UCAD', impact: 0.0002, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0x2222222222222222222222222222222222222222222222222222222222222222', block: 19190000, network: 'Ethereum', gas: '0.0019 ETH' },
+            { id: 's9', ts: Date.now() - 86400000 * 6, payToken: 'USDT', recvToken: 'USDC', paid: 2500, recv: 2496.25, pairKey: 'USDT_USDC', impact: 0.0042, slip: 0.01, dex: 'Curve', status: 'completed', hash: '0x3333333333333333333333333333333333333333333333333333333333333333', block: 19191200, network: 'Ethereum', gas: '0.0035 ETH' },
+            { id: 's10', ts: Date.now() - 86400000 * 8, payToken: 'USDC', recvToken: 'UNERA CAD', paid: 175.5, recv: 175.88, pairKey: 'USDC_UCAD', impact: 0.0018, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0x4444444444444444444444444444444444444444444444444444444444444444', block: 19188500, network: 'Ethereum', gas: '0.00195 ETH' },
+            { id: 's11', ts: Date.now() - 86400000 * 9, payToken: 'USDT', recvToken: 'UNERA CAD', paid: 4200, recv: 4188.6, pairKey: 'USDT_UCAD', impact: 0.018, slip: 0.01, dex: 'Uniswap V3', status: 'completed', hash: '0x5555555555555555555555555555555555555555555555555555555555555555', block: 19187000, network: 'Ethereum', gas: '0.0023 ETH' },
+            { id: 's12', ts: Date.now() - 86400000 * 10, payToken: 'USDT', recvToken: 'USDC', paid: 500, recv: 499.65, pairKey: 'USDT_USDC', impact: 0.0011, slip: 0.005, dex: 'Balancer', status: 'processing', hash: '0x6666666666666666666666666666666666666666666666666666666666666666', block: '—', network: 'Ethereum', gas: '—' },
+            { id: 's13', ts: Date.now() - 86400000 * 12, payToken: 'USDC', recvToken: 'UNERA CAD', paid: 950, recv: 952.38, pairKey: 'USDC_UCAD', impact: 0.006, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0x7777777777777777777777777777777777777777777777777777777777777777', block: 19185000, network: 'Ethereum', gas: '0.002 ETH' },
+            { id: 's14', ts: Date.now() - 86400000 * 15, payToken: 'USDT', recvToken: 'UNERA CAD', paid: 125.25, recv: 125.56, pairKey: 'USDT_UCAD', impact: 0.0009, slip: 0.005, dex: 'Uniswap V3', status: 'completed', hash: '0x8888888888888888888888888888888888888888888888888888888888888888', block: 19182000, network: 'Ethereum', gas: '0.00185 ETH' },
+            { id: 's15', ts: Date.now() - 86400000 * 22, payToken: 'USDT', recvToken: 'USDC', paid: 15000, recv: 14982, pairKey: 'USDT_USDC', impact: 0.012, slip: 0.015, dex: 'Curve', status: 'completed', hash: '0x9999999999999999999999999999999999999999999999999999999999999999', block: 19175000, network: 'Ethereum', gas: '0.0045 ETH' }
+        ];
+
+        function startOfDay(d) { const x = new Date(d); x.setHours(0,0,0,0); return x.getTime(); }
+        function filterByPreset(ts, preset, from, to) {
+            const now = Date.now();
+            if (preset === 'today') return ts >= startOfDay(now);
+            if (preset === '7d') return ts >= now - 86400000 * 7;
+            if (preset === '30d') return ts >= now - 86400000 * 30;
+            if (preset === '3m') return ts >= now - 86400000 * 90;
+            if (preset === 'custom' && from && to) {
+                const a = new Date(from).setHours(0,0,0,0);
+                const b = new Date(to).setHours(23,59,59,999);
+                return ts >= a && ts <= b;
+            }
+            return true;
+        }
+
+        function impactBand(p) {
+            if (p < 0.005) return 'low';
+            if (p <= 0.02) return 'medium';
+            return 'high';
+        }
+
+        function getFiltered() {
+            return MOCK.filter(tx => {
+                if (!filterByPreset(tx.ts, applied.preset, applied.dateFrom, applied.dateTo)) return false;
+                if (applied.status !== 'all' && tx.status !== applied.status) return false;
+                if (applied.pair !== 'all' && tx.pairKey !== applied.pair) return false;
+                if (applied.impactTier !== 'any' && impactBand(tx.impact) !== applied.impactTier) return false;
+                return true;
+            }).sort((a, b) => b.ts - a.ts);
+        }
+
+        function formatDayHeader(ts) {
+            const d = new Date(ts);
+            const today = startOfDay(Date.now());
+            const y = startOfDay(ts);
+            if (y === today) return 'Today — ' + d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            const yest = today - 86400000;
+            if (y === yest) return 'Yesterday — ' + d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+            return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        }
+
+        function statusLabel(s) {
+            return ({ completed: 'Completed', pending: 'Pending', processing: 'Processing', failed: 'Failed' })[s] || s;
+        }
+
+        function truncateHash(h) {
+            if (!h || h.length < 14) return h;
+            return h.slice(0, 6) + '…' + h.slice(-4);
+        }
+
+        function renderStats() {
+            const done = MOCK.filter(t => t.status === 'completed');
+            const volUsd = done.reduce((s, t) => s + t.paid, 0);
+            document.getElementById('statVolume').textContent = '$' + volUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('statSwapCount').textContent = String(MOCK.length);
+            const avgImp = done.length ? done.reduce((s, t) => s + t.impact, 0) / done.length : 0;
+            const impEl = document.getElementById('statAvgImpact');
+            impEl.textContent = (avgImp * 100).toFixed(2) + '%';
+            impEl.className = 'impact-value';
+            if (avgImp > 0.02) impEl.style.color = 'var(--error)';
+            else if (avgImp > 0.005) impEl.style.color = 'var(--warning)';
+            else impEl.style.color = 'var(--success)';
+            const last = MOCK.slice().sort((a, b) => b.ts - a.ts)[0];
+            if (last) {
+                const dt = new Date(last.ts);
+                document.getElementById('statLastDate').textContent = dt.toLocaleDateString();
+                const days = Math.floor((Date.now() - last.ts) / 86400000);
+                document.getElementById('statLastRelative').textContent = days === 0 ? 'Today' : days === 1 ? '1 day ago' : days + ' days ago';
+            }
+        }
+
+        function searchMatch(tx, q) {
+            if (!q.trim()) return true;
+            const low = q.toLowerCase();
+            return tx.hash.toLowerCase().includes(low) || String(tx.paid).includes(low) || String(tx.recv).includes(low) || tx.payToken.toLowerCase().includes(low);
+        }
+
+        function renderList() {
+            const q = document.getElementById('searchInput').value;
+            let rows = getFiltered().filter(tx => searchMatch(tx, q));
+            const total = rows.length;
+            rows = rows.slice(0, displayed);
+
+            const list = document.getElementById('transactionList');
+            const empty = document.getElementById('emptyState');
+            const loadWrap = document.getElementById('loadMoreWrap');
+
+            if (total === 0) {
+                list.innerHTML = '';
+                empty.classList.add('visible');
+                empty.setAttribute('aria-hidden', 'false');
+                loadWrap.hidden = true;
+                return;
+            }
+            empty.classList.remove('visible');
+            empty.setAttribute('aria-hidden', 'true');
+            loadWrap.hidden = false;
+
+            const groups = {};
+            rows.forEach(tx => {
+                const key = startOfDay(tx.ts);
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(tx);
+            });
+
+            const keys = Object.keys(groups).map(Number).sort((a, b) => b - a);
+            let html = '';
+            keys.forEach(day => {
+                const sample = groups[day][0].ts;
+                html += '<div class="date-group"><div class="date-header">' + formatDayHeader(sample) + '</div>';
+                groups[day].forEach(tx => {
+                    const time = new Date(tx.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const slipPct = (tx.slip * 100).toFixed(1);
+                    const meta = time + ' · ' + slipPct + '% slippage · ' + tx.dex;
+                    const title = tx.payToken + ' → ' + tx.recvToken;
+                    const recvStr = (tx.status === 'failed' ? '' : '+') + tx.recv.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + tx.recvToken;
+                    const aria = 'Swap ' + title + ', ' + recvStr + ', ' + statusLabel(tx.status);
+                    const stClass = tx.status === 'completed' ? 'completed' : tx.status === 'failed' ? 'failed' : tx.status === 'processing' ? 'processing' : 'pending';
+                    const band = impactBand(tx.impact);
+                    const pill = '<span class="price-impact-pill ' + band + '">' + (tx.impact * 100).toFixed(2) + '%</span>';
+                    const priClass = 'amount-primary' + (tx.status === 'failed' ? ' muted-fail' : '');
+                    html += '<div class="transaction-item" role="button" tabindex="0" data-id="' + tx.id + '" aria-label="' + aria.replace(/"/g, '&quot;') + '">';
+                    html += '<div class="transaction-icon swap" aria-hidden="true">⇄</div>';
+                    const exHrefS = tx.hash.startsWith('0x') ? 'https://etherscan.io/tx/' + tx.hash : '#';
+                    html += '<div class="transaction-details"><div class="transaction-title">' + title + '</div>';
+                    html += '<div class="transaction-meta"><span class="transaction-status ' + stClass + '" role="status">' + statusLabel(tx.status) + '</span><span aria-hidden="true">·</span><span>' + meta + '</span></div>';
+                    html += '<div class="tx-row-hash" onclick="event.stopPropagation()"><code>' + truncateHash(tx.hash) + '</code>';
+                    html += '<button type="button" class="tx-mini-btn" data-swap-copy="' + tx.id + '" aria-label="Copy transaction hash">Copy</button>';
+                    html += '<a class="tx-mini-link" href="' + exHrefS + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Open transaction in block explorer">Explorer ↗</a></div></div>';
+                    html += '<div class="transaction-amount"><div class="' + priClass + '">' + recvStr + '</div>';
+                    html += '<div class="amount-secondary"><span>–' + tx.paid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + tx.payToken + '</span>' + pill + '</div></div></div>';
+                });
+                html += '</div>';
+            });
+            list.innerHTML = html;
+
+            list.querySelectorAll('.transaction-item').forEach(el => {
+                el.addEventListener('click', () => openDetail(el.dataset.id));
+                el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(el.dataset.id); } });
+            });
+            list.querySelectorAll('[data-swap-copy]').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    const tx = MOCK.find(t => t.id === btn.getAttribute('data-swap-copy'));
+                    if (tx && tx.hash) navigator.clipboard.writeText(tx.hash);
+                });
+            });
+
+            document.getElementById('transactionCount').innerHTML = 'Showing <span>' + rows.length + '</span> of <span>' + total + '</span> transactions';
+            const btn = document.getElementById('loadMoreBtn');
+            btn.disabled = rows.length >= total;
+        }
+
+        function openDetail(id) {
+            const tx = MOCK.find(t => t.id === id);
+            if (!tx) return;
+            document.getElementById('d-payAmt').textContent = '–' + tx.paid.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' ' + tx.payToken;
+            document.getElementById('d-payCode').textContent = tx.payToken;
+            document.getElementById('d-recvAmt').textContent = '+' + tx.recv.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('d-recvCode').textContent = tx.recvToken;
+            document.getElementById('d-txHash').textContent = truncateHash(tx.hash);
+            document.getElementById('d-txHash').dataset.full = tx.hash;
+            document.getElementById('d-explorer').href = tx.hash.startsWith('0x') ? 'https://etherscan.io/tx/' + tx.hash : '#';
+            document.getElementById('d-datetime').textContent = new Date(tx.ts).toLocaleString();
+            const rateLine = tx.recvToken === 'UNERA CAD' && tx.paid > 0
+                ? '1 ' + tx.payToken + ' = ' + (tx.recv / tx.paid).toFixed(4) + ' ' + tx.recvToken
+                : '1 ' + tx.payToken + ' = ' + (tx.recv / tx.paid).toFixed(6) + ' ' + tx.recvToken;
+            document.getElementById('d-exrate').textContent = rateLine;
+            let effLine = '—';
+            if (tx.status === 'completed' && tx.paid > 0) {
+                const ratio = tx.recv / tx.paid;
+                const dec = tx.recvToken === 'UNERA CAD' ? 4 : 6;
+                effLine = '1 ' + tx.payToken + ' = ' + ratio.toFixed(dec) + ' ' + tx.recvToken;
+            }
+            document.getElementById('d-effective').textContent = effLine;
+            const imp = document.getElementById('d-impact');
+            imp.textContent = (tx.impact * 100).toFixed(2) + '%';
+            imp.className = 'cd-value ' + (impactBand(tx.impact) === 'low' ? 'good' : impactBand(tx.impact) === 'medium' ? 'warn' : 'danger');
+            document.getElementById('d-slip').textContent = (tx.slip * 100).toFixed(2) + '%';
+            document.getElementById('d-dex').textContent = tx.dex;
+            document.getElementById('d-block').textContent = String(tx.block);
+            document.getElementById('d-network').textContent = tx.network;
+            document.getElementById('d-gas').textContent = tx.gas;
+            const st = document.getElementById('d-status');
+            st.textContent = statusLabel(tx.status);
+            st.className = 'cd-value ' + (tx.status === 'completed' ? 'good' : tx.status === 'failed' ? 'danger' : 'warn');
+
+            const modal = document.getElementById('swapDetailModal');
+            modal.classList.add('active');
+            modal.removeAttribute('aria-hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => document.getElementById('swapDetailClose').focus(), 50);
+        }
+
+        function closeSwapDetail() {
+            const modal = document.getElementById('swapDetailModal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            if (!document.getElementById('impactModal').classList.contains('active')) document.body.style.overflow = '';
+        }
+
+        function openImpactLearn() {
+            document.getElementById('impactModal').classList.add('active');
+            document.getElementById('impactModal').removeAttribute('aria-hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => document.getElementById('impactModalClose').focus(), 50);
+        }
+
+        function closeImpactLearn() {
+            document.getElementById('impactModal').classList.remove('active');
+            document.getElementById('impactModal').setAttribute('aria-hidden', 'true');
+            if (!document.getElementById('swapDetailModal').classList.contains('active')) document.body.style.overflow = '';
+        }
+
+        function exportCsv() {
+            const rows = getFiltered().filter(tx => searchMatch(tx, document.getElementById('searchInput').value));
+            const header = 'id,datetime,pair,pay_token,paid,recv_token,received,impact_pct,slippage,dex,status,tx_hash';
+            const lines = rows.map(tx => [tx.id, new Date(tx.ts).toISOString(), tx.pairKey, tx.payToken, tx.paid, tx.recvToken, tx.recv, (tx.impact * 100).toFixed(3), (tx.slip * 100).toFixed(2), tx.dex, tx.status, tx.hash].join(','));
+            const blob = new Blob([[header, ...lines].join('\n')], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'swap-history.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function pairLabel(key) {
+            return ({ USDT_UCAD: 'USDT → UCAD', USDC_UCAD: 'USDC → UCAD', USDT_USDC: 'USDT → USDC' })[key] || key;
+        }
+
+        function syncChips() {
+            const wrap = document.getElementById('activeFilters');
+            const chips = [];
+            if (applied.preset !== '30d') {
+                const pl = applied.preset === 'custom' ? 'Custom range' : applied.preset === 'today' ? 'Today' : applied.preset.toUpperCase();
+                chips.push({ label: pl, key: 'preset' });
+            }
+            if (applied.status !== 'all') chips.push({ label: statusLabel(applied.status), key: 'status' });
+            if (applied.pair !== 'all') chips.push({ label: pairLabel(applied.pair), key: 'pair' });
+            if (applied.impactTier !== 'any') chips.push({ label: 'Impact: ' + applied.impactTier, key: 'impact' });
+            if (!chips.length) { wrap.hidden = true; wrap.innerHTML = ''; return; }
+            wrap.hidden = false;
+            wrap.innerHTML = chips.map(c => '<span class="filter-chip">' + c.label + '<button type="button" data-chip="' + c.key + '" aria-label="Remove ' + c.label + ' filter">×</button></span>').join('') +
+                '<button type="button" class="filter-chip-clear-all" id="clearAllChips">Clear all</button>';
+        }
+
+        function syncPairQuickButtons() {
+            document.querySelectorAll('[data-pair-quick]').forEach(b => {
+                const on = b.getAttribute('data-pair-quick') === (applied.pair === 'all' ? 'all' : applied.pair);
+                b.classList.toggle('active', on);
+                b.setAttribute('aria-pressed', on);
+            });
+        }
+
+        document.getElementById('activeFilters').addEventListener('click', e => {
+            const t = e.target;
+            if (t.id === 'clearAllChips') {
+                applied = { preset: '30d', dateFrom: null, dateTo: null, status: 'all', pair: 'all', impactTier: 'any' };
+                document.getElementById('quick30d').classList.add('active');
+                syncPairQuickButtons();
+                displayed = PAGE;
+                syncChips();
+                renderList();
+                return;
+            }
+            const btn = t.closest('button[data-chip]');
+            if (!btn) return;
+            const k = btn.dataset.chip;
+            if (k === 'preset') { applied.preset = '30d'; applied.dateFrom = null; applied.dateTo = null; document.getElementById('quick30d').classList.add('active'); }
+            if (k === 'status') applied.status = 'all';
+            if (k === 'pair') applied.pair = 'all';
+            if (k === 'impact') applied.impactTier = 'any';
+            syncPairQuickButtons();
+            displayed = PAGE;
+            syncChips();
+            renderList();
+        });
+
+        function openFilterModal() {
+            document.querySelectorAll('.date-preset-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === applied.preset));
+            document.getElementById('customDateRow').hidden = applied.preset !== 'custom';
+            document.getElementById('dateFrom').value = applied.dateFrom || '';
+            document.getElementById('dateTo').value = applied.dateTo || '';
+            document.querySelectorAll('input[name="f-status"]').forEach(r => { r.checked = r.value === applied.status; });
+            document.querySelectorAll('input[name="f-pair"]').forEach(r => { r.checked = r.value === applied.pair; });
+            document.querySelectorAll('input[name="f-impact"]').forEach(r => { r.checked = r.value === applied.impactTier; });
+
+            const m = document.getElementById('filterModal');
+            m.classList.add('active');
+            m.removeAttribute('aria-hidden');
+            document.getElementById('filterBtn').setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFilterModal() {
+            const m = document.getElementById('filterModal');
+            m.classList.remove('active');
+            m.setAttribute('aria-hidden', 'true');
+            document.getElementById('filterBtn').setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function applyFilterModal() {
+            const preset = document.querySelector('.date-preset-btn.active')?.dataset.preset || '30d';
+            applied.preset = preset;
+            applied.dateFrom = document.getElementById('dateFrom').value || null;
+            applied.dateTo = document.getElementById('dateTo').value || null;
+            applied.status = document.querySelector('input[name="f-status"]:checked').value;
+            applied.pair = document.querySelector('input[name="f-pair"]:checked').value;
+            applied.impactTier = document.querySelector('input[name="f-impact"]:checked').value;
+            document.getElementById('quick30d').classList.toggle('active', applied.preset === '30d');
+            syncPairQuickButtons();
+            displayed = PAGE;
+            closeFilterModal();
+            syncChips();
+            renderList();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', () => {
+            document.getElementById('searchClearBtn').hidden = !document.getElementById('searchInput').value;
+            displayed = PAGE;
+            renderList();
+        });
+        document.getElementById('searchClearBtn').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchClearBtn').hidden = true;
+            displayed = PAGE;
+            renderList();
+        });
+        document.getElementById('loadMoreBtn').addEventListener('click', () => { displayed += PAGE; renderList(); });
+        document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+        document.getElementById('filterBtn').addEventListener('click', openFilterModal);
+        document.getElementById('filterModalClose').addEventListener('click', closeFilterModal);
+        document.getElementById('filterModalOverlay').addEventListener('click', closeFilterModal);
+        document.getElementById('filterApply').addEventListener('click', applyFilterModal);
+        document.getElementById('filterClearAll').addEventListener('click', () => {
+            document.querySelectorAll('.date-preset-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === '30d'));
+            document.getElementById('customDateRow').hidden = true;
+            document.querySelector('input[name="f-status"][value="all"]').checked = true;
+            document.querySelector('input[name="f-pair"][value="all"]').checked = true;
+            document.querySelector('input[name="f-impact"][value="any"]').checked = true;
+        });
+        document.querySelectorAll('.date-preset-btn').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('.date-preset-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            document.getElementById('customDateRow').hidden = b.dataset.preset !== 'custom';
+        }));
+        document.getElementById('quick30d').addEventListener('click', () => {
+            applied.preset = '30d';
+            applied.dateFrom = null;
+            applied.dateTo = null;
+            document.getElementById('quick30d').classList.add('active');
+            displayed = PAGE;
+            syncChips();
+            renderList();
+        });
+        document.querySelectorAll('[data-pair-quick]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const v = btn.getAttribute('data-pair-quick');
+                applied.pair = v === 'all' ? 'all' : v;
+                syncPairQuickButtons();
+                displayed = PAGE;
+                syncChips();
+                renderList();
+            });
+        });
+        document.getElementById('d-copyHash').addEventListener('click', () => {
+            const full = document.getElementById('d-txHash').dataset.full;
+            if (full) navigator.clipboard.writeText(full);
+        });
+        document.getElementById('d-receipt').addEventListener('click', () => { /* design preview */ });
+        document.getElementById('openImpactLearn').addEventListener('click', openImpactLearn);
+        document.getElementById('swapDetailModalOverlay').addEventListener('click', closeSwapDetail);
+        document.getElementById('swapDetailClose').addEventListener('click', closeSwapDetail);
+        document.getElementById('impactModalOverlay').addEventListener('click', closeImpactLearn);
+        document.getElementById('impactModalClose').addEventListener('click', closeImpactLearn);
+        document.getElementById('impactGotIt').addEventListener('click', closeImpactLearn);
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                closeFilterModal();
+                closeImpactLearn();
+                closeSwapDetail();
+                document.querySelectorAll('.modal-overlay.active').forEach(m => { if (m.id === 'connectModal') m.classList.remove('active'); });
+                document.body.style.overflow = document.querySelector('.filter-modal.active') || document.querySelector('.modal-overlay.active') ? 'hidden' : '';
+            }
+        });
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = ''; }
+
+        function initNavDropdowns() {
+            document.querySelectorAll('.nav-dropdown-item').forEach(item => {
+                const btn = item.querySelector('.nav-dropdown-trigger');
+                const menu = item.querySelector('.nav-dropdown-menu');
+                if (!btn || !menu) return;
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    const open = !item.classList.contains('open');
+                    document.querySelectorAll('.nav-dropdown-item').forEach(i => {
+                        i.classList.remove('open');
+                        const b = i.querySelector('.nav-dropdown-trigger');
+                        if (b) b.setAttribute('aria-expanded', 'false');
+                    });
+                    if (open) { item.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+                });
+            });
+            document.addEventListener('click', e => {
+                if (e.target.closest('.nav-dropdown-item')) return;
+                document.querySelectorAll('.nav-dropdown-item').forEach(item => {
+                    item.classList.remove('open');
+                    const b = item.querySelector('.nav-dropdown-trigger');
+                    if (b) b.setAttribute('aria-expanded', 'false');
+                });
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.nav-dropdown-item').forEach(item => {
+                        item.classList.remove('open');
+                        const b = item.querySelector('.nav-dropdown-trigger');
+                        if (b) b.setAttribute('aria-expanded', 'false');
+                    });
+                }
+            });
+        }
+
+        document.getElementById('hamburgerBtn').addEventListener('click', function () {
+            const open = this.classList.toggle('active');
+            this.setAttribute('aria-expanded', open);
+            document.getElementById('mobileMenu').classList.toggle('active', open);
+            document.getElementById('mobileOverlay').classList.toggle('active', open);
+        });
+        document.getElementById('mobileClose').addEventListener('click', () => {
+            document.getElementById('hamburgerBtn').classList.remove('active');
+            document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+            document.getElementById('mobileMenu').classList.remove('active');
+            document.getElementById('mobileOverlay').classList.remove('active');
+        });
+
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+
+        initNavDropdowns();
+        renderStats();
+        syncPairQuickButtons();
+        syncChips();
+        renderList();
+    })();
+    </script>
+</body>
+</html>

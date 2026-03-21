@@ -1,0 +1,769 @@
+---
+description: UNERA mobile app design rule — comprehensive guidelines for all iOS and Android mobile development tasks. Covers platform compliance (iOS HIG + Android MD3), design tokens, navigation, touch targets, typography, security UX, accessibility, animation, haptics, and component patterns. Apply to all mobile screens, React Native components, and mobile-specific design decisions.
+globs: unera-mobile/**/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+
+# UNERA Mobile App Design Rules
+
+> These rules govern all mobile UI/UX work for the UNERA iOS and Android app. They are grounded in Apple Human Interface Guidelines (HIG), Android Material Design 3 (MD3), and design patterns from leading fintech/crypto apps (Coinbase, Revolut, Cash App, Wise). Every mobile screen, component, and interaction must comply.
+
+---
+
+## 1. Platform Compliance
+
+### iOS — Apple Human Interface Guidelines
+
+- **Navigation**: Use `UITabBarController`-style bottom tab bar as the primary navigation pattern. 3–5 tabs maximum. UNERA uses exactly 5: Home, Wallet, Move, Impact, Profile.
+- **Safe areas**: Every screen MUST use `useSafeAreaInsets()` or `<SafeAreaView>`. Account for Dynamic Island (top) and home indicator bar (bottom). Never position interactive elements behind these.
+- **Back navigation**: Swipe-from-left-edge must work on every pushed screen. Never disable the system back gesture.
+- **Sheet modals**: Transactional flows (Send, Add Money, Exchange, Donate) open as bottom sheets with a drag handle bar, swipe-down to dismiss. Full-screen modals for auth and KYC only.
+- **SF Symbols**: Use SF Symbols for system icons (chevron.right, checkmark.circle, qrcode, person.crop.circle, bell, gear, arrow.up, arrow.down) alongside UNERA brand icons.
+- **Dynamic Type**: All text must scale with the user's system font size setting. Test at iOS maximum Accessibility text size. Never hardcode fixed-height text containers.
+- **Tab bar badges**: Use red oval badges on Home and Profile tabs for unread notification count. Clear on screen visit.
+- **Haptics**: Use `expo-haptics` — `Haptics.impactAsync(ImpactFeedbackStyle.Medium)` on success; `ImpactFeedbackStyle.Light` on tap; `Haptics.notificationAsync(NotificationFeedbackType.Error)` on errors.
+- **Apple Sign In**: Required on iOS if any social login is offered. Apple Sign In button must appear first (above Google).
+- **Screenshot protection**: Apply `FLAG_SECURE` equivalent (`expo-screen-capture` preventScreenCapture) on: seed phrase screens, CVV displays, and wallet address reveals.
+- **App Clips**: The "Receive Money" QR entry point should support App Clips for users without the full app installed.
+
+### Android — Material Design 3
+
+- **Navigation**: Use `NavigationBar` (MD3) as the primary bottom navigation. 3–5 destinations. Same 5-tab structure as iOS.
+- **Edge-to-edge**: All screens must implement edge-to-edge layout. Handle `WindowInsets` for status bar, navigation bar, and IME (keyboard) properly. Never clip content behind system bars.
+- **Predictive back**: Register `onBackInvokedCallback` (Android 14+) for proper predictive back animation support on all screens.
+- **Dynamic Color override**: Android 12+ Material You dynamic color MUST be overridden with UNERA brand tokens. Set `colorPrimary: #10B981`, `colorSecondary: #0EA5E9`. Never let wallpaper colors bleed into UNERA UI.
+- **Material Symbols**: Use Material Symbols (outlined style) for system icons. Supplement with UNERA brand SVG icons.
+- **Adaptive icons**: App icon must use foreground + background layer format for Android home screen. Foreground: UNERA logomark. Background: primary green `#10B981`.
+- **Biometrics**: Use `BiometricPrompt` API for all biometric auth — supports fingerprint, face, iris unified. Always check availability and provide password fallback.
+- **Haptics**: More limited than iOS. Use `HapticFeedbackConstants.CONFIRM` for success, `REJECT` for errors, `CLOCK_TICK` for selection changes.
+- **FCM**: Firebase Cloud Messaging for all push notifications. Create notification channels (`NotificationChannel`) for: Transactions, Impact Updates, Security Alerts, Promotions.
+- **Widgets**: Phase 2 — use Jetpack Glance API. Home screen widget shows live balance + quick Send/Receive buttons.
+
+---
+
+## 2. Design Tokens — Web to Mobile (1:1 Mapping)
+
+All UNERA design tokens from the web app apply directly to mobile. Use this `theme.ts` as the single source of truth for all mobile styling — never hardcode hex values in components.
+
+```typescript
+// constants/theme.ts
+export const colors = {
+  // Brand
+  primaryGreen:   '#10B981',
+  primaryBlue:    '#0EA5E9',
+  accentPink:     '#EC4899',
+  accentIndigo:   '#6366F1',
+
+  // Neutrals
+  neutral900: '#1F2937',
+  neutral800: '#374151',
+  neutral700: '#4B5563',
+  neutral600: '#6B7280',
+  neutral500: '#9CA3AF',
+  neutral400: '#D1D5DB',
+  neutral300: '#E5E7EB',
+  neutral200: '#F3F4F6',
+  neutral100: '#F9FAFB',
+  neutral50:  '#FFFFFF',
+
+  // Semantic
+  success: '#059669',
+  warning: '#F59E0B',
+  error:   '#EF4444',
+
+  // Text
+  textPrimary:   '#0F172A',
+  textSecondary: '#475569',
+  borderSubtle:  '#E2E8F0',
+} as const;
+
+export const gradients = {
+  primary:  ['#10B981', '#0EA5E9'] as const, // 135deg — hero cards, CTAs
+  sky:      ['#0EA5E9', '#3B82F6'] as const,
+  warm:     ['#F59E0B', '#EC4899'] as const,
+  operator: ['#3B82F6', '#6366F1'] as const,
+} as const;
+
+export const spacing = {
+  xs:   4,
+  sm:   8,
+  md:   12,
+  lg:   16,
+  xl:   20,
+  xxl:  24,
+  section: 32,
+} as const;
+
+export const radius = {
+  sm:   8,
+  md:   12,
+  lg:   16,
+  xl:   20,   // matches web --border-radius: 1.25rem
+  full: 9999,
+} as const;
+```
+
+---
+
+## 3. Typography
+
+Font family: **Space Grotesk** — same as web. Bundle via `expo-font` or `@expo-google-fonts/space-grotesk`. Apply to all text elements globally via root Text component.
+
+### Type Scale
+
+| Role | Size (pt/sp) | Weight | Usage |
+|---|---|---|---|
+| `heroBalance` | 40pt | 700 Bold | Portfolio total on HomeScreen |
+| `display` | 32pt | 700 Bold | Major screen titles |
+| `title1` | 26pt | 700 Bold | Section headers |
+| `title2` | 22pt | 600 SemiBold | Card titles, modal headers |
+| `title3` | 20pt | 600 SemiBold | Sub-section headers |
+| `headline` | 17pt | 600 SemiBold | List row labels |
+| `body` | 16pt | 400 Regular | Primary body text |
+| `callout` | 15pt | 400 Regular | Supporting body text |
+| `subhead` | 14pt | 400 Regular | Secondary labels |
+| `footnote` | 13pt | 400 Regular | Metadata, timestamps |
+| `caption` | 12pt | 400 Regular | Smallest label text |
+
+Rules:
+- **Minimum font size: 12pt** — never go below this.
+- **Input fields: minimum 16pt** (prevents iOS auto-zoom on focus).
+- **All sizes in `sp`-equivalent** — React Native font sizes scale with system settings.
+- **Gradient text** (screen titles): Use `expo-linear-gradient` with `MaskedView` — replicate web gradient text pattern.
+- **Currency amounts**: Always use tabular figures (monospace-style number alignment) where available.
+
+---
+
+## 4. Navigation Patterns
+
+### Bottom Tab Bar — 5 Tabs (Non-Negotiable)
+
+The bottom tab bar IS the primary navigation. No side drawer. No hamburger menu. No top navigation for core app sections.
+
+```
+Tab 1: Home     — house icon         — Dashboard, notifications
+Tab 2: Wallet   — wallet/card icon   — Balances, transactions
+Tab 3: Move     — plus circle (FAB)  — Action hub (raised, accent color)
+Tab 4: Impact   — globe/heart icon   — Centres, donations
+Tab 5: Profile  — avatar icon        — Settings, security
+```
+
+- **Move tab** (center): Raised above other tabs with gradient background (`#10B981` → `#0EA5E9`). Tapping opens `MoveActionSheet` (bottom sheet with 2×3 action grid). The tab does NOT navigate to a screen — it triggers a sheet.
+- **Tab switching**: Instant — no slide/fade animation between tabs. Matches native iOS/Android behavior.
+- **Active state**: Active tab icon uses `primaryGreen (#10B981)`. Inactive: `neutral500 (#9CA3AF)`. Label always visible (no icon-only tabs).
+- **Badge**: Notification count badge on Home tab. Security alert badge on Profile tab.
+- **Each tab maintains its own navigation stack** — pushing a screen in Wallet does not affect the Home stack.
+
+### Stack Navigation (Within Tabs)
+
+- **Push transitions**: Use platform default — slide from right on iOS, fade-scale on Android.
+- **Back button**: Always visible in pushed screens. iOS: chevron.left + screen title. Android: back arrow. Never remove back navigation from a pushed screen.
+- **Screen headers**: Consistent pattern — left: back button, center: screen title (`title2` weight), right: optional action icon (share, info, etc.).
+- **Depth limit**: Maximum 3 levels deep within a tab stack. Beyond 3 levels, reconsider the information architecture.
+
+### Sheet Modals (Transactional Flows)
+
+All Send, Receive, Add Money, Exchange, Convert, Stake, Withdraw, and Donate flows open as **bottom sheet modals** — not pushed screens.
+
+- Drag handle bar at top center (width 32pt, height 4pt, `neutral300`, `borderRadius: 2`)
+- Swipe down to dismiss (or tap outside on Android)
+- Background: dimmed overlay (`rgba(0,0,0,0.5)`) with `backdrop-filter: blur` effect
+- Sheet itself: white background, `borderTopLeftRadius: 24`, `borderTopRightRadius: 24`
+- Max height: 90% of screen height; min height: 50%
+- Keyboard behavior: sheet slides up with keyboard (`KeyboardAvoidingView`)
+
+### Auth & Onboarding (Outside Tab Bar)
+
+Auth flows are presented as full-screen modals before the main app is accessible. They use a simple stack navigator with no tab bar visible.
+
+---
+
+## 5. Touch Targets & Spacing
+
+- **Minimum touch target: 44×44pt (iOS) / 48×48dp (Android)** — non-negotiable for every interactive element
+- **Bottom tab bar items**: min height 49pt (iOS standard) / 56dp (Android MD3 standard)
+- **Primary CTA buttons**: `minHeight: 52`, `borderRadius: radius.lg (16)`, full width in sheet modals
+- **Secondary buttons**: `minHeight: 48`, outline style
+- **Icon-only buttons**: Must be wrapped in a pressable with min 44×44pt hit area even if the icon is smaller
+- **List rows**: min height 56pt/dp — use `minHeight: 56` in StyleSheet
+- **Spacing between touch targets**: min 8pt gap to prevent accidental taps
+- **Form inputs**: `minHeight: 52`, `paddingHorizontal: 16`, `fontSize: 16` (mandatory)
+
+---
+
+## 6. Color Application on Mobile
+
+### Dark Gradient Headers (Trust Pattern)
+
+Portfolio balance screens and primary money displays use the `--gradient-primary` (green → blue) as the screen header background. White text on gradient. This is the signature UNERA mobile pattern — do not replace with a white header for financial data screens.
+
+```
+HomeScreen header:    gradient-primary (green → blue), white text
+WalletScreen header:  gradient-primary, white text
+CentreDetailScreen:   hero image with gradient overlay
+Auth screens:         white background (trust + cleanliness)
+Sheet modals:         white background
+```
+
+### Status Bar
+
+- Over gradient headers: `light-content` (white icons/time)
+- Over white backgrounds: `dark-content` (dark icons/time)
+- Set programmatically per screen using `expo-status-bar`
+
+### Card Styling on Mobile
+
+```typescript
+// Native card — shadow instead of border-only (reads better on native)
+const cardStyle = {
+  backgroundColor: colors.neutral50,     // white
+  borderRadius: radius.xl,               // 20pt — matches web 1.25rem
+  // iOS shadow
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.06,
+  shadowRadius: 8,
+  // Android elevation
+  elevation: 3,
+  // Subtle border (keep for consistency with web design)
+  borderWidth: 1,
+  borderColor: colors.borderSubtle,
+};
+```
+
+### Do Not Use on Mobile
+
+- ❌ Hardcoded hex values — always reference `theme.ts`
+- ❌ `#10B981` (primaryGreen) as text color on white — fails WCAG AA contrast
+- ❌ White text on `#10B981` background for body text — use only for large bold text (≥ 18pt bold or ≥ 24pt regular)
+- ❌ Custom colors not in the token set — extend `theme.ts` if genuinely needed, document why
+
+---
+
+## 7. Security UX
+
+Security is the most critical trust dimension in a fintech app. These rules are non-negotiable.
+
+### Biometric Authentication
+- **Biometric is the primary login CTA** — large prominent button ("Use Face ID" / "Use Touch ID" / "Use Fingerprint")
+- Auto-trigger biometric prompt on app foreground after session timeout (5 min background)
+- Always provide a fallback: "Use Password" link below biometric button
+- Show a blurred/masked version of the dashboard behind the lock screen (teases value, motivates unlock)
+- Never store auth tokens in AsyncStorage — use `expo-secure-store` (iOS Keychain / Android Keystore)
+
+### Balance & Sensitive Data Masking
+- **All balances masked by default** — show "••••••" until user taps to reveal
+- Reveal gesture: single tap — do not require hold or swipe
+- Re-mask after 30 seconds of inactivity (configurable in settings)
+- Masked state: display masked placeholder at same dimensions as the real value (prevents layout shift on reveal)
+- Wallet addresses: show first 6 + "…" + last 4 characters. "Show full" button available.
+
+### Transaction Confirmation
+- All transactions (Send, Exchange, Withdraw, Stake) require a **Review screen** before confirmation
+- Review screen must display: From, To, Amount, Fee, Total deducted — no hidden costs
+- For amounts > $50 (configurable): trigger biometric re-authentication before proceeding
+- Irreversible actions (seed phrase delete, account delete, large withdrawals): show explicit warning text + require typing "CONFIRM" or similar
+- Confirmation button: never auto-enabled — user must scroll to bottom of review details first
+
+### Session Management
+- Auto-lock after 5 minutes in background
+- Do not show sensitive data in iOS app switcher / Android recent apps — apply `FLAG_SECURE` / blank overlay on `applicationWillResignActive`
+- Session timeout banner: "Your session has expired. Tap to unlock." — non-dismissible until biometric/PIN
+
+### KYC & Identity
+- Document scan: native camera in portrait mode; no landscape for document scanning
+- Selfie: front camera with liveness guidance overlay ("Blink", "Turn left")
+- Never store raw document images on device after upload — clear from memory immediately
+- Progress is saved server-side: user can resume KYC after app close
+
+---
+
+## 8. Accessibility
+
+### VoiceOver (iOS) / TalkBack (Android) — Required
+
+Every interactive element MUST have:
+```typescript
+// Required on every touchable element
+accessibilityLabel="Send money to a contact or address"    // What it is
+accessibilityHint="Opens the send money flow"              // What happens
+accessibilityRole="button"                                 // Role
+```
+
+Rules:
+- Decorative images: `accessible={false}` + `importantForAccessibility="no"`
+- Amount displays: read as "balance is [amount] dollars, tap to reveal"
+- Transaction rows: read full row — "Sent 50 dollars to Alice, March 14, completed"
+- Sheet modals: set `accessibilityViewIsModal={true}` to trap focus inside
+- Error messages: `accessibilityLiveRegion="assertive"` so screen readers announce immediately
+- Loading states: `accessibilityLiveRegion="polite"` + "Loading transactions" label
+
+### Dynamic Type / Font Scaling
+- All text uses React Native's default `fontSize` in `sp` — scales automatically
+- Test every screen at iOS Settings → Accessibility → Display & Text Size → Larger Text (maximum 5 steps)
+- `flexWrap: 'wrap'` on all text containers; `numberOfLines` only on non-critical secondary text
+- Bottom tab labels must remain visible at large sizes — allow label wrap or abbreviate
+
+### Color Contrast (WCAG AA Minimum)
+| Element | Foreground | Background | Ratio | Status |
+|---|---|---|---|---|
+| Primary body text | `#0F172A` | `#FFFFFF` | 19.6:1 | AAA |
+| Secondary text | `#475569` | `#FFFFFF` | 6.0:1 | AA |
+| White on gradient | `#FFFFFF` | `#10B981` | 2.8:1 | ❌ text only — use bold ≥18pt |
+| White on gradient | `#FFFFFF` | `#0EA5E9` | 3.1:1 | ❌ text only — use bold ≥18pt |
+| Error text | `#EF4444` | `#FFFFFF` | 4.5:1 | AA ✓ |
+| Success text | `#059669` | `#FFFFFF` | 4.6:1 | AA ✓ |
+
+- Rule: white text on the primary gradient is acceptable for **hero balance displays** (large, bold) and **CTA button labels** (bold), NOT for body text or captions.
+
+### Reduced Motion
+```typescript
+import { useReducedMotion } from 'react-native-reanimated';
+
+const reduceMotion = useReducedMotion();
+
+// Wrap all animations
+withTiming(targetValue, {
+  duration: reduceMotion ? 0 : 300,
+});
+```
+- When reduced motion is enabled: all transitions are instant (0ms duration)
+- Skeleton shimmers: replace with static gray placeholder
+- Tab transitions: already instant — no change needed
+- Success animations: show static checkmark instead of animated
+
+---
+
+## 9. Animation & Haptics
+
+### Animation Principles
+- **Platform-default transitions first** — only add custom animations when they meaningfully improve comprehension or delight
+- Use `react-native-reanimated` v3 for all animations — never `Animated` API (legacy, lower performance)
+- Target 60fps on all devices; 120fps on ProMotion iPhones (use `useFrameCallback` for high-frequency)
+- `withSpring` for interactive/physics-feel animations; `withTiming` with `Easing.bezier` for controlled UI transitions
+
+### Specific Animation Rules
+
+**Tab bar**: Instant switch — no transition. Active indicator slides between tabs with `withTiming(x, { duration: 200 })`.
+
+**Screen push**: Platform default (iOS slide-right, Android fade-scale). Do not override with custom transitions for pushed screens.
+
+**Bottom sheets**: `withSpring({ damping: 20, stiffness: 150 })` for open; `withTiming` for close.
+
+**Balance reveal**: `withTiming` opacity 0→1 over 200ms when unmasking.
+
+**Success state**: Sequence — checkmark draws in (stroke animation, 400ms) → scale pulse (1.0→1.1→1.0, 200ms) → haptic medium impact.
+
+**Error state**: Horizontal shake — `withSequence(withTiming(-8), withTiming(8), withTiming(-4), withTiming(4), withTiming(0))` over 300ms total + haptic error notification.
+
+**Skeleton loader**: Shimmer effect — animated gradient sliding left-to-right on placeholder shapes. Duration: 1200ms loop. Only show if data hasn't loaded within 200ms (prevents flash).
+
+**Donation success**: Confetti particle animation (react-native-confetti-cannon) + large animated heart icon + `Haptics.notificationAsync(NotificationFeedbackType.Success)`.
+
+**Number countup**: Balance values animate from previous value to new value on load — `withTiming` over 600ms. Skip if reduced motion enabled.
+
+### Haptic Feedback Mapping
+
+| Event | Haptic Pattern | iOS | Android |
+|---|---|---|---|
+| Button tap (standard) | Light impact | `ImpactFeedbackStyle.Light` | `KEYBOARD_TAP` |
+| CTA button (primary) | Medium impact | `ImpactFeedbackStyle.Medium` | `VIRTUAL_KEY` |
+| Transaction success | Success notification | `NotificationFeedbackType.Success` | `CONFIRM` |
+| Error / validation fail | Error notification | `NotificationFeedbackType.Error` | `REJECT` |
+| Warning / irreversible action | Warning notification | `NotificationFeedbackType.Warning` | `LONG_PRESS` |
+| QR code detected | Medium impact | `ImpactFeedbackStyle.Medium` | `CONFIRM` |
+| Amount preset selected | Selection changed | `ImpactFeedbackStyle.Light` | `CLOCK_TICK` |
+| Swipe action revealed | Light impact | `ImpactFeedbackStyle.Light` | `KEYBOARD_TAP` |
+
+---
+
+## 10. Forms & Input Patterns
+
+### Amount Inputs
+- Amount entry for Send, Add Money, Exchange, Donate: use **custom large numpad**, not the system keyboard
+- Numpad layout: 3×4 grid (1-9, ., 0, delete); keys min 64×64pt; large font (28pt)
+- Live currency conversion: show crypto ↔ fiat toggle instantly as user types
+- Maximum amount validation: real-time, inline below input ("Exceeds available balance")
+- Leading zeros: strip automatically. "0.50" → "$0.50". Never show "050".
+- Decimal: allow one decimal point only; max 2 decimal places for fiat, up to 8 for crypto
+
+### Text Inputs
+- Height: `minHeight: 52`, `paddingHorizontal: 16`, `paddingVertical: 14`
+- Font size: **16pt minimum** — prevents iOS keyboard zoom on focus
+- Border: `borderWidth: 1.5, borderColor: colors.borderSubtle` default; `borderColor: colors.primaryGreen` on focus; `borderColor: colors.error` on validation error
+- Labels: above the input, `caption` size, `textSecondary` color, 4pt gap below label
+- Error messages: below the input, `caption` size, `colors.error`, shown immediately on blur (not on submit)
+- Password fields: always include show/hide toggle (eye icon, right side of input). Use SF Symbol `eye` / `eye.slash` (iOS) or equivalent Material Symbol (Android)
+- Placeholder text: `neutral500` color, same font size as input text
+
+### Real-Time Validation
+- Validate on field blur (not on keystroke, not on submit)
+- Exception: amount fields — validate on keystroke to show balance warnings live
+- Error states: red border + error message below field + error icon in field right
+- Success states: green border + checkmark icon on fields where confirmation matters (email, username, address)
+- Never show a generic "Form has errors" banner — always point to the specific field
+
+### QR Scanner
+- Full-screen camera view with scan region overlay (white rounded square frame, 240×240pt)
+- Corner markers on scan region (UNERA green, 2pt stroke, 20pt length)
+- Status text below frame: "Align QR code within the frame"
+- Auto-detect and auto-fill: on QR detection, close camera and populate address field immediately
+- Torch/flashlight toggle button in top-right corner
+- Manual entry fallback: "Enter address manually" link below camera view
+
+---
+
+## 11. Loading States
+
+**Principle**: Never show a blank screen. Every screen must show meaningful content within 200ms.
+
+### Loading Hierarchy
+1. **Instant**: Show cached data immediately, even if stale
+2. **200ms threshold**: If fresh data hasn't arrived in 200ms, show skeleton shimmer
+3. **Never show**: A spinner/activity indicator for full-screen loads (only for inline button loading states)
+4. **Stale label**: If showing cached data, show "Last updated 3 min ago" in caption below
+
+### Skeleton Shimmer Pattern
+- Replicate the exact layout of the loaded content — same card dimensions, same number of rows
+- Gray placeholder shapes (`neutral200` base, `neutral100` shimmer highlight)
+- Shimmer animation: left-to-right gradient sweep, 1200ms loop
+- Disable when `useReducedMotion() === true` — show static gray instead
+
+### Button Loading State
+- Replace button label with activity indicator (small, white) when action is in progress
+- Disable button while loading — no double-submission
+- Show "Processing…" label alongside spinner for operations > 1 second
+
+### Error States
+- Full-screen error: centered illustration + title ("Something went wrong") + body text + retry button
+- Inline list error: empty state card within the list area
+- Network error banner: top-of-screen slide-down banner (not modal) — "No internet connection"
+- API error toast: bottom toast, `colors.error` background, 4 second auto-dismiss
+
+---
+
+## 12. Push Notifications
+
+### Notification Categories
+
+Define exactly four channels / categories:
+
+| Category | Channel Name | Examples | Default |
+|---|---|---|---|
+| `transactions` | Transaction Updates | "You sent $25 to Alice", "You received $100 USDC" | On |
+| `impact` | Impact & Centres | "Toronto Centre needs funding", "Your donation funded 3 days" | On |
+| `security` | Security Alerts | "New device login", "Password changed", "New session" | On (forced) |
+| `marketing` | News & Updates | "New feature: Staking is live", "UNERA monthly report" | Off by default |
+
+### Notification Design Rules
+- **Title**: Action verb + subject — "Sent $25.00 to Alice Chen"
+- **Body**: Context + outcome — "Transaction confirmed. View receipt →"
+- **Never**: "You have a new notification" (useless); price spam; guilt-based re-engagement
+- **Rich notifications** (iOS 15+ / Android): include app icon + sender avatar for P2P; include centre image for Impact notifications
+- **Grouping**: Group notifications by category in the notification center — not one-by-one
+- **Deep link**: Every notification must deep-link to the relevant screen (`unera://transaction/[txId]`, `unera://centre/[centreId]`)
+- **Security notifications**: Cannot be disabled by user. Always delivered. No batching.
+
+---
+
+## 13. Deep Links
+
+All deep links use the scheme `unera://`. Every notification and email must deep-link to the relevant screen.
+
+| Route | Deep Link | Screen |
+|---|---|---|
+| Home | `unera://home` | HomeScreen |
+| Transaction detail | `unera://transaction/[txId]` | TransactionDetailScreen |
+| Centre detail | `unera://centre/[centreId]` | CentreDetailScreen |
+| Donate to centre | `unera://donate/[centreId]` | DonateScreen |
+| Password reset | `unera://reset?token=[token]` | PasswordResetScreen |
+| Email verify | `unera://verify?token=[token]` | VerifyEmailScreen |
+| Receive (with amount) | `unera://receive?amount=[amount]` | ReceiveScreen |
+
+Handle all deep links in a root `DeepLinkHandler` component that intercepts the URL and routes via `expo-router`.
+
+---
+
+## 14. Onboarding & Empty States
+
+### Onboarding Slides (First Launch)
+- 3 slides, horizontally swipeable, with pagination dots
+- Each slide: full-screen gradient background + centered illustration + large title + 1-sentence body
+- Slide 1 — "Hold Value": gradient-primary background — "Your money, stable and secure."
+- Slide 2 — "Give Automatically": gradient-warm background — "Every dollar you hold does good."
+- Slide 3 — "Grow Together": gradient-sky background — "Your impact, tracked in real time."
+- Skip button: top-right, always visible. "Get Started" on final slide.
+- Auto-advance: no — users must swipe or tap Next
+
+### Empty States
+Every list screen must have a designed empty state (not a blank screen):
+
+| Screen | Empty State Message | CTA |
+|---|---|---|
+| Transaction history | "No transactions yet" + wallet illustration | "Add Money" button |
+| Donation history | "You haven't donated yet" + heart illustration | "Explore Centres" button |
+| Notifications | "You're all caught up" + bell illustration | None |
+| Explore Centres (no results) | "No centres match your search" + globe illustration | Clear filters |
+
+Empty state illustration style: simple 2-color line art using UNERA brand colors. Max 120×120pt.
+
+---
+
+## 15. What NOT to Do on Mobile
+
+- ❌ **No hamburger menu** — bottom tab bar only for core navigation
+- ❌ **No top navigation bar for the main app** — reserved for screen titles within stacks only
+- ❌ **No full-screen loading spinners** — use skeleton shimmers
+- ❌ **No modal on top of modal** — maximum 1 modal layer at a time
+- ❌ **No auto-playing video or audio** — fintech apps require user consent for media
+- ❌ **No gesture conflicts** — swipe-from-edge for back must never conflict with swipe-in-component
+- ❌ **No font below 12pt** — ever
+- ❌ **No hardcoded hex values** in component files — always reference `theme.ts`
+- ❌ **No AsyncStorage for sensitive data** — always `expo-secure-store`
+- ❌ **No disabled states without explanation** — if a button is disabled, show why inline
+- ❌ **No landscape-locked screens** — all screens must support both orientations (except camera flows)
+- ❌ **No Internet Explorer / web-only patterns** — no hover states, no right-click menus, no tooltips on tap (use accessible hints instead)
+- ❌ **No launch screen longer than 2 seconds** — splash screen is brand moment only, not a loading gate
+- ❌ **No skipping platform review guidelines** — App Store and Google Play rejections cost weeks; comply from the start
+
+---
+
+## 16. Icons, Illustrations & Media
+
+> **Source of truth**: All brand/content icons, illustrations, and photography must match the web app reference pages exactly. The web app uses zero external icon libraries — every non-system icon is a handcrafted inline SVG.
+
+---
+
+### 16.0 Design Decisions (Rationale)
+
+These decisions were made to align mobile with web while respecting platform guidelines:
+
+**Emoji replacement** — The web app uses emojis as icons in several places (e.g. 💚 🌍 📈 🔒 🦊 on dashboard, wallet, account-settings). On mobile, emojis are rendered by the OS and look different across Android/iOS versions. **Decision**: Replace emojis with proper inline SVG icons in brand colors (mobile best practice).
+
+**Icon system split** — The existing mobile rule specifies SF Symbols for iOS and Material Symbols for Android for system UI icons (back arrows, chevrons, tab bar icons, eye/hide toggles). The web app uses custom handcrafted inline SVGs for everything — no icon library. **Decision**: Split — system/platform icons (back, chevron, eye, close × , check) stay as SF Symbols / Material Symbols, while BRAND and CONTENT icons (logo, wallet providers, centre illustrations, action icons) match the web SVGs exactly.
+
+---
+
+### 16.1 Icon System Split
+
+| Icon category | Mobile implementation | Source |
+|---|---|---|
+| **System / platform chrome** | SF Symbols (iOS) · Material Symbols Outlined (Android) | Platform-native — see Section 1 |
+| **Brand, content & action icons** | Exact SVG paths from web app | `dashboard-enhanced.html`, `wallet-enhanced.html`, `account-settings.html`, `notifications.html` |
+
+The list of system/chrome icons that remain platform-native: back arrow, close × , chevron (up/down/right), eye/eye-off toggle on inputs, checkmark (form confirmation), tab bar icons (home, wallet, plus, globe, person). Everything outside this list must use the web SVG paths below.
+
+---
+
+### 16.2 Brand Logo
+
+The CLB logomark is four concentric circles. Use this exact structure for all screens, splash, and app icon foreground layer:
+
+```typescript
+// CLB brand logo — viewBox="0 0 140 140"
+// <circle cx="70" cy="70" r="60" fill="#99F6E4"/>
+// <circle cx="70" cy="70" r="45" fill="#14B8A6"/>
+// <circle cx="70" cy="70" r="30" fill="#0F766E"/>
+// <circle cx="70" cy="70" r="15" fill="#FFFFFF"/>
+```
+
+Never substitute the logomark with a wordmark, an emoji, or a simplified version.
+
+---
+
+### 16.3 Notification Bell
+
+Used in top-right header and as the empty-state illustration on the Notifications screen. Two stroke-width variants:
+
+**Nav / header bell** (`stroke-width="1.75"`):
+```typescript
+// viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="1.75"
+// <path stroke-linecap="round" stroke-linejoin="round"
+//   d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
+```
+
+**Empty-state bell** (`stroke-width="1.5"` — lighter weight reads as decorative at large size):
+Same path, change `stroke-width` to `"1.5"`. Render at 80–120pt for empty states.
+
+---
+
+### 16.4 Action Icons (Quick-Action Cards & Buttons)
+
+All action icons: `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `stroke-width="2"`.
+
+| Action | SVG paths |
+|---|---|
+| **Wallet / My Wallet** | `<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01"/>` |
+| **Add Money** | `<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>` |
+| **Exchange (quick-action)** | `<path stroke-linecap="round" stroke-linejoin="round" d="M4 7h11M4 7l3-3m-3 3l3 3M20 17H9m11 0l-3-3m3 3l-3 3"/>` |
+| **Explore Centres** | `<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>` |
+| **Exchange (wallet action)** | `<path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h14M17 8l4 4m0 0l-4 4m4-4H7"/>` |
+| **Send** | `<path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>` |
+| **Stake** | `stroke-width="2.2"` — `<path stroke-linecap="round" stroke-linejoin="round" d="M16 11V8a4 4 0 10-8 0v3M5 11h14v8H5z"/>` |
+
+---
+
+### 16.5 Balance Privacy Toggle (Eye Icons)
+
+`viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `stroke-width="2"`.
+
+**Eye-open** (balances visible — show "Hide Balances"):
+```typescript
+// <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+// <circle cx="12" cy="12" r="3"/>
+```
+
+**Eye-off** (balances hidden — show "Show Balances"):
+```typescript
+// <path d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.988 18.988 0 015.125-5.172M9.879 9.879a3 3 0 004.242 4.242M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M2 2l20 20"/>
+```
+
+---
+
+### 16.6 Alert / Security Icon
+
+Used in KYC verification banners and security warning contexts. `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `stroke-width="2"`.
+
+```typescript
+// <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+```
+
+---
+
+### 16.7 Transaction Status Icons
+
+`viewBox="0 0 20 20"`, `fill="currentColor"` (Heroicons v1 solid). Color the icon via the parent element's color token.
+
+| Status | Color token | SVG path |
+|---|---|---|
+| **Confirmed** | `colors.success` (`#059669`) | `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>` |
+| **Pending** | `colors.warning` (`#F59E0B`) | `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>` |
+| **Failed** | `colors.error` (`#EF4444`) | `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>` |
+
+---
+
+### 16.8 Empty State Icons
+
+`viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `stroke-width="2"`. Render at 80–120pt. Stroke color: `colors.neutral400`.
+
+| Screen | SVG paths |
+|---|---|
+| **No transactions** (document/file) | `<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>` |
+| **No notifications** | Large bell — same path as nav bell above at 96pt, `stroke-width="1.5"` |
+| **No donations** | Heart — `<path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>` |
+| **No centre results** | Globe — `<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>` |
+
+---
+
+### 16.9 Wallet Provider Brand Icons
+
+Five wallet provider logos used in connect-wallet flows. Exact SVG markup — do not substitute with generic logos or image assets:
+
+**MetaMask** (`viewBox="0 0 24 24"`, `fill="none"`):
+```typescript
+// <path d="M20.3 5.1L13.5 9.9l1.3-3L20.3 5.1z" fill="#E17726" stroke="#E17726" stroke-width="0.25"/>
+// <path d="M3.7 5.1l6.7 4.9-1.2-3.1L3.7 5.1zM17.6 15.9l-1.8 2.8 3.9 1.1 1.1-3.8-3.2-.1zM3.3 16l1.1 3.8 3.9-1.1-1.8-2.8-3.2.1z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+// <path d="M8.1 11.1l-1.1 1.6 3.8.2-.1-4.1-2.6 2.3zM15.9 11.1l-2.6-2.4-.2 4.2 3.9-.2-1.1-1.6zM8.3 18.7l2.3-1.1-2-1.5-.3 2.6zM13.4 17.6l2.3 1.1-.3-2.6-2 1.5z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+// <path d="M15.7 18.7l-2.3-1.1.2 1.5v.7l2.1-1.1zM8.3 18.7l2.1 1.1v-.7l.2-1.5-2.3 1.1z" fill="#D5BFB2" stroke="#D5BFB2" stroke-width="0.25"/>
+// <path d="M10.5 14.4l-1.9-.6 1.4-.6.5 1.2zM13.5 14.4l.5-1.2 1.4.6-1.9.6z" fill="#233447" stroke="#233447" stroke-width="0.25"/>
+// <path d="M8.3 18.7l.3-2.8-2.1.1 1.8 2.7zM15.4 15.9l.3 2.8 1.8-2.7-2.1-.1zM17 12.7l-3.9.2.4 2 .5-1.2 1.4.6 1.6-1.6zM8.6 13.8l1.4-.6.5 1.2.4-2-3.9-.2 1.6 1.6z" fill="#CC6228" stroke="#CC6228" stroke-width="0.25"/>
+// <path d="M7 12.7l1.7 3.3-.1-1.6L7 12.7zM15.4 14.4l-.1 1.6 1.7-3.3-1.6 1.7zM10.9 12.9l-.4 2 .5 2.6.1-3-.2-1.6zM13.1 12.9l-.2 1.5.1 3.1.5-2.6-.4-2z" fill="#E27525" stroke="#E27525" stroke-width="0.25"/>
+// <path d="M13.5 14.4l-.5 2.6.4.3 2-1.5.1-1.6-2 .2zM8.6 13.8l.1 1.6 2 1.5.4-.3-.5-2.6-2-.2z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+// <path d="M13.6 20.2v-.7l-.2-.2h-2.8l-.2.2v.7l-2.1-1.1.7.6 1.5 1h2.9l1.5-1 .7-.6-2-1z" fill="#C0AC9D" stroke="#C0AC9D" stroke-width="0.25"/>
+// <path d="M13.4 17.6l-.4-.3h-2l-.4.3-.2 1.5.2-.2h2.8l.2.2-.2-1.5z" fill="#161616" stroke="#161616" stroke-width="0.25"/>
+// <path d="M20.7 10.4l.6-2.8-1-2.5-7.9 5.9 3 2.5 4.3 1.2.9-1.1-.4-.3.6-.6-.5-.4.6-.5-.4-.3zM3.7 7.6l.6 2.8-.4.3.6.5-.5.4.6.6-.4.3.9 1.1 4.3-1.2 3-2.5L4.7 5.1l-1 2.5z" fill="#763E1A" stroke="#763E1A" stroke-width="0.25"/>
+// <path d="M19.8 13.6l-4.3-1.2 1.3 1.6-1.7 3.3 2.3-.1h3.4l-1-3.6zM8.5 12.4l-4.3 1.2-1 3.6h3.4l2.3.1-1.7-3.3 1.3-1.6zM13.1 12.9l.3-4.7 1.4-3.8h-6.2l1.4 3.8.3 4.7.1 1.6v3.1h2l.1-3.1-.4-1.6z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+```
+
+**WalletConnect** (`viewBox="0 0 24 24"`, `fill="none"`):
+```typescript
+// <path d="M5.5 9.5c3.5-3.5 9.2-3.5 12.7 0l.4.4c.2.2.2.5 0 .7l-1.4 1.4c-.1.1-.3.1-.4 0l-.6-.6c-2.4-2.4-6.4-2.4-8.8 0l-.6.6c-.1.1-.3.1-.4 0L4.9 10.6c-.2-.2-.2-.5 0-.7l.6-.4zm15.7 2.9l1.3 1.3c.2.2.2.5 0 .7l-5.7 5.7c-.2.2-.5.2-.7 0l-4.1-4.1c-.1-.1-.2-.1-.2 0l-4.1 4.1c-.2.2-.5.2-.7 0l-5.7-5.7c-.2-.2-.2-.5 0-.7l1.3-1.3c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0z" fill="#3B99FC"/>
+```
+
+**Coinbase** (`viewBox="0 0 24 24"`, `fill="none"`):
+```typescript
+// <circle cx="12" cy="12" r="10" fill="#0052FF"/>
+// <path d="M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+```
+
+**Brave** (`viewBox="0 0 24 24"`, `fill="none"`):
+```typescript
+// <path d="M12 2L2 7l2 9 8 6 8-6 2-9-10-5z" fill="#FB542B"/>
+// <path d="M12 2v20M22 7H2M20 16H4" stroke="white" stroke-width="1.5"/>
+```
+
+**Ledger** (`viewBox="0 0 24 24"`, `fill="none"`):
+```typescript
+// <rect x="4" y="4" width="16" height="16" rx="2" fill="#333"/>
+// <path d="M7 7h3v3H7V7zM14 7h3v3h-3V7zM7 14h3v3H7v-3zM14 14h3v3h-3v-3z" fill="white"/>
+```
+
+---
+
+### 16.10 Centre Photography
+
+The three Humanity Centre cards use the exact same Unsplash photo URLs as the web app. These photos must be used for the corresponding centres throughout the mobile app (cards, detail screens, hero images):
+
+| Centre | Unsplash URL |
+|---|---|
+| Toronto Humanity Centre | `https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&q=80` |
+| Nairobi Humanity Centre | `https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80` |
+| Mumbai Humanity Centre | `https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80` |
+
+For mobile, append `&fit=crop&crop=center` to the URL when a specific aspect ratio is needed (e.g. `16:9` for hero banners, `1:1` for card thumbnails). Cache with `expo-image` or React Native's `Image` component with appropriate `resizeMode`.
+
+---
+
+### 16.11 User Avatars
+
+No external avatar service (no Gravatar, no DiceBear, no UI Avatars). User avatars render as styled `<View>` showing the user's initials — same pattern as the web's CSS text-initials `<div>`:
+
+```typescript
+// Avatar component pattern
+const avatarStyle = {
+  width: 40,
+  height: 40,
+  borderRadius: 20,
+  background: gradients.primary, // LinearGradient green→blue
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+// Text: user initials (e.g. "JS"), color white, fontSize 14, fontWeight '600'
+```
+
+When a user uploads a profile photo, display the photo inside the same circular container with `borderRadius: 9999`.
+
+---
+
+### 16.12 Emoji Replacement Rule
+
+The web app uses emoji in several places as lightweight icons (e.g. 💚 🌍 📈 🔒 on dashboards and wallets). **Emoji are banned as icons on mobile.** Replace every web-app emoji icon with an SVG equivalent in brand colors.
+
+| Web emoji | Mobile SVG replacement | Color token |
+|---|---|---|
+| 💚 (value/success highlight) | Checkmark circle (status icon, Section 16.7 Confirmed) | `colors.success` |
+| 🌍 / 🌐 (impact/globe) | Globe empty-state SVG (Section 16.8) | `colors.primaryGreen` |
+| 📈 (growth/yield) | Trend arrow `<path d="M23 6l-9.5 9.5-5-5L1 18"/>` | `colors.primaryGreen` |
+| 🔒 (security/lock) | Alert/security icon (Section 16.6) | `colors.neutral600` |
+| 🦊 (MetaMask) | MetaMask brand SVG (Section 16.9) | Brand colors |
+| ❤️ (donation/heart) | Heart empty-state SVG (Section 16.8) | `colors.accentPink` |
+| ⚡ (fast/instant) | Lightning `<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>` | `colors.warning` |
+| 💰 / 💸 (money) | Wallet icon (Section 16.4) | `colors.primaryBlue` |
+| 📧 (email) | Envelope `<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0 1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>` | `colors.neutral600` |
+| ⚠️ (warning) | Warning triangle `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>` | `colors.warning` |
+| ✅ (completed/success) | Same as confirmed status icon (Section 16.7) | `colors.success` |
+| 🔄 (refresh/swap) | Exchange wallet action icon (Section 16.4) | `colors.primaryBlue` |
+
+All SVG replacements: `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `stroke-width="2"` unless noted otherwise.
+
+---
+
+### 16.13 What NOT to Do — Icons & Media
+
+- ❌ **No external icon libraries** (Lucide, Heroicons npm package, Font Awesome, Phosphor, Tabler) — use the SVG paths listed in this section directly
+- ❌ **No emoji as icons** — use SVG equivalents from Section 16.12
+- ❌ **No third-party avatar services** — text initials only until user uploads a photo
+- ❌ **No substituting wallet provider logos** — MetaMask, WalletConnect, Coinbase, Brave, and Ledger must use the exact brand SVG paths from Section 16.9
+- ❌ **No different photos for the Humanity Centres** — use the exact Unsplash URLs from Section 16.10
+- ❌ **No rasterized PNG/JPG icons** for UI icons — SVG/vector only for all iconography
+- ❌ **No hardcoded icon colors** — always apply color via `colors.*` token from `theme.ts` or `stroke="currentColor"` inherited from the parent

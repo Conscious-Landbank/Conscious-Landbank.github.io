@@ -1,0 +1,46 @@
+---
+description: Display data tables without scrollbars (activity-section, history-section pattern)
+alwaysApply: true
+---
+
+# Table Display — No Scrollbars
+
+For complicated data tables (e.g. `.activity-section`, `.history-section`, transaction logs, audit tables), **do not show scrollbars**. Users can still scroll horizontally via touch, trackpad, or mouse drag.
+
+## Reference Elements
+
+- `main#main-content > div#dashboard > div.activity-section` — Recent Activity table
+- `main#main-content > div.history-section` — Minting Audit Log table
+
+## Implementation
+
+### 1. No Vertical Scrollbar
+
+- Do **not** use `max-height` + `overflow-y: auto` on the table wrapper.
+- Let the section height grow to fit all rows.
+
+### 2. No Horizontal Scrollbar
+
+On the table wrapper (e.g. `.activity-table-wrap`, `.history-table-wrap`):
+
+```css
+.table-wrap {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.table-wrap::-webkit-scrollbar {
+    display: none;
+}
+```
+
+- `scrollbar-width: none` — Firefox
+- `-ms-overflow-style: none` — IE/Edge
+- `::-webkit-scrollbar { display: none }` — Chrome, Safari
+
+Content remains horizontally scrollable; only the scrollbar is hidden.
+
+## Apply To
+
+- Any new table with many columns or rows that might overflow
+- Existing tables when adding similar patterns

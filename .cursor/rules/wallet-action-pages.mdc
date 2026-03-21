@@ -1,0 +1,65 @@
+---
+description: Standards for wallet action flows (Get/Redeem UNERA CAD, similar transactional pages)
+alwaysApply: false
+---
+
+# Wallet Action Pages
+
+Use these patterns for **multi-step wallet flows** (e.g. `get-unera-cad.html`, `redeem-unera-cad.html`) and any new pages that match the same UX class.
+
+## Layout
+
+- **Main column**: `main#main-content.container` with `max-width: 720px`, `margin: 0 auto`, vertical padding aligned with `exchange.html` / `stake.html` / `send-enhanced.html` / `add-money.html`.
+- **Inner rail**: Step panels, stepper, and primary flow cards constrained to **`max-width: 700px`** with `margin-left: auto; margin-right: auto` (same relationship as `add-money.html` `.step-content` + `.stepper`).
+
+## Stepper
+
+- **Desktop**: `<nav class="stepper" id="dynamicStepper" role="progressbar" …>` with a single `.stepper-progress` child whose **width** reflects `(currentStep - 1) / (totalSteps - 1)`.
+- **Mobile**: `.mobile-stepper-compact` with `mobile-step-circle`, `mobile-step-info`, `mobile-step-counter` — **full add-money styling**. Hide desktop `.stepper` at `max-width: 768px`; show compact stepper.
+- **JS**: Build step circles from a `FLOW_KEYS` array; set **completed** steps with ✓ in `.step-circle`; keep `aria-valuenow` / `aria-valuemax` in sync.
+
+## Completion step
+
+- Final success state: **`.success-screen.flow-card-animated`** wrapping **`success-icon-animated`** (or **`success-icon-animated-lg`** where specified) **+ `.lightning-badge`** (or **`lightning-badge-lg`**).
+- Reuse **`@keyframes checkmark`** / **`slideInCard`** patterns from `add-money.html` where applicable.
+- Processing / pending / failure remain distinct (no success checkmark for pending settlement).
+- **`get-unera-cad.html`**: success actions include **View Wallet**, contextual **View mint history** or **View swap history** (by flow type), and **Go Again** (`.success-flow-actions` grid stacks on small viewports).
+- **`redeem-unera-cad.html`**: for **pending settlement** and **completed** tracker states, success actions use **View Wallet**, **Get UNERA CAD** (re-entry), and **New Redemption** (`.success-actions-three`); do **not** push Mint/Swap history on redeem completion.
+
+## Navigation (desktop)
+
+- **UNERA CAD** and **TRANSACT** **dropdown groups** (click-activated, not hover-only):
+  - `aria-expanded`, `aria-haspopup="true"`, `role="menu"` / `role="menuitem"`.
+  - **Escape** and **outside click** close; `z-index: 10002` on `.nav-dropdown-menu`.
+  - Active route: highlight **child** link + **`is-active-route`** on parent trigger when appropriate.
+  - **UNERA CAD — navigation tiers**:
+    - **`dashboard-enhanced.html` (desktop top nav)**: **Get** and **Redeem** only in the main bar (same as other global shells). Mint/Swap history are **not** duplicated there by default.
+    - **`dashboard-enhanced.html` (in-page)**: **Quick Actions** includes a **full-width UNERA CAD hub** (`.unera-cad-hub-card`): four destinations — Get, Redeem, Mint history, Swap history — with clear primary vs history styling.
+    - **`dashboard-enhanced.html` (mobile drawer)**: flat list includes **Mint History** and **Swap History** after Redeem (same order as Wallet mobile).
+    - **Hub + Wallet** (`get-unera-cad.html`, `redeem-unera-cad.html`, `mint-history.html`, `swap-history.html`, `wallet-enhanced.html`): **UNERA CAD** dropdown / mobile list = **Get**, **Redeem**, **separator**, **Mint History**, **Swap History**.
+  - **`wallet-enhanced.html`**: on the **hCAD** balance card, **`asset-unera-cad-links`** below `.asset-quick-actions` — **2×2 grid** of links (Get, Redeem, Mint history, Swap history); asset-scoped entry; do not add extra icon buttons for these.
+  - **Optional follow-up**: **Dashboard** desktop nav could adopt the same **UNERA CAD dropdown** as Wallet for full parity (deferred to reduce nav complexity).
+  - **TRANSACT** menu: Add Money (`add-money.html`), Exchange (`exchange.html`), Send (`send-enhanced.html`).
+- At **`max-width: 768px`**: do **not** rely on dropdowns — destinations live in the **mobile drawer** flat list (or grouped headings optional).
+
+## Responsiveness
+
+Match **add-money / exchange / stake / send-enhanced**:
+
+- **`prefers-reduced-motion: reduce`**: `0.01ms` transitions/animations on `*, *::before, *::after`.
+- **768px**: hamburger, container `padding: 2rem 1.5rem`, page title **~2rem**, stacked **dual CTAs** (`grid-template-columns: 1fr`), inputs **`font-size: 1rem`** on fields to avoid iOS zoom.
+- **640px**: container `2rem 1rem`; **dest / option grids** single column where send/exchange do.
+- **480px**: nav `1rem`, container `1.5rem 1rem`, title **~1.75rem**.
+- Primary buttons **min-height ~46px**; nav touch targets **~44px**.
+
+## Edge cases (always design for)
+
+- **Insufficient balance** / below minimum amount.
+- **Rate expiry** on review (banner + re-confirm).
+- **High impact / liquidity** (swap-style flows).
+- **Transaction rejected** (user wallet) vs **failed** (network/revert) — different copy and CTAs.
+- **Redeem-specific**: bank not linked (CAD), daily limits, **burn reverted** (safe retry) vs **partial burn** (contact support).
+
+## Out of scope
+
+- No backend implementation; use mocks, query flags, or UI-only state for demos.
