@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="auth-enhancements.css">
     
     <!-- Wallet Integration Libraries -->
     <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
@@ -2404,75 +2405,204 @@
             color: var(--text-secondary);
         }
 
-        /* Load More Container */
-        .load-more-container {
-            text-align: center;
-            padding: 2rem 0 3rem 0;
+        /* Transaction list pagination */
+        .tx-pagination {
+            padding: 1.5rem 0 2.5rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+            border-top: 2px solid var(--border-subtle);
+            margin-top: 0.5rem;
         }
 
-        .transaction-count {
-            font-size: 0.938rem;
+        /* Summary row — icon + text */
+        .tx-pagination-summary {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
             color: var(--text-secondary);
-            margin-bottom: 1.5rem;
             font-weight: 500;
         }
 
-        .transaction-count span {
+        .tx-pagination-summary-icon {
+            width: 1rem;
+            height: 1rem;
+            color: var(--primary-green);
+            flex-shrink: 0;
+        }
+
+        /* Range endpoints (1–10) in brand green */
+        .tx-pagination-summary #txRangeStart,
+        .tx-pagination-summary #txRangeEnd {
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        /* Total count bold dark */
+        .tx-pagination-summary #txTotalFiltered {
             font-weight: 700;
             color: var(--text-primary);
         }
 
-        .load-more-btn {
-            display: inline-flex;
+        .tx-pagination-bar {
+            display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 2rem;
-            background: white;
-            border: 2px solid var(--border-subtle);
-            border-radius: 980px;
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.2s;
+            justify-content: space-between;
+            gap: 0.75rem 1.5rem;
         }
 
-        .load-more-btn:hover {
-            border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.05);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-        }
-
-        .load-more-btn:focus {
-            outline: 3px solid var(--primary-green);
-            outline-offset: 2px;
-        }
-
-        .load-more-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .load-more-btn svg {
-            transition: transform 0.2s;
-        }
-
-        .load-more-btn:hover:not(:disabled) svg {
-            transform: translateY(2px);
-        }
-
-        /* Loading Indicator */
-        .loading-indicator {
+        .tx-pagination-nav {
             display: flex;
             align-items: center;
+            gap: 0.5rem;
+            flex: 1 1 auto;
+        }
+
+        /* Page indicator — pill chip */
+        .tx-pagination-page {
+            font-family: var(--font-display);
+            font-size: 0.813rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+            padding: 0.4rem 1.25rem;
+            background: var(--neutral-100);
+            border: 2px solid var(--neutral-300);
+            border-radius: 2rem;
+            min-width: 7rem;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        /* Nav buttons — icon + label, brand-green hover */
+        .tx-pagination-btn {
+            min-height: 46px;
+            min-width: 7rem;
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            gap: 1rem;
-            padding: 2rem;
+            gap: 0.375rem;
+            border-color: var(--neutral-300);
             color: var(--text-secondary);
-            font-size: 0.938rem;
+            transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease;
+        }
+
+        .tx-pagination-btn:hover:not(:disabled) {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.06);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tx-pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            pointer-events: none;
+        }
+
+        /* Text label inside button — hidden at ≤480px */
+        .tx-btn-label {
+            display: inline;
+        }
+
+        .tx-pagination-size {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem 0.75rem;
+        }
+
+        .tx-pagination-size-label {
+            font-size: 0.813rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Rows-per-page select — custom SVG chevron */
+        .tx-pagination-select {
+            min-height: 46px;
+            padding: 0.5rem 2.5rem 0.5rem 0.875rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--text-primary);
+            background-color: var(--neutral-50);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.18s ease;
+        }
+
+        .tx-pagination-select:hover {
+            border-color: var(--primary-green);
+        }
+
+        .tx-pagination-select:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+            border-color: var(--primary-green);
+        }
+
+        @media (max-width: 768px) {
+            .tx-pagination-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .tx-pagination-nav {
+                justify-content: space-between;
+            }
+
+            .tx-pagination-btn {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .tx-pagination-size {
+                justify-content: space-between;
+            }
+
+            .tx-pagination-select {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tx-btn-label {
+                display: none;
+            }
+
+            .tx-pagination-btn {
+                min-width: 44px;
+                border-radius: 0.75rem;
+                flex: 1;
+            }
+
+            .tx-pagination-page {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.875rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .tx-pagination-btn,
+            .tx-pagination-select {
+                transition: none;
+            }
         }
 
         .spinner {
@@ -5062,27 +5192,41 @@
                 </div>
             </div>
 
-            <!-- Load More Transactions -->
-            <div class="load-more-container" id="loadMoreContainer">
-                <div class="transaction-count" role="status" aria-live="polite" id="transactionCount">
-                    Showing <span id="shownCount">10</span> of <span id="totalCount">10</span> transactions
-                </div>
-                <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreTransactions()" aria-label="Load more transactions">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            <!-- Transaction pagination -->
+            <nav class="tx-pagination" id="txPaginationContainer" aria-label="Transaction list pagination">
+                <div class="tx-pagination-summary" role="status" aria-live="polite" id="txPaginationSummary">
+                    <svg class="tx-pagination-summary-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h10"/>
                     </svg>
-                    <span id="loadMoreText">Load More Transactions</span>
-                </button>
-                
-                <!-- Loading indicator -->
-                <div class="loading-indicator" id="loadingIndicator" style="display: none;" role="status" aria-live="polite">
-                    <div class="spinner"></div>
-                    <span>Loading transactions...</span>
+                    Showing <span id="txRangeStart">1</span>–<span id="txRangeEnd">10</span> of <span id="txTotalFiltered">10</span> transactions
                 </div>
-                
-                <!-- Infinite scroll sentinel -->
-                <div id="scrollSentinel" style="height: 1px;"></div>
-            </div>
+                <div class="tx-pagination-bar">
+                    <div class="tx-pagination-nav">
+                        <button type="button" class="btn btn-secondary tx-pagination-btn" id="txPrevBtn" aria-label="Previous page">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                            <span class="tx-btn-label">Previous</span>
+                        </button>
+                        <span class="tx-pagination-page" id="txPageLabel">Page 1 of 1</span>
+                        <button type="button" class="btn btn-secondary tx-pagination-btn" id="txNextBtn" aria-label="Next page">
+                            <span class="tx-btn-label">Next</span>
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="tx-pagination-size">
+                        <label for="txPageSize" class="tx-pagination-size-label">Rows per page</label>
+                        <select id="txPageSize" class="tx-pagination-select" aria-label="Rows per page">
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+            </nav>
 
             <!-- Empty State -->
             <div class="empty-state" id="emptyState" style="display: none;" role="status">
@@ -5683,6 +5827,150 @@
             // ... keep all existing mock data ...
         };
 
+        // Transaction history: search + pagination (DOM order = newest first)
+        let txCurrentPage = 1;
+        let txPageSize = 10;
+        let txSearchQuery = '';
+
+        function getTxItems() {
+            const list = document.getElementById('transactionList');
+            if (!list) return [];
+            return Array.from(list.querySelectorAll('.transaction-item'));
+        }
+
+        function getTxFilteredItems() {
+            const q = txSearchQuery.trim().toLowerCase();
+            return getTxItems().filter(function(item) {
+                if (!q) return true;
+                return item.textContent.toLowerCase().includes(q);
+            });
+        }
+
+        function updateTxDateGroups() {
+            const list = document.getElementById('transactionList');
+            if (!list) return;
+            list.querySelectorAll('.date-group').forEach(function(group) {
+                const vis = Array.from(group.querySelectorAll('.transaction-item')).some(function(el) {
+                    return el.style.display !== 'none';
+                });
+                group.style.display = vis ? '' : 'none';
+            });
+        }
+
+        function applyTransactionPagination() {
+            const allItems = getTxItems();
+            const filtered = getTxFilteredItems();
+            const total = filtered.length;
+            const totalPages = total === 0 ? 0 : Math.ceil(total / txPageSize);
+
+            if (totalPages > 0 && txCurrentPage > totalPages) txCurrentPage = totalPages;
+            if (txCurrentPage < 1) txCurrentPage = 1;
+
+            allItems.forEach(function(item) {
+                item.style.display = 'none';
+                item.setAttribute('aria-hidden', 'true');
+            });
+
+            const start = (txCurrentPage - 1) * txPageSize;
+            const end = Math.min(start + txPageSize, total);
+            for (let i = start; i < end; i++) {
+                filtered[i].style.display = '';
+                filtered[i].removeAttribute('aria-hidden');
+            }
+
+            updateTxDateGroups();
+
+            const rangeStartEl = document.getElementById('txRangeStart');
+            const rangeEndEl = document.getElementById('txRangeEnd');
+            const totalFEl = document.getElementById('txTotalFiltered');
+            const pageLabel = document.getElementById('txPageLabel');
+            const prevBtn = document.getElementById('txPrevBtn');
+            const nextBtn = document.getElementById('txNextBtn');
+            const pagContainer = document.getElementById('txPaginationContainer');
+            const listEl = document.getElementById('transactionList');
+            const emptyEl = document.getElementById('emptyState');
+
+            if (total === 0) {
+                if (rangeStartEl) rangeStartEl.textContent = '0';
+                if (rangeEndEl) rangeEndEl.textContent = '0';
+                if (totalFEl) totalFEl.textContent = '0';
+                if (pageLabel) pageLabel.textContent = 'Page 0 of 0';
+                if (prevBtn) prevBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = true;
+                if (listEl) listEl.style.display = 'none';
+                if (pagContainer) pagContainer.style.display = 'none';
+                if (emptyEl) emptyEl.style.display = '';
+                return;
+            }
+
+            if (rangeStartEl) rangeStartEl.textContent = String(start + 1);
+            if (rangeEndEl) rangeEndEl.textContent = String(end);
+            if (totalFEl) totalFEl.textContent = String(total);
+            if (pageLabel) pageLabel.textContent = 'Page ' + txCurrentPage + ' of ' + totalPages;
+
+            if (prevBtn) prevBtn.disabled = txCurrentPage <= 1;
+            if (nextBtn) nextBtn.disabled = txCurrentPage >= totalPages;
+
+            if (listEl) listEl.style.display = '';
+            if (pagContainer) pagContainer.style.display = '';
+            if (emptyEl) emptyEl.style.display = 'none';
+        }
+
+        function searchTransactions() {
+            const input = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('searchClearBtn');
+            txSearchQuery = input ? input.value : '';
+            if (clearBtn) clearBtn.style.display = txSearchQuery.trim() ? 'flex' : 'none';
+            txCurrentPage = 1;
+            applyTransactionPagination();
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            if (input) input.value = '';
+            txSearchQuery = '';
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            txCurrentPage = 1;
+            applyTransactionPagination();
+        }
+
+        function toggleFilterPanel() {
+            showComingSoon('Transaction filters', '🔍', 'Soon you will be able to filter by date, asset type, and status.');
+        }
+
+        function initTransactionPagination() {
+            const prev = document.getElementById('txPrevBtn');
+            const next = document.getElementById('txNextBtn');
+            const sel = document.getElementById('txPageSize');
+            if (prev) {
+                prev.addEventListener('click', function() {
+                    if (txCurrentPage > 1) {
+                        txCurrentPage--;
+                        applyTransactionPagination();
+                    }
+                });
+            }
+            if (next) {
+                next.addEventListener('click', function() {
+                    const filtered = getTxFilteredItems();
+                    const totalPages = Math.ceil(filtered.length / txPageSize);
+                    if (txCurrentPage < totalPages) {
+                        txCurrentPage++;
+                        applyTransactionPagination();
+                    }
+                });
+            }
+            if (sel) {
+                sel.addEventListener('change', function() {
+                    txPageSize = parseInt(sel.value, 10) || 10;
+                    txCurrentPage = 1;
+                    applyTransactionPagination();
+                });
+            }
+            applyTransactionPagination();
+        }
+
         // Toggle balance privacy
         let balancesHidden = true;
         function toggleBalancePrivacy() {
@@ -6107,6 +6395,7 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             initializePrivacy();
+            initTransactionPagination();
             // Check wallet connection
             const walletConnected = localStorage.getItem('walletConnected') === 'true';
             const walletAddress = localStorage.getItem('walletAddress');
@@ -6132,7 +6421,10 @@
         window.openConnectModal = openConnectModal;
         window.closeConnectModal = closeConnectModal;
         window.handleWalletConnect = handleWalletConnect;
-        // ... other functions
+        window.searchTransactions = searchTransactions;
+        window.clearSearch = clearSearch;
+        window.toggleFilterPanel = toggleFilterPanel;
+        window.applyTransactionPagination = applyTransactionPagination;
     </script>
 
     <!-- Hamburger Menu Script -->
@@ -6214,5 +6506,7 @@
             initNavDropdowns();
         })();
     </script>
+    <script src="auth-enhancements.js"></script>
+    <script src="js/wallet/providers.js"></script>
 </body>
 </html>

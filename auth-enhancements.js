@@ -671,94 +671,141 @@ function generateSecureToken() {
 }
 
 /**
- * Show toast notification
- * @param {string} message - Message to show
- * @param {string} type - Type (success, error, warning, info)
+ * Show toast notification (layout from auth-enhancements.css when linked).
+ * @param {string|{title:string,detail?:string}} message - Plain string or title + detail (wallet events).
+ * @param {string} type - success | error | warning | info
+ * @param {number} [durationMs=4000] - Visible duration; wallet toasts often use 5500–6000.
  */
-function showToast(message, type = 'info') {
-    // Remove existing toast
+function showToast(message, type = 'info', durationMs = 4000) {
     const existingToast = document.querySelector('.toast-notification');
     if (existingToast) {
         existingToast.remove();
     }
-    
+
+    const validTypes = ['success', 'error', 'warning', 'info'];
+    const toastType = validTypes.includes(type) ? type : 'info';
+
     const toast = document.createElement('div');
-    toast.className = 'toast-notification';
-    
-    const colors = {
-        success: '#10B981',
-        error: '#EF4444',
-        warning: '#F59E0B',
-        info: '#0EA5E9'
-    };
-    
+    toast.className = `toast-notification toast-${toastType}`;
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.setAttribute('aria-atomic', 'true');
+
     const icons = {
         success: '✓',
         error: '✗',
         warning: '⚠',
         info: 'ℹ'
     };
-    
-    toast.style.cssText = `
+
+    const iconEl = document.createElement('div');
+    iconEl.className = 'toast-icon';
+    iconEl.setAttribute('aria-hidden', 'true');
+    iconEl.textContent = icons[toastType] || icons.info;
+
+    const bodyWrap = document.createElement('div');
+    bodyWrap.className = 'toast-text';
+
+    if (message && typeof message === 'object' && message.title != null) {
+        const titleEl = document.createElement('strong');
+        titleEl.className = 'toast-title';
+        titleEl.textContent = message.title;
+        bodyWrap.appendChild(titleEl);
+        if (message.detail) {
+            const detailEl = document.createElement('div');
+            detailEl.className = 'toast-body';
+            detailEl.textContent = message.detail;
+            bodyWrap.appendChild(detailEl);
+        }
+    } else {
+        const plain = document.createElement('div');
+        plain.className = 'toast-message-plain';
+        plain.textContent = String(message ?? '');
+        bodyWrap.appendChild(plain);
+    }
+
+    toast.appendChild(iconEl);
+    toast.appendChild(bodyWrap);
+    document.body.appendChild(toast);
+
+    triggerHaptic(toastType === 'success' ? 'success' : toastType === 'error' ? 'error' : 'light');
+
+    const prefersReduced =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    window.setTimeout(() => {
+        if (!toast.parentNode) return;
+        if (prefersReduced) {
+            toast.remove();
+            return;
+        }
+        toast.classList.add('slideOut');
+        window.setTimeout(() => toast.remove(), 300);
+    }, durationMs);
+}
+
+// Fallback layout if auth-enhancements.css is not linked (login/signup pages).
+(function injectToastFallbackStyles() {
+    if (document.querySelector('link[href*="auth-enhancements.css"]')) return;
+    if (document.getElementById('auth-enhancements-toast-fallback')) return;
+    const style = document.createElement('style');
+    style.id = 'auth-enhancements-toast-fallback';
+    style.textContent = `
+    .toast-notification {
         position: fixed;
         top: 2rem;
         right: 2rem;
         background: white;
-        color: ${colors[type]};
         padding: 1rem 1.5rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-        border-left: 4px solid ${colors[type]};
-        z-index: 10000;
+        border-radius: 0.875rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        z-index: 10003;
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        max-width: 400px;
-        animation: slideIn 0.3s ease-out;
+        align-items: flex-start;
+        gap: 0.875rem;
+        max-width: 420px;
+        min-width: 280px;
+        font-family: system-ui, sans-serif;
+    }
+    .toast-notification.toast-success { border-left: 4px solid #10B981; }
+    .toast-notification.toast-error { border-left: 4px solid #EF4444; }
+    .toast-notification.toast-warning { border-left: 4px solid #F59E0B; }
+    .toast-notification.toast-info { border-left: 4px solid #0EA5E9; }
+    .toast-notification .toast-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .toast-notification.toast-success .toast-icon { color: #10B981; }
+    .toast-notification.toast-error .toast-icon { color: #EF4444; }
+    .toast-notification.toast-warning .toast-icon { color: #F59E0B; }
+    .toast-notification.toast-info .toast-icon { color: #0EA5E9; }
+    .toast-notification .toast-title { display: block; font-weight: 600; margin-bottom: 0.25rem; color: #1F2937; }
+    .toast-notification .toast-body { font-size: 0.875rem; color: #4B5563; }
+    .toast-notification .toast-message-plain { color: #1F2937; }
+    @keyframes toastSlideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes toastSlideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    .toast-notification { animation: toastSlideIn 0.3s ease-out; }
+    .toast-notification.slideOut { animation: toastSlideOut 0.3s ease-out forwards; }
+    @media (max-width: 768px) {
+        .toast-notification {
+            top: auto;
+            bottom: 2rem;
+            left: 1rem;
+            right: 1rem;
+            max-width: none;
+        }
+    }
     `;
-    
-    toast.innerHTML = `
-        <div style="font-size: 1.25rem;">${icons[type]}</div>
-        <div style="color: #1F2937;">${message}</div>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    // Trigger haptic
-    triggerHaptic(type === 'success' ? 'success' : type === 'error' ? 'error' : 'light');
-    
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
-}
+    document.head.appendChild(style);
+})();
 
-// Add animation styles
+// Add animation styles (spin, lockout)
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-    
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
