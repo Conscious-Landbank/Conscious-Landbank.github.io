@@ -2070,6 +2070,126 @@
             color: var(--text-primary);
         }
 
+        /* Wallet Scope Selector */
+        .wallet-scope-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: var(--neutral-200);
+            border-radius: 0.625rem;
+            padding: 0.25rem;
+        }
+
+        .wallet-scope-btn {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border: none;
+            background: transparent;
+            border-radius: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 32px;
+            white-space: nowrap;
+            font-family: var(--font-body);
+        }
+
+        .wallet-scope-btn.active {
+            background: white;
+            color: var(--text-primary);
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .wallet-scope-btn:hover:not(.active) {
+            color: var(--text-primary);
+        }
+
+        .wallet-scope-btn:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Wallet scope persistent badge (shown below card header when specific wallet is selected) */
+        .wallet-scope-badge {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .wallet-scope-badge.visible {
+            display: flex;
+        }
+
+        .wallet-scope-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--text-primary);
+            border-radius: 2rem;
+            padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .wallet-scope-chip button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            border-radius: 50%;
+            transition: opacity 0.15s;
+            min-height: 0;
+        }
+
+        .wallet-scope-chip button:hover { opacity: 1; }
+        .wallet-scope-chip button:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; }
+
+        /* Custom contract address input inside Currency filter */
+        .filter-cs-custom-input {
+            padding: 0.625rem 0.75rem 0.5rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 0.25rem;
+        }
+
+        .filter-cs-custom-input input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.813rem;
+            color: var(--text-primary);
+            background: var(--neutral-100);
+            transition: border-color 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .filter-cs-custom-input input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .filter-cs-custom-input input::placeholder {
+            color: var(--neutral-500);
+            font-family: monospace;
+        }
+
+        .filter-cs-custom-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.375rem;
+        }
+
         .history-controls {
             display: flex;
             gap: 1rem;
@@ -4052,6 +4172,20 @@
                 padding: 1.25rem;
             }
 
+            .history-section .card-header {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
+            .wallet-scope-selector {
+                width: 100%;
+            }
+
+            .wallet-scope-btn {
+                flex: 1;
+                text-align: center;
+            }
+
             .history-controls {
                 flex-direction: column;
             }
@@ -5587,6 +5721,40 @@
         <section class="history-section card" aria-labelledby="history-title">
             <div class="card-header">
                 <h3 id="history-title" class="card-title">Transaction History</h3>
+                <div class="wallet-scope-selector" role="group" aria-label="Wallet scope">
+                    <button
+                        type="button"
+                        class="wallet-scope-btn active"
+                        data-wallet="all"
+                        onclick="selectWalletScope('all', this)"
+                        aria-pressed="true">
+                        All Wallets
+                    </button>
+                    <button
+                        type="button"
+                        class="wallet-scope-btn"
+                        data-wallet="0x742d35Cc6634C0532925a3b8D4C9D2a8f7b3a8f"
+                        onclick="selectWalletScope('0x742d35Cc6634C0532925a3b8D4C9D2a8f7b3a8f', this)"
+                        aria-pressed="false">
+                        0x742d...3a8f
+                    </button>
+                </div>
+            </div>
+
+            <!-- Wallet Scope Badge (persistent indicator when a specific wallet is scoped) -->
+            <div class="wallet-scope-badge" id="walletScopeBadge" role="status" aria-live="polite">
+                <div class="wallet-scope-chip">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                        <path d="M2 10h20"/>
+                    </svg>
+                    <span id="walletScopeBadgeText">Wallet: 0x742d...3a8f</span>
+                    <button type="button" onclick="selectWalletScope('all', null)" aria-label="Clear wallet filter">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Search and Filters -->
@@ -6671,7 +6839,46 @@
                                 <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
                                 <span>hJPY</span>
                             </div>
+                            <div class="filter-cs-option" role="option" data-value="custom" aria-selected="false" tabindex="-1" style="border-top: 1px solid var(--border-subtle); color: var(--primary-green); font-style: italic;">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>Custom token...</span>
+                            </div>
                         </div>
+                        <!-- Revealed when "Custom token..." is selected -->
+                        <div class="filter-cs-custom-input" id="customContractAddressWrap" hidden>
+                            <input
+                                type="text"
+                                id="contractAddressInput"
+                                placeholder="0x..."
+                                aria-label="Token contract address (0x...)"
+                                autocomplete="off"
+                                spellcheck="false"
+                                maxlength="42"
+                                oninput="syncCustomContractAddress(this.value)">
+                            <p class="filter-cs-custom-hint">Paste a valid ERC-20 contract address (42 chars)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Network</h3>
+                    <div class="radio-group" role="radiogroup" aria-label="Blockchain network">
+                        <label class="radio-label">
+                            <input type="radio" name="chainId" value="" checked>
+                            <span>All Networks</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="chainId" value="8453">
+                            <span>⬟ Base</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="chainId" value="1">
+                            <span>◈ Ethereum</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="chainId" value="11155111">
+                            <span>◈ Sepolia (Testnet)</span>
+                        </label>
                     </div>
                 </div>
 
@@ -6827,10 +7034,13 @@
                 type: 'all',
                 categories: [],
                 statuses: ['completed', 'pending'],
-                currency: 'all'
+                currency: 'all',
+                network: '',
+                contractAddress: ''
             };
         }
         let activeFilters = getDefaultActiveFilters();
+        let activeWalletScope = 'all';
 
         const PRESETS_STORAGE_KEY = 'walletFilterPresets';
         let savedPresets = [];
@@ -7145,6 +7355,11 @@
             ).filter(function(cb) { return cb.id && cb.id.startsWith('status-'); }).map(function(cb) { return cb.value; });
             const cur = document.getElementById('currencyFilter');
             activeFilters.currency = cur ? cur.value : 'all';
+            activeFilters.network = document.querySelector('input[name="chainId"]:checked')?.value || '';
+            const contractInput = document.getElementById('contractAddressInput');
+            activeFilters.contractAddress = (activeFilters.currency === 'custom' && contractInput)
+                ? contractInput.value.trim()
+                : '';
 
             txDisplayedCount = 10;
             applyTransactionPagination();
@@ -7185,15 +7400,36 @@
 
         function clearCurrencyFilter() {
             activeFilters.currency = 'all';
+            activeFilters.contractAddress = '';
             const cur = document.getElementById('currencyFilter');
             if (cur) cur.value = 'all';
             if (window.syncComboDisplay) syncComboDisplay('currencyFilter', 'all');
+            const customWrap = document.getElementById('customContractAddressWrap');
+            if (customWrap) customWrap.setAttribute('hidden', '');
+            const contractInput = document.getElementById('contractAddressInput');
+            if (contractInput) contractInput.value = '';
+        }
+
+        function clearNetworkFilter() {
+            activeFilters.network = '';
+            const allNetworkRadio = document.querySelector('input[name="chainId"][value=""]');
+            if (allNetworkRadio) allNetworkRadio.checked = true;
+        }
+
+        function clearContractAddressFilter() {
+            activeFilters.contractAddress = '';
+            const contractInput = document.getElementById('contractAddressInput');
+            if (contractInput) contractInput.value = '';
+            const customWrap = document.getElementById('customContractAddressWrap');
+            if (customWrap) customWrap.setAttribute('hidden', '');
         }
 
         function clearAllFilters() {
             activeFilters = getDefaultActiveFilters();
             clearDateFilter();
             clearTypeFilter();
+            clearNetworkFilter();
+            clearContractAddressFilter();
             document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(function(cb) {
                 if (cb.id === 'status-completed' || cb.id === 'status-pending') {
                     cb.checked = true;
@@ -7257,9 +7493,19 @@
                 });
             });
             if (activeFilters.currency !== 'all') {
+                var currencyLabel = activeFilters.currency === 'custom' && activeFilters.contractAddress
+                    ? 'Token: ' + activeFilters.contractAddress.substring(0, 6) + '...' + activeFilters.contractAddress.slice(-4)
+                    : 'Currency: ' + activeFilters.currency;
                 chips.push({
-                    label: 'Currency: ' + activeFilters.currency,
-                    onRemove: function() { clearCurrencyFilter(); applyFilters(); }
+                    label: currencyLabel,
+                    onRemove: function() { clearCurrencyFilter(); clearContractAddressFilter(); applyFilters(); }
+                });
+            }
+            if (activeFilters.network) {
+                var networkNames = { '8453': 'Base', '1': 'Ethereum', '11155111': 'Sepolia' };
+                chips.push({
+                    label: '⬟ Network: ' + (networkNames[activeFilters.network] || activeFilters.network),
+                    onRemove: function() { clearNetworkFilter(); applyFilters(); }
                 });
             }
 
@@ -7302,6 +7548,91 @@
             }
             renderFilterPresets();
         }
+
+        // ========================================
+        // WALLET SCOPE SELECTOR
+        // ========================================
+
+        function selectWalletScope(wallet, clickedBtn) {
+            activeWalletScope = wallet;
+
+            document.querySelectorAll('.wallet-scope-btn').forEach(function(btn) {
+                const isActive = btn.dataset.wallet === wallet;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+
+            const badge = document.getElementById('walletScopeBadge');
+            if (badge) {
+                if (wallet === 'all') {
+                    badge.classList.remove('visible');
+                } else {
+                    const short = wallet.substring(0, 6) + '...' + wallet.slice(-4);
+                    const badgeText = document.getElementById('walletScopeBadgeText');
+                    if (badgeText) badgeText.textContent = 'Wallet: ' + short;
+                    badge.classList.add('visible');
+                }
+            }
+        }
+
+        // ========================================
+        // CUSTOM CONTRACT ADDRESS (Currency filter)
+        // ========================================
+
+        function syncCustomContractAddress(value) {
+            activeFilters.contractAddress = value.trim();
+            const cur = document.getElementById('currencyFilter');
+            if (cur && cur.value === 'custom') {
+                const triggerLabel = document.querySelector('.filter-cs[data-cs-id="currencyFilter"] .filter-cs-value');
+                if (triggerLabel) {
+                    triggerLabel.textContent = value.trim()
+                        ? 'Token: ' + value.trim().substring(0, 6) + '...' + value.trim().slice(-4)
+                        : 'Custom token...';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currencyHidden = document.getElementById('currencyFilter');
+            if (currencyHidden) {
+                const observer = new MutationObserver(function() {});
+                const csEl = document.querySelector('.filter-cs[data-cs-id="currencyFilter"]');
+                if (csEl) {
+                    const customOption = csEl.querySelector('.filter-cs-option[data-value="custom"]');
+                    if (customOption) {
+                        customOption.addEventListener('click', function() {
+                            const wrap = document.getElementById('customContractAddressWrap');
+                            if (wrap) {
+                                wrap.removeAttribute('hidden');
+                                const inp = wrap.querySelector('input');
+                                if (inp) setTimeout(function() { inp.focus(); }, 80);
+                            }
+                        });
+                        customOption.addEventListener('keydown', function(e) {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                const wrap = document.getElementById('customContractAddressWrap');
+                                if (wrap) {
+                                    wrap.removeAttribute('hidden');
+                                    const inp = wrap.querySelector('input');
+                                    if (inp) setTimeout(function() { inp.focus(); }, 80);
+                                }
+                            }
+                        });
+                    }
+                }
+                currencyHidden.addEventListener('change', function() {
+                    const wrap = document.getElementById('customContractAddressWrap');
+                    if (!wrap) return;
+                    if (currencyHidden.value !== 'custom') {
+                        wrap.setAttribute('hidden', '');
+                        const inp = wrap.querySelector('input');
+                        if (inp) inp.value = '';
+                        activeFilters.contractAddress = '';
+                    }
+                });
+            }
+        });
 
         function escapeHTML(str) {
             const div = document.createElement('div');
@@ -7355,7 +7686,9 @@
                 const value   = optionEl.dataset.value;
                 const label   = optionEl.querySelector('span').textContent;
 
-                document.getElementById(inputId).value = value;
+                const hiddenInput = document.getElementById(inputId);
+                hiddenInput.value = value;
+                hiddenInput.dispatchEvent(new Event('change'));
 
                 getOptions(csEl).forEach(function(opt) {
                     opt.setAttribute('aria-selected', 'false');
@@ -7527,7 +7860,9 @@
                     statuses: Array.from(
                         document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
                     ).filter(function(cb) { return cb.id && cb.id.startsWith('status-'); }).map(function(cb) { return cb.value; }),
-                    currency: document.getElementById('currencyFilter')?.value || 'all'
+                    currency: document.getElementById('currencyFilter')?.value || 'all',
+                    network: document.querySelector('input[name="chainId"]:checked')?.value || '',
+                    contractAddress: document.getElementById('contractAddressInput')?.value?.trim() || ''
                 },
                 createdAt: new Date().toISOString()
             };
@@ -7548,6 +7883,8 @@
             activeFilters.categories = Array.isArray(f.categories) ? f.categories.slice() : [];
             activeFilters.statuses = Array.isArray(f.statuses) && f.statuses.length ? f.statuses.slice() : ['completed', 'pending'];
             activeFilters.currency = f.currency || 'all';
+            activeFilters.network = f.network || '';
+            activeFilters.contractAddress = f.contractAddress || '';
             const df = document.getElementById('dateFrom');
             const dt = document.getElementById('dateTo');
             if (df) df.value = activeFilters.dateFrom || '';
@@ -7565,6 +7902,17 @@
             const cur = document.getElementById('currencyFilter');
             if (cur) cur.value = activeFilters.currency;
             if (window.syncComboDisplay) syncComboDisplay('currencyFilter', activeFilters.currency || 'all');
+            const networkRadio = document.querySelector('input[name="chainId"][value="' + activeFilters.network + '"]');
+            if (networkRadio) networkRadio.checked = true;
+            const customWrap = document.getElementById('customContractAddressWrap');
+            const contractInput = document.getElementById('contractAddressInput');
+            if (activeFilters.currency === 'custom' && activeFilters.contractAddress) {
+                if (customWrap) customWrap.removeAttribute('hidden');
+                if (contractInput) contractInput.value = activeFilters.contractAddress;
+            } else {
+                if (customWrap) customWrap.setAttribute('hidden', '');
+                if (contractInput) contractInput.value = '';
+            }
             applyFilters();
         }
 
@@ -8212,6 +8560,10 @@
         window.deletePreset = deletePreset;
         window.showExportDialog = showExportDialog;
         window.applyTransactionPagination = applyTransactionPagination;
+        window.selectWalletScope = selectWalletScope;
+        window.syncCustomContractAddress = syncCustomContractAddress;
+        window.clearNetworkFilter = clearNetworkFilter;
+        window.clearContractAddressFilter = clearContractAddressFilter;
     </script>
 
     <!-- Hamburger Menu Script -->
