@@ -1917,7 +1917,13 @@
             to { opacity: 1; }
         }
 
+        /* Reset auth-enhancements.css .modal (biometric overlay) — inner dialog must stay in flex flow */
         .modal {
+            position: relative;
+            top: auto;
+            right: auto;
+            bottom: auto;
+            left: auto;
             background: white;
             border-radius: 16px;
             max-width: 480px;
@@ -1987,6 +1993,55 @@
         }
         #connectModal .modal-body {
             overflow: visible;
+        }
+
+        /* DEV: Test scenario selector (connect modal) */
+        .connect-test-scenarios {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1.5px dashed var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            margin-bottom: 1.25rem;
+        }
+        .test-scenarios-label {
+            display: block;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .scenario-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+        .scenario-pill {
+            padding: 0.25rem 0.625rem;
+            border-radius: 999px;
+            border: 1.5px solid var(--border-subtle);
+            background: white;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            line-height: 1.4;
+        }
+        .scenario-pill:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+        .scenario-pill:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .scenario-pill.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
         }
 
         /* Notification Modal Specific Styles */
@@ -2141,6 +2196,11 @@
 
         .notification-modal .modal-footer .btn {
             width: 100%;
+        }
+
+        .notification-action-btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
         }
 
         /* Button Base Styles */
@@ -3017,6 +3077,16 @@
                 </button>
             </div>
             <div class="modal-body">
+                <!-- DEV: Test scenario selector — remove before production -->
+                <div class="connect-test-scenarios" id="connectTestScenarios" role="group" aria-label="Test scenario selector">
+                    <span class="test-scenarios-label">DEV · Simulate scenario</span>
+                    <div class="scenario-pills">
+                        <button type="button" class="scenario-pill active" data-scenario="happy" onclick="setConnectScenario('happy', this)">✓ Happy Path</button>
+                        <button type="button" class="scenario-pill" data-scenario="wrong-network" onclick="setConnectScenario('wrong-network', this)">Wrong Network</button>
+                        <button type="button" class="scenario-pill" data-scenario="not-installed" onclick="setConnectScenario('not-installed', this)">Not Installed</button>
+                        <button type="button" class="scenario-pill" data-scenario="user-rejected" onclick="setConnectScenario('user-rejected', this)">User Rejected</button>
+                    </div>
+                </div>
                 <p class="modal-desc" id="connectModalDesc">Unera is your gateway to impact. Select a supported wallet to authenticate and continue.</p>
                 <div class="wallet-grid">
                     <button class="wallet-option-card recommended" onclick="handleWalletConnect('metamask')">
@@ -3111,7 +3181,9 @@
             const icon = document.getElementById('notificationIcon');
             const messageEl = document.getElementById('notificationMessage');
             const titleEl = document.getElementById('notificationTitle');
-            
+            const footer = modal ? modal.querySelector('.modal-footer') : null;
+            if (!modal || !messageEl || !titleEl) return;
+
             titleEl.textContent = title;
             if (options.useHtml) {
                 messageEl.innerHTML = message;
@@ -3120,7 +3192,7 @@
                 messageEl.textContent = message;
                 messageEl.classList.remove('impact-detail-wrapper');
             }
-            
+
             if (options.icon) {
                 icon.className = 'notification-icon impact-style';
                 icon.textContent = options.icon;
@@ -3135,19 +3207,41 @@
                 }
                 icon.innerHTML = defaultCheckSvg;
             }
-            
+
+            if (footer) {
+                const existing = footer.querySelector('.notification-action-btn');
+                if (existing) existing.remove();
+                if (options.actionLabel && options.actionFn) {
+                    const actionBtn = document.createElement('button');
+                    actionBtn.className = 'btn btn-primary notification-action-btn';
+                    actionBtn.textContent = options.actionLabel;
+                    actionBtn.onclick = () => {
+                        closeNotificationModal();
+                        options.actionFn();
+                    };
+                    footer.insertBefore(actionBtn, footer.firstChild);
+                }
+            }
+
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
+
             setTimeout(() => {
-                const closeBtn = modal.querySelector('.modal-close');
-                if (closeBtn) closeBtn.focus();
+                const primaryBtn = footer && footer.querySelector('.notification-action-btn');
+                const fallback = modal.querySelector('.modal-close');
+                if (primaryBtn) primaryBtn.focus();
+                else if (fallback) fallback.focus();
             }, 100);
         }
 
         function closeNotificationModal() {
-            document.getElementById('notificationModal').classList.remove('active');
-            document.body.style.overflow = '';
+            const modal = document.getElementById('notificationModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                const actionBtn = modal.querySelector('.notification-action-btn');
+                if (actionBtn) actionBtn.remove();
+            }
         }
 
         function showConfirmation(message, title, onConfirm, onCancel = null) {
@@ -3176,9 +3270,23 @@
         }
 
         // ==================== CONNECT MODAL ====================
+        window._connectScenario = 'happy';
+
+        function setConnectScenario(scenario, btn) {
+            window._connectScenario = scenario;
+            document.querySelectorAll('#connectModal .scenario-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
         function openConnectModal() {
             const modal = document.getElementById('connectModal');
             if (!modal) return;
+
+            window._connectScenario = 'happy';
+            document.querySelectorAll('#connectModal .scenario-pill').forEach(p => p.classList.remove('active'));
+            const happyPill = modal.querySelector('.scenario-pill[data-scenario="happy"]');
+            if (happyPill) happyPill.classList.add('active');
+
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             modal.setAttribute('aria-hidden', 'false');
@@ -3186,13 +3294,22 @@
             if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
         }
 
-        function closeConnectModal(event) {
+        function closeConnectModal(event, skipFocusRestore) {
             const modal = document.getElementById('connectModal');
             if (!modal) return;
-            if (event && event.target !== modal) return;
+            const shouldClose =
+                (event && event.target && event.target.id === 'connectModal') ||
+                (!event);
+            if (!shouldClose) return;
             modal.classList.remove('active');
             document.body.style.overflow = '';
             modal.setAttribute('aria-hidden', 'true');
+            if (!skipFocusRestore) {
+                const navConnectBtn = document.getElementById('navConnectBtn');
+                if (navConnectBtn && !navConnectBtn.classList.contains('hidden')) {
+                    navConnectBtn.focus();
+                }
+            }
         }
 
         function handleWalletConnect(provider) {
@@ -3203,48 +3320,102 @@
                 brave: 'Brave Wallet',
                 ledger: 'Ledger'
             };
+
+            const INSTALL_LINKS = {
+                metamask: 'https://metamask.io/download/',
+                walletconnect: 'https://walletconnect.com/',
+                coinbase: 'https://www.coinbase.com/wallet/downloads',
+                brave: 'https://brave.com/download/',
+                ledger: 'https://www.ledger.com/ledger-live'
+            };
+
+            const name = providerNames[provider] || provider;
             const modalBody = document.querySelector('#connectModal .modal-body');
             const originalContent = modalBody.innerHTML;
+
             modalBody.innerHTML = `
                 <div class="modal-loading">
                     <div class="spinner"></div>
-                    <p>Connecting to ${providerNames[provider] || provider}...</p>
+                    <p>Connecting to ${name}...</p>
                 </div>
             `;
 
             setTimeout(() => {
-                closeConnectModal();
-                // Restore modal body so wallet grid is available next time
                 modalBody.innerHTML = originalContent;
 
-                // Update UI to connected state
+                const scenario = window._connectScenario || 'happy';
+
+                if (scenario === 'wrong-network') {
+                    closeConnectModal(undefined, true);
+                    showNotification(
+                        `${name} is connected to an unsupported network. Unera requires Base or Sepolia — switch your wallet to the correct network and try again.`,
+                        'warning',
+                        'Wrong Network',
+                        {
+                            actionLabel: 'Switch to Base (Simulated)',
+                            actionFn: openConnectModal
+                        }
+                    );
+                    return;
+                }
+
+                if (scenario === 'not-installed') {
+                    closeConnectModal(undefined, true);
+                    showNotification(
+                        `${name} isn't installed in this browser. Install it to continue, then come back and connect.`,
+                        'error',
+                        'Wallet Not Found',
+                        {
+                            actionLabel: `Install ${name}`,
+                            actionFn: () => {
+                                window.open(INSTALL_LINKS[provider] || 'https://metamask.io/download/', '_blank');
+                                openConnectModal();
+                            }
+                        }
+                    );
+                    return;
+                }
+
+                if (scenario === 'user-rejected') {
+                    closeConnectModal(undefined, true);
+                    showNotification(
+                        `You declined the connection request in ${name}. No action was taken — you can try again whenever you're ready.`,
+                        'warning',
+                        'Connection Declined',
+                        {
+                            actionLabel: 'Try Again',
+                            actionFn: openConnectModal
+                        }
+                    );
+                    return;
+                }
+
+                closeConnectModal(undefined, true);
+
                 const demoAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f';
                 const shortAddress = demoAddress.substring(0, 6) + '...' + demoAddress.substring(demoAddress.length - 4);
-                
-                // Hide CONNECT button, show wallet link
-                document.getElementById('navConnectBtn').classList.add('hidden');
-                document.getElementById('walletNavLink').style.display = 'inline-block';
 
-                // Update dropdown wallet badge (desktop)
+                const navConnectBtn = document.getElementById('navConnectBtn');
+                const walletNavLink = document.getElementById('walletNavLink');
+                if (navConnectBtn) navConnectBtn.classList.add('hidden');
+                if (walletNavLink) walletNavLink.style.display = 'inline-block';
+
                 const dropdownWallet = document.getElementById('dropdownWalletAddress');
                 if (dropdownWallet) dropdownWallet.textContent = shortAddress;
-                
-                // Update mobile dropdown wallet badge
+
                 const mobileDropdownWallet = document.getElementById('mobileDropdownWalletAddress');
                 if (mobileDropdownWallet) mobileDropdownWallet.textContent = shortAddress;
 
-                // Show disconnect items
                 const disconnectItem = document.getElementById('disconnectWalletItem');
                 if (disconnectItem) disconnectItem.style.display = 'flex';
                 const disconnectItemMobile = document.getElementById('disconnectWalletItemMobile');
                 if (disconnectItemMobile) disconnectItemMobile.style.display = 'flex';
-                
-                // Store connection
+
                 localStorage.setItem('walletConnected', 'true');
                 localStorage.setItem('walletAddress', demoAddress);
                 localStorage.setItem('walletProvider', provider);
-                
-                showNotification(`${providerNames[provider] || provider} connected successfully!`, 'success');
+
+                showNotification(`${name} connected successfully!`, 'success');
             }, 1500);
         }
 

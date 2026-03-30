@@ -323,6 +323,118 @@
             opacity: 1;
         }
 
+        /* Wallet Nav Trigger */
+        .nav-wallet-trigger {
+            cursor: pointer;
+            border-radius: 0.375rem;
+            padding: 0.125rem 0.25rem;
+            transition: background 0.15s;
+            outline: none;
+        }
+        .nav-wallet-trigger:hover {
+            background: var(--neutral-100);
+        }
+        .nav-wallet-trigger:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .nav-wallet-address-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .nav-wallet-chevron {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+            opacity: 0.55;
+            transition: transform 0.18s cubic-bezier(0.28, 0.11, 0.32, 1), opacity 0.18s;
+        }
+
+        .nav-wallet-trigger:hover .nav-wallet-chevron,
+        .nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron {
+            opacity: 1;
+        }
+
+        .nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron {
+            transform: rotate(180deg);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .nav-wallet-chevron { transition-duration: 0.01ms !important; }
+        }
+
+        /* Wallet Nav Dropdown — mirrors .network-dropdown-nav */
+        .wallet-nav-dropdown {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            left: 0;
+            width: 220px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.12s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+            padding: 0.375rem 0;
+        }
+        .wallet-nav-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .wallet-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            width: 100%;
+            min-height: 44px;
+            padding: 0 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-align: left;
+            transition: background 0.1s;
+        }
+        .wallet-nav-item:hover {
+            background: var(--neutral-100);
+        }
+        .wallet-nav-item:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: -2px;
+        }
+        .wallet-nav-item--destructive {
+            color: var(--text-primary);
+        }
+        .wallet-nav-item--destructive:hover {
+            background: rgba(239, 68, 68, 0.06);
+            color: var(--error);
+        }
+
+        .wallet-nav-divider {
+            height: 1px;
+            background: var(--border-subtle);
+            margin: 0.25rem 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .wallet-nav-dropdown,
+            .nav-wallet-trigger {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+
         /* User Profile in Nav (dropdown trigger wrapper) */
         .user-profile-nav {
             display: flex;
@@ -2283,36 +2395,125 @@
             outline-offset: 2px;
         }
 
-        .filter-section select {
+        /* Custom combobox — Network & Token filters */
+        .filter-cs {
+            position: relative;
+        }
+
+        .filter-cs-trigger {
             width: 100%;
             height: 52px;
-            padding: 0 3rem 0 1rem;
+            padding: 0 1rem;
             border: 2px solid var(--border-subtle);
             border-radius: 0.75rem;
             font-size: 1rem;
             font-family: var(--font-body);
             background: var(--neutral-50);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%236B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
             color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            text-align: left;
         }
 
-        .filter-section select:hover {
-            border-color: var(--border-default);
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%2310B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
-        }
-
-        .filter-section select:focus {
+        .filter-cs-trigger:hover {
             border-color: var(--primary-green);
+        }
+
+        .filter-cs-trigger:focus {
             outline: 2px solid var(--primary-green);
             outline-offset: 1px;
+            border-color: var(--primary-green);
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .filter-cs-trigger[aria-expanded="true"] {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .filter-cs-trigger[aria-expanded="true"] .filter-cs-chevron {
+            transform: rotate(180deg);
+            color: var(--primary-green);
+        }
+
+        .filter-cs-value {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .filter-cs-chevron {
+            flex-shrink: 0;
+            color: var(--neutral-600);
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        /* Panel — rendered fixed to escape overflow:hidden clipping */
+        .filter-cs-list {
+            position: fixed;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0.375rem;
+            z-index: 10020;
+            animation: filterCsFadeIn 0.15s ease-out;
+            overflow-y: auto;
+            max-height: 260px;
+        }
+
+        .filter-cs-list[hidden] {
+            display: none;
+        }
+
+        @keyframes filterCsFadeIn {
+            from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .filter-cs-option {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.5rem;
+            font-size: 0.938rem;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background 0.15s;
+            user-select: none;
+        }
+
+        .filter-cs-option:hover {
+            background: rgba(16, 185, 129, 0.07);
+        }
+
+        .filter-cs-option:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: -2px;
+            background: rgba(16, 185, 129, 0.07);
+        }
+
+        .filter-cs-option[aria-selected="true"] {
+            color: var(--primary-green);
+            font-weight: 700;
+        }
+
+        .filter-cs-option[aria-selected="true"] .filter-cs-check {
+            opacity: 1;
+        }
+
+        .filter-cs-check {
+            flex-shrink: 0;
+            opacity: 0;
+            color: var(--primary-green);
+            transition: opacity 0.15s;
         }
 
         .filter-modal-footer {
@@ -2569,6 +2770,210 @@
             padding: 0;
             overflow-y: auto;
             flex: 1;
+        }
+
+        /* ── Wallet Selection Modal (aligned with dashboard connectModal) ── */
+        #walletSelectionModal {
+            z-index: 10010;
+        }
+        #walletSelectionModal .modal {
+            display: block;
+            max-width: 480px;
+            width: 90%;
+            overflow: visible;
+            max-height: none;
+        }
+        #walletSelectionModal .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #walletSelectionModal .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        #walletSelectionModal .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #64748B;
+        }
+        #walletSelectionModal .modal-close:hover {
+            background: var(--neutral-100);
+        }
+        #walletSelectionModal .modal-close:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        #walletSelectionModal .modal-body {
+            padding: 1.5rem;
+            overflow: visible;
+        }
+
+        .connect-test-scenarios {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1.5px dashed var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            margin-bottom: 1.25rem;
+        }
+        .test-scenarios-label {
+            display: block;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .scenario-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+        .scenario-pill {
+            padding: 0.25rem 0.625rem;
+            border-radius: 999px;
+            border: 1.5px solid var(--border-subtle);
+            background: white;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            line-height: 1.4;
+        }
+        .scenario-pill:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+        .scenario-pill:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .scenario-pill.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        .modal-desc {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .wallet-option-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1rem 0.5rem;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            gap: 0.5rem;
+            font-family: var(--font-body);
+        }
+        .wallet-option-card:hover {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.02);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+        .wallet-option-card:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+        .wallet-option-card .wallet-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .wallet-option-card .wallet-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+        .wallet-option-card .wallet-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        .wallet-option-card.recommended {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(14, 165, 233, 0.05));
+            border-color: var(--primary-green);
+        }
+
+        .wallet-note {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 1rem 0 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .wallet-note small {
+            opacity: 0.8;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--neutral-200);
+            border-top-color: var(--primary-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .modal-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        .modal-loading .spinner {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .wallet-option-card { transition-duration: 0.01ms !important; }
+            .scenario-pill { transition-duration: 0.01ms !important; }
+        }
+
+        @media (max-width: 480px) {
+            .wallet-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Transaction Summary Hero Section */
@@ -2862,6 +3267,11 @@
             color: #3b82f6;
         }
 
+        .toast.warning .toast-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+        }
+
         .toast-content {
             flex: 1;
         }
@@ -2871,6 +3281,37 @@
             font-weight: 600;
             color: var(--text-primary);
             line-height: 1.4;
+        }
+
+        .toast.toast--with-action {
+            animation: slideInRight 0.3s ease-out;
+            align-items: flex-start;
+        }
+        .toast.toast--with-action .toast-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+        }
+        .toast-action-btn {
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 600;
+            min-height: 46px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            background: var(--primary-green);
+            color: white;
+            transition: background 0.2s;
+        }
+        .toast-action-btn:hover {
+            background: #059669;
+        }
+        .toast-action-btn:focus {
+            outline: 3px solid rgba(16, 185, 129, 0.35);
+            outline-offset: 2px;
         }
 
         @media (max-width: 768px) {
@@ -3654,9 +4095,48 @@
                         <div class="nav-wallet-blockie"></div>
                         <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
                     </div>
-                    <div class="nav-wallet-info">
-                        <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
+                    <div class="nav-wallet-info nav-wallet-trigger"
+                         role="button" tabindex="0"
+                         aria-haspopup="menu" aria-expanded="false"
+                         aria-label="Wallet options"
+                         onclick="toggleWalletDropdown(event)"
+                         onkeydown="handleWalletTriggerKey(event)">
+                        <span class="nav-wallet-address-row">
+                            <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
+                            <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </span>
                         <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
+                    </div>
+
+                    <!-- Wallet Options Dropdown -->
+                    <div class="wallet-nav-dropdown" id="walletNavDropdown"
+                         role="menu" aria-label="Wallet options"
+                         onclick="event.stopPropagation()">
+
+                        <button class="wallet-nav-item" role="menuitem" onclick="switchWalletFromNav()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M17 1l4 4-4 4"/>
+                                <path d="M3 11V9a4 4 0 014-4h14"/>
+                                <path d="M7 23l-4-4 4-4"/>
+                                <path d="M21 13v2a4 4 0 01-4 4H3"/>
+                            </svg>
+                            Switch wallet
+                        </button>
+
+                        <div class="wallet-nav-divider" role="separator"></div>
+
+                        <button class="wallet-nav-item wallet-nav-item--destructive" role="menuitem"
+                                onclick="disconnectWalletFromNav()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            Disconnect
+                        </button>
+
                     </div>
                     <div class="nav-network-badge"
                          role="button"
@@ -5142,6 +5622,61 @@
             if (dropdown) dropdown.classList.toggle('show');
         }
 
+        /* ── Wallet Nav Dropdown ──────────────────────────────────── */
+
+        function closeWalletNavDropdown() {
+            const dropdown = document.getElementById('walletNavDropdown');
+            const trigger = document.querySelector('.nav-wallet-trigger');
+            if (dropdown) dropdown.classList.remove('show');
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        }
+
+        function toggleWalletDropdown(event) {
+            event.stopPropagation();
+            // Close other dropdowns
+            closeNetworkDropdown();
+            const userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) userDropdown.classList.remove('show');
+            closeNotificationPanel();
+
+            const dropdown = document.getElementById('walletNavDropdown');
+            const trigger = document.querySelector('.nav-wallet-trigger');
+            if (!dropdown || !trigger) return;
+            const isOpen = dropdown.classList.toggle('show');
+            trigger.setAttribute('aria-expanded', String(isOpen));
+            if (isOpen) {
+                const firstItem = dropdown.querySelector('[role="menuitem"]');
+                if (firstItem) firstItem.focus();
+            }
+        }
+
+        function handleWalletTriggerKey(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleWalletDropdown(event);
+            } else if (event.key === 'Escape') {
+                closeWalletNavDropdown();
+                document.querySelector('.nav-wallet-trigger')?.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                const dropdown = document.getElementById('walletNavDropdown');
+                if (!dropdown) return;
+                if (!dropdown.classList.contains('show')) toggleWalletDropdown(event);
+                const firstItem = dropdown.querySelector('[role="menuitem"]');
+                if (firstItem) firstItem.focus();
+            }
+        }
+
+        function switchWalletFromNav() {
+            closeWalletNavDropdown();
+            showWalletSelectionModal();
+        }
+
+        function disconnectWalletFromNav() {
+            closeWalletNavDropdown();
+            doDisconnectWallet();
+        }
+
         /* ── Network Switcher ─────────────────────────────────────── */
 
         function closeNetworkDropdown() {
@@ -5391,6 +5926,12 @@
             if (networkDropdown && networkDropdown.classList.contains('show')) {
                 if (!navWalletDisplay?.contains(event.target)) {
                     closeNetworkDropdown();
+                }
+            }
+            const walletNavDropdown = document.getElementById('walletNavDropdown');
+            if (walletNavDropdown && walletNavDropdown.classList.contains('show')) {
+                if (!navWalletDisplay?.contains(event.target)) {
+                    closeWalletNavDropdown();
                 }
             }
         });
@@ -5744,7 +6285,7 @@
             modal.classList.add('active');
             modal.setAttribute('aria-hidden', 'false');
             
-            const firstInput = modal.querySelector('button, input, select');
+            const firstInput = modal.querySelector('button, input:not([type="hidden"]), select');
             if (firstInput) {
                 setTimeout(() => firstInput.focus(), 100);
             }
@@ -5767,7 +6308,7 @@
 
         function trapFocus(modal) {
             const focusableElements = modal.querySelectorAll(
-                'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
             );
             const firstElement = focusableElements[0];
             const lastElement = focusableElements[focusableElements.length - 1];
@@ -5784,6 +6325,7 @@
                 }
                 
                 if (e.key === 'Escape') {
+                    if (window.closeOpenFilterCombo && window.closeOpenFilterCombo()) return;
                     closeFilterPanel();
                 }
             };
@@ -6043,11 +6585,13 @@
         function clearNetworkFilter() {
             activeFilters.network = 'all';
             document.getElementById('networkFilter').value = 'all';
+            if (window.syncComboDisplay) syncComboDisplay('networkFilter', 'all');
         }
 
         function clearTokenFilter() {
             activeFilters.token = 'all';
             document.getElementById('tokenFilter').value = 'all';
+            if (window.syncComboDisplay) syncComboDisplay('tokenFilter', 'all');
         }
 
         function clearAllFilters() {
@@ -6067,6 +6611,10 @@
             });
             document.getElementById('networkFilter').value = 'all';
             document.getElementById('tokenFilter').value = 'all';
+            if (window.syncComboDisplay) {
+                syncComboDisplay('networkFilter', 'all');
+                syncComboDisplay('tokenFilter', 'all');
+            }
             
             document.getElementById('activeFilters').style.display = 'none';
             document.getElementById('activeFilters').innerHTML = '';
@@ -6215,6 +6763,10 @@
             
             document.getElementById('networkFilter').value = preset.filters.network;
             document.getElementById('tokenFilter').value = preset.filters.token;
+            if (window.syncComboDisplay) {
+                syncComboDisplay('networkFilter', preset.filters.network || 'all');
+                syncComboDisplay('tokenFilter', preset.filters.token || 'all');
+            }
             
             applyFilters();
         }
@@ -6239,6 +6791,154 @@
             div.textContent = str;
             return div.innerHTML;
         }
+
+        // ========================================
+        // FILTER COMBOBOX CONTROLLER
+        // ========================================
+
+        (function () {
+            let openCombo = null;
+
+            function getOptions(csEl) {
+                return Array.from(csEl.querySelectorAll('.filter-cs-option'));
+            }
+
+            function positionList(csEl) {
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list = csEl.querySelector('.filter-cs-list');
+                const rect = trigger.getBoundingClientRect();
+                list.style.top    = (rect.bottom + 6) + 'px';
+                list.style.left   = rect.left + 'px';
+                list.style.width  = rect.width + 'px';
+            }
+
+            function openCombobox(csEl) {
+                if (openCombo && openCombo !== csEl) closeCombobox(openCombo);
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list    = csEl.querySelector('.filter-cs-list');
+                list.removeAttribute('hidden');
+                trigger.setAttribute('aria-expanded', 'true');
+                positionList(csEl);
+                openCombo = csEl;
+                const selected = csEl.querySelector('.filter-cs-option[aria-selected="true"]')
+                              || getOptions(csEl)[0];
+                if (selected) selected.focus();
+            }
+
+            function closeCombobox(csEl) {
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list    = csEl.querySelector('.filter-cs-list');
+                list.setAttribute('hidden', '');
+                trigger.setAttribute('aria-expanded', 'false');
+                if (openCombo === csEl) openCombo = null;
+            }
+
+            function selectOption(csEl, optionEl) {
+                const inputId = csEl.dataset.csId;
+                const value   = optionEl.dataset.value;
+                const label   = optionEl.querySelector('span').textContent;
+
+                document.getElementById(inputId).value = value;
+
+                getOptions(csEl).forEach(opt => {
+                    opt.setAttribute('aria-selected', 'false');
+                    opt.setAttribute('tabindex', '-1');
+                });
+                optionEl.setAttribute('aria-selected', 'true');
+                optionEl.setAttribute('tabindex', '0');
+                csEl.querySelector('.filter-cs-value').textContent = label;
+
+                closeCombobox(csEl);
+                csEl.querySelector('.filter-cs-trigger').focus();
+            }
+
+            function syncComboDisplay(inputId, value) {
+                const csEl = document.querySelector(`.filter-cs[data-cs-id="${CSS.escape(inputId)}"]`);
+                if (!csEl) return;
+                const opt = csEl.querySelector(`.filter-cs-option[data-value="${CSS.escape(value)}"]`)
+                         || csEl.querySelector('.filter-cs-option[data-value="all"]');
+                if (!opt) return;
+                getOptions(csEl).forEach(o => {
+                    o.setAttribute('aria-selected', 'false');
+                    o.setAttribute('tabindex', '-1');
+                });
+                opt.setAttribute('aria-selected', 'true');
+                opt.setAttribute('tabindex', '0');
+                csEl.querySelector('.filter-cs-value').textContent = opt.querySelector('span').textContent;
+            }
+
+            window.syncComboDisplay = syncComboDisplay;
+
+            window.closeOpenFilterCombo = function () {
+                if (openCombo) { closeCombobox(openCombo); return true; }
+                return false;
+            };
+
+            function handleKeydown(csEl, e) {
+                const options = getOptions(csEl);
+                const idx     = options.findIndex(o => o === document.activeElement);
+                const list    = csEl.querySelector('.filter-cs-list');
+                const isOpen  = !list.hasAttribute('hidden');
+
+                if (e.key === 'Escape') {
+                    if (isOpen) {
+                        e.stopPropagation();
+                        closeCombobox(csEl);
+                        csEl.querySelector('.filter-cs-trigger').focus();
+                    }
+                    return;
+                }
+
+                if (!isOpen) {
+                    if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
+                        e.preventDefault();
+                        openCombobox(csEl);
+                    }
+                    return;
+                }
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    options[(idx + 1) % options.length].focus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    options[(idx - 1 + options.length) % options.length].focus();
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (idx >= 0) selectOption(csEl, options[idx]);
+                } else if (e.key === 'Tab') {
+                    closeCombobox(csEl);
+                }
+            }
+
+            function initCombobox(csEl) {
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list    = csEl.querySelector('.filter-cs-list');
+
+                trigger.addEventListener('click', () => {
+                    list.hasAttribute('hidden') ? openCombobox(csEl) : closeCombobox(csEl);
+                });
+
+                csEl.addEventListener('keydown', e => handleKeydown(csEl, e));
+
+                getOptions(csEl).forEach(opt => {
+                    opt.addEventListener('mousedown', e => e.preventDefault());
+                    opt.addEventListener('click', () => selectOption(csEl, opt));
+                });
+            }
+
+            document.addEventListener('click', e => {
+                if (!openCombo) return;
+                if (!openCombo.contains(e.target)) closeCombobox(openCombo);
+            });
+
+            window.addEventListener('resize', () => { if (openCombo) positionList(openCombo); });
+            document.addEventListener('scroll', () => { if (openCombo) positionList(openCombo); }, true);
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.filter-cs').forEach(csEl => initCombobox(csEl));
+            });
+        })();
 
         // ========================================
         // TRANSACTION DETAIL MODAL
@@ -6442,9 +7142,13 @@
             }
         }
 
-        // Toast Notification System
-        function showNotification(message, type = 'success') {
-            // Create container if it doesn't exist
+        // Toast Notification System (optional action CTA — matches dashboard scenario flows)
+        function showNotification(message, type = 'success', options = {}) {
+            if (typeof options !== 'object' || options === null) options = {};
+            const actionLabel = options.actionLabel;
+            const actionFn = options.actionFn;
+            const hasAction = typeof actionLabel === 'string' && typeof actionFn === 'function';
+
             let container = document.getElementById('toastContainer');
             if (!container) {
                 container = document.createElement('div');
@@ -6453,34 +7157,53 @@
                 document.body.appendChild(container);
             }
 
-            // Create toast element
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            
-            // Icon based on type
+            if (hasAction) toast.classList.add('toast--with-action');
+
             const icons = {
                 success: '✓',
                 error: '✕',
-                info: 'ℹ'
+                info: 'ℹ',
+                warning: '⚠'
             };
-            
-            toast.innerHTML = `
-                <div class="toast-icon">${icons[type] || icons.success}</div>
-                <div class="toast-content">
-                    <div class="toast-message">${message}</div>
-                </div>
-            `;
-            
+
+            const iconEl = document.createElement('div');
+            iconEl.className = 'toast-icon';
+            iconEl.textContent = icons[type] || icons.success;
+
+            const contentEl = document.createElement('div');
+            contentEl.className = 'toast-content';
+            const msgEl = document.createElement('div');
+            msgEl.className = 'toast-message';
+            msgEl.textContent = message;
+            contentEl.appendChild(msgEl);
+
+            if (hasAction) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'toast-action-btn';
+                btn.textContent = actionLabel;
+                btn.onclick = () => {
+                    toast.remove();
+                    if (container && container.children.length === 0) container.remove();
+                    actionFn();
+                };
+                contentEl.appendChild(btn);
+            }
+
+            toast.appendChild(iconEl);
+            toast.appendChild(contentEl);
             container.appendChild(toast);
-            
-            // Remove toast after animation completes
-            setTimeout(() => {
-                toast.remove();
-                // Remove container if no more toasts
-                if (container.children.length === 0) {
-                    container.remove();
-                }
-            }, 3000);
+
+            if (!hasAction) {
+                setTimeout(() => {
+                    toast.remove();
+                    if (container && container.children.length === 0) {
+                        container.remove();
+                    }
+                }, 3000);
+            }
         }
 
         function copyToClipboard(text, label) {
@@ -6501,104 +7224,122 @@
             showWalletSelectionModal();
         }
 
+        window._connectScenario = 'happy';
+
+        function setConnectScenario(scenario, btn) {
+            window._connectScenario = scenario;
+            document.querySelectorAll('#walletSelectionModal .scenario-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
         // Show wallet selection modal
         function showWalletSelectionModal() {
-            const modal = document.createElement('div');
-            modal.id = 'walletSelectionModal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 10000;
-                backdrop-filter: blur(4px);
-            `;
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                background: white;
-                border-radius: 1.5rem;
-                padding: 0;
-                max-width: 420px;
-                width: 90%;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                position: relative;
-                overflow: hidden;
-            `;
-            
-            modalContent.innerHTML = `
-                <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
-                    <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0; color: #1a1a1a;">
-                        Connect a wallet
-                    </h2>
-                    <button onclick="closeWalletSelectionModal()" style="
-                        background: transparent;
-                        border: none;
-                        font-size: 1.5rem;
-                        color: #666;
-                        cursor: pointer;
-                        padding: 0;
-                        width: 32px;
-                        height: 32px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 50%;
-                        transition: background 0.2s;
-                    " onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
-                        ×
-                    </button>
-                </div>
-                
-                <div style="padding: 1rem;">
-                    <button onclick="connectAndBindWallet('metamask')" style="
-                        width: 100%;
-                        display: flex;
-                        align-items: center;
-                        gap: 1rem;
-                        padding: 1rem;
-                        background: white;
-                        border: 1.5px solid #e0e0e0;
-                        border-radius: 0.75rem;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                        margin-bottom: 0.75rem;
-                    " onmouseover="this.style.borderColor='#10B981'" onmouseout="this.style.borderColor='#e0e0e0'">
-                        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🦊</div>
-                        <div style="flex: 1; text-align: left;">
-                            <div style="font-weight: 600; font-size: 1rem; color: #1a1a1a;">MetaMask</div>
-                            <div style="font-size: 0.813rem; color: #666;">Connect using browser extension</div>
+            // Remove any stale instance
+            const stale = document.getElementById('walletSelectionModal');
+            if (stale) stale.remove();
+
+            window._connectScenario = 'happy';
+
+            const overlay = document.createElement('div');
+            overlay.id = 'walletSelectionModal';
+            overlay.className = 'modal-overlay active';
+            overlay.setAttribute('role', 'dialog');
+            overlay.setAttribute('aria-modal', 'true');
+            overlay.setAttribute('aria-labelledby', 'connectModalTitle');
+            overlay.setAttribute('aria-describedby', 'connectModalDesc');
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) closeWalletSelectionModal();
+            });
+
+            overlay.innerHTML = `
+                <div class="modal" onclick="event.stopPropagation()">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="connectModalTitle">Connect. Contribute. Change lives.</h2>
+                        <button type="button" class="modal-close" onclick="closeWalletSelectionModal()" aria-label="Close modal">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="connect-test-scenarios" id="connectTestScenarios" role="group" aria-label="Test scenario selector">
+                            <span class="test-scenarios-label">DEV · Simulate scenario</span>
+                            <div class="scenario-pills">
+                                <button type="button" class="scenario-pill active" data-scenario="happy" onclick="setConnectScenario('happy', this)">✓ Happy Path</button>
+                                <button type="button" class="scenario-pill" data-scenario="wrong-network" onclick="setConnectScenario('wrong-network', this)">Wrong Network</button>
+                                <button type="button" class="scenario-pill" data-scenario="not-installed" onclick="setConnectScenario('not-installed', this)">Not Installed</button>
+                                <button type="button" class="scenario-pill" data-scenario="user-rejected" onclick="setConnectScenario('user-rejected', this)">User Rejected</button>
+                            </div>
                         </div>
-                    </button>
-                    
-                    <button onclick="connectAndBindWallet('walletconnect')" style="
-                        width: 100%;
-                        display: flex;
-                        align-items: center;
-                        gap: 1rem;
-                        padding: 1rem;
-                        background: white;
-                        border: 1.5px solid #e0e0e0;
-                        border-radius: 0.75rem;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                    " onmouseover="this.style.borderColor='#10B981'" onmouseout="this.style.borderColor='#e0e0e0'">
-                        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🔗</div>
-                        <div style="flex: 1; text-align: left;">
-                            <div style="font-weight: 600; font-size: 1rem; color: #1a1a1a;">WalletConnect</div>
-                            <div style="font-size: 0.813rem; color: #666;">Scan QR code with mobile wallet</div>
+                        <p class="modal-desc" id="connectModalDesc">Unera is your gateway to impact. Select a supported wallet to authenticate and continue.</p>
+                        <div class="wallet-grid">
+                            <button type="button" class="wallet-option-card recommended" onclick="handleWalletConnect('metamask')">
+                                <div class="wallet-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <path d="M20.3 5.1L13.5 9.9l1.3-3L20.3 5.1z" fill="#E17726" stroke="#E17726" stroke-width="0.25"/>
+                                        <path d="M3.7 5.1l6.7 4.9-1.2-3.1L3.7 5.1zM17.6 15.9l-1.8 2.8 3.9 1.1 1.1-3.8-3.2-.1zM3.3 16l1.1 3.8 3.9-1.1-1.8-2.8-3.2.1z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+                                        <path d="M8.1 11.1l-1.1 1.6 3.8.2-.1-4.1-2.6 2.3zM15.9 11.1l-2.6-2.4-.2 4.2 3.9-.2-1.1-1.6zM8.3 18.7l2.3-1.1-2-1.5-.3 2.6zM13.4 17.6l2.3 1.1-.3-2.6-2 1.5z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+                                        <path d="M15.7 18.7l-2.3-1.1.2 1.5v.7l2.1-1.1zM8.3 18.7l2.1 1.1v-.7l.2-1.5-2.3 1.1z" fill="#D5BFB2" stroke="#D5BFB2" stroke-width="0.25"/>
+                                        <path d="M10.5 14.4l-1.9-.6 1.4-.6.5 1.2zM13.5 14.4l.5-1.2 1.4.6-1.9.6z" fill="#233447" stroke="#233447" stroke-width="0.25"/>
+                                        <path d="M8.3 18.7l.3-2.8-2.1.1 1.8 2.7zM15.4 15.9l.3 2.8 1.8-2.7-2.1-.1zM17 12.7l-3.9.2.4 2 .5-1.2 1.4.6 1.6-1.6zM8.6 13.8l1.4-.6.5 1.2.4-2-3.9-.2 1.6 1.6z" fill="#CC6228" stroke="#CC6228" stroke-width="0.25"/>
+                                        <path d="M7 12.7l1.7 3.3-.1-1.6L7 12.7zM15.4 14.4l-.1 1.6 1.7-3.3-1.6 1.7zM10.9 12.9l-.4 2 .5 2.6.1-3-.2-1.6zM13.1 12.9l-.2 1.5.1 3.1.5-2.6-.4-2z" fill="#E27525" stroke="#E27525" stroke-width="0.25"/>
+                                        <path d="M13.5 14.4l-.5 2.6.4.3 2-1.5.1-1.6-2 .2zM8.6 13.8l.1 1.6 2 1.5.4-.3-.5-2.6-2-.2z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+                                        <path d="M13.6 20.2v-.7l-.2-.2h-2.8l-.2.2v.7l-2.1-1.1.7.6 1.5 1h2.9l1.5-1 .7-.6-2-1z" fill="#C0AC9D" stroke="#C0AC9D" stroke-width="0.25"/>
+                                        <path d="M13.4 17.6l-.4-.3h-2l-.4.3-.2 1.5.2-.2h2.8l.2.2-.2-1.5z" fill="#161616" stroke="#161616" stroke-width="0.25"/>
+                                        <path d="M20.7 10.4l.6-2.8-1-2.5-7.9 5.9 3 2.5 4.3 1.2.9-1.1-.4-.3.6-.6-.5-.4.6-.5-.4-.3zM3.7 7.6l.6 2.8-.4.3.6.5-.5.4.6.6-.4.3.9 1.1 4.3-1.2 3-2.5L4.7 5.1l-1 2.5z" fill="#763E1A" stroke="#763E1A" stroke-width="0.25"/>
+                                        <path d="M19.8 13.6l-4.3-1.2 1.3 1.6-1.7 3.3 2.3-.1h3.4l-1-3.6zM8.5 12.4l-4.3 1.2-1 3.6h3.4l2.3.1-1.7-3.3 1.3-1.6zM13.1 12.9l.3-4.7 1.4-3.8h-6.2l1.4 3.8.3 4.7.1 1.6v3.1h2l.1-3.1-.4-1.6z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+                                    </svg>
+                                </div>
+                                <span class="wallet-name">MetaMask</span>
+                            </button>
+                            <button type="button" class="wallet-option-card" onclick="handleWalletConnect('walletconnect')">
+                                <div class="wallet-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <path d="M5.5 9.5c3.5-3.5 9.2-3.5 12.7 0l.4.4c.2.2.2.5 0 .7l-1.4 1.4c-.1.1-.3.1-.4 0l-.6-.6c-2.4-2.4-6.4-2.4-8.8 0l-.6.6c-.1.1-.3.1-.4 0L4.9 10.6c-.2-.2-.2-.5 0-.7l.6-.4zm15.7 2.9l1.3 1.3c.2.2.2.5 0 .7l-5.7 5.7c-.2.2-.5.2-.7 0l-4.1-4.1c-.1-.1-.2-.1-.2 0l-4.1 4.1c-.2.2-.5.2-.7 0l-5.7-5.7c-.2-.2-.2-.5 0-.7l1.3-1.3c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0z" fill="#3B99FC"/>
+                                    </svg>
+                                </div>
+                                <span class="wallet-name">WalletConnect</span>
+                            </button>
+                            <button type="button" class="wallet-option-card" onclick="handleWalletConnect('coinbase')">
+                                <div class="wallet-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" fill="#0052FF"/>
+                                        <path d="M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <span class="wallet-name">Coinbase</span>
+                            </button>
+                            <button type="button" class="wallet-option-card" onclick="handleWalletConnect('brave')">
+                                <div class="wallet-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2L2 7l2 9 8 6 8-6 2-9-10-5z" fill="#FB542B"/>
+                                        <path d="M12 2v20M22 7H2M20 16H4" stroke="white" stroke-width="1.5"/>
+                                    </svg>
+                                </div>
+                                <span class="wallet-name">Brave</span>
+                            </button>
+                            <button type="button" class="wallet-option-card" onclick="handleWalletConnect('ledger')">
+                                <div class="wallet-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <rect x="4" y="4" width="16" height="16" rx="2" fill="#333"/>
+                                        <path d="M7 7h3v3H7V7zM14 7h3v3h-3V7zM7 14h3v3H7v-3zM14 14h3v3h-3v-3z" fill="white"/>
+                                    </svg>
+                                </div>
+                                <span class="wallet-name">Ledger</span>
+                            </button>
                         </div>
-                    </button>
+                        <div class="wallet-note">
+                            <small>⚡ Powered by MetaMask and compatible wallets</small>
+                        </div>
+                    </div>
                 </div>
             `;
-            
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
+
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => {
+                const first = overlay.querySelector('.wallet-option-card');
+                if (first) first.focus();
+            });
         }
 
         // Close wallet selection modal
@@ -6607,31 +7348,102 @@
             if (modal) modal.remove();
         }
 
-        // Connect and bind wallet
-        async function connectAndBindWallet(provider) {
-            closeWalletSelectionModal();
-            
-            // Show connecting modal
+        function startWalletBindFlow(provider) {
             showConnectingModal(provider);
-            
-            // Simulate wallet connection (demo mode)
             setTimeout(async () => {
-                const demoAddress = provider === 'metamask' 
-                    ? `0x${Math.random().toString(16).substr(2, 40)}` 
-                    : `0x${Math.random().toString(16).substr(2, 40)}`;
-                
-                // Close connecting modal
+                const demoAddress = `0x${Math.random().toString(16).substr(2, 40)}`;
                 const connectingModal = document.getElementById('connectingModal');
                 if (connectingModal) connectingModal.remove();
-                
-                // Show signature request modal (with default name hint)
                 showSignatureModal(provider, demoAddress);
             }, 2000);
         }
 
+        function handleWalletConnect(provider) {
+            const providerNames = {
+                metamask: 'MetaMask',
+                walletconnect: 'WalletConnect',
+                coinbase: 'Coinbase Wallet',
+                brave: 'Brave Wallet',
+                ledger: 'Ledger'
+            };
+            const INSTALL_LINKS = {
+                metamask: 'https://metamask.io/download/',
+                walletconnect: 'https://walletconnect.com/',
+                coinbase: 'https://www.coinbase.com/wallet/downloads',
+                brave: 'https://brave.com/download/',
+                ledger: 'https://www.ledger.com/ledger-live'
+            };
+            const name = providerNames[provider] || provider;
+            const modalBody = document.querySelector('#walletSelectionModal .modal-body');
+            if (!modalBody) return;
+            const originalContent = modalBody.innerHTML;
+            modalBody.innerHTML = `
+                <div class="modal-loading">
+                    <div class="spinner"></div>
+                    <p>Connecting to ${name}...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                modalBody.innerHTML = originalContent;
+                const scenario = window._connectScenario || 'happy';
+
+                if (scenario === 'wrong-network') {
+                    closeWalletSelectionModal();
+                    showNotification(
+                        `${name} is connected to an unsupported network. Unera requires Base or Sepolia — switch your wallet to the correct network and try again.`,
+                        'warning',
+                        {
+                            actionLabel: 'Switch to Base (Simulated)',
+                            actionFn: showWalletSelectionModal
+                        }
+                    );
+                    return;
+                }
+
+                if (scenario === 'not-installed') {
+                    closeWalletSelectionModal();
+                    showNotification(
+                        `${name} isn't installed in this browser. Install it to continue, then come back and connect.`,
+                        'error',
+                        {
+                            actionLabel: `Install ${name}`,
+                            actionFn: () => {
+                                window.open(INSTALL_LINKS[provider] || 'https://metamask.io/download/', '_blank');
+                                showWalletSelectionModal();
+                            }
+                        }
+                    );
+                    return;
+                }
+
+                if (scenario === 'user-rejected') {
+                    closeWalletSelectionModal();
+                    showNotification(
+                        `You declined the connection request in ${name}. No action was taken — you can try again whenever you're ready.`,
+                        'warning',
+                        {
+                            actionLabel: 'Try Again',
+                            actionFn: showWalletSelectionModal
+                        }
+                    );
+                    return;
+                }
+
+                closeWalletSelectionModal();
+                startWalletBindFlow(provider);
+            }, 1500);
+        }
+
         // Show connecting modal
         function showConnectingModal(provider) {
-            const providerNames = { metamask: 'MetaMask', walletconnect: 'WalletConnect' };
+            const providerNames = {
+                metamask: 'MetaMask',
+                walletconnect: 'WalletConnect',
+                coinbase: 'Coinbase Wallet',
+                brave: 'Brave Wallet',
+                ledger: 'Ledger'
+            };
             const modal = document.createElement('div');
             modal.id = 'connectingModal';
             modal.style.cssText = `
@@ -6648,7 +7460,23 @@
                 backdrop-filter: blur(4px);
             `;
             
-            const iconColor = provider === 'metamask' ? '#F6851B' : '#3B99FC';
+            const iconColors = {
+                metamask: '#F6851B',
+                walletconnect: '#3B99FC',
+                coinbase: '#0052FF',
+                brave: '#FB542B',
+                ledger: '#333333'
+            };
+            const emojis = {
+                metamask: '🦊',
+                walletconnect: '🔗',
+                coinbase: '💙',
+                brave: '🦁',
+                ledger: '🔐'
+            };
+            const iconColor = iconColors[provider] || '#3B99FC';
+            const emoji = emojis[provider] || '🔗';
+            const displayName = providerNames[provider] || provider;
             
             modal.innerHTML = `
                 <div style="
@@ -6662,12 +7490,12 @@
                 ">
                     <div style="margin-bottom: 1.5rem;">
                         <div style="width: 80px; height: 80px; background: ${iconColor}; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white;">
-                            ${provider === 'metamask' ? '🦊' : '🔗'}
+                            ${emoji}
                         </div>
                     </div>
                     
                     <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a1a;">
-                        Connect to ${providerNames[provider]}
+                        Connect to ${displayName}
                     </h2>
                     
                     <p style="font-size: 0.938rem; color: #666; margin-bottom: 2rem;">
@@ -6918,12 +7746,6 @@
             }, 2000);
         }
 
-        // Close wallet selection modal
-        function closeWalletSelectionModal() {
-            const modal = document.getElementById('walletSelectionModal');
-            if (modal) modal.remove();
-        }
-
         // Initialize page
         const desktopMenuContainer = document.getElementById('desktopMenuContainer');
         if (desktopMenuContainer) {
@@ -7101,28 +7923,82 @@
 
                 <!-- Network Filter -->
                 <div class="filter-section">
-                    <h3>Network</h3>
-                    <label for="networkFilter" class="sr-only">Filter by network</label>
-                    <select id="networkFilter" aria-label="Filter by network">
-                        <option value="all">All Networks</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Base">Base</option>
-                        <option value="Sepolia">Sepolia (Testnet)</option>
-                    </select>
+                    <h3 id="networkFilterLabel">Network</h3>
+                    <input type="hidden" id="networkFilter" value="all">
+                    <div class="filter-cs" data-cs-id="networkFilter">
+                        <button type="button"
+                            class="filter-cs-trigger"
+                            id="networkFilterBtn"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                            aria-controls="networkFilterList"
+                            aria-labelledby="networkFilterLabel networkFilterBtn">
+                            <span class="filter-cs-value">All Networks</span>
+                            <svg class="filter-cs-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <div class="filter-cs-list" id="networkFilterList" role="listbox" aria-labelledby="networkFilterLabel" hidden>
+                            <div class="filter-cs-option" role="option" data-value="all" aria-selected="true" tabindex="0">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>All Networks</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="Ethereum" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>Ethereum</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="Base" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>Base</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="Sepolia" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>Sepolia (Testnet)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Token Filter -->
                 <div class="filter-section">
-                    <h3>Token</h3>
-                    <label for="tokenFilter" class="sr-only">Filter by token</label>
-                    <select id="tokenFilter" aria-label="Filter by token">
-                        <option value="all">All Tokens</option>
-                        <option value="USDC">USDC</option>
-                        <option value="USDT">USDT</option>
-                        <option value="DAI">DAI</option>
-                        <option value="ETH">ETH</option>
-                        <option value="WETH">WETH</option>
-                    </select>
+                    <h3 id="tokenFilterLabel">Token</h3>
+                    <input type="hidden" id="tokenFilter" value="all">
+                    <div class="filter-cs" data-cs-id="tokenFilter">
+                        <button type="button"
+                            class="filter-cs-trigger"
+                            id="tokenFilterBtn"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                            aria-controls="tokenFilterList"
+                            aria-labelledby="tokenFilterLabel tokenFilterBtn">
+                            <span class="filter-cs-value">All Tokens</span>
+                            <svg class="filter-cs-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <div class="filter-cs-list" id="tokenFilterList" role="listbox" aria-labelledby="tokenFilterLabel" hidden>
+                            <div class="filter-cs-option" role="option" data-value="all" aria-selected="true" tabindex="0">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>All Tokens</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="USDC" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>USDC</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="USDT" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>USDT</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="DAI" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>DAI</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="ETH" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>ETH</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="WETH" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>WETH</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Saved Filter Presets -->
@@ -7323,6 +8199,12 @@
 
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
+                    const walletNavDropdown = document.getElementById('walletNavDropdown');
+                    if (walletNavDropdown && walletNavDropdown.classList.contains('show')) {
+                        closeWalletNavDropdown();
+                        document.querySelector('.nav-wallet-trigger')?.focus();
+                        return;
+                    }
                     const networkDropdown = document.getElementById('networkDropdown');
                     if (networkDropdown && networkDropdown.classList.contains('show')) {
                         closeNetworkDropdown();

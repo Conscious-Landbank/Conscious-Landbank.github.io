@@ -2457,36 +2457,124 @@
             outline-offset: 2px;
         }
 
-        .filter-section select {
+        /* Custom combobox — Currency filter */
+        .filter-cs {
+            position: relative;
+        }
+
+        .filter-cs-trigger {
             width: 100%;
             height: 52px;
-            padding: 0 3rem 0 1rem;
+            padding: 0 1rem;
             border: 2px solid var(--border-subtle);
             border-radius: 0.75rem;
             font-size: 1rem;
             font-family: var(--font-body);
             background: var(--neutral-50);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%236B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
             color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            text-align: left;
         }
 
-        .filter-section select:hover {
-            border-color: var(--border-default);
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%2310B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
-        }
-
-        .filter-section select:focus {
+        .filter-cs-trigger:hover {
             border-color: var(--primary-green);
+        }
+
+        .filter-cs-trigger:focus {
             outline: 2px solid var(--primary-green);
             outline-offset: 1px;
+            border-color: var(--primary-green);
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .filter-cs-trigger[aria-expanded="true"] {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .filter-cs-trigger[aria-expanded="true"] .filter-cs-chevron {
+            transform: rotate(180deg);
+            color: var(--primary-green);
+        }
+
+        .filter-cs-value {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .filter-cs-chevron {
+            flex-shrink: 0;
+            color: var(--neutral-600);
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        .filter-cs-list {
+            position: fixed;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0.375rem;
+            z-index: 10020;
+            animation: filterCsFadeIn 0.15s ease-out;
+            overflow-y: auto;
+            max-height: 260px;
+        }
+
+        .filter-cs-list[hidden] {
+            display: none;
+        }
+
+        @keyframes filterCsFadeIn {
+            from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .filter-cs-option {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.5rem;
+            font-size: 0.938rem;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background 0.15s;
+            user-select: none;
+        }
+
+        .filter-cs-option:hover {
+            background: rgba(16, 185, 129, 0.07);
+        }
+
+        .filter-cs-option:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: -2px;
+            background: rgba(16, 185, 129, 0.07);
+        }
+
+        .filter-cs-option[aria-selected="true"] {
+            color: var(--primary-green);
+            font-weight: 700;
+        }
+
+        .filter-cs-option[aria-selected="true"] .filter-cs-check {
+            opacity: 1;
+        }
+
+        .filter-cs-check {
+            flex-shrink: 0;
+            opacity: 0;
+            color: var(--primary-green);
+            transition: opacity 0.15s;
         }
 
         .filter-modal-footer {
@@ -6545,16 +6633,46 @@
                 </div>
 
                 <div class="filter-section">
-                    <h3>Currency</h3>
-                    <label for="currencyFilter" class="sr-only">Filter by currency</label>
-                    <select id="currencyFilter" aria-label="Filter by currency">
-                        <option value="all">All Currencies</option>
-                        <option value="hUSD">hUSD</option>
-                        <option value="hCAD">hCAD</option>
-                        <option value="hEUR">hEUR</option>
-                        <option value="hGBP">hGBP</option>
-                        <option value="hJPY">hJPY</option>
-                    </select>
+                    <h3 id="currencyFilterLabel">Currency</h3>
+                    <input type="hidden" id="currencyFilter" value="all">
+                    <div class="filter-cs" data-cs-id="currencyFilter">
+                        <button type="button"
+                            class="filter-cs-trigger"
+                            id="currencyFilterBtn"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                            aria-controls="currencyFilterList"
+                            aria-labelledby="currencyFilterLabel currencyFilterBtn">
+                            <span class="filter-cs-value">All Currencies</span>
+                            <svg class="filter-cs-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <div class="filter-cs-list" id="currencyFilterList" role="listbox" aria-labelledby="currencyFilterLabel" hidden>
+                            <div class="filter-cs-option" role="option" data-value="all" aria-selected="true" tabindex="0">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>All Currencies</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="hUSD" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>hUSD</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="hCAD" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>hCAD</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="hEUR" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>hEUR</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="hGBP" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>hGBP</span>
+                            </div>
+                            <div class="filter-cs-option" role="option" data-value="hJPY" aria-selected="false" tabindex="-1">
+                                <svg class="filter-cs-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>hJPY</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="filter-section">
@@ -6925,7 +7043,7 @@
             modal.setAttribute('aria-hidden', 'false');
             const filterBtn = document.getElementById('filterBtn');
             if (filterBtn) filterBtn.setAttribute('aria-expanded', 'true');
-            const firstInput = modal.querySelector('button, input, select');
+            const firstInput = modal.querySelector('button, input:not([type="hidden"]), select');
             if (firstInput) setTimeout(function() { firstInput.focus(); }, 100);
             trapFocus(modal);
             document.body.style.overflow = 'hidden';
@@ -6944,7 +7062,7 @@
 
         function trapFocus(modal) {
             const focusableElements = modal.querySelectorAll(
-                'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
             );
             const firstElement = focusableElements[0];
             const lastElement = focusableElements[focusableElements.length - 1];
@@ -6959,6 +7077,7 @@
                     }
                 }
                 if (e.key === 'Escape') {
+                    if (window.closeOpenFilterCombo && window.closeOpenFilterCombo()) return;
                     closeFilterPanel();
                 }
             };
@@ -7068,6 +7187,7 @@
             activeFilters.currency = 'all';
             const cur = document.getElementById('currencyFilter');
             if (cur) cur.value = 'all';
+            if (window.syncComboDisplay) syncComboDisplay('currencyFilter', 'all');
         }
 
         function clearAllFilters() {
@@ -7083,6 +7203,7 @@
             });
             const cur = document.getElementById('currencyFilter');
             if (cur) cur.value = 'all';
+            if (window.syncComboDisplay) syncComboDisplay('currencyFilter', 'all');
 
             const af = document.getElementById('activeFilters');
             if (af) {
@@ -7187,6 +7308,154 @@
             div.textContent = str;
             return div.innerHTML;
         }
+
+        // ========================================
+        // FILTER COMBOBOX CONTROLLER
+        // ========================================
+
+        (function () {
+            let openCombo = null;
+
+            function getOptions(csEl) {
+                return Array.from(csEl.querySelectorAll('.filter-cs-option'));
+            }
+
+            function positionList(csEl) {
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list = csEl.querySelector('.filter-cs-list');
+                const rect = trigger.getBoundingClientRect();
+                list.style.top    = (rect.bottom + 6) + 'px';
+                list.style.left   = rect.left + 'px';
+                list.style.width  = rect.width + 'px';
+            }
+
+            function openCombobox(csEl) {
+                if (openCombo && openCombo !== csEl) closeCombobox(openCombo);
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list    = csEl.querySelector('.filter-cs-list');
+                list.removeAttribute('hidden');
+                trigger.setAttribute('aria-expanded', 'true');
+                positionList(csEl);
+                openCombo = csEl;
+                const selected = csEl.querySelector('.filter-cs-option[aria-selected="true"]')
+                              || getOptions(csEl)[0];
+                if (selected) selected.focus();
+            }
+
+            function closeCombobox(csEl) {
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list    = csEl.querySelector('.filter-cs-list');
+                list.setAttribute('hidden', '');
+                trigger.setAttribute('aria-expanded', 'false');
+                if (openCombo === csEl) openCombo = null;
+            }
+
+            function selectOption(csEl, optionEl) {
+                const inputId = csEl.dataset.csId;
+                const value   = optionEl.dataset.value;
+                const label   = optionEl.querySelector('span').textContent;
+
+                document.getElementById(inputId).value = value;
+
+                getOptions(csEl).forEach(function(opt) {
+                    opt.setAttribute('aria-selected', 'false');
+                    opt.setAttribute('tabindex', '-1');
+                });
+                optionEl.setAttribute('aria-selected', 'true');
+                optionEl.setAttribute('tabindex', '0');
+                csEl.querySelector('.filter-cs-value').textContent = label;
+
+                closeCombobox(csEl);
+                csEl.querySelector('.filter-cs-trigger').focus();
+            }
+
+            function syncComboDisplay(inputId, value) {
+                const csEl = document.querySelector('.filter-cs[data-cs-id="' + inputId + '"]');
+                if (!csEl) return;
+                const opt = csEl.querySelector('.filter-cs-option[data-value="' + value + '"]')
+                         || csEl.querySelector('.filter-cs-option[data-value="all"]');
+                if (!opt) return;
+                getOptions(csEl).forEach(function(o) {
+                    o.setAttribute('aria-selected', 'false');
+                    o.setAttribute('tabindex', '-1');
+                });
+                opt.setAttribute('aria-selected', 'true');
+                opt.setAttribute('tabindex', '0');
+                csEl.querySelector('.filter-cs-value').textContent = opt.querySelector('span').textContent;
+            }
+
+            window.syncComboDisplay = syncComboDisplay;
+
+            window.closeOpenFilterCombo = function () {
+                if (openCombo) { closeCombobox(openCombo); return true; }
+                return false;
+            };
+
+            function handleKeydown(csEl, e) {
+                const options = getOptions(csEl);
+                const idx     = options.findIndex(function(o) { return o === document.activeElement; });
+                const list    = csEl.querySelector('.filter-cs-list');
+                const isOpen  = !list.hasAttribute('hidden');
+
+                if (e.key === 'Escape') {
+                    if (isOpen) {
+                        e.stopPropagation();
+                        closeCombobox(csEl);
+                        csEl.querySelector('.filter-cs-trigger').focus();
+                    }
+                    return;
+                }
+
+                if (!isOpen) {
+                    if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
+                        e.preventDefault();
+                        openCombobox(csEl);
+                    }
+                    return;
+                }
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    options[(idx + 1) % options.length].focus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    options[(idx - 1 + options.length) % options.length].focus();
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (idx >= 0) selectOption(csEl, options[idx]);
+                } else if (e.key === 'Tab') {
+                    closeCombobox(csEl);
+                }
+            }
+
+            function initCombobox(csEl) {
+                const trigger = csEl.querySelector('.filter-cs-trigger');
+                const list    = csEl.querySelector('.filter-cs-list');
+
+                trigger.addEventListener('click', function() {
+                    list.hasAttribute('hidden') ? openCombobox(csEl) : closeCombobox(csEl);
+                });
+
+                csEl.addEventListener('keydown', function(e) { handleKeydown(csEl, e); });
+
+                getOptions(csEl).forEach(function(opt) {
+                    opt.addEventListener('mousedown', function(e) { e.preventDefault(); });
+                    opt.addEventListener('click', function() { selectOption(csEl, opt); });
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                if (!openCombo) return;
+                if (!openCombo.contains(e.target)) closeCombobox(openCombo);
+            });
+
+            window.addEventListener('resize', function() { if (openCombo) positionList(openCombo); });
+            document.addEventListener('scroll', function() { if (openCombo) positionList(openCombo); }, true);
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.filter-cs').forEach(function(csEl) { initCombobox(csEl); });
+            });
+        })();
 
         function renderFilterPresets() {
             const container = document.getElementById('filterPresets');
@@ -7295,6 +7564,7 @@
             });
             const cur = document.getElementById('currencyFilter');
             if (cur) cur.value = activeFilters.currency;
+            if (window.syncComboDisplay) syncComboDisplay('currencyFilter', activeFilters.currency || 'all');
             applyFilters();
         }
 
