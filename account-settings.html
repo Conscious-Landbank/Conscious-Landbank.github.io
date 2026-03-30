@@ -195,6 +195,134 @@
             color: var(--text-secondary);
         }
 
+        /* Network badge — interactive trigger */
+        .nav-network-badge {
+            cursor: pointer;
+            border-radius: 0.375rem;
+            padding: 0.1875rem 0.375rem 0.1875rem 0.375rem;
+            transition: background 0.15s;
+        }
+
+        .nav-network-badge:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-network-badge:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        .nav-network-badge.open {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-network-chevron {
+            width: 12px;
+            height: 12px;
+            color: var(--neutral-500);
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-network-badge.open .nav-network-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Network Switcher Dropdown — mirrors .user-dropdown-nav */
+        .network-dropdown-nav {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+
+        .network-dropdown-nav.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .network-dropdown-header-nav {
+            font-size: 0.688rem;
+            font-weight: 700;
+            color: var(--neutral-600);
+            letter-spacing: 0.05em;
+            padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            margin-bottom: 0.25rem;
+        }
+
+        .network-options-list-nav {
+            padding: 0.375rem 0.5rem 0.5rem;
+        }
+
+        /* Network option rows — mirrors .dropdown-item-nav */
+        .network-option-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .network-option-nav:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: #0F766E;
+        }
+
+        .network-option-nav:focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: -2px;
+        }
+
+        .network-option-nav.active {
+            color: var(--primary-green);
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.06);
+        }
+
+        .network-option-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .network-option-name {
+            flex: 1;
+        }
+
+        .network-option-check {
+            width: 14px;
+            height: 14px;
+            color: var(--primary-green);
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .network-option-nav.active .network-option-check {
+            opacity: 1;
+        }
+
         /* User Profile in Nav (dropdown trigger wrapper) */
         .user-profile-nav {
             display: flex;
@@ -1063,6 +1191,14 @@
                 max-height: 70vh;
                 border-radius: 0 0 0.75rem 0.75rem;
             }
+            .network-dropdown-nav {
+                position: fixed;
+                top: 44px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                border-radius: 0 0 0.75rem 0.75rem;
+            }
         }
 
         /* Main Content */
@@ -1463,6 +1599,113 @@
             flex-shrink: 0;
         }
 
+        /* Connected wallet badge — live session indicator */
+        .connected-wallet-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            min-height: 44px;
+            min-width: 90px;
+            box-sizing: border-box;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--primary-green);
+            border-radius: 980px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .connected-wallet-badge .conn-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            flex-shrink: 0;
+            animation: connPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes connPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.55; transform: scale(0.8); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .connected-wallet-badge .conn-dot {
+                animation: none;
+            }
+        }
+
+        /* Disconnect button — reversible action, uses warning hover not error */
+        .btn-disconnect {
+            padding: 0.5rem 1rem;
+            min-height: 44px;
+            min-width: 90px;
+            box-sizing: border-box;
+            border-radius: 980px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 2px solid var(--border-subtle);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            white-space: nowrap;
+            background: white;
+            color: var(--text-secondary);
+        }
+
+        .btn-disconnect:hover {
+            border-color: var(--warning);
+            color: var(--warning);
+            background: rgba(245, 158, 11, 0.04);
+        }
+
+        .btn-disconnect:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Connect button — outline primary-green, fills on hover */
+        .btn-connect-wallet-card {
+            padding: 0.5rem 1rem;
+            min-height: 44px;
+            min-width: 90px;
+            box-sizing: border-box;
+            border-radius: 980px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 2px solid var(--primary-green);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            white-space: nowrap;
+            background: white;
+            color: var(--primary-green);
+        }
+
+        .btn-connect-wallet-card:hover {
+            background: var(--primary-green);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-connect-wallet-card:focus {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+
+        /* Security Settings link vs Enabled badge — [hidden] must win over .btn / .active-wallet-badge display */
+        #securitySettingsLink[hidden],
+        #securityEnabledBadge[hidden] {
+            display: none !important;
+        }
+
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             .container {
@@ -1488,6 +1731,11 @@
                 justify-content: center;
             }
 
+            .user-info-row .security-enabled-badge:not([hidden]) {
+                width: 100%;
+                justify-content: center;
+            }
+
             .wallet-card {
                 flex-direction: column;
                 align-items: flex-start;
@@ -1505,7 +1753,10 @@
             }
 
             .btn-remove,
-            .active-wallet-badge {
+            .active-wallet-badge,
+            .btn-disconnect,
+            .btn-connect-wallet-card,
+            .connected-wallet-badge {
                 width: 100%;
                 min-width: unset;
                 justify-content: center;
@@ -2970,7 +3221,8 @@
             }
 
             .wallet-actions button,
-            .wallet-actions .active-wallet-badge {
+            .wallet-actions .active-wallet-badge,
+            .wallet-actions .connected-wallet-badge {
                 width: 100%;
                 min-width: unset;
                 justify-content: center;
@@ -3397,7 +3649,7 @@
             </div>
 
             <div class="user-profile-nav" onclick="toggleUserDropdown()" id="userProfile" style="display: none;">
-                <div class="nav-wallet-display" id="navWalletDisplay" style="display: none;">
+                <div class="nav-wallet-display" id="navWalletDisplay" style="display: none; position: relative;">
                     <div class="nav-wallet-avatar">
                         <div class="nav-wallet-blockie"></div>
                         <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
@@ -3406,12 +3658,134 @@
                         <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
                         <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
                     </div>
-                    <div class="nav-network-badge">
-                        <svg class="nav-network-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <div class="nav-network-badge"
+                         role="button"
+                         tabindex="0"
+                         aria-haspopup="listbox"
+                         aria-expanded="false"
+                         aria-label="Switch network, currently Ethereum"
+                         onclick="toggleNetworkDropdown(event)"
+                         onkeydown="handleNetworkBadgeKey(event)">
+                        <svg class="nav-network-icon" id="navNetworkIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
                         </svg>
-                        <span>Ethereum</span>
+                        <span id="navNetworkLabel">Ethereum</span>
+                        <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
                     </div>
+
+                    <!-- Network Switcher Dropdown -->
+                    <div class="network-dropdown-nav" id="networkDropdown"
+                         role="listbox"
+                         aria-label="Select blockchain network"
+                         onclick="event.stopPropagation()">
+                        <div class="network-dropdown-header-nav">Switch Network</div>
+                        <div class="network-options-list-nav">
+
+                            <!-- Ethereum -->
+                            <div class="network-option-nav active"
+                                 role="option" aria-selected="true" tabindex="0"
+                                 data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Ethereum</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+
+                            <!-- Polygon -->
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="polygon" data-chain-label="Polygon" data-chain-color="#8247E5"
+                                 onclick="switchNetwork('polygon','Polygon','#8247E5',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#8247E5"/>
+                                    <path d="M13.5 7.5L10 5.5 6.5 7.5v4l3.5 2 3.5-2v-4z" fill="white" opacity="0.9"/>
+                                    <path d="M10 9.5L8 8.5v2l2 1 2-1v-2L10 9.5z" fill="#8247E5"/>
+                                </svg>
+                                <span class="network-option-name">Polygon</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+
+                            <!-- Arbitrum -->
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="arbitrum" data-chain-label="Arbitrum" data-chain-color="#28A0F0"
+                                 onclick="switchNetwork('arbitrum','Arbitrum','#28A0F0',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#2D374B"/>
+                                    <path d="M10 4L7 9l3 1.5L13 9 10 4z" fill="#28A0F0"/>
+                                    <path d="M7 9l-1 5 4-2 4 2-1-5-3 1.5L7 9z" fill="#28A0F0" opacity="0.7"/>
+                                </svg>
+                                <span class="network-option-name">Arbitrum</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+
+                            <!-- Optimism -->
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="optimism" data-chain-label="Optimism" data-chain-color="#FF0420"
+                                 onclick="switchNetwork('optimism','Optimism','#FF0420',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#FF0420"/>
+                                    <circle cx="10" cy="10" r="5" fill="white" opacity="0.9"/>
+                                    <circle cx="10" cy="10" r="2.5" fill="#FF0420"/>
+                                </svg>
+                                <span class="network-option-name">Optimism</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+
+                            <!-- Base -->
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base','Base','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+
+                            <!-- BNB Chain -->
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="bnb" data-chain-label="BNB Chain" data-chain-color="#F3BA2F"
+                                 onclick="switchNetwork('bnb','BNB Chain','#F3BA2F',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#F3BA2F"/>
+                                    <path d="M10 5l1.5 1.5L10 8 8.5 6.5 10 5zM6.5 8.5L8 7l1.5 1.5L8 10l-1.5-1.5zM10 12l1.5-1.5L13 12l-1.5 1.5L10 12zM12 10l1.5-1.5L15 10l-1.5 1.5L12 10zM10 9l1 1-1 1-1-1 1-1z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">BNB Chain</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /Network Switcher Dropdown -->
                 </div>
                 <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
                     <div class="dropdown-header-nav">
@@ -3491,9 +3865,31 @@
                         <p class="user-email">jane@example.com</p>
                     </div>
                 </div>
-                <a href="setup-2fa.html" class="btn btn-secondary security-settings-btn" aria-label="Security Settings"><span aria-hidden="true">🔒</span> Security Settings</a>
+                <a href="setup-2fa.html?returnTo=account-settings.html" id="securitySettingsLink" class="btn btn-secondary security-settings-btn" aria-label="Security Settings"><span aria-hidden="true">🔒</span> Security Settings</a>
+                <span id="securityEnabledBadge" class="active-wallet-badge security-enabled-badge" hidden title="Two-factor authentication and identity verification are enabled" aria-label="Two-factor authentication and identity verification are enabled">Enabled</span>
             </div>
         </div>
+        <script>
+            (function () {
+                var kyc = localStorage.getItem('kycStatus');
+                var kycComplete = kyc === 'verified' || kyc === 'completed';
+                var showEnabled = localStorage.getItem('2faEnabled') === 'true' && kycComplete;
+                var link = document.getElementById('securitySettingsLink');
+                var badge = document.getElementById('securityEnabledBadge');
+                if (!link || !badge) return;
+                if (showEnabled) {
+                    link.hidden = true;
+                    link.setAttribute('aria-hidden', 'true');
+                    badge.hidden = false;
+                    badge.removeAttribute('aria-hidden');
+                } else {
+                    link.hidden = false;
+                    link.removeAttribute('aria-hidden');
+                    badge.hidden = true;
+                    badge.setAttribute('aria-hidden', 'true');
+                }
+            })();
+        </script>
 
         <!-- Connected Wallets Card -->
         <div class="card" role="region" aria-labelledby="your-wallets-heading">
@@ -3844,6 +4240,34 @@
                                         <path d="M2 10h20"/>
                                     </svg>
                                     <span id="mobileDropdownWalletAddress">0x742d...3a8f</span>
+                                </div>
+                                <div class="mobile-dropdown-section">
+                                    <div class="mobile-dropdown-section-title">Network</div>
+                                    <div class="mobile-network-option mobile-dropdown-item active" data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA" onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#627EEA"/><path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/><path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/></svg>
+                                        Ethereum
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="polygon" data-chain-label="Polygon" data-chain-color="#8247E5" onclick="switchNetwork('polygon','Polygon','#8247E5',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#8247E5"/><path d="M13.5 7.5L10 5.5 6.5 7.5v4l3.5 2 3.5-2v-4z" fill="white" opacity="0.9"/><path d="M10 9.5L8 8.5v2l2 1 2-1v-2L10 9.5z" fill="#8247E5"/></svg>
+                                        Polygon
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="arbitrum" data-chain-label="Arbitrum" data-chain-color="#28A0F0" onclick="switchNetwork('arbitrum','Arbitrum','#28A0F0',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#2D374B"/><path d="M10 4L7 9l3 1.5L13 9 10 4z" fill="#28A0F0"/><path d="M7 9l-1 5 4-2 4 2-1-5-3 1.5L7 9z" fill="#28A0F0" opacity="0.7"/></svg>
+                                        Arbitrum
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="optimism" data-chain-label="Optimism" data-chain-color="#FF0420" onclick="switchNetwork('optimism','Optimism','#FF0420',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#FF0420"/><circle cx="10" cy="10" r="5" fill="white" opacity="0.9"/><circle cx="10" cy="10" r="2.5" fill="#FF0420"/></svg>
+                                        Optimism
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF" onclick="switchNetwork('base','Base','#0052FF',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#0052FF"/><path d="M10 3C6.13 3 3 6.13 3 10s3.13 7 7 7c3.63 0 6.64-2.76 6.97-6.3H10V9h7.97c-.36-3.88-3.61-7-7.97-7V3z" fill="white"/></svg>
+                                        Base
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="bnb" data-chain-label="BNB Chain" data-chain-color="#F3BA2F" onclick="switchNetwork('bnb','BNB Chain','#F3BA2F',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#F3BA2F"/><path d="M10 4.5l1.8 1.8L10 8.1 8.2 6.3 10 4.5zM5.7 8.2L7.5 6.4l1.8 1.8-1.8 1.8-1.8-1.8zM12.7 8.2l1.8-1.8 1.8 1.8-1.8 1.8-1.8-1.8zM10 9.7l1.8 1.8L10 13.3l-1.8-1.8L10 9.7zM5.7 11.8l1.8-1.8 1.8 1.8-1.8 1.8-1.8-1.8zM12.7 11.8l1.8-1.8 1.8 1.8-1.8 1.8-1.8-1.8z" fill="white"/></svg>
+                                        BNB Chain
+                                    </div>
+                                    <div class="mobile-dropdown-divider"></div>
                                 </div>
                                 ${menuHtml}
                             </div>
@@ -4397,6 +4821,7 @@
                 const displayName = wallet.nickname || `Account ${index + 1}`;
                 const pillClass = getNetworkPillClass(network);
                 const ariaWalletLabel = `${displayName}, ${shortAddress}`;
+                const isConn = isWalletConnected(wallet.address);
 
                 return `
                     <div class="wallet-card" style="position: relative;" role="listitem" aria-label="${ariaWalletLabel.replace(/"/g, '&quot;')}">
@@ -4439,17 +4864,29 @@
                             </div>
                         </div>
                         <div class="wallet-actions">
-                            ${index === 0 ? `
-                                <span class="active-wallet-badge" title="Primary wallet for your account" aria-label="Primary wallet for your account">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Active
+                            ${isConn ? `
+                                <span class="connected-wallet-badge" title="This wallet is currently connected" aria-label="This wallet is currently connected">
+                                    <span class="conn-dot" aria-hidden="true"></span>
+                                    Connected
                                 </span>
-                            ` : ''}
-                            <button type="button" class="btn-remove" onclick="removeWallet('${wallet.address}')" aria-label="Remove ${displayName.replace(/"/g, '&quot;')} from saved wallets">
-                                Remove
-                            </button>
+                                <button type="button" class="btn-disconnect" onclick="disconnectFromCard()" aria-label="Disconnect ${displayName.replace(/"/g, '&quot;')}">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                                    </svg>
+                                    Disconnect
+                                </button>
+                            ` : `
+                                <button type="button" class="btn-connect-wallet-card" onclick="connectFromCard('${wallet.address}')" aria-label="Connect ${displayName.replace(/"/g, '&quot;')}">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                                    </svg>
+                                    Connect
+                                </button>
+                                <button type="button" class="btn-remove" onclick="removeWallet('${wallet.address}')" aria-label="Remove ${displayName.replace(/"/g, '&quot;')} from saved wallets">
+                                    Remove
+                                </button>
+                            `}
                         </div>
                     </div>
                 `;
@@ -4700,9 +5137,142 @@
 
         function toggleUserDropdown() {
             closeNotificationPanel();
+            closeNetworkDropdown();
             const dropdown = document.getElementById('userDropdown');
             if (dropdown) dropdown.classList.toggle('show');
         }
+
+        /* ── Network Switcher ─────────────────────────────────────── */
+
+        function closeNetworkDropdown() {
+            const dropdown = document.getElementById('networkDropdown');
+            const badge = document.querySelector('.nav-network-badge');
+            if (dropdown) dropdown.classList.remove('show');
+            if (badge) {
+                badge.classList.remove('open');
+                badge.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function toggleNetworkDropdown(event) {
+            event.stopPropagation();
+            closeNotificationPanel();
+            // Close user dropdown if open
+            const userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) userDropdown.classList.remove('show');
+
+            const badge = event.currentTarget;
+            const dropdown = document.getElementById('networkDropdown');
+            if (!dropdown) return;
+            const isOpen = dropdown.classList.toggle('show');
+            badge.classList.toggle('open', isOpen);
+            badge.setAttribute('aria-expanded', String(isOpen));
+
+            // Focus first option when opening
+            if (isOpen) {
+                const firstOption = dropdown.querySelector('.network-option-nav');
+                if (firstOption) firstOption.focus();
+            }
+        }
+
+        // Chain icon paths keyed by chain ID (used to swap the nav badge icon)
+        const CHAIN_NAV_ICON_PATHS = {
+            ethereum: { path: 'M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z', viewBox: '0 0 24 24', fill: 'currentColor' },
+            polygon:  { path: 'M14.12 6.78L10 4.5 5.88 6.78v4.44L10 13.5l4.12-2.28V6.78zm-4.12 4.5L8 10V8l2-1.1L12 8v2l-2 1.28z', viewBox: '0 0 20 20', fill: 'currentColor' },
+            arbitrum: { path: 'M12 2L4 14l8 4 8-4L12 2zm0 3l5 8.5-5 2.5-5-2.5L12 5z', viewBox: '0 0 24 24', fill: 'currentColor' },
+            optimism: { path: 'M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 4a6 6 0 1 1 0 12A6 6 0 0 1 12 6z', viewBox: '0 0 24 24', fill: 'currentColor' },
+            base:     { path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.18 0 9.44-3.93 9.95-9H12v-2h11.95c-.5-5.5-5.1-9.99-11.95-9.99V2z', viewBox: '0 0 24 24', fill: 'currentColor' },
+            bnb:      { path: 'M12 2l2.5 2.5-2.5 2.5-2.5-2.5L12 2zM6.5 7.5L9 5l2.5 2.5L9 10 6.5 7.5zM14.5 7.5L17 5l2.5 2.5L17 10l-2.5-2.5zM12 9.5l2.5 2.5-2.5 2.5L9.5 12l2.5-2.5zM6.5 14.5L9 12l2.5 2.5L9 17l-2.5-2.5zM14.5 14.5L17 12l2.5 2.5L17 17l-2.5-2.5zM12 17l2.5 2.5L12 22l-2.5-2.5L12 17z', viewBox: '0 0 24 24', fill: 'currentColor' }
+        };
+
+        function switchNetwork(chainId, label, chainColor, optionEl) {
+            // Update active state in desktop dropdown
+            document.querySelectorAll('.network-option-nav').forEach(function(el) {
+                el.classList.remove('active');
+                el.setAttribute('aria-selected', 'false');
+            });
+            const desktopMatch = document.querySelector('.network-option-nav[data-chain-id="' + chainId + '"]');
+            if (desktopMatch) {
+                desktopMatch.classList.add('active');
+                desktopMatch.setAttribute('aria-selected', 'true');
+            }
+
+            // Update active state in mobile network options
+            document.querySelectorAll('.mobile-network-option').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            const mobileMatch = document.querySelector('.mobile-network-option[data-chain-id="' + chainId + '"]');
+            if (mobileMatch) mobileMatch.classList.add('active');
+
+            // Update nav badge label
+            const navLabel = document.getElementById('navNetworkLabel');
+            if (navLabel) navLabel.textContent = label;
+
+            // Update nav badge icon color to reflect selected chain
+            const navIcon = document.getElementById('navNetworkIcon');
+            if (navIcon) navIcon.style.color = chainColor;
+
+            // Update badge aria-label
+            const badge = document.querySelector('.nav-network-badge');
+            if (badge) badge.setAttribute('aria-label', 'Switch network, currently ' + label);
+
+            // Close desktop dropdown
+            closeNetworkDropdown();
+
+            // Persist selection
+            try { localStorage.setItem('selectedNetwork', JSON.stringify({ id: chainId, label: label, color: chainColor })); } catch(e) {}
+        }
+
+        function handleNetworkBadgeKey(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleNetworkDropdown(event);
+            } else if (event.key === 'Escape') {
+                closeNetworkDropdown();
+                event.currentTarget.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                const dropdown = document.getElementById('networkDropdown');
+                if (!dropdown) return;
+                if (!dropdown.classList.contains('show')) {
+                    const badge = event.currentTarget;
+                    badge.classList.add('open');
+                    badge.setAttribute('aria-expanded', 'true');
+                    dropdown.classList.add('show');
+                }
+                const firstOption = dropdown.querySelector('.network-option-nav');
+                if (firstOption) firstOption.focus();
+            }
+        }
+
+        function handleNetworkOptionKey(event) {
+            const options = Array.from(document.querySelectorAll('#networkDropdown .network-option-nav'));
+            const idx = options.indexOf(event.currentTarget);
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                event.currentTarget.click();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                closeNetworkDropdown();
+                const badge = document.querySelector('.nav-network-badge');
+                if (badge) badge.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                const next = options[idx + 1];
+                if (next) next.focus();
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (idx === 0) {
+                    const badge = document.querySelector('.nav-network-badge');
+                    if (badge) badge.focus();
+                } else {
+                    const prev = options[idx - 1];
+                    if (prev) prev.focus();
+                }
+            }
+        }
+
+        /* ── /Network Switcher ────────────────────────────────────── */
 
         function toggleMobileUserDropdown() {
             const dropdown = document.getElementById('mobileUserDropdown');
@@ -4732,9 +5302,58 @@
             if (typeof showNotification === 'function') {
                 showNotification('Wallet disconnected', 'success');
             }
+            // Re-render wallet cards so connected/disconnected state updates in place
+            renderWallets();
         }
 
         function disconnectWallet() {
+            const modal = document.getElementById('confirmationModal');
+            const confirmBtn = document.getElementById('confirmButton');
+            if (modal && confirmBtn) {
+                showConfirmation(
+                    'Are you sure you want to disconnect your wallet?',
+                    'Disconnect Wallet',
+                    doDisconnectWallet
+                );
+            } else {
+                doDisconnectWallet();
+            }
+        }
+
+        // ==================== WALLET CARD CONNECT / DISCONNECT ====================
+
+        function isWalletConnected(address) {
+            const connected = localStorage.getItem('walletAddress');
+            if (!connected) return false;
+            return connected.toLowerCase() === address.toLowerCase();
+        }
+
+        function connectFromCard(address) {
+            localStorage.setItem('walletConnected', 'true');
+            localStorage.setItem('walletAddress', address);
+            localStorage.setItem('walletProvider', 'injected');
+
+            // Show nav Disconnect item
+            const disconnectItem = document.getElementById('disconnectWalletItem');
+            if (disconnectItem) disconnectItem.style.display = 'flex';
+            const disconnectItemMobile = document.getElementById('disconnectWalletItemMobile');
+            if (disconnectItemMobile) disconnectItemMobile.style.display = 'flex';
+
+            // Update nav wallet address display
+            const shortAddr = address.substring(0, 6) + '...' + address.substring(address.length - 4);
+            const dropdownWallet = document.getElementById('dropdownWalletAddress');
+            if (dropdownWallet) dropdownWallet.textContent = shortAddr;
+            const mobileDropdownWallet = document.getElementById('mobileDropdownWalletAddress');
+            if (mobileDropdownWallet) mobileDropdownWallet.textContent = shortAddr;
+
+            const boundWallets = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+            updateNavWalletDisplay(boundWallets);
+
+            showNotification('Wallet connected', 'success');
+            renderWallets();
+        }
+
+        function disconnectFromCard() {
             const modal = document.getElementById('confirmationModal');
             const confirmBtn = document.getElementById('confirmButton');
             if (modal && confirmBtn) {
@@ -4754,6 +5373,9 @@
             const dropdown = document.getElementById('userDropdown');
             const notificationBellWrapper = document.getElementById('notificationBellWrapper');
             const notificationPanel = document.getElementById('notificationPanel');
+            const networkDropdown = document.getElementById('networkDropdown');
+            const navWalletDisplay = document.getElementById('navWalletDisplay');
+
             if (dropdown && dropdown.classList.contains('show')) {
                 if (!userProfile?.contains(event.target)) {
                     dropdown.classList.remove('show');
@@ -4764,6 +5386,11 @@
                     notificationPanel.classList.remove('show');
                     const bell = document.getElementById('notificationBell');
                     if (bell) bell.setAttribute('aria-expanded', 'false');
+                }
+            }
+            if (networkDropdown && networkDropdown.classList.contains('show')) {
+                if (!navWalletDisplay?.contains(event.target)) {
+                    closeNetworkDropdown();
                 }
             }
         });
@@ -6349,6 +6976,33 @@
                 if (mobileDropdownWallet) mobileDropdownWallet.textContent = shortAddress;
             }
         }
+
+        // Restore previously selected network
+        (function restoreSelectedNetwork() {
+            try {
+                const saved = localStorage.getItem('selectedNetwork');
+                if (!saved) return;
+                const net = JSON.parse(saved);
+                if (!net || !net.id || !net.label) return;
+                // Update desktop options
+                document.querySelectorAll('.network-option-nav').forEach(function(el) {
+                    const isMatch = el.getAttribute('data-chain-id') === net.id;
+                    el.classList.toggle('active', isMatch);
+                    el.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+                });
+                // Update mobile options
+                document.querySelectorAll('.mobile-network-option').forEach(function(el) {
+                    el.classList.toggle('active', el.getAttribute('data-chain-id') === net.id);
+                });
+                // Update badge
+                const navLabel = document.getElementById('navNetworkLabel');
+                if (navLabel) navLabel.textContent = net.label;
+                const navIcon = document.getElementById('navNetworkIcon');
+                if (navIcon && net.color) navIcon.style.color = net.color;
+                const badge = document.querySelector('.nav-network-badge');
+                if (badge) badge.setAttribute('aria-label', 'Switch network, currently ' + net.label);
+            } catch(e) {}
+        })();
     </script>
     <!-- Filter Modal for Blockchain Transactions -->
     <div class="filter-modal" id="filterModal" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle" aria-hidden="true">
@@ -6669,6 +7323,13 @@
 
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
+                    const networkDropdown = document.getElementById('networkDropdown');
+                    if (networkDropdown && networkDropdown.classList.contains('show')) {
+                        closeNetworkDropdown();
+                        const badge = document.querySelector('.nav-network-badge');
+                        if (badge) badge.focus();
+                        return;
+                    }
                     const notificationPanel = document.getElementById('notificationPanel');
                     if (notificationPanel && notificationPanel.classList.contains('show')) {
                         closeNotificationPanel();

@@ -320,18 +320,6 @@
             color: var(--text-secondary);
         }
 
-        /* Stack trust badges vertically on very small screens */
-        @media (max-width: 480px) {
-            .trust-bar-minimal {
-                flex-direction: column;
-                gap: 0.5rem;
-                align-items: center;
-            }
-            .trust-bar-minimal span:nth-child(2) {
-                display: none; /* Hide bullet separator when stacked */
-            }
-        }
-
         /* ========================================
            BOSS REQUIREMENTS: SELFIE CAPTURE OPTIONS
            ======================================== */
@@ -2623,6 +2611,24 @@
             Exit
         </a>
     </header>
+    <script>
+        (function () {
+            var KYC_EXIT_RETURN_KEY = 'kycExitReturnUrl';
+            var ALLOWED_KYC_RETURN_TO = { 'account-settings.html': true };
+            function getAllowlistedReturnTo(raw) {
+                if (!raw || typeof raw !== 'string') return '';
+                var decoded = decodeURIComponent(raw.trim());
+                return ALLOWED_KYC_RETURN_TO[decoded] ? decoded : '';
+            }
+            var params = new URLSearchParams(window.location.search);
+            var target = getAllowlistedReturnTo(params.get('returnTo'));
+            if (!target) target = getAllowlistedReturnTo(sessionStorage.getItem(KYC_EXIT_RETURN_KEY) || '');
+            var exitHref = target || 'dashboard-enhanced.html';
+            var back = document.querySelector('header.header .back-btn');
+            if (back) back.setAttribute('href', exitHref);
+            if (target) sessionStorage.removeItem(KYC_EXIT_RETURN_KEY);
+        })();
+    </script>
 
     <!-- Main Content -->
     <main id="main-content" class="auth-container-wide">

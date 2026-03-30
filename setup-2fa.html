@@ -869,6 +869,36 @@
 
     <!-- JavaScript -->
     <script>
+        const KYC_EXIT_RETURN_KEY = 'kycExitReturnUrl';
+        const ALLOWED_KYC_RETURN_TO = new Set(['account-settings.html']);
+
+        function getAllowlistedReturnTo(raw) {
+            if (!raw || typeof raw !== 'string') return '';
+            const decoded = decodeURIComponent(raw.trim());
+            return ALLOWED_KYC_RETURN_TO.has(decoded) ? decoded : '';
+        }
+
+        function persistReturnToFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const v = getAllowlistedReturnTo(params.get('returnTo'));
+            if (v) {
+                sessionStorage.setItem(KYC_EXIT_RETURN_KEY, v);
+            } else {
+                sessionStorage.removeItem(KYC_EXIT_RETURN_KEY);
+            }
+        }
+
+        function kycVerifyHref() {
+            const params = new URLSearchParams(window.location.search);
+            let ret = getAllowlistedReturnTo(params.get('returnTo'));
+            if (!ret) ret = getAllowlistedReturnTo(sessionStorage.getItem(KYC_EXIT_RETURN_KEY) || '');
+            let url = 'kyc-verify.html?from=signup';
+            if (ret) url += '&returnTo=' + encodeURIComponent(ret);
+            return url;
+        }
+
+        persistReturnToFromUrl();
+
         let selectedMethod = null;
 
         function selectMethod(method) {
@@ -1106,7 +1136,7 @@
         }
 
         function completeSetup() {
-            window.location.href = 'kyc-verify.html?from=signup';
+            window.location.href = kycVerifyHref();
         }
 
         async function resendEmailCode() {
@@ -1131,7 +1161,7 @@
                     localStorage.setItem('2faSkipped', 'true');
                     
                     // Go to next step (KYC)
-                    window.location.href = 'kyc-verify.html?from=signup';
+                    window.location.href = kycVerifyHref();
                 }
             );
         }
