@@ -60,6 +60,23 @@ Match **add-money / exchange / stake / send-enhanced**:
 - **Transaction rejected** (user wallet) vs **failed** (network/revert) — different copy and CTAs.
 - **Redeem-specific**: bank not linked (CAD), daily limits, **burn reverted** (safe retry) vs **partial burn** (contact support).
 
+## Mint tab (`get-unera-cad.html`)
+
+- **Settlement time parity (Swap + Mint)**: **Same** typical on-chain completion messaging on the **amount** step, **review** step (`Estimated settlement time` → `Typically under 30 seconds`), and **processing** subcopy — both tabs; do not imply Mint is faster than Swap.
+- **Quote disclosure**: **Exchange rate**, **exchange fee**, and **rate source** must stay **always visible** on the amount step (no accordion or “Details” collapse for those three).
+- **Receive amount**: **Net of exchange fee** (see `S.mint.exchangeFeeRate` in the page script); review step must match.
+- **CAD/USD chart**: **Below** the mint widget card, as **reference context** only (title e.g. “CAD/USD reference”); **no** timeframe toggle (single 24h series).
+- **Trust copy**: Distinguish **no AMM / pool fee** from **exchange fee** — do not claim zero fees if a mint exchange fee applies.
+
+## Approve-then-primary CTA (`get-unera-cad.html` — Swap & Mint)
+
+- **When the wallet is connected** and the amount is valid (min, balance, pool cap for swap): show **Approve {token}** first (mock ERC-20 allowance). Short helper line under the button explains protocol spend approval.
+- After mock approval succeeds for the **current** `fromToken`, replace with **Swap** (AMM tab) or **Deposit** (mint tab). Same click handlers then advance to the existing **Review** step (`#step-review`); do **not** remove the review screen.
+- **Per-flow, per-token state**: allowance is satisfied only when the stored approved token matches the widget’s `fromToken`. Changing the from-token (selector or flip) invalidates approval for that flow until the user approves again.
+- **Reset**: **Go Again** / flow reset clears mock allowance so the sequence replays.
+- **Processing**: after approval on the amount step, swap processing uses **two** inline steps (submit to AMM → confirm on-chain), not a duplicate “Approving token spend” phase. Mint keeps deposit → mint → confirm.
+- Real on-chain `approve` / `allowance` reads stay out of scope for static demos; wire as UI-only state until a Web3 layer exists.
+
 ## Out of scope
 
 - No backend implementation; use mocks, query flags, or UI-only state for demos.

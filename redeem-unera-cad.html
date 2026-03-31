@@ -185,6 +185,43 @@
         @keyframes rfade { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: translateY(0); } }
 
         .btn-actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
+
+        /* ── Prerequisites step ── */
+        .section-title {
+            font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 0.5rem;
+        }
+        .section-desc { color: var(--text-secondary); font-size: 1rem; margin-bottom: 2rem; }
+        .prereq-grid { display: grid; gap: 1rem; margin-bottom: 2rem; }
+        .prereq-card {
+            background: var(--neutral-100); border: 2px solid var(--border-subtle);
+            border-radius: 1rem; padding: 1.5rem;
+            display: flex; align-items: flex-start; gap: 1rem; transition: all 0.2s;
+        }
+        .prereq-card:hover { border-color: var(--primary-green); background: white; }
+        .prereq-icon {
+            flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.5rem;
+        }
+        .prereq-content { flex: 1; }
+        .prereq-title { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; font-size: 1rem; }
+        .prereq-desc { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem; }
+        .prereq-action {
+            background: white; border: 2px solid var(--border-subtle); border-radius: 0.5rem;
+            padding: 0.5rem 1rem; font-size: 0.813rem; font-weight: 600;
+            color: var(--text-primary); cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .prereq-action:hover { border-color: var(--primary-green); color: var(--primary-green); }
+        .prereq-action.completed {
+            background: rgba(16,185,129,0.1); border-color: var(--primary-green);
+            color: var(--primary-green); pointer-events: none;
+        }
+        /* btn-actions (two-col grid) for prereq step */
+        .btn-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+
         .rate-expired-banner {
             display: none; align-items: flex-start; gap: 0.625rem;
             padding: 0.75rem 0.875rem; background: rgba(245,158,11,0.1);
@@ -618,6 +655,49 @@
                 <span class="mobile-step-counter" id="mobileStepCounter">1/4</span>
             </div>
 
+            <!-- ================= PREREQ – STEP 0 (KYC & WALLET) ================= -->
+            <div id="step-prereq" class="redeem-step">
+                <h2 class="section-title">Before you start</h2>
+                <p class="section-desc">To redeem UNERA CAD, we need to verify your identity and connect a wallet. It only takes a minute.</p>
+
+                <div class="prereq-grid">
+                    <!-- KYC Card -->
+                    <div class="prereq-card" id="kycPrereq">
+                        <div class="prereq-icon">🛡️</div>
+                        <div class="prereq-content">
+                            <div class="prereq-title">Identity Verification</div>
+                            <div class="prereq-desc">Regulatory compliance required for UNERA CAD redemptions.</div>
+                            <button class="prereq-action" id="kycAction" onclick="startKYC()">Verify Now</button>
+                        </div>
+                    </div>
+
+                    <!-- Wallet Card -->
+                    <div class="prereq-card" id="walletPrereq">
+                        <div class="prereq-icon">💰</div>
+                        <div class="prereq-content">
+                            <div class="prereq-title">Connect Wallet</div>
+                            <div class="prereq-desc">A wallet is needed to burn your UNERA CAD.</div>
+                            <button class="prereq-action" id="walletAction" onclick="connectWalletForPrereq()">Connect Wallet</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(16,185,129,0.05); border-radius: 0.75rem; padding: 1.5rem; margin: 0 0 2rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span style="font-size: 2rem;">✨</span>
+                        <div>
+                            <strong style="font-size: 1.1rem;">Why complete these steps?</strong>
+                            <p style="color: var(--text-secondary); margin-top: 0.25rem;">Verified users enjoy higher redemption limits, lower fees, and priority support. A connected wallet lets you burn UNERA CAD securely.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-actions">
+                    <button class="btn btn-secondary" onclick="goBack()">Back</button>
+                    <button class="btn btn-primary" id="prereqContinue" onclick="checkPrereqsAndContinue()" disabled>Continue</button>
+                </div>
+            </div>
+
             <!-- Step 1: Choose destination -->
             <div class="redeem-step active" id="step-destination">
                 <div class="dest-section">
@@ -862,6 +942,7 @@
     const S = {
         walletConnected: false,
         walletAddress: '',
+        kycCompleted: false,
         destination: 'usdt',
         amount: '',
         rate: 1.3847,
@@ -883,6 +964,8 @@
     };
     let currentFlowStep = 1;
     let reviewWatchTimer = null;
+    let prerequisitesHidden = false;
+    let inPrereqStep = false;
 
     function bankOnFile() {
         return new URLSearchParams(location.search).get('noBank') !== '1';
@@ -913,6 +996,14 @@
     document.addEventListener('DOMContentLoaded', () => {
         S.walletConnected = !!localStorage.getItem('walletAddress');
         S.walletAddress   = localStorage.getItem('walletAddress') || '';
+        S.kycCompleted    = localStorage.getItem('kycStatus') === 'verified';
+
+        if (S.kycCompleted && S.walletConnected) {
+            prerequisitesHidden = true;
+        } else {
+            showPrereqStep();
+        }
+
         startCountdown();
         renderDestDetail();
         renderRecvTokenDisplay();
@@ -921,6 +1012,7 @@
         syncNavWallet();
         buildFlowStepper();
         updateFlowStepper();
+        updatePrereqUI();
         initNavDropdowns();
     });
 
@@ -1130,45 +1222,53 @@
     function buildFlowStepper() {
         const stepper = document.getElementById('dynamicStepper');
         if (!stepper) return;
+        const visibleKeys = prerequisitesHidden ? FLOW_KEYS : ['prereq', ...FLOW_KEYS];
+        const allTitles = { prereq: 'Prerequisites', ...FLOW_TITLES };
+        const visualCurrentStep = inPrereqStep ? 1 : currentFlowStep + (prerequisitesHidden ? 0 : 1);
+        const total = visibleKeys.length;
         let html = '';
-        FLOW_KEYS.forEach((key, i) => {
+        visibleKeys.forEach((key, i) => {
             const num = i + 1;
-            html += `<div class="step" data-flow-step="${num}"><div class="step-circle">${num}</div><div class="step-label">${FLOW_TITLES[key]}</div></div>`;
+            html += `<div class="step" data-flow-step="${num}"><div class="step-circle">${num}</div><div class="step-label">${allTitles[key]}</div></div>`;
         });
-        const pct = FLOW_KEYS.length > 1 ? ((currentFlowStep - 1) / (FLOW_KEYS.length - 1)) * 100 : 0;
+        const pct = total > 1 ? ((visualCurrentStep - 1) / (total - 1)) * 100 : 0;
         stepper.innerHTML = `<div class="stepper-progress" id="stepperProgress" style="width:${pct}%"></div>${html}`;
     }
 
     function updateFlowStepper() {
         buildFlowStepper();
+        const visibleKeys = prerequisitesHidden ? FLOW_KEYS : ['prereq', ...FLOW_KEYS];
+        const allTitles = { prereq: 'Prerequisites', ...FLOW_TITLES };
+        const visualCurrentStep = inPrereqStep ? 1 : currentFlowStep + (prerequisitesHidden ? 0 : 1);
+        const total = visibleKeys.length;
         const steps = document.querySelectorAll('#dynamicStepper .step');
         steps.forEach((el, i) => {
             const num = i + 1;
             el.classList.remove('active', 'completed');
-            if (num < currentFlowStep) el.classList.add('completed');
-            if (num === currentFlowStep) el.classList.add('active');
+            if (num < visualCurrentStep) el.classList.add('completed');
+            if (num === visualCurrentStep) el.classList.add('active');
             const circle = el.querySelector('.step-circle');
-            if (num < currentFlowStep) circle.textContent = '✓';
+            if (num < visualCurrentStep) circle.textContent = '✓';
             else circle.textContent = String(num);
         });
         const sp = document.getElementById('stepperProgress');
-        if (sp) sp.style.width = (FLOW_KEYS.length > 1 ? ((currentFlowStep - 1) / (FLOW_KEYS.length - 1)) * 100 : 0) + '%';
+        if (sp) sp.style.width = (total > 1 ? ((visualCurrentStep - 1) / (total - 1)) * 100 : 0) + '%';
         const ds = document.getElementById('dynamicStepper');
         if (ds) {
-            ds.setAttribute('aria-valuenow', currentFlowStep);
-            ds.setAttribute('aria-valuemax', FLOW_KEYS.length);
+            ds.setAttribute('aria-valuenow', visualCurrentStep);
+            ds.setAttribute('aria-valuemax', total);
         }
-        const key = FLOW_KEYS[currentFlowStep - 1];
+        const key = inPrereqStep ? 'prereq' : FLOW_KEYS[currentFlowStep - 1];
         const msn = document.getElementById('mobileStepNumber');
         const mcs = document.getElementById('mobileCurrentStep');
         const mts = document.getElementById('mobileTotalSteps');
         const mtitle = document.getElementById('mobileStepTitle');
         const mc = document.getElementById('mobileStepCounter');
-        if (msn) msn.textContent = currentFlowStep;
-        if (mcs) mcs.textContent = currentFlowStep;
-        if (mts) mts.textContent = FLOW_KEYS.length;
-        if (mtitle) mtitle.textContent = FLOW_TITLES[key] || '';
-        if (mc) mc.textContent = `${currentFlowStep}/${FLOW_KEYS.length}`;
+        if (msn) msn.textContent = visualCurrentStep;
+        if (mcs) mcs.textContent = visualCurrentStep;
+        if (mts) mts.textContent = total;
+        if (mtitle) mtitle.textContent = allTitles[key] || '';
+        if (mc) mc.textContent = `${visualCurrentStep}/${total}`;
     }
 
     function hideRateExpiredBanner() {
@@ -1499,7 +1599,82 @@
         renderDestDetail();
         updateRedeemBtn();
         syncNavWallet();
+        updatePrereqUI();
+        checkAllPrereqs();
     }
+
+    // ── PREREQUISITES ────────────────────────────────────────────────────────────
+    function showPrereqStep() {
+        inPrereqStep = true;
+        FLOW_KEYS.forEach(key => {
+            const el = document.getElementById('step-' + key);
+            if (el) el.classList.remove('active');
+        });
+        const prereqEl = document.getElementById('step-prereq');
+        if (prereqEl) prereqEl.classList.add('active');
+    }
+
+    function startKYC() {
+        window.location.href = 'kyc-verify.html';
+    }
+
+    function connectWalletForPrereq() {
+        openModal('connectModal');
+    }
+
+    function updatePrereqUI() {
+        const kycAction = document.getElementById('kycAction');
+        const walletAction = document.getElementById('walletAction');
+        const prereqContinue = document.getElementById('prereqContinue');
+        if (kycAction) {
+            if (S.kycCompleted) {
+                kycAction.textContent = '✓ Verified';
+                kycAction.classList.add('completed');
+            } else {
+                kycAction.textContent = 'Verify Now';
+                kycAction.classList.remove('completed');
+            }
+        }
+        if (walletAction) {
+            if (S.walletConnected) {
+                walletAction.textContent = '✓ Connected';
+                walletAction.classList.add('completed');
+            } else {
+                walletAction.textContent = 'Connect Wallet';
+                walletAction.classList.remove('completed');
+            }
+        }
+        if (prereqContinue) {
+            prereqContinue.disabled = !(S.kycCompleted && S.walletConnected);
+        }
+    }
+
+    function checkAllPrereqs() {
+        if (S.kycCompleted && S.walletConnected) {
+            prerequisitesHidden = true;
+            inPrereqStep = false;
+            const prereqEl = document.getElementById('step-prereq');
+            if (prereqEl) prereqEl.classList.remove('active');
+            goToFlowStep(1);
+        } else {
+            updatePrereqUI();
+        }
+    }
+
+    function checkPrereqsAndContinue() {
+        if (S.kycCompleted && S.walletConnected) {
+            prerequisitesHidden = true;
+            inPrereqStep = false;
+            const prereqEl = document.getElementById('step-prereq');
+            if (prereqEl) prereqEl.classList.remove('active');
+            goToFlowStep(1);
+        }
+    }
+
+    function goBack() {
+        window.location.href = 'wallet-enhanced.html';
+    }
+    // ─────────────────────────────────────────────────────────────────────────────
 
     function initNavDropdowns() {
         document.querySelectorAll('.nav-dropdown-item').forEach(item => {
