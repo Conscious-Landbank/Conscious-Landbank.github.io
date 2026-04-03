@@ -58,6 +58,10 @@
         /* ===== SKIP LINK ===== */
         .skip-link { position: absolute; top: -40px; left: 0; background: var(--primary-green); color: white; padding: 8px 16px; text-decoration: none; z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600; }
         .skip-link:focus { top: 0; }
+        .visually-hidden {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+        }
 
         /* ===== NAV (verbatim from exchange.html) ===== */
         .nav { background: #FFFFFF; padding: 0 2.75rem; height: 44px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10001; border-bottom: 1px solid var(--border-subtle); }
@@ -314,6 +318,47 @@
             background: var(--gradient-warm); color: white;
         }
 
+        /* Destination in-card asset selector (pattern from get-unera-cad.html swap row) */
+        .dest-asset-btn {
+            align-self: flex-start;
+            margin-top: 0.25rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        .dest-asset-btn .token-selector-inner { max-width: 100%; }
+        .token-selector-btn {
+            display: flex; flex-direction: column; align-items: stretch;
+            cursor: pointer; background: none; border: none; padding: 0; font-family: var(--font-body);
+            text-align: left;
+        }
+        .token-selector-inner {
+            display: flex; align-items: center; gap: 0.4rem;
+            background: white; border: 1.5px solid var(--border-subtle);
+            border-radius: 999px; padding: 0.3rem 0.625rem 0.3rem 0.4rem;
+            transition: all 0.2s;
+        }
+        .token-selector-btn:hover .token-selector-inner { border-color: var(--primary-green); box-shadow: 0 2px 8px rgba(16,185,129,0.12); }
+        .token-selector-btn:focus, .token-selector-btn:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; border-radius: 999px; }
+        .token-chevron { width: 11px; height: 11px; stroke: var(--neutral-500); flex-shrink: 0; }
+        .tok-usdc { background: #2775CA; color: white; }
+        .tok-usd { background: linear-gradient(135deg, #0EA5E9, #6366F1); color: white; }
+        .tok-eur { background: linear-gradient(135deg, #6366F1, #EC4899); color: white; }
+        .dest-card-icon.usd { background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(99,102,241,0.12)); }
+        .dest-card-icon.eur { background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(236,72,153,0.1)); }
+
+        /* Redeem asset modal list */
+        .tok-list-item {
+            display: flex; align-items: center; gap: 0.875rem;
+            padding: 0.75rem; border-radius: 0.625rem; cursor: pointer; transition: background 0.15s;
+        }
+        .tok-list-item:hover { background: var(--neutral-100); }
+        .tok-list-item.selected { background: rgba(16,185,129,0.08); }
+        .tok-list-item:focus, .tok-list-item:focus-visible { outline: 2px solid var(--primary-green); outline-offset: 2px; border-radius: 0.625rem; }
+        .tok-list-info { flex: 1; min-width: 0; }
+        .tok-list-name { font-weight: 700; font-size: 0.938rem; color: var(--text-primary); }
+        .tok-list-full { font-size: 0.813rem; color: var(--text-secondary); }
+        .tok-list-tag { font-size: 0.75rem; font-weight: 600; color: var(--neutral-500); flex-shrink: 0; }
+
         /* ===== WIDGET CARD ===== */
         .widget-card { background: white; border-radius: 1.25rem; border: 2px solid var(--border-subtle); padding: 1.125rem; }
 
@@ -340,6 +385,8 @@
         .tok-unera { background: var(--gradient-primary); color: white; }
         .tok-cad { background: linear-gradient(135deg, #EF4444, #0EA5E9); color: white; }
         .tok-usdt { background: #26A17B; color: white; }
+        .token-icon-circle.tok-usd,
+        .token-icon-circle.tok-eur { font-size: 0.625rem; }
         .token-display-inner { display: flex; align-items: center; gap: 0.4rem; background: rgba(16,185,129,0.07); border: 1.5px solid rgba(16,185,129,0.18); border-radius: 999px; padding: 0.3rem 0.75rem 0.3rem 0.5rem; }
         .token-display-cad { display: flex; align-items: center; gap: 0.4rem; background: rgba(239,68,68,0.06); border: 1.5px solid rgba(239,68,68,0.18); border-radius: 999px; padding: 0.3rem 0.75rem 0.3rem 0.5rem; }
         .token-display-usdt { display: flex; align-items: center; gap: 0.4rem; background: rgba(38,161,123,0.08); border: 1.5px solid rgba(38,161,123,0.2); border-radius: 999px; padding: 0.3rem 0.75rem 0.3rem 0.5rem; }
@@ -376,6 +423,51 @@
         /* ===== DESTINATION DETAIL (bank/wallet) ===== */
         .dest-detail-section { margin-top: 0.875rem; }
         .dest-detail-label { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 0.5rem; }
+        .dest-bank-empty {
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.06);
+            border: 1.5px solid rgba(239, 68, 68, 0.2);
+            border-radius: 0.875rem;
+            font-size: 0.875rem;
+        }
+        .dest-bank-empty-title { font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; }
+        .dest-bank-empty-text { color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.45; }
+        .dest-detail-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem 1rem;
+            margin-top: 0.75rem;
+        }
+        .dest-detail-actions .btn { min-height: 46px; }
+        .dest-link-account {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-green);
+            text-decoration: none;
+            padding: 0.25rem 0;
+        }
+        .dest-link-account:hover { text-decoration: underline; }
+        .dest-link-account:focus { outline: 2px solid var(--primary-green); outline-offset: 2px; border-radius: 4px; }
+        .bank-picker-modal-body { padding-top: 0.5rem; padding-bottom: 1rem; max-height: min(60vh, 420px); overflow-y: auto; }
+        .bank-picker-card {
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+            font: inherit;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .bank-picker-card:last-of-type { margin-bottom: 0; }
+        .bank-picker-footer {
+            padding: 0 1.5rem 1.25rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .bank-picker-footer-text { font-size: 0.813rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
 
         /* Saved method card (from add-money.html lines 1940-1963) */
         .saved-method-card {
@@ -397,6 +489,28 @@
         .wallet-addr-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; flex-shrink: 0; }
         .wallet-addr-text { font-size: 0.813rem; font-weight: 600; color: var(--text-primary); font-family: monospace; }
         .wallet-addr-label { font-size: 0.688rem; color: var(--text-secondary); margin-top: 0.1rem; }
+        .wallet-addr-field { margin-top: 0.35rem; }
+        .wallet-addr-input {
+            width: 100%; box-sizing: border-box;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-family: ui-monospace, monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            background: var(--neutral-50);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .wallet-addr-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+            background: white;
+        }
+        .wallet-addr-input.wallet-addr-invalid { border-color: var(--error); }
+        .wallet-addr-hint { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.35rem; line-height: 1.4; }
+        .wallet-addr-error { font-size: 0.75rem; color: var(--error); margin-top: 0.35rem; display: none; font-weight: 600; }
+        .wallet-addr-error.visible { display: block; }
 
         /* ===== ACTION BUTTON ===== */
         .action-btn-wrap { margin-top: 0.875rem; }
@@ -639,7 +753,7 @@
 
             <div class="page-header">
                 <h1 class="page-title">Redeem UNERA CAD</h1>
-                <p class="page-subtitle">Burn your UNERA CAD to receive CAD or USDT</p>
+                <p class="page-subtitle">Burn UNERA CAD to redeem to fiat (bank) or crypto (on-chain)</p>
             </div>
 
             <nav class="stepper" id="dynamicStepper" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4" aria-label="Redemption progress"></nav>
@@ -687,7 +801,7 @@
                         <span style="font-size: 2rem;">✨</span>
                         <div>
                             <strong style="font-size: 1.1rem;">Why complete these steps?</strong>
-                            <p style="color: var(--text-secondary); margin-top: 0.25rem;">Verified users enjoy higher redemption limits, lower fees, and priority support. A connected wallet lets you burn UNERA CAD securely.</p>
+                            <p style="color: var(--text-secondary); margin-top: 0.25rem;">Verified users enjoy higher redemption limits and priority support. Standard redemption fees apply to all redemptions. A connected wallet lets you burn UNERA CAD securely.</p>
                         </div>
                     </div>
                 </div>
@@ -701,32 +815,49 @@
             <!-- Step 1: Choose destination -->
             <div class="redeem-step active" id="step-destination">
                 <div class="dest-section">
-                    <div class="dest-section-label">Where do you want to receive?</div>
-                    <div class="dest-grid" role="radiogroup" aria-label="Redemption destination">
+                    <div class="dest-grid" role="radiogroup" aria-label="Redeem to fiat bank or crypto wallet">
 
                         <div class="dest-card" id="dest-cad" role="radio" tabindex="0"
-                            aria-checked="false" aria-label="Receive Canadian dollars, 1 to 2 business days"
+                            aria-checked="false" aria-label="Redeem to fiat, Canadian dollars to linked bank account, one to two business days, redemption fee applies"
                             onclick="selectDest('cad')" onkeydown="if(event.key==='Enter'||event.key===' ')selectDest('cad')">
                             <div class="dest-check">
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
-                            <div class="dest-card-icon cad" aria-hidden="true">🍁</div>
-                            <div class="dest-title">Receive CAD</div>
-                            <div class="dest-desc">Fiat deposited to your linked bank account</div>
-                            <div class="dest-meta">1–2 business days</div>
+                            <div class="dest-card-icon cad" id="fiatDestCardIcon" aria-hidden="true">🍁</div>
+                            <div class="dest-title">Redeem to fiat</div>
+                            <div class="dest-desc" id="fiatDestDesc">Requires a linked bank account. Funds settle in your chosen currency.</div>
+                            <button type="button" class="token-selector-btn dest-asset-btn" id="fiatDestSelectorBtn"
+                                aria-haspopup="dialog" aria-label="Select fiat currency"
+                                onclick="event.stopPropagation(); openRedeemAssetSelector('fiat')">
+                                <div class="token-selector-inner">
+                                    <div class="token-icon-circle tok-cad" id="fiatSelectorIcon" aria-hidden="true">🍁</div>
+                                    <span class="token-code-label" id="fiatSelectorCode">CAD</span>
+                                    <svg class="token-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                                </div>
+                            </button>
+                            <div class="dest-meta" id="fiatDestMeta">1–2 business days · Fee applies</div>
                         </div>
 
                         <div class="dest-card selected" id="dest-usdt" role="radio" tabindex="0"
-                            aria-checked="true" aria-label="Receive USDT, under 5 minutes, recommended"
+                            aria-checked="true" aria-label="Redeem to crypto, USDT to your wallet address, typically under five minutes, redemption fee applies, recommended fastest"
                             onclick="selectDest('usdt')" onkeydown="if(event.key==='Enter'||event.key===' ')selectDest('usdt')">
                             <span class="recommended-flag">Fastest</span>
                             <div class="dest-check">
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
-                            <div class="dest-card-icon usdt" aria-hidden="true">₮</div>
-                            <div class="dest-title">Receive USDT</div>
-                            <div class="dest-desc">Unlocked to your connected wallet instantly</div>
-                            <div class="dest-meta fast">⚡ &lt; 5 minutes</div>
+                            <div class="dest-card-icon usdt" id="cryptoDestCardIcon" aria-hidden="true">₮</div>
+                            <div class="dest-title">Redeem to crypto</div>
+                            <div class="dest-desc" id="cryptoDestDesc">Requires a destination wallet address. Asset sent on-chain.</div>
+                            <button type="button" class="token-selector-btn dest-asset-btn" id="cryptoDestSelectorBtn"
+                                aria-haspopup="dialog" aria-label="Select crypto asset"
+                                onclick="event.stopPropagation(); openRedeemAssetSelector('crypto')">
+                                <div class="token-selector-inner">
+                                    <div class="token-icon-circle tok-usdt" id="cryptoSelectorIcon" aria-hidden="true">₮</div>
+                                    <span class="token-code-label" id="cryptoSelectorCode">USDT</span>
+                                    <svg class="token-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                                </div>
+                            </button>
+                            <div class="dest-meta fast" id="cryptoDestMeta">⚡ &lt; 5 min · Fee applies</div>
                         </div>
 
                     </div>
@@ -798,14 +929,14 @@
                         </div>
                         <div class="summary-row">
                             <span class="summary-label">Redemption fee</span>
-                            <span class="summary-value" style="color:var(--success);">None</span>
+                            <span class="summary-value" id="sumFee">—</span>
                         </div>
                         <div class="summary-row" id="sumSettleRow">
                             <span class="summary-label">Estimated arrival</span>
                             <span class="summary-value" id="sumSettle">—</span>
                         </div>
                         <div class="summary-row">
-                            <span class="summary-label" id="sumRecvLabel">You receive</span>
+                            <span class="summary-label" id="sumRecvLabel">You receive (after fee)</span>
                             <span class="summary-value receive-big" id="sumRecv">—</span>
                         </div>
                     </div>
@@ -859,14 +990,14 @@
 
                     <div class="confirm-detail"><span class="cd-label">Destination</span><span class="cd-value" id="rv-dest">—</span></div>
                     <div class="confirm-detail"><span class="cd-label">Exchange rate</span><span class="cd-value" id="rv-rate">—</span></div>
-                    <div class="confirm-detail"><span class="cd-label">Redemption fee</span><span class="cd-value good">None</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Redemption fee</span><span class="cd-value" id="rv-fee">—</span></div>
                     <div class="confirm-detail"><span class="cd-label">Estimated arrival</span><span class="cd-value" id="rv-settle">—</span></div>
                     <div class="confirm-detail" id="rv-bankRow" style="display:none;"><span class="cd-label">Bank account</span><span class="cd-value" id="rv-bank">—</span></div>
                     <div class="confirm-detail" id="rv-walletRow" style="display:none;"><span class="cd-label">Destination wallet</span><span class="cd-value" id="rv-wallet" style="font-family:monospace; font-size:0.8rem;">—</span></div>
 
-                    <div class="fee-trust-banner" role="note">
-                        <span aria-hidden="true">✓</span>
-                        <div><span class="fee-trust-strong">$0.00 redemption fee</span> — No fee is charged for this redemption. You receive the full quoted amount.</div>
+                    <div class="fee-trust-banner" role="note" id="feeTrustBanner">
+                        <span aria-hidden="true">ℹ️</span>
+                        <div id="feeTrustText"><span class="fee-trust-strong">Redemption fee</span> — A fee applies to this redemption. The amount above is what you receive after fees.</div>
                     </div>
 
                     <div class="irrevers-warn">
@@ -935,6 +1066,39 @@
         </div>
     </div>
 
+    <!-- Redeem: fiat / crypto asset picker (same modal pattern as get-unera-cad token selector) -->
+    <div id="redeemAssetModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="redeemAssetModalTitle"
+        onclick="if(event.target===this)closeModal('redeemAssetModal')">
+        <div class="modal-sheet" onclick="event.stopPropagation()" style="max-width:400px;">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title" id="redeemAssetModalTitle">Select currency</span>
+                <button type="button" class="modal-close" onclick="closeModal('redeemAssetModal')" aria-label="Close">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" style="padding-top:0.5rem;" id="redeemAssetModalList" role="listbox" aria-labelledby="redeemAssetModalTitle"></div>
+        </div>
+    </div>
+
+    <div id="redeemBankModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="redeemBankModalTitle"
+        onclick="if(event.target===this)closeModal('redeemBankModal')">
+        <div class="modal-sheet" onclick="event.stopPropagation()" style="max-width:400px;">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title" id="redeemBankModalTitle">Receiving bank account</span>
+                <button type="button" class="modal-close" onclick="closeModal('redeemBankModal')" aria-label="Close">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body bank-picker-modal-body" id="redeemBankModalList" role="listbox" aria-labelledby="redeemBankModalTitle"></div>
+            <div class="bank-picker-footer">
+                <p class="bank-picker-footer-text">Need to add or verify an account?</p>
+                <a href="account-settings.html" class="btn btn-secondary" style="width:100%; text-decoration:none; box-sizing:border-box; text-align:center;">Add bank account</a>
+            </div>
+        </div>
+    </div>
+
     <script>
     // =============================================================================
     // STATE
@@ -944,17 +1108,48 @@
         walletAddress: '',
         kycCompleted: false,
         destination: 'usdt',
+        fiatCurrency: 'CAD',
+        cryptoAsset: 'USDT',
         amount: '',
+        cryptoDestAddress: '',
         rate: 1.3847,
         countdown: 15,
         cdTimer: null,
         reviewLockedRate: null,
         txState: null,
         txSimulate: null,
+        selectedBankId: '',
     };
+
+    /** Mock linked bank accounts (design demo). Use ?noBank=1 to simulate none on file. */
+    const MOCK_BANK_ACCOUNTS = [
+        { id: 'bank_td', institution: 'TD Canada Trust', product: 'Chequing', mask: '4521', routing: '004', currency: 'CAD' },
+        { id: 'bank_rbc', institution: 'RBC Royal Bank', product: 'Savings', mask: '8891', routing: '003', currency: 'CAD' },
+    ];
 
     const UNERA_BALANCE = 1240;
     const DAILY_REDEEM_LIMIT = 50000;
+    /** Mock redemption fees (demo): fiat % of UNERA CAD amount; crypto % of gross USDT before net. */
+    const REDEEM_FEE_RATE_FIAT = 0.0025;
+    const REDEEM_FEE_RATE_CRYPTO = 0.005;
+
+    function redeemFeeFiat(amt) {
+        return amt * REDEEM_FEE_RATE_FIAT;
+    }
+    function redeemFeeCrypto(grossUsdt) {
+        return grossUsdt * REDEEM_FEE_RATE_CRYPTO;
+    }
+    function isValidEthAddress(s) {
+        return /^0x[a-fA-F0-9]{40}$/.test(String(s).trim());
+    }
+    function escapeHtmlAttr(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+    function randomHexEthAddress() {
+        let h = '';
+        for (let i = 0; i < 40; i++) h += Math.floor(Math.random() * 16).toString(16);
+        return '0x' + h;
+    }
     const FLOW_KEYS = ['destination', 'amount', 'review', 'complete'];
     const FLOW_TITLES = {
         destination: 'Destination',
@@ -967,36 +1162,105 @@
     let prerequisitesHidden = false;
     let inPrereqStep = false;
 
+    function getLinkedBanks() {
+        if (new URLSearchParams(location.search).get('noBank') === '1') return [];
+        return MOCK_BANK_ACCOUNTS;
+    }
+
     function bankOnFile() {
-        return new URLSearchParams(location.search).get('noBank') !== '1';
+        return getLinkedBanks().length > 0;
+    }
+
+    function syncSelectedBankFromLinked() {
+        const banks = getLinkedBanks();
+        if (!banks.length) {
+            S.selectedBankId = '';
+            return;
+        }
+        if (!banks.some(b => b.id === S.selectedBankId)) {
+            S.selectedBankId = banks[0].id;
+        }
+    }
+
+    function getSelectedBank() {
+        const banks = getLinkedBanks();
+        if (!banks.length) return null;
+        const b = banks.find(x => x.id === S.selectedBankId) || banks[0];
+        if (b.id !== S.selectedBankId) S.selectedBankId = b.id;
+        return b;
+    }
+
+    function formatBankSummary(b) {
+        if (!b) return '—';
+        return `${b.institution} •••• ${b.mask}`;
+    }
+
+    function formatBankDetailLine(b) {
+        if (!b) return '';
+        return `•••• •••• ${b.mask} · Routing: ${b.routing}`;
     }
 
     function dailyCap() {
         return new URLSearchParams(location.search).get('lowLimit') === '1' ? 100 : DAILY_REDEEM_LIMIT;
     }
 
-    const DEST_CONFIG = {
-        cad: {
-            label: 'CAD',
-            settle: '1–2 business days',
-            burnNote: 'Funds will be deposited to your linked bank account.',
-            icon: '🍁', tokenClass: 'tok-cad', tokenText: 'CAD',
-        },
-        usdt: {
-            label: 'USDT',
-            settle: '< 5 minutes',
-            burnNote: 'Your USDT will be unlocked and sent to your wallet.',
-            icon: '₮', tokenClass: 'tok-usdt', tokenText: 'USDT',
-        },
-    };
+    /** Mock fiat payout options (design demo). fiatRate = units of this currency per 1 UNERA CAD after fee base. */
+    const FIAT_OPTIONS = [
+        { code: 'CAD', label: 'CAD', name: 'Canadian dollar', icon: '🍁', cardIconClass: 'cad', tokenClass: 'tok-cad', fiatRate: 1,
+            settle: '1–2 business days', metaLine: '1–2 business days · Fee applies',
+            burnNote: 'Funds will be deposited to your linked bank account in your chosen currency after the redemption fee.' },
+        { code: 'USD', label: 'USD', name: 'US dollar', icon: '$', cardIconClass: 'usd', tokenClass: 'tok-usd', fiatRate: 0.74,
+            settle: '2–3 business days', metaLine: '2–3 business days · Fee applies',
+            burnNote: 'Funds will be deposited to your linked bank account in your chosen currency after the redemption fee.' },
+        { code: 'EUR', label: 'EUR', name: 'Euro', icon: '€', cardIconClass: 'eur', tokenClass: 'tok-eur', fiatRate: 0.68,
+            settle: '2–4 business days', metaLine: '2–4 business days · Fee applies',
+            burnNote: 'Funds will be deposited to your linked bank account in your chosen currency after the redemption fee.' },
+    ];
+
+    /** Mock crypto payout options; rateFactor scales gross USDT-equivalent from UNERA rate. */
+    const CRYPTO_OPTIONS = [
+        { code: 'USDT', label: 'USDT', name: 'Tether', icon: '₮', cardIconClass: 'usdt', tokenClass: 'tok-usdt', rateFactor: 1,
+            settle: '< 5 minutes', metaFast: '⚡ < 5 min · Fee applies',
+            burnNote: 'will be sent to your destination wallet after the redemption fee.' },
+        { code: 'USDC', label: 'USDC', name: 'USD Coin', icon: '$', cardIconClass: 'usdt', tokenClass: 'tok-usdc', rateFactor: 0.9997,
+            settle: '< 5 minutes', metaFast: '⚡ < 5 min · Fee applies',
+            burnNote: 'will be sent to your destination wallet after the redemption fee.' },
+    ];
+
+    function getFiatOption(code) {
+        return FIAT_OPTIONS.find(o => o.code === code) || FIAT_OPTIONS[0];
+    }
+    function getCryptoOption(code) {
+        return CRYPTO_OPTIONS.find(o => o.code === code) || CRYPTO_OPTIONS[0];
+    }
+    function getActiveDestConfig() {
+        return S.destination === 'cad' ? getFiatOption(S.fiatCurrency) : getCryptoOption(S.cryptoAsset);
+    }
+    function getRateDisplayString() {
+        const isFiat = S.destination === 'cad';
+        if (isFiat) {
+            const o = getFiatOption(S.fiatCurrency);
+            return `1 UNERA CAD = ${fmt(o.fiatRate, 4)} ${o.label}`;
+        }
+        const o = getCryptoOption(S.cryptoAsset);
+        const perUnera = (1 / S.rate) * o.rateFactor;
+        return `1 UNERA CAD = ${fmt(perUnera, 4)} ${o.label}`;
+    }
+
+    let _redeemAssetKind = null;
 
     // =============================================================================
     // INIT
     // =============================================================================
     document.addEventListener('DOMContentLoaded', () => {
-        S.walletConnected = !!localStorage.getItem('walletAddress');
-        S.walletAddress   = localStorage.getItem('walletAddress') || '';
-        S.kycCompleted    = localStorage.getItem('kycStatus') === 'verified';
+        let wa = localStorage.getItem('walletAddress') || '';
+        if (wa && !isValidEthAddress(wa)) {
+            wa = randomHexEthAddress();
+            localStorage.setItem('walletAddress', wa);
+        }
+        S.walletConnected = !!wa;
+        S.walletAddress = wa;
+        S.kycCompleted = localStorage.getItem('kycStatus') === 'verified';
 
         if (S.kycCompleted && S.walletConnected) {
             prerequisitesHidden = true;
@@ -1005,6 +1269,9 @@
         }
 
         startCountdown();
+        syncSelectedBankFromLinked();
+        updateDestSelectorDisplays();
+        updateDestCardAriaLabels();
         renderDestDetail();
         renderRecvTokenDisplay();
         updateRedeemBtn();
@@ -1026,6 +1293,115 @@
             c.classList.toggle('selected', isSelected);
             c.setAttribute('aria-checked', isSelected ? 'true' : 'false');
         });
+        updateDestCardAriaLabels();
+        renderRecvTokenDisplay();
+        renderDestDetail();
+        computeOutputs();
+        updateRedeemBtn();
+        updateDestContinueBtn();
+    }
+
+    function updateDestCardAriaLabels() {
+        const fiat = getFiatOption(S.fiatCurrency);
+        const cry = getCryptoOption(S.cryptoAsset);
+        const fiatEl = document.getElementById('dest-cad');
+        const cryEl = document.getElementById('dest-usdt');
+        if (fiatEl) {
+            fiatEl.setAttribute('aria-label',
+                `Redeem to fiat, ${fiat.label} to linked bank account, ${fiat.settle}, redemption fee applies`);
+        }
+        if (cryEl) {
+            cryEl.setAttribute('aria-label',
+                `Redeem to crypto, ${cry.label} to your wallet address, ${cry.settle}, redemption fee applies, recommended fastest`);
+        }
+    }
+
+    function updateDestSelectorDisplays() {
+        const fiat = getFiatOption(S.fiatCurrency);
+        const cry = getCryptoOption(S.cryptoAsset);
+
+        const fiatIcon = document.getElementById('fiatSelectorIcon');
+        const fiatCode = document.getElementById('fiatSelectorCode');
+        const fiatCardIcon = document.getElementById('fiatDestCardIcon');
+        const fiatMeta = document.getElementById('fiatDestMeta');
+        if (fiatIcon && fiatCode) {
+            fiatIcon.className = `token-icon-circle ${fiat.tokenClass}`;
+            fiatIcon.textContent = fiat.icon;
+            fiatCode.textContent = fiat.label;
+        }
+        if (fiatCardIcon) {
+            fiatCardIcon.className = 'dest-card-icon ' + fiat.cardIconClass;
+            fiatCardIcon.textContent = fiat.icon;
+        }
+        if (fiatMeta) fiatMeta.textContent = fiat.metaLine;
+
+        const cIcon = document.getElementById('cryptoSelectorIcon');
+        const cCode = document.getElementById('cryptoSelectorCode');
+        const cCardIcon = document.getElementById('cryptoDestCardIcon');
+        const cMeta = document.getElementById('cryptoDestMeta');
+        if (cIcon && cCode) {
+            cIcon.className = `token-icon-circle ${cry.tokenClass}`;
+            cIcon.textContent = cry.icon;
+            cCode.textContent = cry.label;
+        }
+        if (cCardIcon) {
+            cCardIcon.className = 'dest-card-icon ' + cry.cardIconClass;
+            cCardIcon.textContent = cry.icon;
+        }
+        if (cMeta) cMeta.textContent = cry.metaFast;
+    }
+
+    function openRedeemAssetSelector(kind) {
+        _redeemAssetKind = kind;
+        const titleEl = document.getElementById('redeemAssetModalTitle');
+        const listEl = document.getElementById('redeemAssetModalList');
+        if (!titleEl || !listEl) return;
+        if (kind === 'fiat') {
+            titleEl.textContent = 'Select currency';
+            const cur = S.fiatCurrency;
+            listEl.innerHTML = FIAT_OPTIONS.map(o => `
+            <div class="tok-list-item${o.code === cur ? ' selected' : ''}"
+                role="option" tabindex="0" aria-selected="${o.code === cur}"
+                data-code="${o.code}"
+                onclick="selectRedeemAsset('${o.code}')"
+                onkeydown="if(event.key==='Enter'||event.key===' ')selectRedeemAsset('${o.code}')">
+                <div class="token-icon-circle ${o.tokenClass}" style="width:34px;height:34px;font-size:1rem;">${o.icon}</div>
+                <div class="tok-list-info">
+                    <div class="tok-list-name">${o.label}</div>
+                    <div class="tok-list-full">${o.name}</div>
+                </div>
+                <div class="tok-list-tag">${o.code === 'CAD' ? 'Default' : ''}</div>
+            </div>`).join('');
+        } else {
+            titleEl.textContent = 'Select asset';
+            const cur = S.cryptoAsset;
+            listEl.innerHTML = CRYPTO_OPTIONS.map(o => `
+            <div class="tok-list-item${o.code === cur ? ' selected' : ''}"
+                role="option" tabindex="0" aria-selected="${o.code === cur}"
+                data-code="${o.code}"
+                onclick="selectRedeemAsset('${o.code}')"
+                onkeydown="if(event.key==='Enter'||event.key===' ')selectRedeemAsset('${o.code}')">
+                <div class="token-icon-circle ${o.tokenClass}" style="width:34px;height:34px;font-size:1rem;">${o.icon}</div>
+                <div class="tok-list-info">
+                    <div class="tok-list-name">${o.label}</div>
+                    <div class="tok-list-full">${o.name}</div>
+                </div>
+                <div class="tok-list-tag">${o.code === 'USDT' ? 'Default' : ''}</div>
+            </div>`).join('');
+        }
+        openModal('redeemAssetModal');
+    }
+
+    function selectRedeemAsset(code) {
+        if (_redeemAssetKind === 'fiat') {
+            S.fiatCurrency = code;
+        } else if (_redeemAssetKind === 'crypto') {
+            S.cryptoAsset = code;
+        }
+        _redeemAssetKind = null;
+        closeModal('redeemAssetModal');
+        updateDestSelectorDisplays();
+        updateDestCardAriaLabels();
         renderRecvTokenDisplay();
         renderDestDetail();
         computeOutputs();
@@ -1049,11 +1425,70 @@
     }
 
     function renderRecvTokenDisplay() {
-        const cfg = DEST_CONFIG[S.destination];
-        const html = S.destination === 'cad'
-            ? `<div class="token-display-cad"><div class="token-icon-circle tok-cad" aria-hidden="true">🍁</div><span class="token-code-label">CAD</span></div>`
-            : `<div class="token-display-usdt"><div class="token-icon-circle tok-usdt" aria-hidden="true">₮</div><span class="token-code-label">USDT</span></div>`;
+        const cfg = getActiveDestConfig();
+        const wrapClass = S.destination === 'cad' ? 'token-display-cad' : 'token-display-usdt';
+        const html = `<div class="${wrapClass}"><div class="token-icon-circle ${cfg.tokenClass}" aria-hidden="true">${cfg.icon}</div><span class="token-code-label">${cfg.label}</span></div>`;
         document.getElementById('recvTokenDisplay').innerHTML = html;
+    }
+
+    function getEffectiveCryptoAddress() {
+        const el = document.getElementById('cryptoDestInput');
+        if (el) return el.value.trim();
+        return (S.cryptoDestAddress || S.walletAddress || '').trim();
+    }
+
+    function onCryptoDestInput() {
+        const el = document.getElementById('cryptoDestInput');
+        if (el) {
+            S.cryptoDestAddress = el.value.trim();
+            const v = S.cryptoDestAddress;
+            el.setAttribute('aria-invalid', (v.length > 0 && !isValidEthAddress(v)) ? 'true' : 'false');
+        }
+        updateCryptoDestInvalid();
+        computeOutputs();
+        updateRedeemBtn();
+    }
+
+    function updateCryptoDestInvalid() {
+        const err = document.getElementById('cryptoDestError');
+        const inp = document.getElementById('cryptoDestInput');
+        if (!inp) return;
+        const v = inp.value.trim();
+        const show = v.length > 0 && !isValidEthAddress(v);
+        if (err) err.classList.toggle('visible', show);
+        inp.classList.toggle('wallet-addr-invalid', show);
+    }
+
+    function openRedeemBankModal() {
+        renderRedeemBankModalList();
+        openModal('redeemBankModal');
+    }
+
+    function renderRedeemBankModalList() {
+        const list = document.getElementById('redeemBankModalList');
+        if (!list) return;
+        const banks = getLinkedBanks();
+        list.innerHTML = banks.map(b => {
+            const sel = b.id === S.selectedBankId;
+            return `<button type="button" class="saved-method-card bank-picker-card${sel ? ' selected' : ''}" role="option"
+                aria-selected="${sel}" id="redeemBankOpt-${b.id}"
+                onclick="selectRedeemBank('${b.id}')">
+                <div class="method-icon-wrap" aria-hidden="true">🏦</div>
+                <div class="method-details-col">
+                    <div class="method-name">${b.institution} — ${b.product}</div>
+                    <div class="method-info">${formatBankDetailLine(b)}</div>
+                </div>
+                <div class="method-check">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+            </button>`;
+        }).join('');
+    }
+
+    function selectRedeemBank(id) {
+        S.selectedBankId = id;
+        closeModal('redeemBankModal');
+        renderDestDetail();
     }
 
     function renderDestDetail() {
@@ -1061,37 +1496,56 @@
         if (S.destination === 'cad') {
             if (!bankOnFile()) {
                 section.innerHTML = `
-                    <div class="dest-detail-label" style="margin-top:0.875rem;">Receiving bank account</div>
-                    <div style="padding:1rem; background:rgba(239,68,68,0.06); border:1.5px solid rgba(239,68,68,0.2); border-radius:0.875rem; font-size:0.875rem;">
-                        <div style="font-weight:700; color:var(--text-primary); margin-bottom:0.35rem;">No bank account on file</div>
-                        <div style="color:var(--text-secondary); margin-bottom:0.75rem;">Add a CAD bank account to redeem to fiat.</div>
-                        <a href="account-settings.html" class="btn btn-primary" style="width:100%; text-decoration:none; box-sizing:border-box;">Add Bank Account</a>
+                    <div class="dest-detail-label">Receiving bank account</div>
+                    <div class="dest-bank-empty" role="status">
+                        <div class="dest-bank-empty-title">No bank account on file</div>
+                        <div class="dest-bank-empty-text">Add a CAD bank account to redeem to fiat.</div>
+                        <a href="account-settings.html" class="btn btn-primary" style="width:100%; text-decoration:none; box-sizing:border-box;">Add bank account</a>
                     </div>`;
             } else {
+                const b = getSelectedBank();
+                const nameLine = b ? `${b.institution} — ${b.product}` : '';
+                const infoLine = b ? formatBankDetailLine(b) : '';
                 section.innerHTML = `
-                    <div class="dest-detail-label" style="margin-top:0.875rem;">Receiving bank account</div>
-                    <div class="saved-method-card selected" role="presentation">
-                        <div class="method-icon-wrap">🏦</div>
+                    <div class="dest-detail-label">Receiving bank account</div>
+                    <div class="saved-method-card selected" role="group" aria-label="Selected receiving bank account">
+                        <div class="method-icon-wrap" aria-hidden="true">🏦</div>
                         <div class="method-details-col">
-                            <div class="method-name">TD Canada Trust — Chequing</div>
-                            <div class="method-info">•••• •••• 4521 · Routing: 004</div>
+                            <div class="method-name">${nameLine}</div>
+                            <div class="method-info">${infoLine}</div>
                         </div>
-                        <div class="method-check">
+                        <div class="method-check" aria-hidden="true">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
+                    </div>
+                    <div class="dest-detail-actions">
+                        <button type="button" class="btn btn-secondary" onclick="openRedeemBankModal()" aria-haspopup="dialog" aria-controls="redeemBankModal">Change account</button>
+                        <a href="account-settings.html" class="dest-link-account">Add another account</a>
                     </div>`;
             }
         } else {
-            const addr = S.walletAddress || '0xA1B2C3D4E5F6...7890';
+            const cry = getCryptoOption(S.cryptoAsset);
+            const raw = S.cryptoDestAddress || S.walletAddress || '';
+            const val = escapeHtmlAttr(raw);
             section.innerHTML = `
-                <div class="dest-detail-label" style="margin-top:0.875rem;">Destination wallet</div>
-                <div class="wallet-addr-display">
-                    <div class="wallet-addr-icon">W</div>
-                    <div>
-                        <div class="wallet-addr-text">${addr.slice(0,10)}…${addr.slice(-6)}</div>
-                        <div class="wallet-addr-label">Connected wallet · Ethereum mainnet</div>
-                    </div>
+                <div class="dest-detail-label" style="margin-top:0.875rem;">Destination wallet address</div>
+                <div class="wallet-addr-field">
+                    <label for="cryptoDestInput" class="visually-hidden">${cry.label} destination wallet address</label>
+                    <input type="text" class="wallet-addr-input" id="cryptoDestInput" name="cryptoDestInput"
+                        autocomplete="off" spellcheck="false" inputmode="text"
+                        placeholder="0x… (Ethereum address)"
+                        aria-describedby="cryptoDestHint cryptoDestError"
+                        aria-invalid="false"
+                        value="${val}"
+                        oninput="onCryptoDestInput()">
+                    <p class="wallet-addr-hint" id="cryptoDestHint">${cry.label} will be sent to this address on Ethereum mainnet. Connect a wallet to autofill, or paste any valid address.</p>
+                    <p class="wallet-addr-error" id="cryptoDestError" role="alert">Enter a valid 0x wallet address (42 characters).</p>
                 </div>`;
+            const inp = document.getElementById('cryptoDestInput');
+            if (inp) {
+                inp.setAttribute('aria-invalid', (!isValidEthAddress(inp.value.trim()) && inp.value.trim().length > 0) ? 'true' : 'false');
+            }
+            updateCryptoDestInvalid();
         }
     }
 
@@ -1138,35 +1592,43 @@
     }
 
     function computeOutputs() {
-        const amt    = parseFloat(S.amount) || 0;
-        const cfg    = DEST_CONFIG[S.destination];
-        // UNERA CAD → output: divide by rate (1 UNERA CAD = 1/rate USD, then to CAD or USDT)
-        // For CAD: 1 UNERA CAD ≈ 1 CAD (it's pegged to CAD)
-        // For USDT: 1 UNERA CAD ≈ 1/rate USDT
-        const recvCAD  = amt;                          // 1:1 for CAD
-        const recvUSDT = amt / S.rate;                 // convert at FX rate
+        const amt = parseFloat(S.amount) || 0;
+        const cfg = getActiveDestConfig();
+        const fiatOpt = getFiatOption(S.fiatCurrency);
+        const cryptoOpt = getCryptoOption(S.cryptoAsset);
+        const isFiat = S.destination === 'cad';
 
-        const recv = S.destination === 'cad' ? recvCAD : recvUSDT;
-        const rateStr = S.destination === 'cad'
-            ? `1 UNERA CAD = 1.0000 CAD`
-            : `1 UNERA CAD = ${(1/S.rate).toFixed(4)} USDT`;
+        const feeCadBase = redeemFeeFiat(amt);
+        const grossUSDT = amt / S.rate;
+        const grossCrypto = grossUSDT * cryptoOpt.rateFactor;
+        const feeCrypto = redeemFeeCrypto(grossCrypto);
+        const netFiat = Math.max(0, (amt - feeCadBase) * fiatOpt.fiatRate);
+        const netCrypto = Math.max(0, grossCrypto - feeCrypto);
+
+        const recv = isFiat ? netFiat : netCrypto;
+        const feeShown = isFiat ? feeCadBase * fiatOpt.fiatRate : feeCrypto;
+        const rateStr = getRateDisplayString();
 
         set('rateDisplay', rateStr);
         set('sumRate', rateStr);
         set('sumSettle', cfg.settle);
-        set('sumRecvLabel', `You receive (${cfg.label})`);
+        set('sumRecvLabel', `You receive (${cfg.label}, after fee)`);
 
         if (amt > 0) {
-            set('recvAmt',   fmt(recv, 4));
-            set('recvFiat',  S.destination === 'cad' ? `~$${fmt(recv, 2)} CAD` : `~$${fmt(recv, 2)} USD`);
+            set('sumFee', isFiat
+                ? `${fmt(feeShown, 2)} ${fiatOpt.label} (${(REDEEM_FEE_RATE_FIAT * 100).toFixed(2)}%)`
+                : `${fmt(feeShown, 4)} ${cryptoOpt.label} (${(REDEEM_FEE_RATE_CRYPTO * 100).toFixed(2)}%)`);
+            set('recvAmt', fmt(recv, 4));
+            set('recvFiat', isFiat ? `~${fmt(recv, 2)} ${fiatOpt.label} (net)` : `~$${fmt(recv, 2)} USD (net)`);
             set('redeemFiat', `~$${fmt(amt * (1/S.rate), 2)} USD`);
-            set('sumRecv',   `${fmt(recv, 4)} ${cfg.label}`);
+            set('sumRecv', `${fmt(recv, 4)} ${cfg.label}`);
             document.getElementById('convSummary').style.display = 'block';
         } else {
-            set('recvAmt',   '');
-            set('recvFiat',  '~$0.00');
-            set('redeemFiat','~$0.00 USD');
-            set('sumRecv',   '—');
+            set('sumFee', '—');
+            set('recvAmt', '');
+            set('recvFiat', '~$0.00');
+            set('redeemFiat', '~$0.00 USD');
+            set('sumRecv', '—');
             document.getElementById('convSummary').style.display = 'none';
         }
     }
@@ -1178,8 +1640,10 @@
         const amt = parseFloat(S.amount) || 0;
         const btn = document.getElementById('redeemBtn');
         const cap = dailyCap();
+        const cryptoAddr = getEffectiveCryptoAddress();
         if (!S.walletConnected) setBtn(btn, 's-connect', 'Connect Wallet');
         else if (S.destination === 'cad' && !bankOnFile()) setBtn(btn, 's-error', 'Add a bank account');
+        else if (S.destination === 'usdt' && !isValidEthAddress(cryptoAddr)) setBtn(btn, 's-error', 'Enter a valid wallet address');
         else if (amt <= 0) setBtn(btn, 's-disabled', 'Enter an amount');
         else if (amt > UNERA_BALANCE) setBtn(btn, 's-error', 'Insufficient UNERA CAD');
         else if (amt > cap) setBtn(btn, 's-error', `Daily limit reached (${fmt(cap, 0)} UNERA CAD) · Resets midnight ET`);
@@ -1200,6 +1664,7 @@
         const amt = parseFloat(S.amount) || 0;
         if (amt <= 0 || amt > UNERA_BALANCE || amt > dailyCap()) return;
         if (S.destination === 'cad' && !bankOnFile()) return;
+        if (S.destination === 'usdt' && !isValidEthAddress(getEffectiveCryptoAddress())) return;
         hideRateExpiredBanner();
         populateReview();
         S.reviewLockedRate = S.rate;
@@ -1280,10 +1745,7 @@
         const b = document.getElementById('rateExpiredBanner');
         if (!b || b.classList.contains('active')) return;
         b.classList.add('active');
-        const rateStr = S.destination === 'cad'
-            ? `1 UNERA CAD = 1.0000 CAD`
-            : `1 UNERA CAD = ${(1/S.rate).toFixed(4)} USDT`;
-        set('rateExpiredNewVal', rateStr);
+        set('rateExpiredNewVal', getRateDisplayString());
     }
 
     function confirmRateRefresh() {
@@ -1314,50 +1776,73 @@
     }
 
     function populateReview() {
-        const amt  = parseFloat(S.amount) || 0;
-        const cfg  = DEST_CONFIG[S.destination];
-        const recv = S.destination === 'cad' ? amt : amt / S.rate;
-        const rateStr = S.destination === 'cad'
-            ? `1 UNERA CAD = 1.0000 CAD`
-            : `1 UNERA CAD = ${(1/S.rate).toFixed(4)} USDT`;
+        const amt = parseFloat(S.amount) || 0;
+        const cfg = getActiveDestConfig();
+        const fiatOpt = getFiatOption(S.fiatCurrency);
+        const cryptoOpt = getCryptoOption(S.cryptoAsset);
+        const isFiat = S.destination === 'cad';
+        const grossUSDT = amt / S.rate;
+        const grossCrypto = grossUSDT * cryptoOpt.rateFactor;
+        const feeCad = redeemFeeFiat(amt);
+        const feeCrypto = redeemFeeCrypto(grossCrypto);
+        const recv = isFiat
+            ? Math.max(0, (amt - feeCad) * fiatOpt.fiatRate)
+            : Math.max(0, grossCrypto - feeCrypto);
+        const rateStr = getRateDisplayString();
+        const feeLine = isFiat
+            ? `${fmt(feeCad * fiatOpt.fiatRate, 2)} ${fiatOpt.label}`
+            : `${fmt(feeCrypto, 4)} ${cryptoOpt.label}`;
+        const destAddr = getEffectiveCryptoAddress();
 
-        set('rv-pay',   fmt(amt, 4));
-        set('rv-recv',  fmt(recv, 4));
+        set('rv-pay', fmt(amt, 4));
+        set('rv-recv', fmt(recv, 4));
         set('rv-recvCode', cfg.label);
-        set('rv-dest',  `Receive ${cfg.label}`);
-        set('rv-rate',  rateStr);
+        set('rv-dest', isFiat ? `Fiat · ${fiatOpt.label} to linked bank` : `Crypto · ${cryptoOpt.label} to wallet`);
+        set('rv-rate', rateStr);
+        set('rv-fee', feeLine);
         set('rv-settle', cfg.settle);
-        set('rv-burnNote', cfg.burnNote);
+        set('rv-burnNote', isFiat ? cfg.burnNote : `${cryptoOpt.label} ${cfg.burnNote}`);
 
-        const bankRow   = document.getElementById('rv-bankRow');
+        const ft = document.getElementById('feeTrustText');
+        if (ft) {
+            ft.innerHTML = '<span class="fee-trust-strong">Redemption fee ' + escapeHtmlAttr(feeLine) + '</span> — Included in the quote above. You receive the net amount after this fee.';
+        }
+
+        const bankRow = document.getElementById('rv-bankRow');
         const walletRow = document.getElementById('rv-walletRow');
-        if (S.destination === 'cad') {
+        if (isFiat) {
             bankRow.style.display = 'flex';
             walletRow.style.display = 'none';
-            set('rv-bank', bankOnFile() ? 'TD Canada Trust •••• 4521' : '—');
+            set('rv-bank', bankOnFile() ? formatBankSummary(getSelectedBank()) : '—');
         } else {
             bankRow.style.display = 'none';
             walletRow.style.display = 'flex';
-            set('rv-wallet', S.walletAddress || '0xA1B2C3D4E5F67890');
+            const wv = document.getElementById('rv-wallet');
+            if (wv) {
+                wv.textContent = destAddr.length > 22
+                    ? destAddr.slice(0, 12) + '…' + destAddr.slice(-10)
+                    : destAddr;
+                wv.title = destAddr;
+            }
         }
 
         const ban = document.getElementById('destReviewBanner');
         const pill = document.getElementById('destReviewPill');
         if (ban && pill) {
-            if (S.destination === 'cad') {
+            if (isFiat) {
                 ban.className = 'dest-review-banner cad';
-                document.getElementById('destReviewIcon').textContent = '🍁';
-                set('destReviewTitle', 'CAD bank redemption');
-                set('destReviewSub', 'Funds settle to your linked CAD account in 1–2 business days. A verified bank account is required.');
+                document.getElementById('destReviewIcon').textContent = fiatOpt.icon;
+                set('destReviewTitle', 'Redeem to fiat');
+                set('destReviewSub', `${fiatOpt.label} settles to your linked bank account (${fiatOpt.settle}). A verified bank account is required. A redemption fee applies.`);
                 pill.className = 'dest-pill cad';
-                pill.textContent = 'Fiat · Bank settlement';
+                pill.textContent = 'Fiat · Bank';
             } else {
                 ban.className = 'dest-review-banner usdt';
-                document.getElementById('destReviewIcon').textContent = '₮';
-                set('destReviewTitle', 'USDT wallet unlock');
-                set('destReviewSub', 'USDT is sent to your connected wallet, typically within minutes. No bank transfer — on-chain delivery only.');
+                document.getElementById('destReviewIcon').textContent = cryptoOpt.icon;
+                set('destReviewTitle', 'Redeem to crypto');
+                set('destReviewSub', `${cryptoOpt.label} is sent on-chain to the wallet address you provided (${cryptoOpt.settle}). A redemption fee applies.`);
                 pill.className = 'dest-pill usdt';
-                pill.textContent = 'Crypto · Fast';
+                pill.textContent = 'Crypto · Wallet';
             }
         }
     }
@@ -1375,10 +1860,20 @@
     }
 
     function runTxTracker() {
-        const isCad   = S.destination === 'cad';
-        const amt     = parseFloat(S.amount) || 0;
-        const cfg     = DEST_CONFIG[S.destination];
-        const recv    = isCad ? amt : amt / S.rate;
+        const isCad = S.destination === 'cad';
+        const amt = parseFloat(S.amount) || 0;
+        const cfg = getActiveDestConfig();
+        const fiatOpt = getFiatOption(S.fiatCurrency);
+        const cryptoOpt = getCryptoOption(S.cryptoAsset);
+        const grossUSDT = amt / S.rate;
+        const grossCrypto = grossUSDT * cryptoOpt.rateFactor;
+        const feeCad = redeemFeeFiat(amt);
+        const feeCrypto = redeemFeeCrypto(grossCrypto);
+        const recv = isCad ? Math.max(0, (amt - feeCad) * fiatOpt.fiatRate) : Math.max(0, grossCrypto - feeCrypto);
+        const feeStr = isCad ? `${fmt(feeCad * fiatOpt.fiatRate, 2)} ${fiatOpt.label}` : `${fmt(feeCrypto, 4)} ${cryptoOpt.label}`;
+        const destAddr = getEffectiveCryptoAddress();
+        const releaseLabel = isCad ? `Releasing ${fiatOpt.label} funds` : `Unlocking ${cryptoOpt.label}`;
+        const settleDesc = isCad ? `Bank processing (${fiatOpt.settle})` : 'On-chain confirmation';
 
         // State 1: Submitted
         renderTxState('submitted', {
@@ -1386,8 +1881,8 @@
             subtitle: 'Your request is being processed…',
             steps: [
                 { id: 'burn',    label: 'Burning UNERA CAD tokens',          desc: 'Removing tokens from circulation' },
-                { id: 'release', label: isCad ? 'Releasing CAD funds' : 'Unlocking USDT', desc: isCad ? 'Initiating bank transfer' : 'Sending to your wallet' },
-                { id: 'settle',  label: 'Settling',                           desc: isCad ? 'Bank processing (1–2 days)' : 'On-chain confirmation' },
+                { id: 'release', label: releaseLabel, desc: isCad ? 'Initiating bank transfer' : 'Sending to your wallet' },
+                { id: 'settle',  label: 'Settling',                           desc: isCad ? settleDesc : 'On-chain confirmation' },
             ],
             currentIdx: 0,
         });
@@ -1405,12 +1900,14 @@
                         } else if (S.txSimulate === 'partial') {
                             renderTxState('failed', { kind: 'partial' });
                         } else if (isCad) {
+                            const selBank = getSelectedBank();
                             renderTxState('pending', {
-                                amt: fmt(recv, 2), token: 'CAD', settle: cfg.settle,
+                                amt: fmt(recv, 2), token: fiatOpt.label, settle: cfg.settle, feeStr: feeStr,
+                                bankInstitution: selBank ? selBank.institution : 'Linked bank',
                             });
                         } else {
                             renderTxState('completed', {
-                                amt: fmt(recv, 4), token: 'USDT', paid: fmt(amt, 4),
+                                amt: fmt(recv, 4), token: cryptoOpt.label, paid: fmt(amt, 4), feeStr: feeStr, destAddr: destAddr,
                             });
                         }
                     }, 1200);
@@ -1427,10 +1924,12 @@
 
         if (state === 'submitted' || state === 'confirming') {
             const idx = data.stepIdx ?? data.currentIdx ?? 0;
+            const fiatOpt = getFiatOption(S.fiatCurrency);
+            const cryptoOpt = getCryptoOption(S.cryptoAsset);
             const steps = data.steps || [
                 { id: 'burn',    label: 'Burning UNERA CAD tokens',                   desc: 'Removing tokens from circulation' },
-                { id: 'release', label: isCad ? 'Releasing CAD funds' : 'Unlocking USDT', desc: isCad ? 'Initiating bank transfer' : 'Sending to your wallet' },
-                { id: 'settle',  label: 'Settling',                                    desc: isCad ? 'Bank processing (1–2 days)' : 'On-chain confirmation' },
+                { id: 'release', label: isCad ? `Releasing ${fiatOpt.label} funds` : `Unlocking ${cryptoOpt.label}`, desc: isCad ? 'Initiating bank transfer' : 'Sending to your wallet' },
+                { id: 'settle',  label: 'Settling',                                    desc: isCad ? `Bank processing (${fiatOpt.settle})` : 'On-chain confirmation' },
             ];
             el.innerHTML = `
                 <div class="tx-tracker">
@@ -1465,13 +1964,13 @@
                 <div class="tx-tracker-header">
                     <div class="tx-icon-wrap pending" aria-hidden="true">🏦</div>
                     <div class="tx-status-title">Funds Are On Their Way</div>
-                    <div class="tx-status-subtitle">Your CAD has been dispatched to your bank</div>
+                    <div class="tx-status-subtitle">Your ${data.token} has been dispatched to your bank</div>
                 </div>
                 <div class="settlement-banner">
                     <div class="settlement-banner-icon">📅</div>
                     <div>
                         <div class="settlement-banner-text">Expected by ${getSettlementDate()}</div>
-                        <div class="settlement-banner-sub">Funds arrive within ${data.settle} — check your TD Canada Trust account</div>
+                        <div class="settlement-banner-sub">Funds arrive within ${data.settle} — check your ${data.bankInstitution || 'linked bank'} account</div>
                     </div>
                 </div>
                 <div class="tracker-steps">
@@ -1482,9 +1981,10 @@
                     <div style="margin-top:1.25rem; display:grid; gap:0.625rem;">
                     <div style="font-size:0.813rem; font-weight:600; color:var(--text-secondary);">Transaction details</div>
                     <div style="background:var(--neutral-100); border-radius:0.75rem; padding:0.875rem;">
-                        <div class="suc-row"><span class="suc-label">Destination</span><span class="suc-value">CAD · Linked bank</span></div>
+                        <div class="suc-row"><span class="suc-label">Destination</span><span class="suc-value">${data.token} · Linked bank</span></div>
                         <div class="suc-row"><span class="suc-label">Settlement</span><span class="suc-value">1–2 business days</span></div>
-                        <div class="suc-row"><span class="suc-label">Amount</span><span class="suc-value">${data.amt} ${data.token}</span></div>
+                        <div class="suc-row"><span class="suc-label">Redemption fee</span><span class="suc-value">${data.feeStr || '—'}</span></div>
+                        <div class="suc-row"><span class="suc-label">Amount (net)</span><span class="suc-value">${data.amt} ${data.token}</span></div>
                         <div class="suc-row"><span class="suc-label">Transaction ID</span><span class="suc-value">TXN-${Date.now().toString(36).toUpperCase()}</span></div>
                         <div class="suc-row" style="border:none;"><span class="suc-label">Status</span><span class="suc-value" style="color:var(--accent-indigo);">Pending settlement</span></div>
                     </div>
@@ -1508,8 +2008,10 @@
                     <h2 class="success-title">Redemption Successful!</h2>
                     <div class="success-amount">+${data.amt} ${data.token}</div>
                     <div class="success-details">
-                        <div class="suc-row"><span class="suc-label">Destination</span><span class="suc-value">USDT · Connected wallet</span></div>
+                        <div class="suc-row"><span class="suc-label">Destination</span><span class="suc-value">Crypto · ${data.token} to wallet</span></div>
+                        <div class="suc-row"><span class="suc-label">Wallet address</span><span class="suc-value" style="font-family:monospace;font-size:0.75rem;word-break:break-all;">${data.destAddr ? (data.destAddr.slice(0,14) + '…' + data.destAddr.slice(-12)) : '—'}</span></div>
                         <div class="suc-row"><span class="suc-label">Settlement</span><span class="suc-value">On-chain (typically &lt; 5 min)</span></div>
+                        <div class="suc-row"><span class="suc-label">Redemption fee</span><span class="suc-value">${data.feeStr || '—'}</span></div>
                         <div class="suc-row"><span class="suc-label">Transaction ID</span><span class="suc-value">TXN-${Date.now().toString(36).toUpperCase()}</span></div>
                         <div class="suc-row"><span class="suc-label">Date &amp; time</span><span class="suc-value">${new Date().toLocaleString()}</span></div>
                         <div class="suc-row"><span class="suc-label">You redeemed</span><span class="suc-value">${data.paid} UNERA CAD</span></div>
@@ -1571,6 +2073,9 @@
 
     function startNew() {
         S.amount = '';
+        S.cryptoDestAddress = '';
+        S.fiatCurrency = 'CAD';
+        S.cryptoAsset = 'USDT';
         S.txState = null;
         S.txSimulate = null;
         S.reviewLockedRate = null;
@@ -1584,6 +2089,10 @@
         clearInterval(S.cdTimer);
         startCountdown();
         goToFlowStep(1);
+        updateDestSelectorDisplays();
+        updateDestCardAriaLabels();
+        renderDestDetail();
+        computeOutputs();
         updateRedeemBtn();
         updateDestContinueBtn();
     }
@@ -1593,10 +2102,12 @@
     // =============================================================================
     function connectWallet(_type) {
         S.walletConnected = true;
-        S.walletAddress   = '0x' + Math.random().toString(16).slice(2, 10).toUpperCase();
+        S.walletAddress = randomHexEthAddress();
         localStorage.setItem('walletAddress', S.walletAddress);
+        if (!S.cryptoDestAddress) S.cryptoDestAddress = S.walletAddress;
         closeModal('connectModal');
         renderDestDetail();
+        computeOutputs();
         updateRedeemBtn();
         syncNavWallet();
         updatePrereqUI();
