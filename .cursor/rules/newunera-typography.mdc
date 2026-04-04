@@ -1,0 +1,113 @@
+---
+description: UNERA V2 typography — TestFoundersGrotesk, Oakes Grotesk, CJK/Arabic; aligns with brand-style-guide and Brand Rationale
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# UNERA V2 — Typography & Font Types
+
+**Canonical implementation (copy patterns from here):** `NewUnera/brand-style-guide.html` — `@font-face` block, `--font-*` tokens, and Typography section pages (Typographic family, Primary typefaces English, Chinese, Arabic).
+
+**Brand narrative (voice, trust, community context — not font metrics):** `Brand Guide/Brand Rationale UNERA.docx`. When typography choices affect tone, they should feel **clear, institutional, and human-centered** (readable grotesk; no decorative display faces).
+
+**Scope:** New-brand HTML under `NewUnera/` only. Do not apply old-brand (Space Grotesk) stacks to these files.
+
+---
+
+## 1. Primary Latin — Brand Intent vs Repo Files
+
+| Layer | Rule |
+|--------|------|
+| **Brand (guidelines copy)** | **Oakes Grotesk** is the official UNERA typeface — do not replace or mix with arbitrary families. Reference: [Oakes Grotesk](https://supply.family/shop/oakes-grotesk/) (linked from `brand-style-guide.html`). |
+| **Weights (English)** | Light **300**, Regular **400**, Medium **500**, SemiBold **600**, Bold **700** — each with **normal and italic** styles. |
+| **This repository (web)** | Use **`TestFoundersGrotesk`** via local **`@font-face`** from `Brand Guide/*.otf`, with **`'Oakes Grotesk'`** as the **fallback** in the stack so intent stays correct if Oakes is installed. |
+
+```css
+--font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+--font-body:    'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+```
+
+---
+
+## 2. Required `@font-face` Set (all ten files)
+
+**Mandatory:** Latin web fonts for UNERA V2 MUST use **only** these OTFs under `Brand Guide/` (repo-relative paths). Do not substitute other filenames or font files for new or updated NewUnera work — this reflects the latest brand guideline for TestFoundersGrotesk.
+
+| From `NewUnera/*.html` | From repo root |
+|------------------------|----------------|
+| `../Brand Guide/TestFoundersGrotesk-Light.otf` | `Brand Guide/TestFoundersGrotesk-Light.otf` |
+| `../Brand Guide/TestFoundersGrotesk-LightItalic.otf` | `Brand Guide/TestFoundersGrotesk-LightItalic.otf` |
+| `../Brand Guide/TestFoundersGrotesk-Regular.otf` | `Brand Guide/TestFoundersGrotesk-Regular.otf` |
+| `../Brand Guide/TestFoundersGrotesk-RegularItalic.otf` | `Brand Guide/TestFoundersGrotesk-RegularItalic.otf` |
+| `../Brand Guide/TestFoundersGrotesk-Medium.otf` | `Brand Guide/TestFoundersGrotesk-Medium.otf` |
+| `../Brand Guide/TestFoundersGrotesk-MediumItalic.otf` | `Brand Guide/TestFoundersGrotesk-MediumItalic.otf` |
+| `../Brand Guide/TestFoundersGrotesk-Semibold.otf` | `Brand Guide/TestFoundersGrotesk-Semibold.otf` |
+| `../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf` | `Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf` |
+| `../Brand Guide/TestFoundersGrotesk-Bold.otf` | `Brand Guide/TestFoundersGrotesk-Bold.otf` |
+| `../Brand Guide/TestFoundersGrotesk-BoldItalic.otf` | `Brand Guide/TestFoundersGrotesk-BoldItalic.otf` |
+
+**Weight → CSS mapping** (same ten files):
+
+| `font-weight` | `font-style` | File (basename) |
+|----------------|--------------|-----------------|
+| 300 | normal | `TestFoundersGrotesk-Light.otf` |
+| 300 | italic | `TestFoundersGrotesk-LightItalic.otf` |
+| 400 | normal | `TestFoundersGrotesk-Regular.otf` |
+| 400 | italic | `TestFoundersGrotesk-RegularItalic.otf` |
+| 500 | normal | `TestFoundersGrotesk-Medium.otf` |
+| 500 | italic | `TestFoundersGrotesk-MediumItalic.otf` |
+| 600 | normal | `TestFoundersGrotesk-Semibold.otf` |
+| 600 | italic | `TestFoundersGrotesk-SemiboldItalic.otf` |
+| 700 | normal | `TestFoundersGrotesk-Bold.otf` |
+| 700 | italic | `TestFoundersGrotesk-BoldItalic.otf` |
+
+Use `font-family: 'TestFoundersGrotesk';`, `format('opentype')`, and `font-display: swap` on every rule.
+
+**No heavier Latin weight:** There is **no** 800/900 face. Do **not** use `font-weight: 800` or `900` on the primary Latin stack — use **700** (Bold) maximum; otherwise the browser synthesizes weight and typography drifts off-brand.
+
+---
+
+## 3. Chinese (Simplified)
+
+- **Family:** `Noto Sans SC` (Google Fonts), weights used in the guide: **300, 400, 500, 700** (specimens include Light through Bold; pair with English hierarchy).
+- **Token:** `--font-chinese: 'Noto Sans SC', sans-serif;`
+- **Link pattern** — match `brand-style-guide.html` `<head>` (preconnect + `family=Noto+Sans+SC:wght@300;400;500;700`).
+- CJK blocks should **complement** the Latin grotesk (bold, clear hierarchy) — see `#chinese-typefaces` in the style guide.
+
+---
+
+## 4. Arabic
+
+- **Family:** `Mada` (Google Fonts), weights **300, 400, 600, 700** per specimens.
+- **Token:** `--font-arabic: 'Mada', sans-serif;`
+- **Layout:** `direction: rtl; text-align: right;` on Arabic content blocks; labels may stay LTR where the guide shows it.
+- Match the guide’s `<head>` import for Mada.
+
+---
+
+## 5. Base Rendering & UI Conventions
+
+- **Body default:** `font-family: var(--font-body);` with **line-height ~1.6**, `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`.
+- **Headings / display:** use `var(--font-display)` where the reference pages distinguish display from body (often same family; weight/size create hierarchy).
+- **Gradient titles:** follow `brand-style-guide.html` / `NewUnera` pages — `background: var(--gradient-primary); -webkit-background-clip: text;` (typography rule stays aligned with existing token usage).
+- **Figures / amounts:** use `font-variant-numeric: tabular-nums` where tables or numeric columns must align (see style guide patterns).
+- **KPI / impact stats:** large stat figures (e.g. dashboard `.impact-value`) use **`font-size: var(--font-stat-size)`** (2.5rem), **`font-weight: 700`**, **`line-height: 1`**, tabular nums; optional narrow breakpoint: **`var(--font-stat-size-compact)`** (2rem). Tokens are defined in `NewUnera/brand-style-guide.html` `:root` — copy into app pages that need KPIs.
+- **Code / hex / specs:** monospace stack as in the guide (e.g. `'Courier New', monospace`) — **not** TestFoundersGrotesk.
+
+---
+
+## 6. What NOT To Do
+
+- Do **not** import **Space Grotesk** or any **Google Font** for the **primary Latin** stack — only local TestFoundersGrotesk + named fallback.
+- Do **not** substitute arbitrary sans-serifs (Arial-only, Inter, etc.) for the primary stack on UNERA V2 pages.
+- Do **not** use **`font-weight: 800` or `900`** on Latin UI — no matching OTF; use **700** max (see §2).
+- Do **not** omit italic `@font-face` rules if the page uses `font-style: italic` at any weight.
+- Do **not** hardcode a different font-family string than the agreed stack unless adding a **documented** third script (then follow the style guide’s pattern for CJK/Arabic).
+
+---
+
+## 7. When Updating This Rule
+
+1. Re-read **`NewUnera/brand-style-guide.html`** — `@font-face`, `:root` font variables, and Typography sections are the **source of truth** for stacks and weights.
+2. Re-read **`Brand Guide/Brand Rationale UNERA.docx`** for narrative fit (clarity, trust, community) — not for changing font file names unless the brand team updates the written guidelines.
+3. If new OTF files are added under `Brand Guide/`, update **§2** and the `@font-face` block in the canonical HTML to stay in sync.

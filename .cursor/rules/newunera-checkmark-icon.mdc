@@ -1,0 +1,60 @@
+---
+description: Canonical stroked checkmark SVG for UNERA V2 NewUnera flows (stepper, trackers, processing chips)
+alwaysApply: false
+---
+
+# UNERA V2 — Stroked checkmark icon
+
+Use the **same** checkmark geometry as the large success hero (`.success-icon-animated` / `.success-icon-animated-lg`) anywhere a **circular “done” chip** needs a check — not the Unicode character `✓`.
+
+## Canonical markup
+
+```html
+<svg class="unera-checkmark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+```
+
+## Required CSS (path is stroked, not filled)
+
+```css
+.unera-checkmark {
+  display: block;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+```
+
+Parent chips should set `color: white` (or equivalent) so `currentColor` matches the success surface — same pattern as `.success-icon-animated svg` / `.success-icon-animated-lg svg`.
+
+## JS constant (static HTML demos)
+
+Duplicate in each page’s script as needed:
+
+```js
+const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+```
+
+Use `innerHTML = UNERA_CHECKMARK_SVG` for completed states; use `textContent = String(n)` for step numbers (clears SVG).
+
+## Where this applies (`NewUnera/`)
+
+| Surface | Selector / context |
+|--------|---------------------|
+| Desktop stepper | `#dynamicStepper .step.completed .step-circle` |
+| Redeem tx tracker | `.ts-icon.ts-check` (processing + pending templates) |
+| Get processing list | `.proc-icon.done` |
+
+**Reference implementations:** `NewUnera/get-unera-cad.html`, `NewUnera/redeem-unera-cad.html`.
+
+## Do not
+
+- Do **not** use Unicode `✓` inside `.step-circle`, `.ts-icon.ts-check`, or `.proc-icon.done` — it will not match the success-screen stroke shape.
+- Do **not** swap in a different path or stroke weight for these chips without updating **all** surfaces above and the large success SVG for visual parity.
+
+## Out of scope
+
+- **Copy-only** labels (e.g. “✓ Verified”, “✓ Rate updated”) may stay as text.
+- **Pseudo-elements** with `content: '✓'` (e.g. mint path selected badge) need a different pattern if they must match this icon (real element or background SVG).
