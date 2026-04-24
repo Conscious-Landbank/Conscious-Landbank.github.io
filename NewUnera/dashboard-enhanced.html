@@ -40,29 +40,29 @@
             --brand-white:       #ffffff;
             --brand-red:         #ab5770;
             --brand-purple:      #6a5770;
-            --brand-light-blue:  #8bacb1;
+            --brand-light-blue:  #90c2b8;
 
             /* ── Semantic aliases (keep old names so existing refs just work) */
             --primary-green:     #173d47;   /* Deep Blue  */
-            --primary-blue:      #8bacb1;   /* Light Blue */
+            --primary-blue:      #90c2b8;   /* Light Blue */
             --accent-pink:       #ffffab;   /* Yellow     */
             --neutral-900:       #173d47;
             --neutral-800:       #1e4e5a;
             --neutral-700:       #2e6374;
             --neutral-600:       #3d6b78;
-            --neutral-500:       #8bacb1;
+            --neutral-500:       #90c2b8;
             --neutral-400:       #b8d1d6;
             --neutral-300:       #d8ecee;
             --neutral-200:       #e8f5f6;
             --neutral-100:       #f3fafb;
             --neutral-50:        #ffffff;
-            --gradient-primary:  linear-gradient(135deg, #173d47 0%, #6a5770 100%);
-            --gradient-sky:      linear-gradient(135deg, #ebfcf5 0%, #8bacb1 100%);
-            --gradient-warm:     linear-gradient(135deg, #cec4b8 0%, #ffffab 100%);
-            --gradient-deep:     linear-gradient(135deg, #173d47 0%, #8bacb1 100%);
-            /* Premium chrome — brand-style-guide (black→deep blue, dusk mauve→purple) */
-            --gradient-ink:      linear-gradient(135deg, #000000 0%, #173d47 100%);
-            --gradient-dusk:     linear-gradient(135deg, #ab5770 0%, #6a5770 100%);
+            /* Legacy --gradient-* names: product UI uses solid fills only */
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-dusk:     var(--brand-deep-blue);
             --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
             --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
 
@@ -70,27 +70,24 @@
                Purpose: encode numeric direction (positive/negative/neutral) ONLY.
                NEVER use for brand decoration, CTAs, layout chrome, or UI validation.
                ALWAYS pair with a directional icon (NNG: 37% faster).
-               Verified WCAG AA on both #fff and --brand-white.
-               ─────────────────────────────────────────────────────
-               TOKEN SPLIT — two distinct red families intentionally:
-                 fin-down / fin-down-bg  → P&L loss, negative amount rows, delta arrows
-                 --error / --error-bg    → UI errors, form validation, notification alerts
-               Keeping them separate prevents users from misreading a "form error"
-               as a financial loss — critical in a fintech dashboard.             */
-            --fin-up:            #1a7a5e;   /* 5.2:1 on #fff — deep teal-green, positive/gain  */
-            --fin-up-bg:         rgba(26, 122, 94, 0.10);
-            --fin-down:          #c23b4f;   /* 4.9:1 on #fff — deep crimson, negative/loss     */
-            --fin-down-bg:       rgba(194, 59, 79, 0.10);
-            --fin-neutral:       #5a8a90;   /* 4.7:1 on #fff — muted teal, flat/unchanged      */
-            --fin-neutral-bg:    rgba(90, 138, 144, 0.10);
+               --fin-up   → #1a7a5e — gains, inflows, positive deltas (forest green, AA-friendly on white).
+               --fin-down → var(--brand-red) — losses, outflows, negative deltas.
+               --fin-neutral → flat/unchanged (slightly different teal from --fin-up).
+               Same hue as --error for losses; disambiguate by context, copy, and icons.     */
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --fin-neutral:       #6b9090;   /* flat/unchanged — distinct from #1a7a5e fin-up   */
+            --fin-neutral-bg:    rgba(107, 144, 144, 0.10);
 
             /* ── Semantic status aliases ────────────────────────────
-               --success  → matches financial gains (one family)
-               --error    → brand mauve-red for UI errors/alerts (distinct from fin-down)
+               --success  → same as --fin-up (#1a7a5e)
+               --error    → brand mauve-red (same as --fin-down hue; context differs)
                --warning  → amber, pending/caution states                         */
             --success:           var(--fin-up);
             --warning:           #b8a030;
-            --error:             var(--brand-red);   /* #ab5770 — UI/validation/alerts, NOT P&L */
+            --error:             var(--brand-red);
             --error-bg:          rgba(171, 87, 112, 0.10);
 
             /* ── Accessibility ──────────────────────────────────── */
@@ -99,14 +96,14 @@
             --border-subtle:     rgba(23, 61, 71, 0.13);   /* aligned to brand-style-guide.html */
             --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
 
-            /* ── Surface tints (white canvas + brand-cloud-blue family) ─ */
-            --surface-impact:    linear-gradient(180deg, color-mix(in srgb, var(--brand-cloud-blue) 42%, white) 0%, var(--brand-white) 72%);
-            --surface-action:    linear-gradient(168deg, var(--brand-white) 0%, color-mix(in srgb, var(--brand-cloud-blue) 28%, white) 100%);
-            --surface-cad-hub:   linear-gradient(128deg, color-mix(in srgb, var(--brand-cloud-blue) 55%, white) 0%, var(--brand-white) 48%, color-mix(in srgb, var(--brand-light-blue) 12%, white) 100%);
+            /* ── Surface tints — solid color-mix (no gradients on product UI) ─ */
+            --surface-impact:    color-mix(in srgb, var(--brand-cloud-blue) 22%, var(--brand-white));
+            --surface-action:    color-mix(in srgb, var(--brand-cloud-blue) 14%, var(--brand-white));
+            --surface-cad-hub:   color-mix(in srgb, var(--brand-light-blue) 12%, color-mix(in srgb, var(--brand-cloud-blue) 32%, var(--brand-white)));
             /* Secondary quick-action cards — subtle per-card tints */
-            --surface-warm:      linear-gradient(168deg, var(--brand-white) 0%, color-mix(in srgb, var(--brand-earth) 18%, white) 100%);
-            --surface-sky:       linear-gradient(168deg, var(--brand-white) 0%, color-mix(in srgb, var(--brand-cloud-blue) 30%, white) 100%);
-            --surface-deep:      linear-gradient(168deg, var(--brand-white) 0%, color-mix(in srgb, var(--brand-deep-blue) 7%, white) 100%);
+            --surface-warm:      color-mix(in srgb, var(--brand-earth) 12%, var(--brand-white));
+            --surface-sky:       color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-deep:      color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white));
         }
 
         /* Reduced Motion Support */
@@ -190,6 +187,9 @@
         .nav-logo-img {
             height: 24px;
             width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
             display: block;
         }
 
@@ -423,7 +423,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--brand-yellow) 0%, var(--brand-earth) 100%);
+            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -463,7 +463,7 @@
 
         .dropdown-header-nav {
             padding: 1.25rem;
-            background: linear-gradient(135deg, rgba(23, 61, 71, 0.08) 0%, rgba(139, 172, 177, 0.08) 100%);
+            background: color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
 
@@ -478,7 +478,7 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--brand-yellow) 0%, var(--brand-earth) 100%);
+            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -851,7 +851,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--brand-yellow) 0%, var(--brand-earth) 100%);
+            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1065,6 +1065,45 @@
             background: rgba(23, 61, 71, 0.15);
         }
 
+        /* #kycAlert — stacked layout, 16px alignment; lock type metrics to match wallet canonical height */
+        #kycAlert.alert-banner {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+        }
+
+        #kycAlert .alert-title {
+            line-height: 1.3;
+        }
+
+        #kycAlert .alert-description {
+            line-height: 1.4;
+        }
+
+        #kycAlert .alert-actions {
+            width: 100%;
+            justify-content: space-between;
+            box-sizing: border-box;
+            padding-left: 2.5rem; /* line up with text past icon: 24px + 1rem gap */
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 1025px) {
+            #kycAlert.alert-banner {
+                margin-top: -1rem;
+                margin-left: calc(1rem - 2.75rem);
+                margin-right: calc(1rem - 2.75rem);
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #kycAlert.alert-banner {
+                margin-top: -0.5rem;
+                margin-left: calc(1rem - 1.5rem);
+                margin-right: calc(1rem - 1.5rem);
+            }
+        }
+
         /* Page Header */
         .page-header {
             margin-bottom: 2.5rem;
@@ -1181,31 +1220,35 @@
         .impact-icon {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, rgba(23, 61, 71, 0.15) 0%, rgba(139, 172, 177, 0.15) 100%);
+            background: color-mix(in srgb, var(--brand-deep-blue) 12%, var(--brand-white));
             border-radius: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.75rem;
+            color: var(--brand-deep-blue);
         }
-        /* Per-card icon background differentiation — each card is immediately recognizable */
+        /* Per-card icon background + semantic ink — each card instantly scannable */
         .impact-icon--portfolio {
-            background: linear-gradient(135deg, rgba(23, 61, 71, 0.20) 0%, rgba(106, 87, 112, 0.18) 100%);
+            background: color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+            color: var(--brand-deep-blue);
         }
         .impact-icon--yield {
-            background: linear-gradient(135deg, rgba(235, 252, 245, 0.90) 0%, rgba(139, 172, 177, 0.35) 100%);
+            background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white));
+            color: var(--fin-up);
         }
         .impact-icon--donations {
-            background: linear-gradient(135deg, rgba(206, 196, 184, 0.35) 0%, rgba(255, 255, 171, 0.55) 100%);
+            background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            color: var(--brand-red);
         }
         .impact-icon--lives {
-            background: linear-gradient(135deg, rgba(23, 61, 71, 0.18) 0%, rgba(139, 172, 177, 0.30) 100%);
+            background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white));
+            color: var(--brand-purple);
         }
 
         .info-tooltip {
             width: 24px;
             height: 24px;
-            background: rgba(139, 172, 177, 0.1);
+            background: rgba(144, 194, 184, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1371,7 +1414,7 @@
         }
 
         .action-card.primary .action-card-icon svg {
-            stroke: var(--brand-black);
+            fill: var(--brand-black);
         }
 
         .action-card.primary .action-card-title,
@@ -1399,7 +1442,7 @@
         .action-card-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, rgba(23, 61, 71, 0.15) 0%, rgba(139, 172, 177, 0.15) 100%);
+            background: color-mix(in srgb, var(--brand-deep-blue) 12%, var(--brand-white));
             border-radius: 1rem;
             display: flex;
             align-items: center;
@@ -1410,7 +1453,7 @@
         .action-card-icon svg {
             width: 32px;
             height: 32px;
-            stroke: currentColor;
+            fill: currentColor;
         }
 
         .action-card-title {
@@ -1462,7 +1505,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(ellipse 120% 80% at 100% 0%, rgba(139, 172, 177, 0.14) 0%, transparent 55%);
+            background: color-mix(in srgb, var(--brand-light-blue) 10%, transparent);
             pointer-events: none;
             z-index: 0;
         }
@@ -1491,7 +1534,7 @@
         .unera-cad-hub-icon svg {
             width: 26px;
             height: 26px;
-            stroke: var(--brand-deep-blue);
+            fill: var(--brand-deep-blue);
         }
 
         .unera-cad-hub-title {
@@ -1613,17 +1656,19 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-size: 1.25rem;
+            color: var(--brand-deep-blue);
         }
 
         .activity-icon.donation {
-            background: var(--fin-up-bg);
-            border: 2px solid rgba(26, 122, 94, 0.25);
+            background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            color: var(--brand-red);
+            border: 2px solid rgba(171, 87, 112, 0.25);
         }
 
         .activity-icon.yield {
-            background: linear-gradient(135deg, rgba(235, 252, 245, 0.90) 0%, rgba(139, 172, 177, 0.30) 100%);
-            border: 2px solid rgba(23, 61, 71, 0.20);
+            background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white));
+            color: var(--fin-up);
+            border: 2px solid color-mix(in srgb, var(--fin-up) 20%, transparent);
         }
 
         /* Transaction type badge (NNG: icon+color, 37% faster finding) */
@@ -1644,7 +1689,7 @@
             color: var(--fin-up);
         }
         .activity-type-badge--yield {
-            background: linear-gradient(135deg, rgba(235,252,245,0.8), rgba(139,172,177,0.2));
+            background: color-mix(in srgb, var(--brand-cloud-blue) 35%, var(--brand-white));
             color: var(--brand-deep-blue);
         }
         .activity-type-badge--swap {
@@ -1663,7 +1708,7 @@
             margin: 0 auto 1rem;
             font-size: 1.25rem;
             /* V2 only: --warning + --brand-light-blue (no legacy orange) */
-            background: linear-gradient(135deg, color-mix(in srgb, var(--warning) 18%, transparent) 0%, color-mix(in srgb, var(--brand-light-blue) 22%, transparent) 100%);
+            background: color-mix(in srgb, var(--warning) 22%, var(--brand-white));
             border: 2px solid color-mix(in srgb, var(--warning) 35%, transparent);
         }
 
@@ -1784,7 +1829,7 @@
             left: 0;
             right: 0;
             height: 60%;
-            background: linear-gradient(to top, rgba(23,61,71,0.55) 0%, transparent 100%);
+            background: color-mix(in srgb, var(--brand-deep-blue) 48%, transparent);
             z-index: 1;
         }
 
@@ -1811,14 +1856,8 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: repeating-linear-gradient(
-                0deg, transparent, transparent 18px,
-                rgba(255,255,255,0.05) 18px, rgba(255,255,255,0.05) 19px
-            ),
-            repeating-linear-gradient(
-                90deg, transparent, transparent 18px,
-                rgba(255,255,255,0.05) 18px, rgba(255,255,255,0.05) 19px
-            );
+            background: rgba(255, 255, 255, 0.06);
+            pointer-events: none;
         }
 
         /* Donation progress bar (NNG: length = clearest quantitative preattentive channel) */
@@ -2375,21 +2414,21 @@
             width: 56px;
             height: 56px;
             border-radius: 1rem;
-            background: linear-gradient(135deg, rgba(23, 61, 71, 0.15) 0%, rgba(139, 172, 177, 0.15) 100%);
+            background: color-mix(in srgb, var(--brand-deep-blue) 12%, var(--brand-white));
             color: inherit;
             font-size: 1.75rem;
         }
 
         .notification-icon.error {
-            background: linear-gradient(135deg, var(--brand-red) 0%, var(--brand-purple) 100%);
+            background: var(--error);
         }
 
         .notification-icon.warning {
-            background: var(--gradient-warm);
+            background: var(--warning);
         }
 
         .notification-icon.info {
-            background: linear-gradient(135deg, var(--brand-light-blue) 0%, var(--brand-purple) 100%);
+            background: var(--brand-light-blue);
         }
 
         .notification-message {
@@ -2444,7 +2483,7 @@
             align-items: flex-start;
             gap: 0.5rem;
             padding: 0.875rem 1rem;
-            background: rgba(139, 172, 177, 0.08);
+            background: rgba(144, 194, 184, 0.08);
             border-left: 3px solid var(--primary-blue);
             border-radius: 0 0.5rem 0.5rem 0;
             font-size: 0.875rem;
@@ -2596,7 +2635,7 @@
         }
 
         .wallet-option-card.recommended {
-            background: linear-gradient(135deg, rgba(23, 61, 71, 0.05), rgba(139, 172, 177, 0.05));
+            background: color-mix(in srgb, var(--brand-cloud-blue) 16%, var(--brand-white));
             border-color: var(--brand-deep-blue);
         }
 
@@ -2710,8 +2749,8 @@
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-left">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
-                <img src="../Brand Guide/Unera-Horizontal.png"
-                     alt="UNERA Stablecoin"
+                <img src="NewLogo/Unera White Text Nav.svg"
+                     alt="UNERA"
                      class="nav-logo-img"
                      height="24">
             </a>
@@ -2747,11 +2786,7 @@
                     aria-expanded="false"
                     onclick="toggleNotificationPanel()"
                 >
-                    <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
-                    </svg>
+                    <svg class="notif-bell-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
                     <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
                 </button>
 
@@ -2771,11 +2806,7 @@
                                     onclick="markAllNotificationsRead()">Mark all read</button>
                             <button type="button" class="notif-close-btn"
                                     onclick="closeNotificationPanel()" aria-label="Close notifications">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                    <line x1="18" y1="6" x2="6" y2="18"/>
-                                    <line x1="6" y1="6" x2="18" y2="18"/>
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                             </button>
                         </div>
                     </div>
@@ -2806,10 +2837,7 @@
                             </div>
                         </div>
                         <div class="dropdown-wallet-badge-nav">
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="5" width="20" height="14" rx="2"/>
-                                <path d="M2 10h20"/>
-                            </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg>
                             <span id="dropdownWalletAddress">0x742d...3a8f</span>
                         </div>
                     </div>
@@ -2817,48 +2845,31 @@
                         <div class="dropdown-section-nav">
                             <div class="dropdown-section-title-nav">ACCOUNT</div>
                             <a href="account-settings.html" class="dropdown-item-nav">
-                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/></svg>
                                 My Profile
                             </a>
                             <a href="account-settings.html" class="dropdown-item-nav">
-                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
                                 Account Settings
                             </a>
                         </div>
                         <div class="dropdown-divider-nav"></div>
                         <a href="wallet-enhanced.html" class="dropdown-item-nav">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="5" width="20" height="14" rx="2"/>
-                                <path d="M2 10h20"/>
-                            </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg>
                             My Wallet
                         </a>
                         <a href="dashboard-enhanced.html" class="dropdown-item-nav">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="7" height="7"/>
-                                <rect x="14" y="3" width="7" height="7"/>
-                                <rect x="14" y="14" width="7" height="7"/>
-                                <rect x="3" y="14" width="7" height="7"/>
-                            </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
                             Dashboard
                         </a>
                         <div class="dropdown-divider-nav"></div>
                         <!-- Disconnect Wallet (shown when wallet connected) -->
                         <a href="#" class="dropdown-item-nav" id="disconnectWalletItem" onclick="disconnectWallet(); return false;" style="display: none;">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/>
-                            </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
                             Disconnect Wallet
                         </a>
                         <a href="#" class="dropdown-item-nav" onclick="logout(); return false;">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                            </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
                             Log Out
                         </a>
                     </div>
@@ -2879,16 +2890,13 @@
     <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
         <div class="mobile-menu-header">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
-                <img src="../Brand Guide/Unera-Horizontal.png"
-                     alt="UNERA Stablecoin"
+                <img src="NewLogo/Unera White Text Nav.svg"
+                     alt="UNERA"
                      class="nav-logo-img"
                      height="22">
             </a>
             <button class="mobile-menu-close" aria-label="Close menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
             </button>
         </div>
         <ul class="mobile-nav-links">
@@ -2911,64 +2919,42 @@
                         <div class="mobile-user-email">jane@example.com</div>
                     </div>
                 </div>
-                <svg class="mobile-user-chevron" id="mobileUserChevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
-                </svg>
+                <svg class="mobile-user-chevron" id="mobileUserChevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
             </div>
             <div class="mobile-user-dropdown" id="mobileUserDropdown">
                 <div class="mobile-user-dropdown-content">
                     <div class="mobile-wallet-badge">
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="5" width="20" height="14" rx="2"/>
-                            <path d="M2 10h20"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg>
                         <span id="mobileDropdownWalletAddress">0x742d...3a8f</span>
                     </div>
                     <div class="mobile-dropdown-section">
                         <div class="mobile-dropdown-section-title">ACCOUNT</div>
                         <a href="account-settings.html" class="mobile-dropdown-item">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/></svg>
                             My Profile
                         </a>
                         <a href="account-settings.html" class="mobile-dropdown-item">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
                             Account Settings
                         </a>
                     </div>
                     <div class="mobile-dropdown-divider"></div>
                     <a href="wallet-enhanced.html" class="mobile-dropdown-item">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="5" width="20" height="14" rx="2"/>
-                            <path d="M2 10h20"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg>
                         My Wallet
                     </a>
                     <a href="dashboard-enhanced.html" class="mobile-dropdown-item">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7"/>
-                            <rect x="14" y="3" width="7" height="7"/>
-                            <rect x="14" y="14" width="7" height="7"/>
-                            <rect x="3" y="14" width="7" height="7"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
                         Dashboard
                     </a>
                     <div class="mobile-dropdown-divider"></div>
                     <!-- Disconnect Wallet (shown when wallet connected) -->
                     <a href="#" class="mobile-dropdown-item" id="disconnectWalletItemMobile" onclick="disconnectWallet(); return false;" style="display: none;">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
                         Disconnect Wallet
                     </a>
                     <a href="#" class="mobile-dropdown-item" onclick="logout(); return false;">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
                         Log Out
                     </a>
                 </div>
@@ -2982,11 +2968,9 @@
         <!-- KYC Alert Banner - System Status Visibility -->
         <div class="alert-banner" role="alert" aria-live="polite" id="kycAlert">
             <div class="alert-content">
-                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
+                <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"/></svg>
                 <div class="alert-text">
-                    <div class="alert-title">🔒 Complete Your Verification</div>
+                    <div class="alert-title">Complete Your Verification</div>
                     <div class="alert-description">Verify your identity to unlock full features and increase transaction limits</div>
                 </div>
             </div>
@@ -2995,10 +2979,7 @@
                     Verify Now
                 </button>
                 <button class="alert-dismiss" onclick="dismissAlert()" aria-label="Dismiss alert">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                 </button>
             </div>
         </div>
@@ -3020,7 +3001,7 @@
                      aria-label="Total portfolio: $10,240.00"
                      onclick="showImpactDetail('balance')">
                     <div class="impact-card-header">
-                        <div class="impact-icon impact-icon--portfolio" aria-hidden="true">💰</div>
+                        <div class="impact-icon impact-icon--portfolio" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M668.5-531.5Q680-543 680-560t-11.5-28.5Q657-600 640-600t-28.5 11.5Q600-577 600-560t11.5 28.5Q623-520 640-520t28.5-11.5ZM320-600h200v-80H320v80ZM180-120q-34-114-67-227.5T80-580q0-92 64-156t156-64h200q29-38 70.5-59t89.5-21q25 0 42.5 17.5T720-820q0 5-5 23-4 11-7.5 22.5T702-751l91 91h87v279l-113 37-67 224H480v-80h-80v80H180Z"/></svg></div>
                         <span class="info-tooltip" 
                               tabindex="0" 
                               role="tooltip" 
@@ -3035,9 +3016,7 @@
                         <circle cx="80" cy="4" r="3" fill="var(--fin-up)"/>
                     </svg>
                     <div class="impact-trend" role="status" aria-label="Trending up: +$2,400 this month">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg>
                         +$2,400 this month
                     </div>
                 </div>
@@ -3049,7 +3028,7 @@
                      aria-label="Yield generated: $486.50"
                      onclick="showImpactDetail('yield')">
                     <div class="impact-card-header">
-                        <div class="impact-icon impact-icon--yield" aria-hidden="true">📈</div>
+                        <div class="impact-icon impact-icon--yield" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m136-240-56-56 296-298 160 160 208-206H640v-80h240v240h-80v-104L536-320 376-480 136-240Z"/></svg></div>
                         <span class="info-tooltip" 
                               tabindex="0" 
                               role="tooltip" 
@@ -3064,9 +3043,7 @@
                         <circle cx="80" cy="6" r="3" fill="var(--fin-up)"/>
                     </svg>
                     <div class="impact-trend" role="status" aria-label="Trending up: +$42 this week">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg>
                         +$42 this week
                     </div>
                 </div>
@@ -3078,7 +3055,7 @@
                      aria-label="Total donations: $5,240.00"
                      onclick="showImpactDetail('donations')">
                     <div class="impact-card-header">
-                        <div class="impact-icon impact-icon--donations" aria-hidden="true">💚</div>
+                        <div class="impact-icon impact-icon--donations" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/></svg></div>
                         <span class="info-tooltip" 
                               tabindex="0" 
                               role="tooltip" 
@@ -3093,9 +3070,7 @@
                         <circle cx="80" cy="5" r="3" fill="var(--fin-up)"/>
                     </svg>
                     <div class="impact-trend" role="status" aria-label="Trending up: +18% this month">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg>
                         +18% this month
                     </div>
                 </div>
@@ -3107,7 +3082,7 @@
                      aria-label="Lives impacted: 1,240+"
                      onclick="showImpactDetail('lives')">
                     <div class="impact-card-header">
-                        <div class="impact-icon impact-icon--lives" aria-hidden="true">🌍</div>
+                        <div class="impact-icon impact-icon--lives" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M324-111.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM440-162v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q41-45 62.5-100.5T800-480q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/></svg></div>
                         <span class="info-tooltip" 
                               tabindex="0" 
                               role="tooltip" 
@@ -3122,9 +3097,7 @@
                         <circle cx="80" cy="3" r="3" fill="var(--fin-up)"/>
                     </svg>
                     <div class="impact-trend impact-trend--neutral" role="status" aria-label="Growing daily">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></svg>
                         Growing daily
                     </div>
                 </div>
@@ -3140,10 +3113,7 @@
             <div class="quick-actions-grid">
                 <a href="wallet-enhanced.html" class="action-card action-card--wallet" aria-label="View your wallet">
                     <div class="action-card-icon">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <rect x="2" y="4" width="20" height="16" rx="2"/>
-                            <path d="M6 10h.01M10 10h.01M14 10h.01"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg>
                     </div>
                     <div class="action-card-title">My Wallet</div>
                     <div class="action-card-desc">View balances & transactions</div>
@@ -3151,9 +3121,7 @@
 
                 <a href="javascript:void(0)" onclick="handleActionClick('add-money.html', 'add money')" class="action-card primary" aria-label="Add money to wallet - Recommended action">
                     <div class="action-card-icon">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                     </div>
                     <div class="action-card-title">Add Money</div>
                     <div class="action-card-desc">Fund your wallet instantly</div>
@@ -3164,9 +3132,7 @@
                 aria-label="Exchange or convert funds">
 
                     <div class="action-card-icon">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h11M4 7l3-3m-3 3l3 3M20 17H9m11 0l-3-3m3 3l-3 3"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-160 80-360l200-200 56 57-103 103h287v80H233l103 103-56 57Zm400-240-56-57 103-103H440v-80h287L624-743l56-57 200 200-200 200Z"/></svg>
                     </div>
 
                     <div class="action-card-title">Exchange</div>
@@ -3176,10 +3142,7 @@
 
                 <a href="explore-centres.html" class="action-card action-card--explore" aria-label="Explore centres">
                     <div class="action-card-icon">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
                     </div>
                     <div class="action-card-title">Explore Centres</div>
                     <div class="action-card-desc">Discover where to donate</div>
@@ -3188,9 +3151,7 @@
                 <div class="unera-cad-hub-card" role="region" aria-labelledby="unera-cad-hub-title">
                     <div class="unera-cad-hub-card-head">
                         <div class="unera-cad-hub-icon" aria-hidden="true">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z"/></svg>
                         </div>
                         <div>
                             <h3 id="unera-cad-hub-title" class="unera-cad-hub-title">UNERA CAD</h3>
@@ -3213,18 +3174,16 @@
                 <h2 id="activity-title" class="section-title">Recent Activity</h2>
                 <a href="wallet-enhanced.html" class="view-all-link">
                     View All
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg>
                 </a>
             </div>
 
             <ul class="activity-list" role="list">
                 <li class="activity-item" role="listitem">
-                    <div class="activity-icon donation" aria-hidden="true">❤️</div>
+                    <div class="activity-icon donation" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/></svg></div>
                     <div class="activity-content">
                         <span class="activity-type-badge activity-type-badge--donation" aria-label="Donation">
-                            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M12 21C12 21 3 14 3 8a9 9 0 0118 0c0 6-9 13-9 13z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z"/></svg>
                             Donation
                         </span>
                         <div class="activity-title">Donation to Nairobi Humanity Centre</div>
@@ -3242,10 +3201,10 @@
                 </li>
 
                 <li class="activity-item" role="listitem">
-                    <div class="activity-icon yield" aria-hidden="true">📈</div>
+                    <div class="activity-icon yield" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m136-240-56-56 296-298 160 160 208-206H640v-80h240v240h-80v-104L536-320 376-480 136-240Z"/></svg></div>
                     <div class="activity-content">
                         <span class="activity-type-badge activity-type-badge--yield" aria-label="Yield">
-                            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m136-240-56-56 296-298 160 160 208-206H640v-80h240v240h-80v-104L536-320 376-480 136-240Z"/></svg>
                             Yield
                         </span>
                         <div class="activity-title">Yield Generated</div>
@@ -3263,10 +3222,10 @@
                 </li>
 
                 <li class="activity-item" role="listitem">
-                    <div class="activity-icon donation" aria-hidden="true">❤️</div>
+                    <div class="activity-icon donation" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/></svg></div>
                     <div class="activity-content">
                         <span class="activity-type-badge activity-type-badge--donation" aria-label="Donation">
-                            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M12 21C12 21 3 14 3 8a9 9 0 0118 0c0 6-9 13-9 13z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z"/></svg>
                             Donation
                         </span>
                         <div class="activity-title">Donation to Toronto HC</div>
@@ -3291,9 +3250,7 @@
                 <h2 id="centres-title" class="section-title">Your Centres</h2>
                 <a href="explore-centres.html" class="view-all-link">
                     Explore More
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg>
                 </a>
             </div>
 
@@ -3307,10 +3264,7 @@
                     <div class="centre-info">
                         <h3 class="centre-name">Toronto Humanity Centre</h3>
                         <div class="centre-location">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M536.5-503.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-186q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>
                             Toronto, Canada
                         </div>
                         <div class="centre-stats">
@@ -3344,10 +3298,7 @@
                     <div class="centre-info">
                         <h3 class="centre-name">Nairobi Humanity Centre</h3>
                         <div class="centre-location">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M536.5-503.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-186q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>
                             Nairobi, Kenya
                         </div>
                         <div class="centre-stats">
@@ -3381,10 +3332,7 @@
                     <div class="centre-info">
                         <h3 class="centre-name">Mumbai Humanity Centre</h3>
                         <div class="centre-location">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M536.5-503.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-186q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>
                             Mumbai, India
                         </div>
                         <div class="centre-stats">
@@ -3418,9 +3366,7 @@
             <div class="modal-header">
                 <h2 id="notificationTitle" class="modal-title">Notification</h2>
                 <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close notification">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                 </button>
             </div>
             <div class="modal-body">
@@ -3439,9 +3385,7 @@
             <div class="modal-header">
                 <h2 class="modal-title" id="connectModalTitle">Connect. Contribute. Change lives.</h2>
                 <button class="modal-close" onclick="closeConnectModal()" aria-label="Close modal">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                 </button>
             </div>
             <div class="modal-body">
@@ -3525,13 +3469,11 @@
             <div class="modal-header">
                 <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
                 <button class="modal-close" onclick="closeConfirmationModal()" aria-label="Close confirmation">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="confirmation-icon" id="confirmationIcon" aria-hidden="true">🔌</div>
+                <div class="confirmation-icon" id="confirmationIcon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760H520q-71 0-115.5 44.5T360-600v240q0 71 44.5 115.5T520-200h320q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm163-157q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Z"/></svg></div>
                 <p class="notification-message" id="confirmationMessage"></p>
             </div>
             <div class="modal-footer" style="display: flex; gap: 0.75rem;">
@@ -3543,7 +3485,7 @@
 
     <script>
         // ==================== HELPER FUNCTIONS ====================
-        const defaultCheckSvg = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>';
+        const defaultCheckSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>';
         function showNotification(message, type = 'success', title = 'Success', options = {}) {
             const modal = document.getElementById('notificationModal');
             const icon = document.getElementById('notificationIcon');
@@ -3562,7 +3504,7 @@
             
             if (options.icon) {
                 icon.className = 'notification-icon impact-style';
-                icon.textContent = options.icon;
+                icon.innerHTML = options.icon;
             } else {
                 icon.className = 'notification-icon';
                 if (type === 'error') {
@@ -3946,9 +3888,9 @@
             const readClass = n.read ? ' read' : '', dot = n.read ? '' : '<span class="notif-unread-dot" aria-hidden="true"></span>';
             const ctaHtml = (n.ctaUrl && n.ctaLabel) ? `<a href="${n.ctaUrl}" class="notif-item-cta" aria-label="${n.ctaLabel}" onclick="event.stopPropagation(); markNotificationRead('${n.id}')">${n.ctaLabel}</a>` : '';
             return `<li class="notif-item${readClass}" role="listitem" data-id="${n.id}">
-                <span class="notif-item-icon notif-type-${type}" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">${iconSvg}</svg></span>
+                <span class="notif-item-icon notif-type-${type}" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor">${iconSvg}</svg></span>
                 <div class="notif-item-body" role="button" tabindex="0" onclick="handleNotificationItemClick(event, '${n.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleNotificationItemClick(event,'${n.id}');}"><p class="notif-item-title">${n.title}</p><p class="notif-item-msg">${n.message}</p><time class="notif-item-time" datetime="${n.timestamp}">${formatRelativeTime(n.timestamp)}</time>${ctaHtml}</div>
-                ${dot}<button type="button" class="notif-item-dismiss" aria-label="Dismiss: ${n.title}" onclick="event.stopPropagation(); clearNotification('${n.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                ${dot}<button type="button" class="notif-item-dismiss" aria-label="Dismiss: ${n.title}" onclick="event.stopPropagation(); clearNotification('${n.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
             </li>`;
         }
         function renderNotificationPanel(variant) {
@@ -3968,7 +3910,7 @@
                 return;
             }
             if (variant === 'mobile') {
-                const bellSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>';
+                const bellSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>';
                 const badgeDisplay = unreadCount > 0 ? `<span class="notif-badge notif-badge-mobile" id="notifBadgeMobile" data-count="${unreadCount}" aria-hidden="true">${unreadCount > 9 ? '9+' : unreadCount}</span>` : '';
                 return `<div class="mobile-notif-profile mobile-user-profile">
                     <div class="mobile-user-profile-header" onclick="toggleMobileNotificationPanel()">
@@ -3977,7 +3919,7 @@
                             <span style="font-weight:600;font-size:0.938rem;color:var(--neutral-900);">Notifications</span>
                             ${badgeDisplay}
                         </div>
-                        <svg class="mobile-user-chevron" id="mobileNotifChevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        <svg class="mobile-user-chevron" id="mobileNotifChevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                     </div>
                     <div class="mobile-user-dropdown" id="mobileNotificationDropdown">
                         <div class="mobile-user-dropdown-content">
@@ -4116,7 +4058,11 @@
         }
 
         function showImpactDetail(type) {
-            const iconMap = { balance: '💰', yield: '📈', donations: '💚', lives: '🌍' };
+            const SAVINGS_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="M668.5-531.5Q680-543 680-560t-11.5-28.5Q657-600 640-600t-28.5 11.5Q600-577 600-560t11.5 28.5Q623-520 640-520t28.5-11.5ZM320-600h200v-80H320v80ZM180-120q-34-114-67-227.5T80-580q0-92 64-156t156-64h200q29-38 70.5-59t89.5-21q25 0 42.5 17.5T720-820q0 5-5 23-4 11-7.5 22.5T702-751l91 91h87v279l-113 37-67 224H480v-80h-80v80H180Z"/></svg>';
+            const TREND_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="m136-240-56-56 296-298 160 160 208-206H640v-80h240v240h-80v-104L536-320 376-480 136-240Z"/></svg>';
+            const FAV_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/></svg>';
+            const PUBLIC_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="M324-111.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM440-162v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q41-45 62.5-100.5T800-480q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/></svg>';
+            const iconMap = { balance: SAVINGS_SVG, yield: TREND_SVG, donations: FAV_SVG, lives: PUBLIC_SVG };
             const details = {
                 'balance': {
                     title: 'Total Balance',
@@ -4170,7 +4116,7 @@
                     <p class="impact-detail-description">${detail.description}</p>
                     <ul class="impact-detail-breakdown">${breakdownItems}</ul>
                     <div class="impact-detail-tip">
-                        <span class="tip-icon">💡</span>
+                        <span class="tip-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M423.5-103.5Q400-127 400-160h160q0 33-23.5 56.5T480-80q-33 0-56.5-23.5ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg></span>
                         <span>${detail.impact}</span>
                     </div>
                     <p class="impact-detail-cta">Click "View Details" for your complete impact report.</p>
