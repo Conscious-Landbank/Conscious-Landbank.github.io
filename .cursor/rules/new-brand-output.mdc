@@ -19,6 +19,17 @@ NewUnera/
   (any future new-brand screens here)
 ```
 
+## Horizontal wordmark — SVG (canonical)
+
+For **any new or updated** `NewUnera/*.html` page that needs the horizontal UNERA wordmark (nav, dark-side mockups, deep-blue specimens):
+
+- **Full wordmark (e.g. brand guide, full “Unera Stablecoin” lockup):** [`NewUnera/NewLogo/Unera White Text.svg`](NewUnera/NewLogo/Unera White Text.svg) on **dark** surfaces. **`src`:** `NewLogo/Unera White Text.svg` (path relative to the page file).
+- **App nav (icon + “Unera” only, no “Stablecoin”):** use [`NewUnera/NewLogo/Unera White Text Nav.svg`](NewUnera/NewLogo/Unera White Text Nav.svg) inside `a.nav-brand`:  
+  `<img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">`  
+  with **`.nav-logo-img`:** `height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block;` (intrinsic width comes from the nav SVG; no fixed 152px slot).
+- **Do not** use `../Brand Guide/Unera-Horizontal.png` for new work; treat the SVGs as the source of truth for V2 pages.
+- **Light nav / light surfaces (AA-safe black word):** for the same Unera-only lockup, use [`NewUnera/NewLogo/Unera Black Text Nav.svg`](NewUnera/NewLogo/Unera Black Text Nav.svg). For the **full** horizontal wordmark on light UI, use `NewLogo/Unera Black Text.svg`.
+
 ## Typography
 
 Use **TestFoundersGrotesk** via `@font-face` (local OTF files in `Brand Guide/`). Never import Space Grotesk or any Google Font for new-brand pages.
@@ -40,6 +51,16 @@ Font stack: `--font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
 
 **Detailed typography (all ten OTF mappings, repo paths, weight 800 anti-pattern, Noto Sans SC, Mada, tabular nums):** `.cursor/rules/newunera-typography.mdc` — align with `NewUnera/brand-style-guide.html` and narrative context in `Brand Guide/Brand Rationale UNERA.docx`.
 
+**P&L and financial direction colors (positive = `--fin-up` / `#1a7a5e`, not `--brand-light-blue`; negative = `--fin-down` / `--brand-red`):** `.cursor/rules/newunera-financial-direction-colors.mdc`.
+
+## No CSS gradients on product HTML
+
+For **any new or updated** `NewUnera/*.html` file **except** [`NewUnera/brand-style-guide.html`](NewUnera/brand-style-guide.html) (which may still show gradient specimens for the PDF brand system):
+
+- Do **not** use `linear-gradient`, `radial-gradient`, `conic-gradient`, or `repeating-linear-gradient` in UI CSS (nav, cards, buttons, titles, icons, bars, overlays, modals).
+- Use **`var(--brand-deep-blue)`** for dark brand chrome (nav, primary fills, stepper emphasis) and **`color-mix(in srgb, …)`** with brand tokens for light tints (e.g. 30% yellow / 50% cloud-blue style mixes per the tint swatches in the style guide).
+- **`brand-style-guide.html`** is the **only** NewUnera page that should document multi-stop gradients for marketing/specimens.
+
 ## Color Tokens (`:root` — use exactly)
 
 ```css
@@ -52,7 +73,7 @@ Font stack: `--font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
     --brand-white:       #ffffff;
     --brand-red:         #ab5770;
     --brand-purple:      #6a5770;
-    --brand-light-blue:  #8bacb1;
+    --brand-light-blue:  #90c2b8;
 
     --primary:           var(--brand-deep-blue);
     --accent:            var(--brand-yellow);
@@ -61,9 +82,10 @@ Font stack: `--font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
     --text-secondary:    #3d6b78;
     --border-subtle:     rgba(23, 61, 71, 0.15);
 
-    --gradient-primary:  linear-gradient(135deg, #173d47 0%, #6a5770 100%);
-    --gradient-warm:     linear-gradient(135deg, #cec4b8 0%, #ffffab 100%);
-    --gradient-sky:      linear-gradient(135deg, #ebfcf5 0%, #8bacb1 100%);
+    /* Product HTML: legacy names hold solids / color-mix only (no CSS gradients). See “No CSS gradients”. */
+    --gradient-primary:  var(--brand-deep-blue);
+    --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+    --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
 
     --success:  #173d47;
     --warning:  #b8a030;
@@ -82,7 +104,11 @@ Font stack: `--font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
 - **Accent button**: Yellow fill (`#ffffab`), Deep Blue text
 - **Cards**: white surface, `border: 1px solid var(--border-subtle)`, `border-radius: 1.25rem`
 - **Focus ring**: `outline: 2px solid var(--brand-deep-blue); outline-offset: 2px`
-- **Gradient text** (page titles): `background: var(--gradient-primary); -webkit-background-clip: text`
+- **Page titles**: solid brand color — `color: var(--brand-deep-blue);` (optionally `font-weight: 700`); do not use background-clip gradient text on product pages
+
+## Icons
+
+All icons across `NewUnera/` use **Material Symbols Outlined** (wght 400, GRAD 0, opsz 24) delivered as **inline SVGs** with `fill="currentColor"`. No emojis, no lucide, no heroicons, no font icons, no SVG sprites. Full specification, markup template, FILL axis policy (outlined vs filled), sizing table, and the canonical 28-icon mapping are in **`.cursor/rules/newunera-icons.mdc`**. The checkmark icon used in steppers and processing trackers is defined in **`.cursor/rules/newunera-checkmark-icon.mdc`**.
 
 ## What NOT to Do
 
@@ -90,3 +116,5 @@ Font stack: `--font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
 - ❌ Never import Space Grotesk
 - ❌ Never save new-brand files outside `NewUnera/`
 - ❌ Never hardcode hex values that have a token equivalent
+- ❌ Never use `../Brand Guide/Unera-Horizontal.png` on NewUnera pages — use `NewLogo/Unera White Text.svg` / `Unera Black Text.svg` for the full wordmark, or `NewLogo/Unera White Text Nav.svg` / `Unera Black Text Nav.svg` for app **nav** (Unera-only lockup)
+- ❌ Never add CSS gradient functions to product HTML under `NewUnera/` (except `brand-style-guide.html`) — see **No CSS gradients on product HTML** above

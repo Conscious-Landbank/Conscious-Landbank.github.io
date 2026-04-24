@@ -1,0 +1,44 @@
+---
+description: UNERA V2 P&L and financial direction colors — positive/up vs negative/down on NewUnera product HTML
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# NewUnera — Financial direction colors (P&L)
+
+All **increasing / up / gain** figures and positive-amount treatments use **`--fin-up` = `#1a7a5e`** (RGB 26, 122, 94) for **stronger contrast on white** than `--brand-light-blue` (`#90c2b8`). **`--brand-light-blue` stays** for soft tints, clouds, and **non-amount** UI — not for primary P&L amount ink. **Decreasing** figures use **`--fin-down` / `var(--brand-red)`**.
+
+## Canonical `:root` mapping (copy from any reference page, e.g. `NewUnera/dashboard-enhanced.html`)
+
+```css
+--fin-up:            #1a7a5e;   /* P&L positive — not --brand-light-blue */
+--fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+--fin-down:          var(--brand-red);          /* #ab5770 */
+--fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+--fin-neutral:       #6b9090;                 /* flat/unchanged — distinct from --fin-up */
+--fin-neutral-bg:    rgba(107, 144, 144, 0.10);
+--success:           var(--fin-up);
+--error:             var(--brand-red);          /* same hue as --fin-down */
+```
+
+## When to use which token
+
+| Semantics | CSS | Brand hex (via token) |
+|-----------|-----|------------------------|
+| Positive amounts, inflows, “you receive”, rate **up**, impact trends (up), balance delta **up**, positive activity rows | `var(--fin-up)` and/or `var(--fin-up-bg)` for pills | **#1a7a5e** (via `--fin-up`) |
+| Negative amounts, outflows, rate **down**, impact trends (down), balance delta **down** | `var(--fin-down)` and/or `var(--fin-down-bg)` | `var(--brand-red)` |
+| Flat / unchanged (not a gain) | `var(--fin-neutral)` | **#6b9090** — distinct from `--fin-up` |
+| Form validation, destructive alerts, inline field errors | `var(--error)` / `var(--error-bg)` | same mauve as `--fin-down` |
+
+**Cognitive rule:** loss color and form-error color are the **same brand mauve** — users tell them apart by **placement** (ledger vs input), **copy**, and **component pattern**, not by a different red hue.
+
+## Implementation rules
+
+- **Never** use `#90c2b8` for **positive amount ink** when `--fin-up` exists — use **`var(--fin-up)`** (canonical solid **`#1a7a5e`**). You may still use `var(--brand-light-blue)` for **surfaces** (e.g. `--surface-cad-hub`, soft wells) per `newunera-color-system.mdc`.
+- **Never** hardcode `#ab5770` for losses when `var(--brand-red)` / `var(--fin-down)` apply.
+- **Wallet-only** soft/ring helpers should derive from `var(--fin-up)` / `var(--brand-red)` via `color-mix`, not from light blue for P&L chrome.
+
+## Related
+
+- [`.cursor/rules/newunera-color-system.mdc`](newunera-color-system.mdc) — full V2 system, surfaces, flows
+- [`NewUnera/brand-style-guide.html`](../NewUnera/brand-style-guide.html) — “Financial semantics” color specimens
