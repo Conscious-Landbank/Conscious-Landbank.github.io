@@ -2587,6 +2587,177 @@
         body.modal-open {
             overflow: hidden;
         }
+
+        /* ── KYC Demo Scenario Switcher ── */
+        .demo-panel {
+            margin-top: 2rem;
+            padding: 1.25rem;
+            background: var(--stone-light);
+            border-radius: 1rem;
+            border: 1px dashed rgba(0,0,0,0.1);
+        }
+        .demo-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--stone-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+        .demo-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .demo-btns button {
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            background: white;
+            border: 1.5px solid var(--border-subtle);
+            color: var(--stone-medium);
+            cursor: pointer;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+        .demo-btns button:hover {
+            border-color: var(--impact-green);
+            color: var(--impact-green);
+            background: rgba(16, 185, 129, 0.04);
+        }
+        .demo-btns button:focus {
+            outline: 2px solid var(--impact-green);
+            outline-offset: 2px;
+        }
+
+        /* ── KYC Outcome: Error Banner ── */
+        .kyc-error-banner {
+            background: rgba(239, 68, 68, 0.06);
+            border-left: 4px solid #EF4444;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.25rem 1.25rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .kyc-error-banner-title {
+            font-size: 0.938rem;
+            font-weight: 700;
+            color: #DC2626;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .kyc-error-banner-body {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+            line-height: 1.5;
+        }
+        .error-code-chip {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.375rem;
+            white-space: nowrap;
+        }
+
+        /* ── KYC Outcome: Warning Banner (Under Review) ── */
+        .kyc-warning-banner {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 4px solid #F59E0B;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.25rem 1.25rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .kyc-warning-banner-title {
+            font-size: 0.938rem;
+            font-weight: 700;
+            color: #D97706;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.375rem;
+        }
+        .kyc-warning-banner-body {
+            font-size: 0.875rem;
+            color: var(--stone-medium);
+            line-height: 1.5;
+        }
+
+        /* ── KYC Outcome: Benefit Cards ── */
+        .kyc-benefits-section {
+            margin: 1.5rem 0;
+        }
+        .kyc-benefits-title {
+            font-size: 0.813rem;
+            font-weight: 600;
+            color: var(--stone-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.875rem;
+        }
+        .kyc-benefit-card {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1.125rem;
+            background: white;
+            border: 2px solid var(--border-subtle);
+            border-radius: 1rem;
+            margin-bottom: 0.625rem;
+            transition: border-color 0.2s;
+        }
+        .kyc-benefit-card:last-child { margin-bottom: 0; }
+        .kyc-benefit-card:hover { border-color: rgba(16, 185, 129, 0.35); }
+        .kyc-benefit-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .kyc-benefit-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--impact-green);
+            stroke-width: 2;
+        }
+        .kyc-benefit-text strong {
+            display: block;
+            font-size: 0.938rem;
+            font-weight: 700;
+            color: var(--stone-dark);
+            margin-bottom: 0.25rem;
+        }
+        .kyc-benefit-text span {
+            font-size: 0.813rem;
+            color: var(--stone-medium);
+            line-height: 1.4;
+        }
+
+        /* ── KYC Locked Badge ── */
+        .kyc-locked-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1.5px solid rgba(239, 68, 68, 0.3);
+            border-radius: 2rem;
+            font-size: 0.813rem;
+            font-weight: 700;
+            color: #DC2626;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -3351,6 +3522,7 @@
     <script>
         let snsWebSdkInstance = null;
         let currentStep = 0;
+        let demoMode = null; // null = happy path; set via setKycDemo()
         const DEMO_MODE = true; // Set to false when you have real Sumsub API keys
 
         // Start verification flow
@@ -4723,6 +4895,22 @@
                         </p>
                     </div>
                     ` : ''}
+                    ${step.id === 5 ? `
+                    <div class="demo-panel" role="region" aria-label="Design demo controls">
+                        <p class="demo-label">Design demo — outcome:</p>
+                        <div class="demo-btns">
+                            <button onclick="setKycDemo(null)">Happy path</button>
+                            <button onclick="setKycDemo('review')">Under review</button>
+                            <button onclick="setKycDemo('forgery')">FORGERY</button>
+                            <button onclick="setKycDemo('damaged')">DOCUMENT_DAMAGED</button>
+                            <button onclick="setKycDemo('expired')">EXPIRED</button>
+                            <button onclick="setKycDemo('face')">FACE_MISMATCH</button>
+                            <button onclick="setKycDemo('quality')">LOW_QUALITY</button>
+                            <button onclick="setKycDemo('duplicate')">DUPLICATE_ACCOUNT</button>
+                            <button onclick="setKycDemo('maxretries')">Max retries</button>
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
             
@@ -5458,6 +5646,315 @@
                 });
             }
         });
+
+        // ─────────────────────────────────────────────────────────────────
+        // KYC DEMO SCENARIO SWITCHER — purely additive, no existing code touched
+        // ─────────────────────────────────────────────────────────────────
+
+        function resetAndGoTo(target) {
+            const ss = document.getElementById('statusSection');
+            ss.style.display = 'none';
+            ss.classList.remove('active');
+            // Show whichever flow container was active (kycFlowContainer for demo flow)
+            const kfc = document.getElementById('kycFlowContainer');
+            if (kfc) kfc.style.display = 'block';
+            if (target === 'doc') {
+                newUserStep3();
+            } else if (target === 'selfie') {
+                newUserStep5();
+            } else {
+                location.reload();
+            }
+        }
+
+        function setKycDemo(mode) {
+            demoMode = mode;
+            // Hide all possible flow and intro containers
+            const intro = document.getElementById('introSection');
+            if (intro) intro.style.display = 'none';
+            const vc = document.getElementById('verificationContainer');
+            if (vc) vc.style.display = 'none';
+            const kfc = document.getElementById('kycFlowContainer');
+            if (kfc) kfc.style.display = 'none';
+            const ss = document.getElementById('statusSection');
+            ss.style.display = 'block';
+            ss.classList.add('active');
+            renderKycOutcome();
+        }
+
+        function _kycBenefitCards() {
+            return `
+                <div class="kyc-benefits-section">
+                    <p class="kyc-benefits-title">Why verify your identity?</p>
+                    <div class="kyc-benefit-card">
+                        <div class="kyc-benefit-icon">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <div class="kyc-benefit-text">
+                            <strong>Required by Law</strong>
+                            <span>Canadian regulations (FINTRAC) require identity verification for financial services to prevent fraud and money laundering.</span>
+                        </div>
+                    </div>
+                    <div class="kyc-benefit-card">
+                        <div class="kyc-benefit-icon">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div class="kyc-benefit-text">
+                            <strong>Unlock Full Features</strong>
+                            <span>Access higher transaction limits, instant transfers, and the full UNERA ecosystem once verified.</span>
+                        </div>
+                    </div>
+                    <div class="kyc-benefit-card">
+                        <div class="kyc-benefit-icon">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div class="kyc-benefit-text">
+                            <strong>Fast &amp; Simple</strong>
+                            <span>Typically takes under 5 minutes. Once done, your Reusable KYC lets you skip this step on future partner platforms.</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderKycOutcome() {
+            const ss = document.getElementById('statusSection');
+            const benefits = _kycBenefitCards();
+
+            if (demoMode === null) {
+                // ── Happy path ──────────────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon success">
+                        <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h1 class="status-title">Verification Successful!</h1>
+                    <p class="status-message">Your identity has been verified. You can now access all features of UNERA and enjoy seamless onboarding across our partner ecosystem.</p>
+                    <div class="status-details">
+                        <div class="status-detail-row">
+                            <span class="status-detail-label">Status</span>
+                            <span class="status-detail-value" style="color: var(--impact-green);">✓ Verified</span>
+                        </div>
+                        <div class="status-detail-row">
+                            <span class="status-detail-label">Verification Level</span>
+                            <span class="status-detail-value">Basic (Tier 1)</span>
+                        </div>
+                        <div class="status-detail-row">
+                            <span class="status-detail-label">Monthly Limit</span>
+                            <span class="status-detail-value">$1,000 CAD</span>
+                        </div>
+                        <div class="status-detail-row">
+                            <span class="status-detail-label">Reusable KYC</span>
+                            <span class="status-detail-value" style="color: var(--impact-green);">✓ Enabled</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="dashboard-enhanced.html" class="btn-primary">
+                            Go to Dashboard
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'review') {
+                // ── Under Review ─────────────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon pending">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <h1 class="status-title">Under Manual Review</h1>
+                    <p class="status-message">Your documents have been submitted and are being reviewed by our compliance team. Most reviews complete within 1–24 hours.</p>
+                    <div class="kyc-warning-banner">
+                        <div class="kyc-warning-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Under Review — No Action Needed
+                        </div>
+                        <div class="kyc-warning-banner-body">You'll receive an email notification when the review is complete. No further documents are required at this time.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="resetAndGoTo('start')">I Understand</button>
+                        <a href="mailto:support@unera.ca" class="btn-secondary">Contact Support</a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'forgery') {
+                // ── FORGERY — hard block ─────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon error">
+                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+                    </div>
+                    <h1 class="status-title">Verification Failed</h1>
+                    <p class="status-message">We were unable to verify your identity due to a document authenticity issue. Please contact support for assistance.</p>
+                    <div class="kyc-error-banner">
+                        <div class="kyc-error-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Document Authenticity Check Failed
+                            <code class="error-code-chip">FORGERY</code>
+                        </div>
+                        <div class="kyc-error-banner-body">Our system detected signs of document tampering or forgery. This is a permanent block. Please contact support if you believe this is an error.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <a href="mailto:support@unera.ca" class="btn-primary">Contact Support</a>
+                        <a href="https://unera.ca/help" target="_blank" class="btn-secondary">Learn More</a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'damaged') {
+                // ── DOCUMENT_DAMAGED ─────────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon error">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9.5 12.5l5 5M14.5 12.5l-5 5"/></svg>
+                    </div>
+                    <h1 class="status-title">Document Unreadable</h1>
+                    <p class="status-message">We couldn't read your document clearly. Please try again with a cleaner, undamaged copy.</p>
+                    <div class="kyc-error-banner">
+                        <div class="kyc-error-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Document Quality Issue
+                            <code class="error-code-chip">DOCUMENT_DAMAGED</code>
+                        </div>
+                        <div class="kyc-error-banner-body">The document appears damaged, obscured, or incomplete. Use a different document or ensure there is no physical damage, folding, or obstruction.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="resetAndGoTo('doc')">
+                            Try Again
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="18" height="18" style="margin-left: 0.375rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        </button>
+                        <a href="mailto:support@unera.ca" class="btn-secondary">Contact Support</a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'expired') {
+                // ── EXPIRED_DOCUMENT ─────────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon error">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9.5 14.5l5 5M14.5 14.5l-5 5"/></svg>
+                    </div>
+                    <h1 class="status-title">Document Expired</h1>
+                    <p class="status-message">The ID document you submitted has passed its expiry date. Please use a current, valid document to verify your identity.</p>
+                    <div class="kyc-error-banner">
+                        <div class="kyc-error-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Expired Document Detected
+                            <code class="error-code-chip">EXPIRED_DOCUMENT</code>
+                        </div>
+                        <div class="kyc-error-banner-body">Your document's expiry date has passed. Please use a passport, national ID, or driver's license that is currently valid.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="resetAndGoTo('doc')">
+                            Try Again
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="18" height="18" style="margin-left: 0.375rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        </button>
+                        <a href="mailto:support@unera.ca" class="btn-secondary">Contact Support</a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'face') {
+                // ── FACE_MISMATCH ─────────────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon error">
+                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/></svg>
+                    </div>
+                    <h1 class="status-title">Selfie Doesn't Match</h1>
+                    <p class="status-message">The selfie you took doesn't match the photo on your ID document. Please retake your selfie in good lighting, looking directly at the camera.</p>
+                    <div class="kyc-error-banner">
+                        <div class="kyc-error-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Biometric Match Failed
+                            <code class="error-code-chip">FACE_MISMATCH</code>
+                        </div>
+                        <div class="kyc-error-banner-body">Tips: Remove glasses or hats, face the camera directly, and ensure your face is well-lit with no strong shadows or backlighting.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="resetAndGoTo('selfie')">
+                            Retry Selfie
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="18" height="18" style="margin-left: 0.375rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </button>
+                        <a href="mailto:support@unera.ca" class="btn-secondary">Contact Support</a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'quality') {
+                // ── LOW_QUALITY_IMAGE ─────────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon error">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/><path d="M9.5 12.5l5 5M14.5 12.5l-5 5"/></svg>
+                    </div>
+                    <h1 class="status-title">Photo Quality Too Low</h1>
+                    <p class="status-message">The photo quality was insufficient for verification. Please retake with better lighting and a steady camera.</p>
+                    <div class="kyc-error-banner">
+                        <div class="kyc-error-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Image Quality Insufficient
+                            <code class="error-code-chip">LOW_QUALITY_IMAGE</code>
+                        </div>
+                        <div class="kyc-error-banner-body">Tips: Use natural or bright overhead lighting, hold the camera steady, and avoid glare or reflections on the document surface.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="resetAndGoTo('selfie')">
+                            Try Again
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="18" height="18" style="margin-left: 0.375rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        </button>
+                        <a href="mailto:support@unera.ca" class="btn-secondary">Contact Support</a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'duplicate') {
+                // ── DUPLICATE_ACCOUNT — hard block ───────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon error">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M18.5 9.5l5 5M23.5 9.5l-5 5"/></svg>
+                    </div>
+                    <h1 class="status-title">Account Already Exists</h1>
+                    <p class="status-message">Your identity is already associated with another UNERA account. Only one account is permitted per person. Please contact support for assistance.</p>
+                    <div class="kyc-error-banner">
+                        <div class="kyc-error-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Duplicate Identity Detected
+                            <code class="error-code-chip">DUPLICATE_ACCOUNT</code>
+                        </div>
+                        <div class="kyc-error-banner-body">This identity document has already been used to verify a different account. This is a permanent block — please contact support to resolve it.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <a href="mailto:support@unera.ca" class="btn-primary">Contact Support</a>
+                    </div>
+                `;
+
+            } else if (demoMode === 'maxretries') {
+                // ── Max retries — 24h lock ────────────────────────────────
+                ss.innerHTML = `
+                    <div class="status-icon error">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span class="kyc-locked-badge">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            Locked for 24 hours
+                        </span>
+                    </div>
+                    <h1 class="status-title">Too Many Attempts</h1>
+                    <p class="status-message">You have reached the maximum number of verification attempts (3/3). Your account is temporarily locked for 24 hours for security reasons.</p>
+                    <div class="kyc-error-banner">
+                        <div class="kyc-error-banner-title">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Maximum Retries Reached (3/3)
+                        </div>
+                        <div class="kyc-error-banner-body">Verification is locked for 24 hours. You can contact support for assistance or request an email reminder when the lock expires.</div>
+                    </div>
+                    ${benefits}
+                    <div class="action-buttons">
+                        <a href="mailto:support@unera.ca" class="btn-primary">Contact Support</a>
+                        <button class="btn-secondary" onclick="(function(){showNotification('We\\'ll email you when your account is ready to retry verification.', 'success', 'Reminder Set'); })()">Notify Me by Email</button>
+                    </div>
+                `;
+            }
+        }
     </script>
 </body>
 </html>
