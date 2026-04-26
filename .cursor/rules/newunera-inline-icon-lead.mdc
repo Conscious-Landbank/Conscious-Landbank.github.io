@@ -1,0 +1,70 @@
+---
+description: Left-aligned flex rows for leading Material inline SVG + body text in NewUnera (info-box, confirm callouts, 2FA hints)
+alwaysApply: false
+---
+
+# NewUnera — Inline icon + text rows (`.unera-icon-lead`)
+
+Use this pattern when a **paragraph or callout** starts with a **Material Symbols** inline SVG (`viewBox="0 -960 960 960"`) followed by running text, and **baseline alignment** looks wrong or fragile (typical for 20px icons next to 0.875rem–1rem copy).
+
+**Not** for:
+
+- **`.input-hint`** rows that already use the global `.input-hint > svg:first-child { vertical-align: -0.18em; }` nudge — keep those unless you intentionally stack `.input-hint.unera-icon-lead` (then flex overrides apply; see §3).
+- **Centered** success follow-up under `.success-screen` — use **`input-hint--success-followup`** (see `.cursor/rules/newunera-success-screen-hero.mdc` §2a).
+- **`ul/li`** rows that already define their own `display: flex` + icon rules (e.g. `.info-box li`).
+
+## 1. DOM
+
+```html
+<p class="unera-icon-lead unera-icon-lead--sm">
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">…</svg>
+  <span>Body copy and <strong>emphasis</strong>.</span>
+</p>
+```
+
+- **Order:** `svg` first, then **`<span>`** wrapping all text so the flex row has two clear children.
+- **Do not** leave a stray emoji or variation selector after `</svg>` (breaks layout and a11y).
+- **Do not** put the SVG inside `<strong>`; keep emphasis inside the `<span>`.
+
+## 2. CSS (per `NewUnera/*.html` page styles)
+
+Copy the block from **`exchange.html`** / **`send-enhanced.html`** (classes `unera-icon-lead`, modifiers below). Core rules:
+
+| Rule | Role |
+|------|------|
+| `.unera-icon-lead` | `display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: flex-start; gap: 0.4rem; margin: 0;` |
+| `.unera-icon-lead > span` | `min-width: 0; flex: 1 1 auto;` (wrap in narrow viewports) |
+| `.unera-icon-lead > svg:first-child` | `flex-shrink: 0; margin-top: 0.1em;` (first-line optical alignment) |
+
+**Modifiers** (examples used in product HTML):
+
+| Class | Role |
+|-------|------|
+| `.unera-icon-lead--sm` | `font-size: 0.875rem` |
+| `.unera-icon-lead--text-base` | `font-size: var(--text-base)` |
+| `.unera-icon-lead--tone-error` | `color: var(--error)` |
+| `.unera-icon-lead--tone-success` | `color: var(--success)` |
+| `.unera-icon-lead--mt-half` | `margin-top: 0.5rem` (stacked under a previous row) |
+
+**Compound (optional):**
+
+```css
+.input-hint.unera-icon-lead > svg:first-child {
+  margin-right: 0;
+  vertical-align: unset;
+}
+```
+
+## 3. Icon assets
+
+- Same Material SVG rules as [`.cursor/rules/newunera-icons.mdc`](newunera-icons.mdc) — `fill="currentColor"`, `aria-hidden="true"` on decorative marks.
+
+## 4. Related
+
+- [`.cursor/rules/newunera-icons.mdc`](newunera-icons.mdc) — asset and sizing
+- [`.cursor/rules/newunera-success-screen-hero.mdc`](newunera-success-screen-hero.mdc) — §2a centered follow-up
+- [`.cursor/rules/wallet-action-pages.mdc`](wallet-action-pages.mdc) — completion / flow copy
+
+## 5. Audit
+
+To find unstyled `p` + leading SVG: `rg '<p[^>]*>\\s*<svg' NewUnera/*.html`

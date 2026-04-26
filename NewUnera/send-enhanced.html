@@ -495,7 +495,7 @@
         .unera-checkmark {
             display: block;
             flex-shrink: 0;
-            fill: currentColor;
+            fill: none;
         }
         .step.completed .step-circle .unera-checkmark { width: 22px; height: 22px; }
         .step-label {
@@ -716,7 +716,8 @@
             left: 50%;
             transform: translateX(-50%);
             background: var(--gradient-warm);
-            color: white;
+            color: var(--brand-deep-blue);
+            border: 1px solid color-mix(in srgb, var(--brand-deep-blue) 18%, transparent);
             padding: 0.25rem 0.75rem;
             border-radius: 1rem;
             font-size: 0.688rem;
@@ -728,8 +729,13 @@
             justify-content: center;
             gap: 0.25rem;
             z-index: 3;
-            white-space: nowrap;    /* Keeps ⭐ and RECOMMENDED on one line */
-            line-height: 1;        /* Prevents extra vertical space from emoji */
+            white-space: nowrap;
+            line-height: 1;
+        }
+        .recommended-badge svg {
+            flex-shrink: 0;
+            width: 14px;
+            height: 14px;
         }
         .option-icon {
             font-size: 2.5rem;
@@ -752,10 +758,20 @@
         }
         .method-reason {
             font-size: 0.813rem;
-            color: var(--neutral-500);
+            color: var(--text-secondary);
             font-weight: 400;
             margin-top: 0.5rem;
             line-height: 1.4;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .method-reason svg {
+            width: 0.875rem;
+            height: 0.875rem;
+            flex-shrink: 0;
+            transform: translateY(0.06em);
         }
         .send-option:focus,
         .send-option:focus-visible {
@@ -773,8 +789,8 @@
             color: var(--text-secondary);
         }
         .fee-badge.free {
-            background: var(--fin-up-bg);
-            color: var(--fin-up);
+            background: color-mix(in srgb, var(--fin-up) 18%, var(--brand-white));
+            color: var(--brand-deep-blue);
         }
 
         /* Search input */
@@ -789,7 +805,7 @@
             transform: translateY(-50%);
             width: 20px;
             height: 20px;
-            fill: var(--neutral-500);
+            fill: var(--text-secondary);
         }
         .search-input {
             width: 100%;
@@ -1146,6 +1162,58 @@
             color: var(--text-secondary);
             margin-top: 0.5rem;
         }
+        /* Leading icon + text: inline SVG optical alignment (see exchange.html) */
+        .input-hint > svg:first-child {
+            display: inline-block;
+            vertical-align: -0.18em;
+            margin-right: 0.4rem;
+        }
+        /* Centered success follow-up under .success-screen: flex + gap; skip baseline nudge (see .input-hint > svg) */
+        .input-hint.input-hint--success-followup {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-top: 1.5rem;
+        }
+        .input-hint.input-hint--success-followup > span {
+            text-align: center;
+            min-width: 0;
+            max-width: 100%;
+        }
+        .input-hint.input-hint--success-followup > svg:first-child {
+            margin-right: 0;
+            margin-top: 0.1em;
+            vertical-align: unset;
+            flex-shrink: 0;
+        }
+        /* Leading icon + running text (info-box, confirm callouts) — flex; see .cursor/rules/newunera-inline-icon-lead.mdc */
+        .unera-icon-lead {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 0.4rem;
+            margin: 0;
+        }
+        .unera-icon-lead--sm { font-size: 0.875rem; }
+        .unera-icon-lead--text-base { font-size: var(--text-base); }
+        .unera-icon-lead--tone-error { color: var(--error); }
+        .unera-icon-lead--tone-success { color: var(--success); }
+        .unera-icon-lead--mt-half { margin-top: 0.5rem; }
+        .unera-icon-lead > span {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+        .unera-icon-lead > svg:first-child {
+            flex-shrink: 0;
+            margin-top: 0.1em;
+        }
+        .input-hint.unera-icon-lead > svg:first-child {
+            margin-right: 0;
+            vertical-align: unset;
+        }
         /* Address warning: high contrast (brand: functional error) */
         .input-hint.input-hint-warning {
             font-size: 0.875rem;
@@ -1333,18 +1401,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--brand-white);
             box-shadow: 0 8px 32px rgba(23, 61, 71, 0.2), 0 0 0 12px rgba(23, 61, 71, 0.08);
             position: relative;
             animation: checkmark 0.5s ease-out;
         }
-        .success-icon-animated svg {
+        .success-icon-animated > .unera-checkmark {
             width: 56px;
             height: 56px;
-            stroke: white;
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
         }
         .lightning-badge {
             position: absolute;
@@ -1360,6 +1424,11 @@
             font-size: 1.25rem;
             color: var(--brand-deep-blue);
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+        }
+        .lightning-badge svg {
+            flex-shrink: 0;
+            fill: var(--brand-white);
+            color: var(--brand-white);
         }
 
         /* Flow animations (from kyc-verify.html - tick icon coming out effect) */
@@ -1622,7 +1691,7 @@
                 <h2 class="section-title">Select transfer type</h2>
                 <div class="send-options">
                     <div class="send-option" data-option="unera" onclick="selectOption('unera', this)">
-                        <span class="recommended-badge">⭐ RECOMMENDED</span>
+                        <span class="recommended-badge"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m233-120 65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z"/></svg> RECOMMENDED</span>
                         <div class="option-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg></div>
                         <div class="option-title">UNERA User</div>
                         <div class="option-desc">Send to someone on UNERA</div>
@@ -1630,7 +1699,7 @@
                         <div class="fee-badge free">No fees</div>
                     </div>
                     <div class="send-option" data-option="external" onclick="selectOption('external', this)">
-                        <div class="option-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>️</div>
+                        <div class="option-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg></div>
                         <div class="option-title">External Wallet</div>
                         <div class="option-desc">Send to crypto wallet</div>
                         <div class="method-reason">Network fee applies · On-chain · Irreversible</div>
@@ -1745,8 +1814,14 @@
                     <span class="summary-value" id="reviewNote">-</span>
                 </div>
                 <div style="background: rgba(239,68,68,0.05); border-radius:0.75rem; padding:1rem; margin-top:1.5rem;">
-                    <p style="font-size:var(--text-base); color:var(--error);"><strong><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>️ Once sent, this cannot be undone.</strong> <span style="font-size:var(--text-sm); color:var(--neutral-600);">Please review carefully.</span></p>
-                    <p style="font-size:var(--text-sm); color:var(--success); margin-top:0.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg> 2FA enabled – extra security</p>
+                    <p class="unera-icon-lead unera-icon-lead--text-base unera-icon-lead--tone-error">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>
+                        <span><strong>Once sent, this cannot be undone.</strong> <span style="font-size:var(--text-sm); color:var(--neutral-600);">Please review carefully.</span></span>
+                    </p>
+                    <p class="unera-icon-lead unera-icon-lead--sm unera-icon-lead--tone-success unera-icon-lead--mt-half">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                        <span>2FA enabled – extra security</span>
+                    </p>
                 </div>
             </div>
             <div class="btn-actions">
@@ -1777,7 +1852,7 @@
             <div class="card flow-card-animated">
                 <div class="success-state">
                     <div class="success-icon-animated">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M5 13l4 4L19 7"></path>
                         </svg>
                         <div class="lightning-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/></svg></div>
@@ -1788,7 +1863,7 @@
                         <strong id="successDestination"></strong>
                         <br>Transaction ID: <span id="transactionId">TX-2026-XXXX</span>
                     </p>
-                    <p class="input-hint" style="margin-top: 1.5rem; text-align: center;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg> The recipient will see the transfer in their wallet. You can send again anytime.</p>
+                    <p class="input-hint input-hint--success-followup"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg><span>The recipient will see the transfer in their wallet. You can send again anytime.</span></p>
                 </div>
             </div>
             <div class="btn-actions">
@@ -1860,7 +1935,7 @@
     </div>
 
     <script>
-        const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+        const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
         // ========== GLOBAL STATE ==========
         const appState = {
             currentStep: 1,
@@ -2083,7 +2158,7 @@
             } else if (appState.sendOption === 'external') {
                 html = `
                     <h2 class="section-title">Send to External Wallet</h2>
-                    <p class="input-hint input-hint-warning"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>️ Double-check the address. Transfers to wrong addresses cannot be reversed.</p>
+                    <p class="input-hint input-hint-warning"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg> Double-check the address. Transfers to wrong addresses cannot be reversed.</p>
                     <div class="form-group network-select">
                         <label class="form-label">Select Network</label>
                         <div class="network-grid">

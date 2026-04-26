@@ -1,0 +1,32 @@
+---
+description: First-line optical alignment for .irrevers-warn and .rate-note lead SVGs in NewUnera wallet review steps (Get/Redeem UNERA CAD)
+alwaysApply: false
+---
+
+# NewUnera — Review callout icons (`.irrevers-warn`, `.rate-note`)
+
+**Scope:** Review-step callouts in wallet flows that use a **15×15** (or same-size) **stroke** inline SVG as the first flex child, followed by a **text column** (bold first line + optional subcopy).
+
+**Canonical implementations:** `NewUnera/get-unera-cad.html` (`.irrevers-warn` + `.rate-note`); `NewUnera/redeem-unera-cad.html` (`.irrevers-warn` only).
+
+## Layout rules
+
+1. **Row container** — `display: flex;` with a horizontal `gap` (e.g. `0.5rem`–`0.625rem`). Use **`align-items: flex-start`** so the lead icon and the text column **anchor to the top** of the row.
+
+2. **Do not** use **`align-items: center`** on **`.rate-note`** when the text block has **multiple lines** (e.g. `<strong>` + `<span>` that wraps). Centering the cross-axis lines the icon up with the **vertical midpoint of the full block**, which misaligns the icon vs the **first line** of copy.
+
+3. **Lead `<svg>`** — `flex-shrink: 0`. Apply a small **first-line optical nudge** with **`margin-top` in `em`** (tied to the callout’s `font-size`), not a raw **`1px`** nudge, so alignment scales if `font-size` changes.
+
+   - **`.irrevers-warn svg`**: e.g. `margin-top: 0.16em;` to align with `.iw-strong`.
+   - **`.rate-note svg`**: e.g. `margin-top: 0.1em;` to align with the first line (often `<strong>`).
+
+4. **Strokes and fills** — Use CSS tokens (e.g. `stroke="var(--error)"` / `fill="var(--error)"` for the irreversibility warning; `stroke="var(--text-primary)"` for neutral/info strokes). Do not hardcode hex when a token exists (see [`.cursor/rules/new-brand-output.mdc`](new-brand-output.mdc)).
+
+## Related
+
+- [`.cursor/rules/newunera-inline-icon-lead.mdc`](newunera-inline-icon-lead.mdc) — same “first-line optical alignment” idea for **paragraph** rows (`.unera-icon-lead`), not the boxed callout pattern here.
+- [`.cursor/rules/wallet-action-pages.mdc`](wallet-action-pages.mdc) — Get/Redeem flow standards.
+
+## Audit
+
+`rg 'irrevers-warn|rate-note' NewUnera/*.html`

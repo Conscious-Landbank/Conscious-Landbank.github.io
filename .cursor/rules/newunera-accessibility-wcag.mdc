@@ -1,0 +1,61 @@
+---
+description: WCAG 2.2 Level AA baseline for all NewUnera HTML — contrast, focus, targets, tokens, and verification workflow
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# NewUnera — WCAG 2.2 Level AA (product HTML)
+
+**Scope:** All files under [`NewUnera/`](NewUnera/) (`*.html`). [`NewUnera/brand-style-guide.html`](NewUnera/brand-style-guide.html) may include marketing specimens; interactive demos there must still avoid unreadable text/ink combinations.
+
+**Normative baseline:** [WCAG 2.2](https://www.w3.org/TR/WCAG22/) **Level AA**. For static HTML UI, prioritize:
+
+| Criterion | Requirement |
+|-----|-----|
+| **1.4.3 Contrast (Minimum)** | Normal text **≥ 4.5:1**; large text (≥18pt regular or 14pt bold) **≥ 3:1** vs background |
+| **1.4.11 Non-text Contrast** | UI components and graphical objects that convey state **≥ 3:1** (borders, icons that communicate meaning, focus rings) |
+| **2.4.7 Focus Visible** | Every interactive control has a visible focus indicator (see [`new-brand-output.mdc`](new-brand-output.mdc) — `outline` with `--brand-deep-blue` on light surfaces, `--brand-yellow` on dark nav) |
+| **2.5.8 Target Size (Minimum)** | **24×24 CSS px** minimum (WCAG 2.2); product bar remains **≥ 44–46px** for primary actions per workspace design rules |
+
+Also align with existing project requirements: **skip link** (`href="#main-content"`), **`prefers-reduced-motion`**, **`lang`** on `<html>`, meaningful **`alt`** / decorative images, **`aria-*`** where components need it, logical **heading order**, **labels** on inputs.
+
+## Brand-specific contrast rules (UNERA V2)
+
+### Warm / pale surfaces (`--gradient-warm`)
+
+On product pages, `--gradient-warm` is a **pale tint** (`color-mix` of `--brand-yellow` and white). **Do not** use **`--brand-white`**, **`white`**, or **`--brand-yellow`** as **text or icon ink** on that background — contrast fails **1.4.3**.
+
+**Correct pattern:** `color: var(--brand-deep-blue)` (and optional `border: 1px solid color-mix(in srgb, var(--brand-deep-blue) 18%, transparent)` for pill edges). Matches [`.cursor/rules/newunera-color-system.mdc`](newunera-color-system.mdc) §7.6 (warm badge / lightning accent copy).
+
+### `--neutral-500` and text
+
+In V2 `:root`, **`--neutral-500`** maps to **`#90c2b8`** (`--brand-light-blue` family). **Do not use it for text** (body, labels, captions, placeholders, meta lines) on white or light `--surface-*` cards — it **fails 1.4.3** on typical backgrounds.
+
+**Use instead:** **`var(--text-secondary)`** (`#3d6b78`) or **`var(--neutral-600)`** where the token stack matches (often equivalent). **Reserved uses for `--neutral-500`:** non-text pairings only when contrast is verified (e.g. some disabled **background** recipes — still verify **1.4.3** for any visible **text** on that control).
+
+### Decorative vs informative icons
+
+Per [`.cursor/rules/newunera-icons.mdc`](newunera-icons.mdc): inline SVGs use **`fill="currentColor"`**. Purely decorative glyphs: **`aria-hidden="true"`**. Do not use emoji for UI affordances where Material inline SVG is specified.
+
+## Checklist before merging NewUnera UI changes
+
+- [ ] New or updated **badges / pills / captions**: contrast spot-check (warm tint → deep-blue ink; no light-blue-on-white small text).
+- [ ] New **buttons / links / cards**: **focus-visible** present; no `outline: none` without a visible replacement.
+- [ ] **Forms:** associated labels (visible or `aria-label`); error text readable (e.g. `--error` on sufficient surface).
+- [ ] **Images:** meaningful `alt`; decorative `alt=""`.
+- [ ] **Keyboard:** tab through the changed flow; focus order makes sense.
+- [ ] **Motion:** respect `prefers-reduced-motion` for animations/transitions.
+
+## Verification workflow (recommended)
+
+1. Open the page locally and run **axe DevTools** or **Lighthouse** (Accessibility) on the changed screen.
+2. Manually tab through primary and secondary actions.
+3. For contentious pairs, use a contrast checker (e.g. WebAIM) on computed foreground/background.
+
+**Note:** Claiming “100% WCAG 2.2 AA” for an entire static site requires a full audit; use the checklist + tooling above for each change set.
+
+## Related rules
+
+- [`.cursor/rules/new-brand-output.mdc`](new-brand-output.mdc) — tokens, focus, no gradients on product HTML
+- [`.cursor/rules/newunera-color-system.mdc`](newunera-color-system.mdc) — surfaces, `--gradient-warm`, flow tokens
+- [`.cursor/rules/newunera-icons.mdc`](newunera-icons.mdc) — icon contrast (incl. **1.4.11** for non-text)

@@ -484,7 +484,7 @@
         .unera-checkmark {
             display: block;
             flex-shrink: 0;
-            fill: currentColor;
+            fill: none;
         }
         .step.completed .step-circle .unera-checkmark { width: 22px; height: 22px; }
         .step-label {
@@ -1018,6 +1018,12 @@
             font-size: 0.875rem;
             color: var(--text-secondary);
             margin-top: 0.5rem;
+        }
+        /* Leading icon + text: inline SVG baseline vs body text — align to first line (see exchange.html) */
+        .input-hint > svg:first-child {
+            display: inline-block;
+            vertical-align: -0.18em;
+            margin-right: 0.4rem;
         }
 
         .input-error {
@@ -1772,8 +1778,15 @@
             color: var(--text-secondary);
             margin-top: 0.25rem;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             gap: 0.25rem;
+        }
+        .method-reason svg {
+            width: 0.875rem;
+            height: 0.875rem;
+            flex-shrink: 0;
+            transform: translateY(0.06em);
         }
         .recommended-badge {
             background: var(--gradient-deep);
@@ -1788,7 +1801,7 @@
         }
         .tooltip-icon {
             cursor: help;
-            border-bottom: 1px dotted var(--neutral-500);
+            border-bottom: 1px dotted var(--text-secondary);
         }
 
         /* Success icon (same as exchange.html - tick + lightning badge) */
@@ -1801,18 +1814,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--brand-white);
             box-shadow: 0 8px 32px rgba(23, 61, 71, 0.2), 0 0 0 12px rgba(23, 61, 71, 0.08);
             position: relative;
             animation: checkmark 0.5s ease-out;
         }
-        .success-icon-animated svg {
+        .success-icon-animated > .unera-checkmark {
             width: 56px;
             height: 56px;
-            stroke: white;
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
         }
         .lightning-badge {
             position: absolute;
@@ -1828,6 +1837,11 @@
             font-size: 1.25rem;
             color: var(--brand-deep-blue);
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+        }
+        .lightning-badge svg {
+            flex-shrink: 0;
+            fill: var(--brand-white);
+            color: var(--brand-white);
         }
         @keyframes checkmark {
             0% { transform: scale(0) rotate(-45deg); }
@@ -2261,7 +2275,7 @@
             <div class="success-screen flow-card-animated">
                 <!-- Lightning success icon from stake.html -->
                 <div class="success-icon-animated">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M5 13l4 4L19 7"></path>
                     </svg>
                     <div class="lightning-badge"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/></svg></div>
@@ -2554,7 +2568,7 @@
 
     <!-- JavaScript -->
     <script>
-        const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+        const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
         // -------------------- STATE --------------------
         const appState = {
             kycCompleted: false,

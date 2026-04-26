@@ -1,0 +1,91 @@
+---
+description: Canonical “lightning success hero” (check + bolt badge) for final success steps in NewUnera multi-step flows
+alwaysApply: false
+---
+
+# NewUnera — Flow success screen (lightning hero)
+
+Use this **one pattern** for the **final success state** of transactional / multi-step flows under `NewUnera/`: **Add Money** (`add-money.html`), **Exchange** (`exchange.html`), **Get UNERA CAD** (`get-unera-cad.html`), **Redeem UNERA CAD** (`redeem-unera-cad.html`), **Send** (`send-enhanced.html`), **Stake** (`stake.html`), and any new flow with a **“completed”** step (e.g. KYC, account actions).
+
+**Canonical layout + motion reference:** `NewUnera/add-money.html` — `#step-complete` → `.success-screen.flow-card-animated` → `.success-icon-animated` + headline + amount + details.
+
+## 1. DOM structure (required)
+
+```html
+<div id="step-complete" class="step-content">
+  <div class="success-screen flow-card-animated">
+    <div class="success-icon-animated" aria-hidden="true">
+      <!-- Primary check: see §2 -->
+      <svg><!-- checkmark — §2 --></svg>
+      <div class="lightning-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+          <path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/>
+        </svg>
+      </div>
+    </div>
+    <h2 class="success-title" id="successScreenHeading">…</h2>
+    <div class="success-amount" id="successAmount">…</div>
+    <div class="success-details">…</div>
+  </div>
+</div>
+```
+
+- **`#step-complete`**: Keep this id for the last step so JS and QA can target one name across flows. If a page uses a different wrapper (e.g. `redeem-step`), still use the **same inner block** (`.success-screen` + icon + title + details).
+- **`.flow-card-animated`**: Apply on `.success-screen` for the same **slide-in** entrance as `add-money.html` (pairs with `@keyframes` defined on the page).
+- **`.success-icon-animated`**: 100×100px **circle** (see §3); holds the **check** and the **lightning badge**.
+- **`.lightning-badge`**: **40×40px** circle, **absolutely positioned** `top: -8px; right: -8px` on `.success-icon-animated` (same as reference pages).
+- **Lightning icon**: **Material-style bolt** (path above), `viewBox="0 -960 960 960"`, **inline SVG**, `fill="currentColor"`, `aria-hidden="true"`. **Default size: 14×14** inside the badge (matches the polished add-money / stake treatment). `16×16` is acceptable where a page already matches exchange/send — when updating or building new, **prefer 14×14** for consistency.
+- **Heading**: Give the `h2` a stable `id` (e.g. `successScreenHeading`) and, if the region is the main announcement, optional `role="region"` + `aria-labelledby` on a wrapping element — at minimum ensure the success step is visible in the focus order after transition.
+
+## 2. Checkmark inside the circle
+
+**Target alignment:** [`.cursor/rules/newunera-checkmark-icon.mdc`](newunera-checkmark-icon.mdc) — the **success-hero stroked** check (class `unera-checkmark`, path `M5 13l4 4L19 7` in `viewBox="0 0 24 24"`), **not** a Unicode `✓`.
+
+- **All product flows:** Use the same stroked check as the stepper and chips — `stroke="currentColor"`, `stroke-width="3"`, `fill="none"`, on the inner `<svg>`, with the circle setting `color: var(--brand-white)` (via `.success-icon-animated` or equivalent). Size the inner mark with `.success-icon-animated > .unera-checkmark` (typically **56×56** for a **100px** outer circle, or **48×48** for smaller `success-icon-animated` variants on Get/Redeem).
+
+## 2a. Centered follow-up line (lightbulb + copy)
+
+- Optional **centered** tips under the hero (e.g. “Your swapped funds are in your wallet…”) use **`p.input-hint.input-hint--success-followup`**: page-local **flex** + **gap**, **Material lightbulb** SVG, sentence in **`<span>…</span>`** — reference `NewUnera/exchange.html`, `stake.html`, `send-enhanced.html`.
+- The global `.input-hint > svg:first-child` **vertical-align** nudge is for **left-aligned** row hints; do **not** use that pattern alone for this centered follow-up (the modifier class overrides it).
+
+## 3. CSS (copy from `add-money.html` and tune tokens only)
+
+Re-use these **class names** so flows stay visually identical:
+
+| Class | Role |
+|-------|------|
+| `.success-screen` | Centered text, vertical padding for the success column |
+| `.success-icon-animated` | 100×100 circle, `background: var(--gradient-deep)` (solid deep blue on product pages), `border-radius: 50%`, flex center, `position: relative`, ring/shadow as in reference, `animation: checkmark 0.5s ease-out` |
+| `.success-icon-animated > .unera-checkmark` | Inner stroked check sizing (e.g. 56×56 for the standard 100px circle) |
+| `.lightning-badge` | 40×40, `color-mix` yellow/earth (see `add-money.html`), `border-radius: 50%`, flex center, `box-shadow` for lift |
+| `.lightning-badge svg` | `flex-shrink: 0`; icon color: **`var(--brand-white)`** (bolt reads as a crisp “spark” on the warm badge) |
+| `.flow-card-animated` | `animation: slideIn 0.4s ease-out` (or shared name used on that page) |
+
+**Brand rules:**
+
+- **No `linear-gradient` / `radial-gradient`** in these components on product HTML — solid **`var(--brand-deep-blue)`** (via `--gradient-deep` if aliased) for the main circle. See `.cursor/rules/new-brand-output.mdc`.
+- **Success amounts** use **`color: var(--fin-up)`** (positive money semantics), not brand light blue for primary figures — see `.cursor/rules/newunera-financial-direction-colors.mdc`.
+- **`.success-title`:** Prefer **solid** `color: var(--brand-deep-blue)` and display weight (per `.cursor/rules/newunera-typography.mdc`); avoid gradient text on new/updated product pages.
+- **`prefers-reduced-motion: reduce`:** Set animations/transitions to **0.01ms** (match other `NewUnera` flow pages).
+
+## 4. Large variant (`-lg`) — Get / Redeem / dense trackers
+
+`NewUnera/get-unera-cad.html` and `NewUnera/redeem-unera-cad.html` use **`success-icon-animated-lg`** and **`lightning-badge-lg`** where the **hero must align with a larger stepper/tracker** language. Use **standard** (§1) for add / exchange / send / stake–style cards; use **`-lg`** only when that page’s design system already defines it — **same bolt path**, **same** yellow-earth badge idea, scaled wrappers only.
+
+## 5. What not to do
+
+- Do **not** replace the lightning badge with an emoji, Lucide, or a different bolt asset — **one** inline SVG path (Material coordinate space `0 -960 960 960`) for the bolt.
+- Do **not** omit `.lightning-badge` on “fast” or swap success — the **check + bolt** is the **brand success signature** for these flows.
+- Do **not** use a different success hero on each page (e.g. only check with no badge, or illustration-only) unless an explicit product exception is documented in the same file.
+- Do **not** add CSS gradient **functions** to the success hero on product HTML (see new-brand-output).
+
+## 6. Related rules
+
+- [`.cursor/rules/newunera-checkmark-icon.mdc`](newunera-checkmark-icon.mdc) — stroked `unera-checkmark` for chips and **hero** (same markup family).
+- [`.cursor/rules/newunera-icons.mdc`](newunera-icons.mdc) — inline SVG, `currentColor`, sizing.
+- [`.cursor/rules/wallet-action-pages.mdc`](wallet-action-pages.mdc) — stepper, completion step, and UNERA CAD–specific CTAs.
+- [`.cursor/rules/newunera-color-system.mdc`](newunera-color-system.mdc) — §7.6 success hero (circle + fin-up halos) for optional outer rings if extended.
+
+## 7. Out of scope
+
+- Backend, real transaction IDs, and Web3 — UI-only; wire ids into the existing success detail rows.

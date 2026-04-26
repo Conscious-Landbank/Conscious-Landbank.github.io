@@ -1034,8 +1034,13 @@
         .privacy-toggle-icon {
             width: 20px;
             height: 20px;
-            fill: currentColor;
-            transition: all 0.2s;
+            flex-shrink: 0;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: opacity 0.2s, transform 0.2s;
         }
 
         /* Enhanced Total Balance Card */
@@ -1745,7 +1750,7 @@
 
         @media (max-width: 900px) {
             .asset-row {
-                grid-template-columns: 40px 1fr 110px 86px auto;
+                grid-template-columns: 40px minmax(0, 1fr) auto auto auto;
                 gap: 0.75rem;
             }
             .asset-row-fiat {
@@ -1755,12 +1760,31 @@
 
         @media (max-width: 640px) {
             .asset-row {
-                grid-template-columns: 36px 1fr auto auto;
+                grid-template-columns: 36px minmax(0, 1fr) minmax(0, auto) auto;
+                grid-template-rows: auto auto;
+                column-gap: 0.625rem;
+                row-gap: 0.5rem;
                 padding: 0.875rem 1rem;
-                gap: 0.625rem;
             }
             .asset-row-fiat {
                 display: none;
+            }
+            .asset-row > .balance-change {
+                justify-self: end;
+                font-size: 0.75rem;
+                padding: 0.2rem 0.45rem;
+            }
+            .asset-row > .asset-row-actions {
+                grid-column: 1 / -1;
+                justify-content: flex-end;
+                padding-top: 0.5rem;
+                border-top: 1px solid var(--border-subtle);
+            }
+            .asset-row-balance {
+                min-width: 0;
+            }
+            .asset-row-balance .balance-amount {
+                font-size: 1rem;
             }
             .assets-panel-header {
                 padding: 1rem;
@@ -2378,7 +2402,7 @@
         }
 
         .search-input::placeholder {
-            color: var(--neutral-500);
+            color: var(--text-secondary);
         }
 
         .search-icon {
@@ -2388,7 +2412,7 @@
             transform: translateY(-50%);
             width: 20px;
             height: 20px;
-            color: var(--neutral-500);
+            color: var(--text-secondary);
             pointer-events: none;
         }
 
@@ -2399,7 +2423,7 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: var(--neutral-500);
+            color: var(--text-secondary);
             cursor: pointer;
             padding: 0.5rem;
             display: flex;
@@ -2581,7 +2605,7 @@
         .modal-close-btn {
             background: none;
             border: none;
-            color: var(--neutral-500);
+            color: var(--text-secondary);
             cursor: pointer;
             padding: 0.5rem;
             display: flex;
@@ -3248,7 +3272,7 @@
         .preset-delete-btn {
             background: none;
             border: none;
-            color: var(--neutral-500);
+            color: var(--text-secondary);
             cursor: pointer;
             padding: 0.25rem;
             display: flex;
@@ -4317,8 +4341,10 @@
                 grid-template-columns: 1fr 1fr;
             }
 
-            .balance-amount {
-                font-size: 2rem !important;
+            .balance-card .balance-amount,
+            .stat-value.balance-amount,
+            #totalBalance.balance-amount {
+                font-size: 2rem;
             }
 
             .history-section.card {
@@ -5095,7 +5121,10 @@
                     aria-label="Toggle balance visibility"
                     aria-pressed="true"
                     id="privacyToggle">
-                    <svg class="privacy-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M607.5-372.5Q660-425 660-500t-52.5-127.5Q555-680 480-680t-127.5 52.5Q300-575 300-500t52.5 127.5Q405-320 480-320t127.5-52.5Zm-204-51Q372-455 372-500t31.5-76.5Q435-608 480-608t76.5 31.5Q588-545 588-500t-31.5 76.5Q525-392 480-392t-76.5-31.5ZM214-281.5Q94-363 40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200q-146 0-266-81.5ZM480-500Zm207.5 160.5Q782-399 832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280q113 0 207.5-59.5Z"/></svg>
+                    <svg class="privacy-toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19 12 19c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 5c4.756 0 8.773 2.662 10.065 7A10.524 10.524 0 0112 19c-1.473 0-2.891-.292-4.21-.818M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path d="M3 3l18 18"/>
+                    </svg>
                     <span id="privacyToggleText">Show Balances</span>
                 </button>
             </div>
@@ -7990,12 +8019,13 @@
             });
 
             btn.setAttribute('aria-pressed', balancesHidden);
-            
+            icon.setAttribute('viewBox', '0 0 24 24');
+
             if (balancesHidden) {
-                icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.988 18.988 0 015.125-5.172M9.879 9.879a3 3 0 004.242 4.242M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M2 2l20 20"/>';
+                icon.innerHTML = '<path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19 12 19c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 5c4.756 0 8.773 2.662 10.065 7A10.524 10.524 0 0112 19c-1.473 0-2.891-.292-4.21-.818M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M3 3l18 18"/>';
                 text.textContent = 'Show Balances';
             } else {
-                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+                icon.innerHTML = '<path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4 12 4c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 20 12 20c-4.638 0-8.573-3.007-9.963-7.178z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>';
                 text.textContent = 'Hide Balances';
             }
         }
@@ -8011,7 +8041,8 @@
             });
             
             btn.setAttribute('aria-pressed', 'true');
-            icon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-11-8-11-8a18.988 18.988 0 015.125-5.172M9.879 9.879a3 3 0 004.242 4.242M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M9.879 9.879L6.343 6.343M9.879 9.879L6.343 6.343m7.536 7.536l3.536 3.536M2 2l20 20"/>';
+            icon.setAttribute('viewBox', '0 0 24 24');
+            icon.innerHTML = '<path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19 12 19c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 5c4.756 0 8.773 2.662 10.065 7A10.524 10.524 0 0112 19c-1.473 0-2.891-.292-4.21-.818M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M3 3l18 18"/>';
             text.textContent = 'Show Balances';
         }
 

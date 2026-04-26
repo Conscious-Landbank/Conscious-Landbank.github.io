@@ -1,42 +1,45 @@
 ---
-description: Canonical Material Symbols "check" SVG for UNERA V2 NewUnera flows (stepper, trackers, processing chips)
+description: Canonical success-aligned stroked check SVG for UNERA V2 NewUnera (stepper, success hero, trackers, processing chips)
 alwaysApply: false
 ---
 
-# UNERA V2 — Check icon (Material Symbols)
+# UNERA V2 — Check icon (success-hero stroked check)
 
-Use the **Material Symbols Outlined `check` icon (FILL=0, wght 400, opsz 24)** anywhere a **circular "done" chip** needs a checkmark — not the Unicode character `✓`.
+**Product flows** under `NewUnera/` use a **single stroked check** that matches the inner SVG of `.success-icon-animated` (see `.cursor/rules/newunera-success-screen-hero.mdc`). It is **not** the Material Symbols filled `check` in `0 -960 960 960` space — that variant is not used for steppers and flow chips in the current system.
 
-This replaces the legacy stroked `<path d="M5 13l4 4L19 7"/>` pattern. The Material Symbols path renders identically across platforms and stays consistent with all other icons in the product. See also: `.cursor/rules/newunera-icons.mdc`.
+- **Path:** `M5 13l4 4L19 7` in `viewBox="0 0 24 24"`.
+- **Render:** `fill="none"`, `stroke="currentColor"`, `stroke-width="3"`, `stroke-linecap="round"`, `stroke-linejoin="round"`.
+- **Class:** `unera-checkmark` on the `<svg>` for sizing hooks.
+
+Parent surfaces (e.g. `.step.completed .step-circle`, `.success-icon-animated`, `.ts-icon.ts-check`, `.proc-icon.done`, `.notification-icon`) set **`color: var(--brand-white)`** (or an appropriate token) so `currentColor` matches the surface — not a hardcoded `stroke="white"` in markup where avoidable.
 
 ## Canonical markup
 
 ```html
-<svg class="unera-checkmark" xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 -960 960 960" width="16" height="16"
-     fill="currentColor" aria-hidden="true">
-  <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M5 13l4 4L19 7" />
 </svg>
 ```
 
-Adjust `width` / `height` to fit the chip well (16 inside a 32 chip, 18 inside a 40 chip, 20 inside a 48 chip, etc.).
-
-## Required CSS (filled path — use `fill`, not `stroke`)
+## Required CSS (stroke — `fill: none`, not filled path)
 
 ```css
 .unera-checkmark {
   display: block;
   flex-shrink: 0;
-  fill: currentColor;
+  fill: none;
 }
 ```
 
-Parent chips should set `color: white` (or equivalent) so `currentColor` matches the success surface — same pattern as `.success-icon-animated svg`.
+Size with context rules, e.g.:
 
-## JS constant (static HTML demos)
+- `.step.completed .step-circle .unera-checkmark` → typically `22px` × `22px`
+- `.success-icon-animated > .unera-checkmark` → typically `56px` × `56px` (100px circle hero)
+
+## JS constant (dynamic stepper, trackers, proc rows)
 
 ```js
-const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>';
+const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
 ```
 
 Use `innerHTML = UNERA_CHECKMARK_SVG` for completed states; use `textContent = String(n)` for step numbers (clears SVG).
@@ -46,19 +49,20 @@ Use `innerHTML = UNERA_CHECKMARK_SVG` for completed states; use `textContent = S
 | Surface | Selector / context |
 |--------|---------------------|
 | Desktop stepper | `#dynamicStepper .step.completed .step-circle` |
-| Redeem tx tracker | `.ts-icon.ts-check` (processing + pending templates) |
+| Success hero | `.success-icon-animated` inner check (and `-lg` variants) |
+| Redeem tx tracker | `.ts-icon.ts-check` |
 | Get processing list | `.proc-icon.done` |
+| Stake / notification | `.notification-icon .unera-checkmark`, `.token-check` (selected) |
 
-**Reference implementations:** `NewUnera/get-unera-cad.html`, `NewUnera/redeem-unera-cad.html`.
+**Reference implementations:** `NewUnera/add-money.html`, `NewUnera/exchange.html`, `NewUnera/get-unera-cad.html`, `NewUnera/redeem-unera-cad.html`, `NewUnera/send-enhanced.html`, `NewUnera/stake.html`.
 
 ## Do not
 
-- Do **not** use the old stroked path `M5 13l4 4L19 7` — replaced by Material Symbols `check`.
-- Do **not** use `stroke: currentColor` or `fill: none` on `.unera-checkmark` — Material Symbols are filled paths.
-- Do **not** use Unicode `✓` inside `.step-circle`, `.ts-icon.ts-check`, or `.proc-icon.done`.
-- Do **not** mix `viewBox="0 0 24 24"` (legacy) with Material Symbols `viewBox="0 -960 960 960"` — they use different coordinate systems.
+- Do **not** replace this stroked mark with a **filled** polyline/legacy single-path `fill: currentColor` on the `M5 13l4` segment — that reads as a different weight than the success hero.
+- Do **not** use Unicode `✓` inside `.step-circle`, `.ts-icon.ts-check`, or `.proc-icon.done` for the primary check affordance.
+- For **other** UI (unrelated icon buttons), use Material Symbols per `.cursor/rules/newunera-icons.mdc` — do not conflate that system with the **flow** `unera-checkmark` above.
 
 ## Out of scope
 
-- **Copy-only** labels (e.g. "✓ Verified", "✓ Rate updated") may stay as text.
+- **Copy-only** labels (e.g. "✓ Verified", "Completed ✓") may stay as text.
 - **Pseudo-elements** with `content: '✓'` need a different pattern if they must match this icon (real element or background SVG).

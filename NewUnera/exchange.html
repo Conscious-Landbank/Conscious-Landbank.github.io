@@ -369,7 +369,7 @@
         .unera-checkmark {
             display: block;
             flex-shrink: 0;
-            fill: currentColor;
+            fill: none;
         }
         .step.completed .step-circle .unera-checkmark { width: 22px; height: 22px; }
         .step-label {
@@ -674,6 +674,58 @@
             color: var(--text-secondary);
             margin-top: 0.5rem;
         }
+        /* Leading icon + text: inline SVGs sit on the alphabetic baseline; nudge to first-line optical center (Material viewBox) */
+        .input-hint > svg:first-child {
+            display: inline-block;
+            vertical-align: -0.18em;
+            margin-right: 0.4rem;
+        }
+        /* Centered success follow-up under .success-screen: flex + gap; skip baseline nudge (see .input-hint > svg) */
+        .input-hint.input-hint--success-followup {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-top: 1.5rem;
+        }
+        .input-hint.input-hint--success-followup > span {
+            text-align: center;
+            min-width: 0;
+            max-width: 100%;
+        }
+        .input-hint.input-hint--success-followup > svg:first-child {
+            margin-right: 0;
+            margin-top: 0.1em;
+            vertical-align: unset;
+            flex-shrink: 0;
+        }
+        /* Leading icon + running text (info-box, confirm callouts) — flex; see .cursor/rules/newunera-inline-icon-lead.mdc */
+        .unera-icon-lead {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 0.4rem;
+            margin: 0;
+        }
+        .unera-icon-lead--sm { font-size: 0.875rem; }
+        .unera-icon-lead--text-base { font-size: var(--text-base); }
+        .unera-icon-lead--tone-error { color: var(--error); }
+        .unera-icon-lead--tone-success { color: var(--success); }
+        .unera-icon-lead--mt-half { margin-top: 0.5rem; }
+        .unera-icon-lead > span {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+        .unera-icon-lead > svg:first-child {
+            flex-shrink: 0;
+            margin-top: 0.1em;
+        }
+        .input-hint.unera-icon-lead > svg:first-child {
+            margin-right: 0;
+            vertical-align: unset;
+        }
         /* Balance hint: label subtle, value prominent (brand: data clarity) */
         .input-hint.input-hint-balance {
             font-size: 0.813rem;
@@ -868,10 +920,11 @@
             background: var(--gradient-deep);
             border-radius: 50%; margin: 0 auto 2rem;
             display: flex; align-items: center; justify-content: center;
+            color: var(--brand-white);
             box-shadow: 0 8px 32px rgba(23, 61, 71, 0.2), 0 0 0 12px color-mix(in srgb, var(--fin-up) 16%, transparent);
             position: relative; animation: checkmark 0.5s ease-out;
         }
-        .success-icon-animated svg { width: 56px; height: 56px; stroke: white; stroke-width: 3; fill: none; }
+        .success-icon-animated > .unera-checkmark { width: 56px; height: 56px; }
         .lightning-badge {
             position: absolute; top: -8px; right: -8px;
             width: 40px; height: 40px;
@@ -880,6 +933,7 @@
             font-size: 1.25rem; color: var(--brand-deep-blue);
             box-shadow: 0 4px 12px rgba(255,215,0,0.4);
         }
+        .lightning-badge svg { flex-shrink: 0; fill: var(--brand-white); color: var(--brand-white); }
         @keyframes checkmark {
             0% { transform: scale(0) rotate(-45deg); }
             50% { transform: scale(1.2) rotate(-45deg); }
@@ -1156,7 +1210,7 @@
 
                 <!-- Popular pairs hint -->
                 <div class="info-box">
-                    <p style="font-size:0.875rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg> Popular pairs: <strong>BTC</strong> → <strong> ETH</strong>, <strong>USDC</strong> → <strong>USDT</strong>, <strong>ETH</strong> → <strong>SOL</strong></p>
+                    <p class="unera-icon-lead unera-icon-lead--sm"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg><span>Popular pairs: <strong>BTC</strong> → <strong>ETH</strong>, <strong>USDC</strong> → <strong>USDT</strong>, <strong>ETH</strong> → <strong>SOL</strong></span></p>
                 </div>
 
                 <div class="btn-actions">
@@ -1254,11 +1308,14 @@
 
                 <!-- Irreversibility warning + 2FA hint -->
                 <div style="background: rgba(239,68,68,0.05); border-radius:0.75rem; padding:1rem; margin-bottom:1rem;">
-                    <p style="display:flex; gap:0.5rem; font-size:var(--text-base); color:var(--error);">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>️</span>
+                    <p class="unera-icon-lead unera-icon-lead--text-base unera-icon-lead--tone-error">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>
                         <span><strong>Once submitted, this swap cannot be canceled.</strong> <span style="font-size:var(--text-sm); color:var(--neutral-600);">Please review carefully.</span></span>
                     </p>
-                    <p style="font-size:var(--text-sm); color:var(--success); margin-top:0.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg> 2FA enabled – extra security</p>
+                    <p class="unera-icon-lead unera-icon-lead--sm unera-icon-lead--tone-success unera-icon-lead--mt-half">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                        <span>2FA enabled – extra security</span>
+                    </p>
                 </div>
 
                 <div class="benefits-note" style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem;">
@@ -1281,7 +1338,7 @@
             <div class="card">
                 <div class="success-screen">
                     <div class="success-icon-animated">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
+                        <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
                         <div class="lightning-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/></svg></div>
                     </div>
                     <h2 class="success-title">Swap successful!</h2>
@@ -1300,7 +1357,7 @@
                             <span class="success-detail-value" style="color:var(--success);">Completed</span>
                         </div>
                     </div>
-                    <p class="input-hint" style="margin-top: 1.5rem; text-align: center;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg> Your swapped funds are in your wallet. Stake them to earn yield or send to someone.</p>
+                    <p class="input-hint input-hint--success-followup"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg><span>Your swapped funds are in your wallet. Stake them to earn yield or send to someone.</span></p>
                 </div>
             </div>
             <div class="btn-actions" style="margin-top:2rem;">
@@ -1403,6 +1460,7 @@
         };
         let currentVisibleStep = 1; // 1-based
         let rateCountdownInterval = null;
+        const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
 
         // -------------------- INIT --------------------
         function logExchangeLayout() {
@@ -1479,8 +1537,9 @@
                 const stepNum = idx + 1;
                 const isActive = currentVisibleStep === stepNum;
                 const isCompleted = currentVisibleStep > stepNum;
+                const circleContent = isCompleted ? UNERA_CHECKMARK_SVG : String(stepNum);
                 stepsHtml += `<div class="step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}" data-visible-step="${stepNum}">
-                    <div class="step-circle">${stepNum}</div>
+                    <div class="step-circle">${circleContent}</div>
                     <div class="step-label">${stepTitles[key]}</div>
                 </div>`;
             });
