@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enable Two-Factor Authentication - UNERA</title>
+
+    <!-- Code Input Handler -->
+    <script src="../code-input-handler.js" defer></script>
+
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+
+            --primary-green:     #173d47;
+            --primary-blue:      #90c2b8;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+            --neutral-50:        #ffffff;
+
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+            --error-bg:          rgba(171, 87, 112, 0.10);
+
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+
+            --surface-sky:       color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-scatter:   color-mix(in srgb, var(--neutral-200) 38%, var(--brand-white));
+            --surface-action-green:        color-mix(in srgb, var(--fin-up) 6%, color-mix(in srgb, var(--brand-cloud-blue) 36%, var(--brand-white)));
+            --surface-action-green-strong: color-mix(in srgb, var(--fin-up) 10%, color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white)));
+            --surface-warning-soft:        color-mix(in srgb, var(--brand-yellow) 50%, white);
+            --surface-error-soft:          color-mix(in srgb, var(--brand-red) 10%, white);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--brand-cloud-blue);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Skip link ── */
+        .skip-link {
+            position: absolute; top: -40px; left: 0;
+            background: var(--brand-deep-blue); color: white;
+            padding: 8px 16px; text-decoration: none;
+            z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600;
+        }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-yellow); }
+
+        /* ── Navigation ── */
+        .nav {
+            background: var(--gradient-ink);
+            padding: 0 2.75rem; height: 44px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .nav-brand { display: flex; align-items: center; text-decoration: none; }
+        .nav-brand:focus, .nav-brand:focus-visible { outline: 3px solid var(--brand-yellow); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-img { height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block; }
+
+        /* ── Container ── */
+        .container { max-width: 640px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+        /* ── Widget card ── */
+        .widget-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            border: 1px solid var(--border-subtle);
+            padding: 2rem 1.75rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* ── Auth header ── */
+        .auth-header { text-align: center; margin-bottom: 1.75rem; }
+        .auth-icon-badge {
+            width: 64px; height: 64px; border-radius: 1.25rem;
+            background: var(--brand-deep-blue);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.25rem; color: var(--brand-white);
+        }
+        .auth-title {
+            font-family: var(--font-display); font-size: 1.625rem; font-weight: 700;
+            color: var(--brand-deep-blue); margin-bottom: 0.5rem; line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+        .auth-subtitle { font-size: 0.938rem; color: var(--text-secondary); line-height: 1.55; }
+
+        /* ── Key message cards ── */
+        .kyc-key-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .key-message-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            background: var(--brand-white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            transition: all 0.2s;
+        }
+        .key-message-card:hover {
+            border-color: var(--brand-deep-blue);
+            background: var(--surface-sky);
+            transform: translateX(4px);
+        }
+        .key-message-card.featured {
+            background: color-mix(in srgb, var(--brand-cloud-blue) 50%, white);
+            border-color: var(--brand-deep-blue);
+            border-width: 1.5px;
+            box-shadow: 0 4px 12px rgba(23, 61, 71, 0.10);
+        }
+        .message-icon {
+            flex-shrink: 0;
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--surface-scatter);
+            border-radius: 0.875rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+        .key-message-card.featured .message-icon {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            border-color: transparent;
+        }
+        .message-content { flex: 1; }
+        .message-content h3 {
+            font-size: 1.063rem; font-weight: 700;
+            color: var(--text-primary); margin: 0 0 0.375rem;
+            font-family: var(--font-display);
+        }
+        .message-content p {
+            font-size: 0.938rem; color: var(--text-secondary); margin: 0; line-height: 1.55;
+        }
+
+        /* ── Trust bar ── */
+        .trust-bar-minimal {
+            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+            padding-top: 1.5rem;
+            font-size: 0.875rem; color: var(--text-secondary);
+        }
+
+        /* ── Method selection ── */
+        .method-card {
+            background: var(--brand-white);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .method-card-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            width: 100%;
+            font-size: 1rem; font-weight: 600; font-family: var(--font-body);
+            padding: 0.875rem 1.5rem; min-height: 46px;
+            border: none; border-radius: 0.75rem; cursor: pointer; transition: all 0.2s;
+            background: var(--brand-deep-blue); color: var(--brand-white);
+            margin-bottom: 0;
+        }
+        .method-card-btn:hover:not(:disabled) {
+            filter: brightness(0.92);
+            box-shadow: 0 4px 12px rgba(23,61,71,0.3);
+            transform: translateY(-1px);
+        }
+        .method-card-btn:focus, .method-card-btn:focus-visible {
+            outline: 3px solid rgba(23,61,71,0.35); outline-offset: 2px;
+        }
+        .method-card:hover {
+            border-color: var(--brand-deep-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(23,61,71,0.10);
+        }
+        .method-card.selected {
+            border-color: var(--brand-deep-blue);
+            background: var(--surface-action-green);
+        }
+        .method-icon { font-size: 2rem; flex-shrink: 0; }
+        .method-info { flex: 1; }
+        .method-info h4 {
+            font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-primary);
+        }
+        .method-info p { font-size: 0.875rem; color: var(--text-secondary); margin: 0; }
+        .method-badge {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .method-badge.recommended {
+            background: color-mix(in srgb, var(--brand-yellow) 60%, white);
+            color: var(--brand-deep-blue);
+        }
+
+        /* ── Setup section ── */
+        .setup-section {
+            margin-top: 2rem; padding: 1.75rem;
+            background: var(--surface-scatter);
+            border-radius: 1rem;
+            border: 1px solid var(--border-subtle);
+        }
+        .setup-section h3 {
+            font-size: 1.063rem; font-weight: 700;
+            margin-bottom: 1rem; color: var(--text-primary);
+            font-family: var(--font-display);
+        }
+        .setup-section ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+        .setup-section li { margin-bottom: 0.5rem; color: var(--text-secondary); }
+
+        /* ── Buttons ── */
+        .btn {
+            padding: 0.75rem 1.5rem; border-radius: 0.75rem;
+            font-size: 0.938rem; font-weight: 600; border: none; cursor: pointer;
+            transition: all 0.2s; font-family: var(--font-body);
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            min-height: 46px; text-decoration: none; width: 100%;
+        }
+        .btn:focus, .btn:focus-visible { outline: 3px solid rgba(23,61,71,0.35); outline-offset: 2px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: var(--brand-deep-blue); color: var(--brand-white); }
+        .btn-primary:hover:not(:disabled) { filter: brightness(0.92); box-shadow: 0 4px 12px rgba(23,61,71,0.3); transform: translateY(-1px); }
+        .btn-primary.loading { opacity: 0.75; pointer-events: none; position: relative; }
+        .btn-primary.loading::after {
+            content: ''; position: absolute; right: 1rem;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: var(--brand-white);
+            border-radius: 50%; animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-primary.success { background: var(--fin-up); pointer-events: none; }
+        .btn-secondary {
+            background: transparent; color: var(--text-secondary);
+            border: 1.5px solid var(--border-subtle);
+        }
+        .btn-secondary:hover:not(:disabled) { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+
+        /* ── Text button (skip / go back) ── */
+        .btn-text {
+            background: none; border: none;
+            color: var(--brand-deep-blue);
+            font-weight: 600; cursor: pointer;
+            text-decoration: underline; text-underline-offset: 2px;
+            padding: 0.75rem 1.5rem; font-size: 1rem; font-family: var(--font-body);
+            display: inline-block; margin: 0 auto;
+        }
+        .btn-text:hover { color: var(--neutral-700); }
+        .btn-text:focus, .btn-text:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 2px; }
+
+        /* ── Form inputs ── */
+        .form-input {
+            width: 100%; padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-subtle); border-radius: 0.75rem;
+            font-family: var(--font-body); font-size: 1rem; color: var(--text-primary);
+            background: var(--brand-white); transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+        }
+        .form-input:focus { border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.08); }
+        .form-input.valid { border-color: var(--fin-up); }
+        .form-input.invalid { border-color: var(--error); }
+        @media (max-width: 480px) { .form-input { font-size: 1rem; } }
+
+        /* ── Phone input group ── */
+        .phone-input-group {
+            display: flex; gap: 0.75rem; margin-bottom: 1.5rem;
+        }
+        .country-code {
+            min-width: 140px; height: 46px;
+            padding: 0 2.5rem 0 1rem;
+            font-size: 1rem; font-family: var(--font-body); font-weight: 500;
+            border: 1.5px solid var(--border-subtle); border-radius: 0.75rem;
+            background: var(--brand-white); cursor: pointer; transition: all 0.2s; outline: none;
+        }
+        .country-code:hover { border-color: var(--brand-deep-blue); }
+        .country-code:focus { border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.08); }
+
+        /* ── Code digit inputs ── */
+        .code-input-group {
+            display: flex; gap: 0.5rem; justify-content: center; margin: 1.5rem 0;
+        }
+        .code-digit {
+            width: 48px; height: 56px;
+            font-size: 1.75rem; font-weight: 700; text-align: center;
+            border: 2px solid var(--border-subtle); border-radius: 0.75rem;
+            font-family: var(--font-body); color: var(--text-primary);
+            background: var(--brand-white);
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            outline: none; caret-color: transparent;
+        }
+        .code-digit:hover { border-color: var(--brand-deep-blue); }
+        .code-digit:focus { border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.10); }
+        .code-digit.filled {
+            background: color-mix(in srgb, var(--brand-deep-blue) 5%, white);
+            border-color: color-mix(in srgb, var(--brand-deep-blue) 35%, transparent);
+            color: var(--brand-deep-blue);
+        }
+        .code-digit.error {
+            border-color: var(--error);
+            background: var(--surface-error-soft);
+            animation: shake 0.4s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+            20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+
+        /* ── QR code ── */
+        .qr-code-container {
+            background: var(--brand-white);
+            padding: 2rem; border-radius: 1rem; text-align: center;
+            margin: 1.5rem 0; border: 1px solid var(--border-subtle);
+        }
+        .qr-code { width: 200px; height: 200px; border: 1px solid var(--border-subtle); border-radius: 0.75rem; }
+
+        /* ── Manual code ── */
+        .manual-code {
+            text-align: center; margin: 1.5rem 0;
+            font-size: 0.875rem; color: var(--text-secondary);
+        }
+        .manual-code code {
+            display: block;
+            background: var(--neutral-100); padding: 0.75rem;
+            border-radius: 0.5rem; font-family: ui-monospace, monospace;
+            font-size: 1rem; font-weight: 600; color: var(--brand-deep-blue);
+            margin-top: 0.5rem; letter-spacing: 2px;
+        }
+
+        /* ── Backup codes warning ── */
+        .backup-codes-warning {
+            display: flex; align-items: flex-start; gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--surface-warning-soft);
+            border: 1.5px solid color-mix(in srgb, var(--warning) 35%, transparent);
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem; color: var(--text-secondary);
+        }
+        .backup-codes-warning svg { flex-shrink: 0; color: var(--warning); }
+        .backup-codes-warning strong { color: var(--text-primary); }
+
+        /* ── Backup codes grid ── */
+        .backup-codes-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem; margin-bottom: 1.5rem;
+        }
+        .backup-code-item {
+            font-family: ui-monospace, monospace;
+            font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.05em;
+            padding: 0.75rem 1rem;
+            background: var(--brand-white);
+            border: 1.5px solid var(--border-subtle); border-radius: 0.5rem;
+            color: var(--text-primary);
+            display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.2s;
+        }
+        .backup-code-item:hover { border-color: var(--brand-deep-blue); background: var(--surface-sky); }
+
+        /* ── Backup code actions ── */
+        .backup-codes-actions {
+            display: flex; gap: 0.75rem; margin-bottom: 1.5rem;
+        }
+        .backup-codes-actions .btn-download,
+        .backup-codes-actions .btn-secondary {
+            height: 46px; min-height: 46px; flex: 1;
+            box-sizing: border-box;
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0 1rem;
+            font-size: 0.938rem; font-weight: 600; font-family: var(--font-body);
+            border-radius: 0.75rem; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-download {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            color: var(--brand-deep-blue);
+            background: transparent;
+            border: 1.5px solid var(--brand-deep-blue);
+        }
+        .btn-download:hover { background: color-mix(in srgb, var(--brand-deep-blue) 6%, white); }
+        .btn-download:focus, .btn-download:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .backup-codes-actions .btn-secondary {
+            color: var(--brand-deep-blue);
+            background: transparent;
+            border: 1.5px solid var(--brand-deep-blue);
+        }
+        .backup-codes-actions .btn-secondary:hover { background: color-mix(in srgb, var(--brand-deep-blue) 6%, white); }
+        .backup-codes-actions .btn-secondary:focus, .backup-codes-actions .btn-secondary:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+
+        /* ── Backup confirm checkbox ── */
+        .backup-confirm-checkbox {
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 1.5rem; cursor: pointer;
+            font-size: 0.9375rem; color: var(--text-secondary);
+        }
+        .backup-confirm-checkbox input[type="checkbox"] {
+            width: 1.25rem; height: 1.25rem;
+            accent-color: var(--brand-deep-blue); flex-shrink: 0;
+        }
+
+        /* ── Skip section ── */
+        .skip-section {
+            margin-top: 2rem; padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+        .skip-note {
+            font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;
+        }
+
+        /* ── Status / error messages ── */
+        .status-message { font-size: 0.875rem; color: var(--text-secondary); text-align: center; }
+        .error-message { font-size: 0.813rem; color: var(--error); font-weight: 500; }
+
+        /* ── Auth link ── */
+        .auth-link {
+            color: var(--brand-deep-blue); font-weight: 600;
+            text-decoration: none; text-underline-offset: 2px;
+        }
+        .auth-link:hover { color: var(--neutral-700); text-decoration: underline; }
+        .auth-link:focus, .auth-link:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 2px; }
+
+        /* ── Modals ── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center;
+            z-index: 10010;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--brand-white); border-radius: 1.25rem;
+            max-width: 400px; width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title {
+            font-family: var(--font-display); font-size: 1.125rem; font-weight: 700;
+            color: var(--text-primary); margin: 0;
+        }
+        .modal-close {
+            background: none; border: none; cursor: pointer;
+            color: var(--text-secondary); border-radius: 6px;
+            padding: 0.25rem; display: flex; align-items: center; transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--brand-deep-blue); }
+        .modal-close:focus, .modal-close:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .modal-body { padding: 1.5rem; }
+        .notification-modal .modal-header { border-bottom: none; }
+        .notification-modal .modal-body { text-align: center; padding: 1.75rem 1.5rem 1.25rem; }
+        .notification-modal .modal-footer { border-top: none; padding: 0 1.5rem 1.5rem; }
+        .notification-icon {
+            width: 64px; height: 64px; margin: 0 auto 1.25rem;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; font-size: 1.75rem;
+            background: var(--fin-up-bg); color: var(--fin-up);
+        }
+        .notification-icon.error   { background: var(--surface-error-soft); color: var(--error); }
+        .notification-icon.warning { background: var(--surface-warning-soft); color: var(--warning); }
+        .notification-icon.info    { background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .notification-icon.success { background: var(--fin-up-bg); color: var(--fin-up); }
+        .notification-message {
+            font-size: 0.938rem; line-height: 1.6; color: var(--text-secondary); margin: 0;
+        }
+        .modal-footer {
+            padding: 0 1.5rem 1.5rem; border-top: 1px solid var(--border-subtle);
+        }
+        .modal-footer-row { display: flex; gap: 0.75rem; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .nav { padding: 0 1.25rem; }
+            .container { padding: 1.5rem 1rem 3rem; }
+            .widget-card { padding: 1.5rem 1.25rem; }
+            .backup-codes-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .auth-title { font-size: 1.375rem; }
+            .widget-card { padding: 1.25rem 1rem; }
+            .container { padding: 1.25rem 0.875rem 2.5rem; }
+            .code-digit { width: 44px; height: 52px; font-size: 1.5rem; }
+            .code-input-group { gap: 0.375rem; }
+            .backup-codes-grid { grid-template-columns: 1fr; }
+            .backup-codes-actions { flex-direction: column; }
+            .phone-input-group { flex-direction: column; }
+            .country-code { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Site navigation">
+        <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+            <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container">
+        <div class="widget-card">
+            <div class="auth-header">
+                <div class="auth-icon-badge" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Secure Your Account</h1>
+                <p class="auth-subtitle">Enable two-factor authentication for extra security — a second layer of protection for your account</p>
+            </div>
+
+            <!-- Benefits - key message cards (match KYC introSection) -->
+            <div class="kyc-key-messages">
+                <div class="key-message-card">
+                    <div class="message-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Protect Your Funds</h3>
+                        <p>Prevent unauthorized access even if your password is compromised</p>
+                    </div>
+                </div>
+                <div class="key-message-card featured">
+                    <div class="message-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Industry Standard</h3>
+                        <p>Two-factor authentication is required by financial apps for your security</p>
+                    </div>
+                </div>
+                <div class="key-message-card">
+                    <div class="message-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Quick Setup</h3>
+                        <p>Takes only 2 minutes to complete</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Method Selection (Initially visible) -->
+            <div id="methodSelection">
+                <!-- <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: var(--text-primary);">Choose a Method:</h3> -->
+                
+                <!-- SMS Method -->
+<!--                 <div class="method-card" onclick="selectMethod('sms')">
+                    <div class="method-icon">📱</div>
+                    <div class="method-info">
+                        <h4>SMS Text Message</h4>
+                        <p>Get codes via text message</p>
+                    </div>
+                    <div class="method-badge recommended">Recommended</div>
+                </div> -->
+                
+                <!-- Email Method -->
+                <button type="button" class="method-card-btn" onclick="selectMethod('email')" style="width: 100%; justify-content: center; gap: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    Get codes via email
+                </button>
+                
+                <!-- Authenticator App Method -->
+                <!-- <div class="method-card" onclick="selectMethod('app')">
+                    <div class="method-icon">🔐</div>
+                    <div class="method-info">
+                        <h4>Authenticator App</h4>
+                        <p>Google or Microsoft Authenticator</p>
+                    </div>
+                    <div class="method-badge">Most Secure</div>
+                </div> -->
+            </div>
+
+            <!-- SMS Setup -->
+            <div id="smsSetup" class="setup-section" style="display: none;">
+                <button class="btn-text" onclick="backToMethodSelection()" style="margin-bottom: 1rem; padding: 0; display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Go back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    Go back
+                </button>
+                <h3>Enter Your Phone Number</h3>
+                <div class="phone-input-group">
+                    <select class="country-code" id="countryCode">
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+86">🇨🇳 +86</option>
+                        <option value="+81">🇯🇵 +81</option>
+                        <option value="+49">🇩🇪 +49</option>
+                        <option value="+33">🇫🇷 +33</option>
+                        <option value="+91">🇮🇳 +91</option>
+                    </select>
+                    <input type="tel" class="form-input" placeholder="(555) 123-4567" id="phoneNumber" style="flex: 1;">
+                </div>
+                <button class="btn btn-primary" onclick="sendSMSCode()">Send Verification Code</button>
+                
+                <!-- Code verification (hidden initially) -->
+                <div id="smsCodeVerification" style="display: none; margin-top: 1.5rem;">
+                    <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+                        Enter the 6-digit code we sent to <strong id="phoneDisplay"></strong>
+                    </p>
+                    <div class="code-input-group">
+                        <input type="text" maxlength="1" class="code-digit" data-index="0" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="1" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="2" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="3" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="4" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="5" inputmode="numeric">
+                    </div>
+                    <button class="btn btn-primary" onclick="verify2FACode('sms')">Verify &amp; Enable 2FA</button>
+                </div>
+            </div>
+
+            <!-- Email Setup -->
+            <div id="emailSetup" class="setup-section" style="display: none;">
+                <button class="btn-text" onclick="backToMethodSelection()" style="margin-bottom: 1rem; padding: 0; display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Go back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    Go back
+                </button>
+                <h3>Email Verification</h3>
+                <p id="emailSetupIntro" style="margin-bottom: 1rem; color: var(--text-secondary);">
+                    We'll send a 6-digit code to your registered email address.
+                </p>
+                <button class="btn btn-primary" id="sendEmailBtn" onclick="sendEmailCode()">Send Verification Code</button>
+                <div id="emailSendStatus" role="status" aria-live="polite" class="status-message" style="display: none; margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-secondary);"></div>
+                
+                <!-- Code verification -->
+                <div id="emailCodeVerification" style="display: none; margin-top: 1.5rem;">
+                    <p id="emailCodeSentMessage" style="margin-bottom: 0.5rem; color: var(--text-secondary);">
+                        Check your email for the verification code
+                    </p>
+                    <p class="email-hint" style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        Check your spam folder if you don't see the email
+                    </p>
+                    <div class="code-input-group">
+                        <input type="text" maxlength="1" class="code-digit" data-index="0" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="1" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="2" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="3" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="4" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="5" inputmode="numeric">
+                    </div>
+                    <p id="codeErrorInline" class="error-message" style="display: none; margin: 0.5rem 0; text-align: center;"></p>
+                    <button class="btn btn-primary" id="verifyEmailBtn" onclick="verify2FACode('email')">Verify &amp; Enable 2FA</button>
+                    <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-secondary); text-align: center;">
+                        Code expired? <button type="button" class="btn-text" onclick="resendEmailCode()" style="padding: 0; font-size: inherit;">Request a new one</button>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Authenticator App Setup -->
+            <div id="appSetup" class="setup-section" style="display: none;">
+                <button class="btn-text" onclick="backToMethodSelection()" style="margin-bottom: 1rem; padding: 0; display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Go back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    Go back
+                </button>
+                <h3>Scan QR Code</h3>
+                <ol>
+                    <li>Download Google Authenticator or Microsoft Authenticator</li>
+                    <li>Open the app and tap "+" to add an account</li>
+                    <li>Scan this QR code:</li>
+                </ol>
+                
+                <div class="qr-code-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23fff' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='16' fill='%23666'%3EQR Code%3C/text%3E%3C/svg%3E" alt="2FA QR Code" class="qr-code" id="qrCode">
+                </div>
+                
+                <p class="manual-code">
+                    Can't scan? Enter this code manually:
+                    <code id="manualCode">JBSWY3DPEHPK3PXP</code>
+                </p>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Enter the 6-digit code from your app:</label>
+                    <div class="code-input-group" style="margin-top: 0.75rem;">
+                        <input type="text" maxlength="1" class="code-digit" data-index="0" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="1" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="2" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="3" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="4" inputmode="numeric">
+                        <input type="text" maxlength="1" class="code-digit" data-index="5" inputmode="numeric">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="verify2FACode('app')">Enable 2FA</button>
+            </div>
+
+            <!-- Backup Codes Section (shown after OTP verification) -->
+            <div id="backupCodesSection" class="setup-section" style="display: none;" aria-live="polite">
+                <h3>Save Your Backup Codes</h3>
+
+                <div class="backup-codes-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L4 6v5c0 5.25 3.47 10.17 8 11.5 4.53-1.33 8-6.25 8-11.5V6L12 2z"/></svg>
+                    <div>
+                        <strong>Store these in a safe place.</strong>
+                        Each code can only be used once. If you lose access to your 2FA device,
+                        you'll need one of these codes to log in.
+                    </div>
+                </div>
+
+                <div class="backup-codes-grid" id="backupCodesGrid">
+                    <!-- Populated by JS: generateBackupCodes() -->
+                </div>
+
+                <div class="backup-codes-actions">
+                    <button type="button" class="btn-download" onclick="downloadBackupCodes()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Download Codes
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="copyAllBackupCodes()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        Copy All
+                    </button>
+                </div>
+
+                <label class="backup-confirm-checkbox">
+                    <input type="checkbox" id="backupConfirmCheckbox" onchange="toggleCompleteBtn()">
+                    I have saved my backup codes in a secure place
+                </label>
+
+                <button class="btn btn-primary" id="completeSetupBtn" onclick="completeSetup()" disabled>
+                    Complete 2FA Setup →
+                </button>
+            </div>
+
+            <!-- Trust Bar (match KYC introSection) -->
+            <div class="trust-bar-minimal">
+                <span>🔒 256-bit encryption</span>
+                <span>•</span>
+                <span>✓ GDPR &amp; CCPA compliant</span>
+            </div>
+
+            <!-- Skip Option -->
+            <div class="skip-section">
+                <button class="btn-text" onclick="skip2FA()">
+                    Skip for Now →
+                </button>
+                <p class="skip-note">
+                    💡 You can enable 2FA later in Account Settings
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Notification</h2>
+                <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notificationIcon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <p class="notification-message" id="notificationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeNotificationModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon warning" id="confirmationIcon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                </div>
+                <p class="notification-message" id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer modal-footer-row">
+                <button class="btn btn-secondary" onclick="closeConfirmationModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-primary" id="confirmButton" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const KYC_EXIT_RETURN_KEY = 'kycExitReturnUrl';
+        const ALLOWED_KYC_RETURN_TO = new Set(['account-settings.html']);
+
+        function getAllowlistedReturnTo(raw) {
+            if (!raw || typeof raw !== 'string') return '';
+            const decoded = decodeURIComponent(raw.trim());
+            return ALLOWED_KYC_RETURN_TO.has(decoded) ? decoded : '';
+        }
+
+        function persistReturnToFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const v = getAllowlistedReturnTo(params.get('returnTo'));
+            if (v) {
+                sessionStorage.setItem(KYC_EXIT_RETURN_KEY, v);
+            } else {
+                sessionStorage.removeItem(KYC_EXIT_RETURN_KEY);
+            }
+        }
+
+        function kycVerifyHref() {
+            const params = new URLSearchParams(window.location.search);
+            let ret = getAllowlistedReturnTo(params.get('returnTo'));
+            if (!ret) ret = getAllowlistedReturnTo(sessionStorage.getItem(KYC_EXIT_RETURN_KEY) || '');
+            let url = 'kyc-verify.html?from=signup';
+            if (ret) url += '&returnTo=' + encodeURIComponent(ret);
+            return url;
+        }
+
+        persistReturnToFromUrl();
+
+        let selectedMethod = null;
+
+        function selectMethod(method) {
+            selectedMethod = method;
+            
+            // Hide method selection
+            document.getElementById('methodSelection').style.display = 'none';
+            
+            // Show selected setup
+            document.getElementById('smsSetup').style.display = method === 'sms' ? 'block' : 'none';
+            document.getElementById('emailSetup').style.display = method === 'email' ? 'block' : 'none';
+            document.getElementById('appSetup').style.display = method === 'app' ? 'block' : 'none';
+            
+            // Setup code input handlers for the app method immediately
+            if (method === 'app') {
+                // Wait for DOM to update then setup handlers
+                setTimeout(() => {
+                    const appInputs = document.querySelectorAll('#appSetup .code-digit[data-index]');
+                    if (appInputs.length > 0) {
+                        initCodeInputs('#appSetup .code-digit[data-index]');
+                    }
+                }, 50);
+            }
+        }
+
+        function backToMethodSelection() {
+            selectedMethod = null;
+            document.getElementById('methodSelection').style.display = 'block';
+            document.getElementById('smsSetup').style.display = 'none';
+            document.getElementById('emailSetup').style.display = 'none';
+            document.getElementById('appSetup').style.display = 'none';
+            // Reset email flow
+            const emailCodeVerification = document.getElementById('emailCodeVerification');
+            const sendEmailBtn = document.getElementById('sendEmailBtn');
+            const emailSetupIntro = document.getElementById('emailSetupIntro');
+            if (emailCodeVerification && sendEmailBtn) {
+                emailCodeVerification.style.display = 'none';
+                sendEmailBtn.style.display = 'inline-flex';
+                sendEmailBtn.textContent = 'Send Verification Code';
+                document.querySelectorAll('#emailCodeVerification .code-digit').forEach(d => d.value = '');
+            }
+            if (emailSetupIntro) emailSetupIntro.style.display = 'block';
+        }
+
+        async function sendSMSCode() {
+            const phone = document.getElementById('phoneNumber').value;
+            const countryCode = document.getElementById('countryCode').value;
+            
+            if (!phone) {
+                showNotification('Please enter your phone number to continue.', 'warning', 'Phone Required');
+                return;
+            }
+            
+            const fullPhone = countryCode + phone.replace(/\D/g, '');
+            document.getElementById('phoneDisplay').textContent = fullPhone;
+            
+            // Simulate sending SMS
+            const btn = event.target;
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            btn.classList.remove('loading');
+            document.getElementById('smsCodeVerification').style.display = 'block';
+            btn.style.display = 'none';
+            
+            // Initialize code input handlers for SMS inputs
+            setTimeout(() => {
+                const smsInputs = document.querySelectorAll('#smsCodeVerification .code-digit[data-index]');
+                if (smsInputs.length > 0) {
+                    initCodeInputs('#smsCodeVerification .code-digit[data-index]');
+                }
+            }, 50);
+        }
+
+        function getMaskedEmail() {
+            const signupEmail = localStorage.getItem('signupEmail');
+            const urlParams = new URLSearchParams(window.location.search);
+            const emailParam = urlParams.get('email');
+            const email = signupEmail || emailParam || 'your registered email';
+            if (email.includes('@')) {
+                const [local, domain] = email.split('@');
+                const masked = local.charAt(0) + '***' + (local.length > 2 ? local.slice(-1) : '') + '@' + domain;
+                return masked;
+            }
+            return email;
+        }
+
+        async function sendEmailCode() {
+            const btn = document.getElementById('sendEmailBtn');
+            const statusEl = document.getElementById('emailSendStatus');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            statusEl.style.display = 'block';
+            statusEl.textContent = 'Sending...';
+            statusEl.setAttribute('aria-live', 'polite');
+            
+            await new Promise(resolve => setTimeout(resolve, 3000)); // 3s for prototyping
+            
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            btn.style.display = 'none';
+            statusEl.textContent = '';
+            statusEl.style.display = 'none';
+            
+            const introEl = document.getElementById('emailSetupIntro');
+            if (introEl) introEl.style.display = 'none';
+            document.getElementById('emailCodeVerification').style.display = 'block';
+            const msgEl = document.getElementById('emailCodeSentMessage');
+            if (msgEl) msgEl.textContent = 'We sent a 6-digit code to ' + getMaskedEmail() + '. Enter it below.';
+            
+            // Initialize code input handlers for Email inputs
+            setTimeout(() => {
+                const emailInputs = document.querySelectorAll('#emailCodeVerification .code-digit[data-index]');
+                if (emailInputs.length > 0) {
+                    initCodeInputs('#emailCodeVerification .code-digit[data-index]');
+                }
+            }, 50);
+        }
+
+        // Old function removed - now using initCodeInputs() from code-input-handler.js
+
+        function clearCodeError() {
+            const errEl = document.getElementById('codeErrorInline');
+            if (errEl) {
+                errEl.style.display = 'none';
+                errEl.textContent = '';
+            }
+            document.querySelectorAll('.code-digit.error').forEach(d => d.classList.remove('error'));
+        }
+
+        async function verify2FACode(method) {
+            const digits = document.querySelectorAll('.code-digit[data-index]');
+            const code = Array.from(digits).map(d => d.value).join('');
+            const codeErrorEl = document.getElementById('codeErrorInline');
+            const btn = event.target;
+            
+            clearCodeError();
+            
+            if (code.length !== 6) {
+                if (codeErrorEl) {
+                    codeErrorEl.textContent = 'Please enter all 6 digits of your verification code.';
+                    codeErrorEl.style.display = 'block';
+                } else {
+                    showNotification('Please enter all 6 digits of your verification code.', 'warning', 'Code Required');
+                }
+                document.querySelectorAll('.code-digit[data-index]').forEach(d => d.classList.add('error'));
+                return;
+            }
+            
+            btn.classList.add('loading');
+            btn.disabled = true;
+            btn.textContent = 'Verifying...';
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Success!
+            localStorage.setItem('2faEnabled', 'true');
+            localStorage.setItem('2faMethod', method);
+            
+            btn.classList.remove('loading');
+            btn.classList.add('success');
+            btn.textContent = '2FA Enabled!';
+            
+            // Haptic feedback
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate([10, 50, 10]);
+            }
+            
+            // Show backup codes step
+            setTimeout(() => {
+                showBackupCodes();
+            }, 1000);
+        }
+
+        function generateBackupCodes() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            const format = () => {
+                let s = '';
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 4; j++) s += chars[Math.floor(Math.random() * chars.length)];
+                    if (i < 2) s += '-';
+                }
+                return s;
+            };
+            const codes = Array.from({ length: 10 }, format);
+            localStorage.setItem('backupCodes', JSON.stringify(codes));
+            const grid = document.getElementById('backupCodesGrid');
+            if (!grid) return;
+            grid.innerHTML = codes.map(c => `<div class="backup-code-item">${c}</div>`).join('');
+        }
+
+        function showBackupCodes() {
+            const methodSel = document.getElementById('methodSelection');
+            if (methodSel) methodSel.style.display = 'none';
+            document.querySelectorAll('.setup-section').forEach(el => {
+                el.style.display = el.id === 'backupCodesSection' ? 'block' : 'none';
+            });
+            const trustBar = document.querySelector('.trust-bar-minimal');
+            const skipSection = document.querySelector('.skip-section');
+            if (trustBar) trustBar.style.display = 'none';
+            if (skipSection) skipSection.style.display = 'none';
+            document.getElementById('backupConfirmCheckbox').checked = false;
+            document.getElementById('completeSetupBtn').disabled = true;
+            generateBackupCodes();
+        }
+
+        function copyAllBackupCodes() {
+            const codes = JSON.parse(localStorage.getItem('backupCodes') || '[]');
+            const text = codes.join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Backup codes copied to clipboard.', 'success', 'Copied');
+            }).catch(() => {
+                showNotification('Could not copy. Please download the codes instead.', 'warning', 'Copy Failed');
+            });
+        }
+
+        function downloadBackupCodes() {
+            const codes = JSON.parse(localStorage.getItem('backupCodes') || '[]');
+            const text = 'UNERA 2FA Backup Codes\n\nSave these codes in a secure place. Each code can only be used once.\n\n' + codes.join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'unera-2fa-backup-codes.txt';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            showNotification('Backup codes downloaded.', 'success', 'Downloaded');
+        }
+
+        function toggleCompleteBtn() {
+            const cb = document.getElementById('backupConfirmCheckbox');
+            const btn = document.getElementById('completeSetupBtn');
+            if (cb && btn) btn.disabled = !cb.checked;
+        }
+
+        function completeSetup() {
+            window.location.href = kycVerifyHref();
+        }
+
+        async function resendEmailCode() {
+            document.getElementById('emailCodeVerification').style.display = 'none';
+            const introEl = document.getElementById('emailSetupIntro');
+            if (introEl) introEl.style.display = 'block';
+            const sendBtn = document.getElementById('sendEmailBtn');
+            sendBtn.style.display = 'inline-flex';
+            sendBtn.textContent = 'Send Verification Code';
+            document.querySelectorAll('#emailCodeVerification .code-digit').forEach(d => d.value = '');
+            clearCodeError();
+            await sendEmailCode();
+        }
+
+        function skip2FA() {
+            showConfirmation(
+                'Skip two-factor authentication? You can enable it later in your account settings for better security.',
+                'Skip 2FA Setup',
+                () => {
+                    // Store skip status
+                    localStorage.setItem('2faEnabled', 'false');
+                    localStorage.setItem('2faSkipped', 'true');
+                    
+                    // Go to next step (KYC)
+                    window.location.href = kycVerifyHref();
+                }
+            );
+        }
+
+        // Modal Functions
+        function showNotification(message, type, title) {
+            const modal = document.getElementById('notificationModal');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            document.getElementById('notificationIcon').className = 'notification-icon ' + (type || '');
+            modal.classList.add('active');
+        }
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+        }
+        function showConfirmation(message, title, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmButton').onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+            modal.classList.add('active');
+        }
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

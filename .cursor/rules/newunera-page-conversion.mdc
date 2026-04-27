@@ -1,0 +1,389 @@
+---
+description: "Canonical process for converting any old V1-brand UNERA page into a NewUnera V2 page. Apply whenever moving or converting any page into NewUnera/."
+globs: ["NewUnera/*.html"]
+---
+
+# NewUnera Page Conversion — V1 → V2
+
+Use this rule for every page that is being created or converted for the `NewUnera/` folder. The conversion is **design-only**: all functionality, copy, JS behavior, IDs, aria attributes, and link targets are preserved; only visual styling changes.
+
+---
+
+## 1. The Core Principle
+
+> **Design only. Parity first.**
+>
+> Every conversion must produce a page in `NewUnera/` that is functionally and copy-wise **identical** to the source page. Styling is the only intended delta.
+
+Never:
+- Remove, skip, or simplify any form field, step, feature, JS function, or inline script block.
+- Delete HTML comment blocks (e.g. commented social/wallet sections) — keep them as-is.
+- Simplify or merge components because "they're not needed in V2."
+- Omit any copy string: titles, subtitles, labels, hints, error messages, trust bars, CTA text, link text, modal titles/bodies, aria-labels, placeholders.
+
+---
+
+## 2. File Output
+
+- **Always save converted pages to `NewUnera/`** — never overwrite root production files.
+- `NewUnera/` is the single source of truth for all V2 pages.
+
+---
+
+## 3. Step-by-Step Conversion Checklist
+
+Work through these steps in order. Each step has a verification note.
+
+### Step 1 — Audit the source
+
+Read the entire source file before changing anything. Note:
+- All form IDs, `name`, `for`, `aria-*` attributes, `role` values.
+- All `<script>` blocks and external script `src` paths.
+- All external CSS `<link>` hrefs.
+- All copy strings: every user-visible text node.
+- All commented blocks.
+
+### Step 2 — Typography
+
+| V1 | V2 |
+|----|-----|
+| `<link>` to Google Fonts (Space Grotesk, Inter) | Remove the `<link>` tags entirely |
+| Any `@font-face` for other fonts | Replace with V2 `@font-face` block |
+| `font-family: 'Space Grotesk', sans-serif` | `font-family: var(--font-body)` |
+| `font-family: 'Inter', sans-serif` | `font-family: var(--font-body)` |
+
+**Required `@font-face` block** (copy from `NewUnera/dashboard-enhanced.html` lines 16–25 — ten OTF rules, `../Brand Guide/TestFoundersGrotesk-*.otf`):
+
+```css
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-Light.otf") format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-LightItalic.otf") format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-Regular.otf") format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-RegularItalic.otf") format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-Medium.otf") format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-MediumItalic.otf") format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-Semibold.otf") format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf") format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-Bold.otf") format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:'TestFoundersGrotesk'; src:url("../Brand Guide/TestFoundersGrotesk-BoldItalic.otf") format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+```
+
+Font stack tokens:
+```css
+--font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+--font-body:    'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+```
+
+Do NOT use `font-weight: 800` or `900` — maximum is `700`.
+
+### Step 3 — CSS custom properties (`:root`)
+
+Replace the entire `:root` block (or the V1 CSS `<link>` that provided it) with the canonical V2 `:root` copied from `NewUnera/dashboard-enhanced.html`. This includes:
+- `--brand-*` color tokens
+- Semantic alias tokens (`--primary-green`, `--neutral-*`, etc.)
+- `--gradient-*` (solid/color-mix values — no CSS gradient functions on product HTML)
+- `--fin-up`, `--fin-down`, `--fin-neutral` and their backgrounds
+- `--success`, `--warning`, `--error`, `--error-bg`
+- `--text-primary`, `--text-secondary`, `--border-subtle`, `--shadow-card`
+- `--surface-*` tokens
+- `--font-display`, `--font-body`
+
+### Step 4 — External CSS dependencies
+
+Remove any `<link rel="stylesheet">` to V1 CSS files (e.g. `auth-enhanced.css`, old component sheets). Replace with a self-contained `<style>` block in `<head>` using V2 tokens.
+
+If the V1 external CSS provided utility classes used by JS (e.g. `.loading`, `.valid`, `.invalid`), re-implement those class selectors in the inline `<style>` block so JS still works.
+
+### Step 5 — Script paths
+
+Update `<script src="...">` paths that are relative and now incorrect from `NewUnera/`:
+
+| V1 (from root) | V2 (from NewUnera/) |
+|---|---|
+| `src="auth-flow.js"` | `src="../auth-flow.js"` |
+| `src="some-util.js"` | `src="../some-util.js"` |
+
+Do NOT change any `window.location.href` values inside inline JS, `fetch()` URLs, or other runtime paths — these are behavior, not file references.
+
+### Step 6 — Navigation / header
+
+**Full app pages** (post-login, with DASHBOARD/WALLET/IMPACT links): Replace the V1 white nav with the V2 deep-blue nav. Copy the exact `<nav>` markup from `NewUnera/dashboard-enhanced.html` and update `aria-current` to reflect the active page.
+
+**Pre-login / auth pages** (login, signup, forgot password): Use a simplified auth header:
+- `background: var(--brand-deep-blue)`
+- Logo: `<img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">`
+- Back button: white/75% text, hover → `var(--brand-yellow)`
+- No nav links (user is not authenticated)
+
+Logo rule — always use SVG files from `NewUnera/NewLogo/`:
+- Dark header/nav: `NewLogo/Unera White Text Nav.svg`
+- Light header: `NewLogo/Unera Black Text Nav.svg`
+- Full wordmark (brand guide): `NewLogo/Unera White Text.svg` / `NewLogo/Unera Black Text.svg`
+- Never use `../Brand Guide/Unera-Horizontal.png`
+
+### Step 7 — Page background and body
+
+```css
+/* App pages */
+body { background: var(--brand-white); }
+
+/* Auth / pre-login pages */
+body { background: var(--brand-cloud-blue); }
+```
+
+Never use a raw hex grey or V1 gradient for the body background.
+
+### Step 8 — Cards
+
+V2 card pattern (from `NewUnera/kyc-verify.html` `.widget-card`, `NewUnera/add-money.html`):
+
+```css
+.card, .widget-card, .auth-card {
+    background: var(--brand-white);
+    border: 1px solid var(--border-subtle);
+    border-radius: 1.25rem;
+    padding: 2rem;          /* or 2.5rem for auth cards */
+    box-shadow: var(--shadow-card);
+}
+```
+
+Hover state (interactive cards):
+```css
+.card:hover {
+    border-color: var(--brand-deep-blue);
+    box-shadow: 0 12px 32px rgba(23, 61, 71, 0.15);
+    transform: translateY(-4px);
+}
+```
+
+### Step 9 — Buttons
+
+| V1 pattern | V2 pattern |
+|---|---|
+| `.submit-btn` gradient green→blue | `background: var(--brand-deep-blue); color: var(--brand-white)` |
+| `.btn-primary` gradient | `background: var(--brand-deep-blue); color: var(--brand-white)` |
+| `background: linear-gradient(...)` on CTA | `background: var(--brand-deep-blue)` — no gradient functions |
+| `.btn-secondary` (outline) | `background: transparent; border: 2px solid var(--border-subtle); color: var(--text-secondary)` |
+| Min height 56px | Min height 46px |
+
+All buttons: `min-height: 46px`, `font-family: var(--font-body)`, `border-radius: 0.75rem`.
+
+Focus ring: `outline: 3px solid rgba(23, 61, 71, 0.30); outline-offset: 2px` on light surfaces.
+
+Loading spinner: CSS `::after` pseudo-element with `border-top-color: var(--brand-white)`.
+Success state: `background: var(--fin-up)`.
+
+Keep all `id`, JS hooks (e.g. `loginBtn.classList.add('loading')`), and button text exactly as in source.
+
+### Step 10 — Form inputs
+
+```css
+.form-input {
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 0.75rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: var(--brand-white);
+}
+.form-input:focus {
+    border-color: var(--brand-deep-blue);
+    box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.10);
+    outline: none;
+}
+.form-input.invalid { border-color: var(--error); }
+.form-input.valid   { border-color: var(--fin-up); }
+```
+
+Labels: `font-size: 0.875rem; font-weight: 600; color: var(--text-primary)`.
+Hints: `font-size: 0.8125rem; color: var(--text-secondary)`.
+Errors: `font-size: 0.8125rem; color: var(--error)`.
+
+On mobile (`max-width: 480px`): `font-size: 1rem` on all inputs to prevent iOS auto-zoom.
+
+### Step 11 — Icons
+
+Replace all V1 icon patterns with Material Symbols Outlined inline SVG per `.cursor/rules/newunera-icons.mdc`:
+- `fill="currentColor"` on `<svg>` — never `stroke="currentColor"`
+- `aria-hidden="true"` on decorative icons
+- Sizing per the sizing table in the icons rule
+
+V1 teal circle logo SVG → V2 Material lock/person/check icon in a `var(--brand-deep-blue)` chip.
+
+Icon wells in auth: `width: 56px; height: 56px; border-radius: 1rem; background: var(--brand-deep-blue); color: var(--brand-white)`.
+
+### Step 12 — Modals
+
+Replace V1 gradient inline styles in modal overlays with V2 tokens:
+
+```css
+.modal-overlay { z-index: 10010; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+.modal { background: var(--brand-white); border-radius: 1.25rem; }
+.modal-header { border-bottom: 1px solid var(--border-subtle); }
+.modal-title { font-family: var(--font-display); color: var(--brand-deep-blue); }
+```
+
+Notification icon states:
+- Default/info: `background: var(--brand-deep-blue); color: var(--brand-white)`
+- Error: `background: var(--brand-red); color: var(--brand-white)`
+- Warning: `background: color-mix(in srgb, var(--brand-yellow) 55%, var(--brand-earth)); color: var(--brand-deep-blue)`
+
+Keep the same show/hide JS mechanism (e.g. `style.display = 'flex'` vs `classList.add('active')`) as the source — do not change the modal trigger pattern.
+
+### Step 13 — No CSS gradients
+
+On product HTML (everything in `NewUnera/` except `brand-style-guide.html`):
+
+```
+❌ background: linear-gradient(...)
+❌ background: radial-gradient(...)
+❌ background: conic-gradient(...)
+```
+
+Replace with solid tokens:
+```
+✅ background: var(--brand-deep-blue)
+✅ background: color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white))
+✅ background: color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white))
+```
+
+### Step 14 — Page titles
+
+```css
+/* V1: gradient clip text */
+.page-title { background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* V2: solid deep-blue */
+.page-title { color: var(--brand-deep-blue); font-weight: 700; }
+```
+
+### Step 15 — Accessibility
+
+These are required on every converted page:
+
+1. **Skip link** — first element in `<body>`:
+   ```html
+   <a href="#main-content" class="skip-link">Skip to main content</a>
+   ```
+   ```css
+   .skip-link { position:absolute; top:-40px; left:0; background:var(--brand-deep-blue); color:white; padding:8px 16px; text-decoration:none; z-index:10000; border-radius:0 0 8px 0; font-weight:600; }
+   .skip-link:focus { top:0; outline:3px solid var(--brand-yellow); }
+   ```
+
+2. **Reduced motion**:
+   ```css
+   @media (prefers-reduced-motion: reduce) {
+       *, *::before, *::after {
+           animation-duration: 0.01ms !important;
+           animation-iteration-count: 1 !important;
+           transition-duration: 0.01ms !important;
+       }
+   }
+   ```
+
+3. **Focus rings** on interactive elements:
+   - Light surfaces: `outline: 2px solid var(--brand-deep-blue); outline-offset: 2px`
+   - Dark nav/header surfaces: `outline: 2px solid var(--brand-yellow); outline-offset: 2px`
+   - Buttons: `outline: 3px solid rgba(23, 61, 71, 0.30); outline-offset: 2px`
+
+4. **Preserve all** `aria-*`, `role`, `lang="en"`, `<label for>` bindings from source.
+
+### Step 16 — Link and href paths
+
+Adjust relative hrefs that are now incorrect from `NewUnera/`:
+
+| Source target | V1 path (from root) | V2 path (from NewUnera/) |
+|---|---|---|
+| Root index | `index.html` | `../index.html` |
+| Root auth page (e.g. forgot-password) | `forgot-password.html` | `../forgot-password.html` |
+| Another NewUnera page | N/A | `other-page.html` (same folder, no `../`) |
+| Anchor links | `#section` | `#section` (unchanged) |
+
+Do NOT change `window.location.href` paths in inline JS (behavior, not markup).
+
+### Step 17 — Responsive
+
+Maintain the same breakpoints as the reference pages:
+
+| Breakpoint | Required behavior |
+|---|---|
+| `≤ 768px` | Nav collapses to hamburger (app pages); auth card fills width; `btn-actions` → 1 column |
+| `≤ 480px` | Compact layout; input `font-size: 1rem` (iOS zoom prevention); sticky CTA button |
+
+---
+
+## 4. V1 → V2 Token & Class Mapping Table
+
+| V1 | V2 |
+|---|---|
+| `#10B981` (emerald green) | `var(--brand-deep-blue)` or `var(--fin-up)` depending on context |
+| `#0EA5E9` (sky blue) | `var(--brand-light-blue)` / `var(--brand-cloud-blue)` tint |
+| `#EC4899` (pink) | `var(--brand-yellow)` (accent) |
+| `--primary-green: #10B981` | `--primary-green: #173d47` (token remapped) |
+| `--gradient-primary: linear-gradient(...)` | `--gradient-primary: var(--brand-deep-blue)` |
+| `linear-gradient(135deg, #10B981, #0EA5E9)` | `var(--brand-deep-blue)` |
+| `#E2E8F0` (border) | `var(--border-subtle)` = `rgba(23,61,71,0.13)` |
+| `#0F172A` (text primary) | `var(--text-primary)` = `#173d47` |
+| `#475569` (text secondary) | `var(--text-secondary)` = `#3d6b78` |
+| `background: var(--gradient-primary)` on button | `background: var(--brand-deep-blue)` |
+| `background: white` (card) | `background: var(--brand-white)` |
+| `border: 2px solid var(--border-subtle)` (card) | `border: 1px solid var(--border-subtle)` |
+| `font-family: 'Space Grotesk', sans-serif` | `font-family: var(--font-body)` |
+| `font-family: 'Inter', sans-serif` | `font-family: var(--font-body)` |
+| `outline: ... var(--primary-green)` | `outline: ... var(--brand-deep-blue)` |
+| `.btn-primary { background: var(--primary-green) }` | `.btn-primary { background: var(--brand-deep-blue) }` |
+| `.success { background: #059669 }` | `.success { background: var(--fin-up) }` |
+| `.error { color: #EF4444 }` | `.error { color: var(--error) }` |
+| `.warning { color: #F59E0B }` | `.warning { color: var(--warning) }` = `#b8a030` |
+| V1 teal circle SVG logo | `<img src="NewLogo/Unera White Text Nav.svg" class="nav-logo-img" height="24">` |
+| Lucide/Heroicons/stroke SVGs | Material Symbols Outlined inline SVG with `fill="currentColor"` |
+| Emoji in UI | Material Symbols Outlined inline SVG (see `newunera-icons.mdc`) |
+
+---
+
+## 5. What to Preserve Without Exception
+
+- All form fields: `<input>`, `<select>`, `<textarea>` — every `type`, `id`, `name`, `autocomplete`, `required`, `placeholder`, `autofocus`
+- All `<label for>` associations
+- All `aria-*` attributes (`aria-label`, `aria-describedby`, `aria-modal`, `aria-labelledby`, `aria-current`, `aria-expanded`, `role`, etc.)
+- All `<script>` inline JS blocks — entire body, unchanged
+- All external `<script src>` references — adjust only the relative path for `NewUnera/` location
+- All `id` attributes used by JS selectors
+- All copy: page `<title>`, `h1`, `h2`, `p`, `label`, `placeholder`, `aria-label`, `alt`, button text, link text, hint text, error message text, trust-bar text, modal title/body, commented copy
+- All commented HTML blocks — re-style if they have inline styles, but keep them commented
+- All step IDs (`#stepEmail`, `#stepDetails`, etc.) and their show/hide logic
+- All link `href` targets (adjust relative paths for `NewUnera/` location as needed)
+- Multi-step query-string behavior (`?step=details&verified=true`, etc.)
+
+---
+
+## 6. Reference Files Priority Order
+
+When building components or copying patterns, use this priority:
+
+| Priority | File | Best for |
+|---|---|---|
+| 1 | `NewUnera/dashboard-enhanced.html` | `:root` tokens, `@font-face`, nav, buttons, cards, skip link |
+| 2 | `NewUnera/wallet-enhanced.html` | Fin semantic tokens, `.btn-danger`, soft/ring tokens, data tables |
+| 3 | `NewUnera/kyc-verify.html` | `.widget-card`, stepped flows, upload zones, `btn-row` |
+| 4 | `NewUnera/add-money.html` | `.form-group`, `.form-input`, `.btn-actions`, modal form patterns |
+| 5 | `NewUnera/exchange.html` | Confirm steps, dropdown patterns, multi-step flow |
+| 6 | `NewUnera/get-unera-cad.html` / `redeem-unera-cad.html` | Flow surface tokens, processing trackers, success hero |
+| 7 | `NewUnera/brand-style-guide.html` | Token reference only — never copy layout from here to product pages |
+
+---
+
+## 7. What NOT to Do
+
+- ❌ Never use `#10B981`, `#0EA5E9`, `#EC4899` — old brand colors
+- ❌ Never import Space Grotesk or any Google Font for the Latin body stack
+- ❌ Never use `font-weight: 800` or `900` on TestFoundersGrotesk
+- ❌ Never use CSS gradient functions (`linear-gradient`, etc.) on product HTML under `NewUnera/`
+- ❌ Never hardcode hex values that have a `--brand-*` or `--*` token equivalent
+- ❌ Never save new-brand files outside `NewUnera/`
+- ❌ Never delete or omit commented sections from the source — keep them as comments
+- ❌ Never change `window.location.href` redirect targets in inline JS
+- ❌ Never remove form fields, JS event listeners, or validation functions
+- ❌ Never change `id`, `name`, `for`, `aria-describedby` associations
+- ❌ Never use gradient text (`-webkit-background-clip: text`) on product pages
+- ❌ Never use `../Brand Guide/Unera-Horizontal.png` — use the SVG files in `NewUnera/NewLogo/`
+- ❌ Never add features, copy, or UI that wasn't in the source
