@@ -87,6 +87,7 @@
             --text-primary:      #173d47;
             --text-secondary:    #3d6b78;
             --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
             --error-bg:          rgba(171, 87, 112, 0.10);
             --success:           var(--fin-up);
             --error:             var(--brand-red);
@@ -1575,11 +1576,12 @@
         }
 
         .asset-action-btn--labeled {
+            flex: 0 0 auto;
             width: auto;
             min-width: 0;
             height: auto;
-            min-height: 34px;
-            padding: 0.4rem 0.75rem;
+            min-height: 30px;
+            padding: 0.3rem 0.625rem;
             gap: 0.375rem;
             font-size: 0.8125rem;
             font-weight: 600;
@@ -1627,18 +1629,63 @@
         }
 
         @media (max-width: 768px) {
+            /* Explicit areas — avoids placing .balance-change in the 36px icon column */
             .portfolio-asset-row-head {
                 grid-template-columns: 36px 1fr auto;
+                grid-template-rows: auto auto;
+                grid-template-areas:
+                    "pa-icon pa-id pa-delta"
+                    "pa-num pa-num pa-num";
+                align-items: start;
+                column-gap: 0.875rem;
                 row-gap: 0.25rem;
             }
 
-            .portfolio-asset-row-numbers {
-                grid-column: 2 / -1;
+            .portfolio-asset-row-head > .distribution-icon {
+                grid-area: pa-icon;
+            }
+
+            .portfolio-asset-row-head > .portfolio-asset-row-identity {
+                grid-area: pa-id;
+                min-width: 0;
+            }
+
+            .portfolio-asset-row-head > .portfolio-asset-row-numbers {
+                grid-area: pa-num;
                 text-align: left;
+            }
+
+            .portfolio-asset-row-head > .balance-change {
+                grid-area: pa-delta;
+                justify-self: end;
+                align-self: start;
+                margin-top: 0;
+                min-width: max-content;
+                padding: 0.375rem 0.625rem;
             }
 
             .portfolio-asset-row-pct {
                 display: none;
+            }
+
+            /* Stablecoin rows: four actions stay on one line */
+            .portfolio-asset-row-actions:has(.asset-action-btn:nth-child(4)) {
+                flex-wrap: nowrap;
+                gap: 0.25rem;
+            }
+
+            .portfolio-asset-row-actions:has(.asset-action-btn:nth-child(4)) .asset-action-btn--labeled {
+                flex: 1 1 0;
+                min-width: 0;
+                justify-content: center;
+                padding: 0.3rem 0.25rem;
+                font-size: 0.6875rem;
+                gap: 0.2rem;
+            }
+
+            .portfolio-asset-row-actions:has(.asset-action-btn:nth-child(4)) .asset-action-btn--labeled svg {
+                width: 14px;
+                height: 14px;
             }
         }
 
@@ -1652,6 +1699,13 @@
                 min-width: 36px;
                 padding: 0;
                 justify-content: center;
+            }
+
+            /* Four icon-only actions: equal flex — keeps one row on narrow phones */
+            .portfolio-asset-row-actions:has(.asset-action-btn:nth-child(4)) .asset-action-btn--labeled {
+                flex: 1 1 0;
+                width: auto;
+                min-width: 0;
             }
         }
 
@@ -1928,7 +1982,7 @@
 
         .unera-cad-hub-card {
             background: var(--surface-cad-hub);
-            border: 2px solid var(--border-subtle);
+            border: 1px solid rgba(23, 61, 71, 0.18);
             border-radius: 1.25rem;
             padding: 2rem 1.75rem;
             display: flex;
@@ -1936,6 +1990,30 @@
             align-items: flex-start;
             gap: 1.25rem 2rem;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* Ink bar — ties hub to nav; vignette on ::after */
+        .unera-cad-hub-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-ink);
+            z-index: 2;
+            pointer-events: none;
+        }
+        .unera-cad-hub-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: color-mix(in srgb, var(--brand-light-blue) 10%, transparent);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .unera-cad-hub-card-head {
@@ -1944,13 +2022,15 @@
             gap: 1rem;
             min-width: min(100%, 220px);
             flex: 1 1 200px;
+            position: relative;
+            z-index: 1;
         }
 
         .unera-cad-hub-icon {
             width: 52px;
             height: 52px;
             flex-shrink: 0;
-            background: color-mix(in srgb, var(--brand-deep-blue) 12%, var(--brand-white));
+            background: rgba(23, 61, 71, 0.10);
             border-radius: 1rem;
             display: flex;
             align-items: center;
@@ -1967,14 +2047,15 @@
             font-family: var(--font-display);
             font-size: 1.125rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--brand-deep-blue);
             margin: 0 0 0.35rem 0;
             line-height: 1.25;
         }
 
         .unera-cad-hub-desc {
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: var(--brand-deep-blue);
+            opacity: 0.72;
             line-height: 1.5;
             margin: 0;
         }
@@ -1986,20 +2067,35 @@
             width: 100%;
             max-width: 420px;
             flex: 1 1 260px;
+            position: relative;
+            z-index: 1;
         }
 
         .unera-cad-hub-actions .btn {
             width: 100%;
             font-size: 0.875rem;
             padding: 0.65rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 46px;
+            box-sizing: border-box;
         }
 
-        .unera-cad-hub-btn-history {
-            color: var(--text-secondary);
-            font-weight: 500;
+        .unera-cad-hub-actions .btn > svg:first-child {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
         }
 
-        .unera-cad-hub-btn-history:hover {
+        /* Solid white fills on tinted hub — reads as premium chips */
+        .unera-cad-hub-card .unera-cad-hub-actions .btn.btn-secondary {
+            background: var(--brand-white);
+        }
+        .unera-cad-hub-card .unera-cad-hub-actions .btn.btn-secondary:hover {
+            background: var(--brand-white);
+            border-color: var(--brand-deep-blue);
             color: var(--brand-deep-blue);
         }
 
@@ -2012,21 +2108,6 @@
             margin-top: 0.375rem;
         }
         .entity-chip--huma { background: var(--brand-purple); }
-
-        /* Reserve link below hub actions */
-        .hub-reserve-link {
-            display: flex; align-items: center; gap: 0.375rem;
-            margin-top: 0.75rem;
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
-        }
-        .hub-reserve-anchor {
-            color: var(--text-secondary);
-            text-decoration: underline;
-            text-underline-offset: 2px;
-        }
-        .hub-reserve-anchor:hover { color: var(--brand-deep-blue); }
-        .hub-reserve-anchor:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 2px; }
 
         @media (max-width: 480px) {
             .unera-cad-hub-actions {
@@ -2635,7 +2716,29 @@
             outline-offset: 2px;
         }
 
-        /* Currency combobox (filter modal) */
+        /* Filter modal: gap + alignment between inline SVG and label text */
+        #filterModal .radio-label > span,
+        #filterModal .checkbox-label > span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+        }
+
+        #filterModal .radio-label > span svg,
+        #filterModal .checkbox-label > span svg {
+            flex-shrink: 0;
+            transform: translateY(1px);
+        }
+
+        #filterModal .filter-radio-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+        }
+
+        /* Token combobox (filter modal) */
         .filter-cs {
             position: relative;
         }
@@ -2747,6 +2850,26 @@
             opacity: 0;
             color: var(--brand-deep-blue);
             transition: opacity 0.15s;
+        }
+
+        #filterModal .filter-token-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            line-height: 1;
+            background: var(--neutral-100);
+            border-radius: 0.375rem;
+            box-sizing: border-box;
+        }
+
+        #filterModal .filter-token-icon > svg {
+            display: block;
+            flex-shrink: 0;
+            color: var(--brand-deep-blue);
         }
 
         .filter-modal-footer {
@@ -5288,22 +5411,16 @@
                     </div>
                     <div>
                         <h3 id="wallet-unera-cad-hub-title" class="unera-cad-hub-title">UNERA CAD</h3>
-                        <p class="unera-cad-hub-desc">Get or redeem UNERA CAD — managed by UNERA Stablecoin. KYC &amp; AML compliance required.</p>
+                        <p id="wallet-unera-cad-hub-desc" class="unera-cad-hub-desc">Get or redeem UNERA CAD — managed by UNERA Stablecoin. KYC &amp; AML compliance required.</p>
                         <div class="entity-chip" aria-label="Managed by UNERA Stablecoin">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"/></svg>
                             <span>UNERA Stablecoin</span>
                         </div>
                     </div>
                 </div>
-                <div class="unera-cad-hub-actions">
-                    <a href="get-unera-cad.html" class="btn btn-secondary">Get UNERA CAD</a>
-                    <a href="redeem-unera-cad.html" class="btn btn-secondary">Redeem</a>
-                    <a href="mint-history.html" class="btn btn-secondary unera-cad-hub-btn-history">Mint history</a>
-                    <a href="swap-history.html" class="btn btn-secondary unera-cad-hub-btn-history">Swap history</a>
-                </div>
-                <div class="hub-reserve-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" style="flex-shrink:0;color:var(--text-secondary);"><path d="M200-280v-280h80v280h-80Zm240 0v-280h80v280h-80ZM80-120v-80h800v80H80Zm600-160v-280h80v280h-80ZM80-640v-80l400-200 400 200v80H80Z"/></svg>
-                    <a href="proof-of-reserve-public.html" class="hub-reserve-anchor">View proof of reserves</a>
+                <div class="unera-cad-hub-actions" role="group" aria-label="UNERA CAD actions">
+                    <a href="get-unera-cad.html" class="btn btn-secondary" aria-describedby="wallet-unera-cad-hub-desc"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg> Get UNERA CAD</a>
+                    <a href="redeem-unera-cad.html" class="btn btn-secondary" aria-describedby="wallet-unera-cad-hub-desc"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg> Redeem to Fiat</a>
                 </div>
             </div>
         </section>
@@ -5886,7 +6003,7 @@
                 </div>
 
                 <div class="filter-section">
-                    <h3 id="currencyFilterLabel">Currency</h3>
+                    <h3 id="currencyFilterLabel">Token</h3>
                     <input type="hidden" id="currencyFilter" value="all">
                     <div class="filter-cs" data-cs-id="currencyFilter">
                         <button type="button"
@@ -5896,37 +6013,44 @@
                             aria-expanded="false"
                             aria-controls="currencyFilterList"
                             aria-labelledby="currencyFilterLabel currencyFilterBtn">
-                            <span class="filter-cs-value">All Currencies</span>
+                            <span class="filter-cs-value">All Tokens</span>
                             <svg class="filter-cs-chevron" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                         </button>
                         <div class="filter-cs-list" id="currencyFilterList" role="listbox" aria-labelledby="currencyFilterLabel" hidden>
                             <div class="filter-cs-option" role="option" data-value="all" aria-selected="true" tabindex="0">
                                 <svg class="filter-cs-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                <span>All Currencies</span>
+                                <span class="filter-token-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 22l-9-5V7l9-5l9 5v10zM9.1 9.25q.575-.6 1.325-.925T12 8t1.575.325t1.325.925l3-1.675L12 4.3L6.1 7.575zm1.9 9.9v-3.275q-1.35-.35-2.175-1.425T8 12q0-.275.025-.513t.1-.487L5 9.25v6.575zm2.413-5.738Q14 12.825 14 12t-.587-1.412T12 10t-1.412.588T10 12t.588 1.413T12 14t1.413-.587M13 19.15l6-3.325V9.25L15.875 11q.075.25.1.488T16 12q0 1.375-.825 2.45T13 15.875z"/></svg></span>
+                                <span class="filter-cs-option-label">All Tokens</span>
                             </div>
                             <div class="filter-cs-option" role="option" data-value="hUSD" aria-selected="false" tabindex="-1">
                                 <svg class="filter-cs-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                <span>hUSD</span>
+                                <span class="filter-token-icon" aria-hidden="true">🇺🇸</span>
+                                <span class="filter-cs-option-label">hUSD</span>
                             </div>
                             <div class="filter-cs-option" role="option" data-value="hCAD" aria-selected="false" tabindex="-1">
                                 <svg class="filter-cs-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                <span>hCAD</span>
+                                <span class="filter-token-icon" aria-hidden="true">🇨🇦</span>
+                                <span class="filter-cs-option-label">hCAD</span>
                             </div>
                             <div class="filter-cs-option" role="option" data-value="hEUR" aria-selected="false" tabindex="-1">
                                 <svg class="filter-cs-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                <span>hEUR</span>
+                                <span class="filter-token-icon" aria-hidden="true">€</span>
+                                <span class="filter-cs-option-label">hEUR</span>
                             </div>
                             <div class="filter-cs-option" role="option" data-value="hGBP" aria-selected="false" tabindex="-1">
                                 <svg class="filter-cs-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                <span>hGBP</span>
+                                <span class="filter-token-icon" aria-hidden="true">🇬🇧</span>
+                                <span class="filter-cs-option-label">hGBP</span>
                             </div>
                             <div class="filter-cs-option" role="option" data-value="hJPY" aria-selected="false" tabindex="-1">
                                 <svg class="filter-cs-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                <span>hJPY</span>
+                                <span class="filter-token-icon" aria-hidden="true">🇯🇵</span>
+                                <span class="filter-cs-option-label">hJPY</span>
                             </div>
                             <div class="filter-cs-option" role="option" data-value="custom" aria-selected="false" tabindex="-1" style="border-top: 1px solid var(--border-subtle); color: var(--brand-deep-blue); font-style: italic;">
                                 <svg class="filter-cs-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-                                <span>Custom token...</span>
+                                <span class="filter-token-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 19.425v-6.85L5 9.1v6.85zm2 0l6-3.475V9.1l-6 3.475zm-1-8.575l5.925-3.425L12 4L6.075 7.425zM4 17.7q-.475-.275-.737-.725t-.263-1v-7.95q0-.55.263-1T4 6.3l7-4.025Q11.475 2 12 2t1 .275L20 6.3q.475.275.738.725t.262 1v7.95q0 .55-.262 1T20 17.7l-7 4.025Q12.525 22 12 22t-1-.275zm8-5.7"/></svg></span>
+                                <span class="filter-cs-option-label">Custom token...</span>
                             </div>
                         </div>
                         <!-- Revealed when "Custom token..." is selected -->
@@ -5954,15 +6078,15 @@
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="chainId" value="8453">
-                            <span>⬟ Base</span>
+                            <span class="filter-radio-inline"><span class="filter-network-glyph" aria-hidden="true">⬟</span><span>Base</span></span>
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="chainId" value="1">
-                            <span>◈ Ethereum</span>
+                            <span class="filter-radio-inline"><span class="filter-network-glyph" aria-hidden="true">◈</span><span>Ethereum</span></span>
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="chainId" value="11155111">
-                            <span>◈ Sepolia (Testnet)</span>
+                            <span class="filter-radio-inline"><span class="filter-network-glyph" aria-hidden="true">◈</span><span>Sepolia (Testnet)</span></span>
                         </label>
                     </div>
                 </div>
@@ -7086,7 +7210,7 @@
             if (activeFilters.currency !== 'all') {
                 var currencyLabel = activeFilters.currency === 'custom' && activeFilters.contractAddress
                     ? 'Token: ' + activeFilters.contractAddress.substring(0, 6) + '...' + activeFilters.contractAddress.slice(-4)
-                    : 'Currency: ' + activeFilters.currency;
+                    : 'Token: ' + activeFilters.currency;
                 chips.push({
                     label: currencyLabel,
                     onRemove: function() { clearCurrencyFilter(); clearContractAddressFilter(); applyFilters(); }
@@ -7166,7 +7290,7 @@
         }
 
         // ========================================
-        // CUSTOM CONTRACT ADDRESS (Currency filter)
+        // CUSTOM CONTRACT ADDRESS (Token filter)
         // ========================================
 
         function syncCustomContractAddress(value) {
@@ -7274,7 +7398,8 @@
             function selectOption(csEl, optionEl) {
                 const inputId = csEl.dataset.csId;
                 const value   = optionEl.dataset.value;
-                const label   = optionEl.querySelector('span').textContent;
+                const labelEl = optionEl.querySelector('.filter-cs-option-label');
+                const label   = labelEl ? labelEl.textContent : '';
 
                 const hiddenInput = document.getElementById(inputId);
                 hiddenInput.value = value;
@@ -7304,7 +7429,8 @@
                 });
                 opt.setAttribute('aria-selected', 'true');
                 opt.setAttribute('tabindex', '0');
-                csEl.querySelector('.filter-cs-value').textContent = opt.querySelector('span').textContent;
+                const syncLabel = opt.querySelector('.filter-cs-option-label');
+                csEl.querySelector('.filter-cs-value').textContent = syncLabel ? syncLabel.textContent : '';
             }
 
             window.syncComboDisplay = syncComboDisplay;
