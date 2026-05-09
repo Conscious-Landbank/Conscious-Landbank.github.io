@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNERA — Choose your view</title>
+    <meta name="description" content="Open the live UNERA experience or preview the in-progress UNERA V2 redesign.">
+    <link rel="icon" href="NewUnera/NewLogo/Unera Black Text Nav.svg" type="image/svg+xml">
+    <style>
+        /* — TestFoundersGrotesk · UNERA V2 brand font ——————————————————————————— */
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-Light.otf')        format('opentype'); font-weight: 300; font-style: normal;  font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-LightItalic.otf')  format('opentype'); font-weight: 300; font-style: italic;  font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-Regular.otf')      format('opentype'); font-weight: 400; font-style: normal;  font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight: 400; font-style: italic; font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-Medium.otf')       format('opentype'); font-weight: 500; font-style: normal;  font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight: 500; font-style: italic;  font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-Semibold.otf')     format('opentype'); font-weight: 600; font-style: normal;  font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight: 600; font-style: italic; font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-Bold.otf')         format('opentype'); font-weight: 700; font-style: normal;  font-display: swap; }
+        @font-face { font-family: 'TestFoundersGrotesk'; src: url('Brand Guide/TestFoundersGrotesk-BoldItalic.otf')   format('opentype'); font-weight: 700; font-style: italic;  font-display: swap; }
+
+        :root {
+            --brand-deep-blue: #173d47;
+            --brand-yellow:    #ffffab;
+            --brand-cloud-blue:#ebfcf5;
+            --brand-earth:     #cec4b8;
+            --brand-white:     #ffffff;
+            --brand-red:       #ab5770;
+            --brand-light-blue:#90c2b8;
+
+            --primary:         var(--brand-deep-blue);
+            --accent:          var(--brand-yellow);
+            --surface:         var(--brand-white);
+            --text-primary:    var(--brand-deep-blue);
+            --text-secondary:  #3d6b78;
+            --border-subtle:   rgba(23, 61, 71, 0.15);
+            --border-strong:   rgba(23, 61, 71, 0.35);
+
+            --font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:    'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            --radius-card:  1.25rem;
+            --radius-pill:  999px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { -webkit-text-size-adjust: 100%; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--brand-cloud-blue);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+        }
+
+        /* — Skip link ———————————————————————————————————————————————————— */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 1rem;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            z-index: 1000;
+            transition: top 0.15s ease;
+        }
+        .skip-link:focus { top: 1rem; outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+
+        /* — Focus ———————————————————————————————————————————————————————— */
+        :focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* — Page shell —————————————————————————————————————————————————— */
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            padding: 1.75rem 1.5rem 0;
+            display: flex;
+            justify-content: center;
+        }
+        .brand-mark {
+            height: 36px;
+            width: auto;
+            display: block;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem 4rem;
+        }
+
+        .chooser {
+            width: 100%;
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .chooser-eyebrow-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: var(--radius-pill);
+            background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white));
+            color: var(--brand-deep-blue);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+        .chooser-eyebrow-tag svg { width: 14px; height: 14px; fill: currentColor; }
+
+        h1.chooser-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--brand-deep-blue);
+            font-size: clamp(2rem, 4.2vw, 2.75rem);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.75rem;
+        }
+        p.chooser-lede {
+            font-size: 1.0625rem;
+            color: var(--text-secondary);
+            max-width: 56ch;
+            margin: 0 0 2.5rem;
+        }
+
+        /* — Card grid ———————————————————————————————————————————————————— */
+        .chooser-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .chooser-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding: 1.75rem;
+            min-height: 260px;
+            background: var(--brand-white);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-card);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+        .chooser-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-strong);
+            box-shadow: 0 12px 28px -16px rgba(23, 61, 71, 0.18);
+        }
+        .chooser-card:focus-visible {
+            outline: 3px solid var(--brand-deep-blue);
+            outline-offset: 3px;
+        }
+
+        .chooser-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 1rem;
+            flex-shrink: 0;
+        }
+        .chooser-icon svg { width: 28px; height: 28px; fill: currentColor; }
+
+        .chooser-card .card-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .chooser-card .card-eyebrow .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+        }
+
+        .chooser-card h2 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--brand-deep-blue);
+            font-size: 1.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+        .chooser-card p.card-desc {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            margin: 0;
+        }
+
+        .card-cta {
+            margin-top: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 46px;
+            padding: 0.65rem 1.15rem;
+            border-radius: var(--radius-pill);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            letter-spacing: 0.01em;
+            align-self: flex-start;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .card-cta svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.18s ease; }
+        .chooser-card:hover .card-cta svg { transform: translateX(3px); }
+
+        /* — Live site card (primary) ———————————————————————————————————— */
+        .chooser-card--live .chooser-icon {
+            background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white));
+            color: var(--brand-deep-blue);
+        }
+        .chooser-card--live .card-eyebrow .status-dot {
+            background: #1a7a5e;
+            box-shadow: 0 0 0 3px color-mix(in srgb, #1a7a5e 18%, transparent);
+        }
+        .chooser-card--live .card-cta {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+        }
+
+        /* — V2 preview card (accent) ———————————————————————————————————— */
+        .chooser-card--preview {
+            border-color: color-mix(in srgb, var(--brand-deep-blue) 30%, transparent);
+        }
+        .chooser-card--preview .chooser-icon {
+            background: color-mix(in srgb, var(--brand-yellow) 55%, var(--brand-earth));
+            color: var(--brand-deep-blue);
+        }
+        .chooser-card--preview .preview-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: var(--radius-pill);
+            background: var(--brand-deep-blue);
+            color: var(--brand-yellow);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .chooser-card--preview .card-cta {
+            background: var(--brand-yellow);
+            color: var(--brand-deep-blue);
+            box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand-deep-blue) 30%, transparent);
+        }
+
+        /* — Footnote ———————————————————————————————————————————————————— */
+        .footnote {
+            margin: 2.5rem 0 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .footnote a {
+            color: var(--brand-deep-blue);
+            text-decoration: underline;
+            text-decoration-color: var(--border-strong);
+            text-underline-offset: 3px;
+        }
+        .footnote a:hover { text-decoration-color: var(--brand-deep-blue); }
+        .footnote-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footnote-meta svg { width: 14px; height: 14px; fill: currentColor; }
+
+        /* — Responsive ———————————————————————————————————————————————————— */
+        @media (max-width: 768px) {
+            .page-header { padding: 1.25rem 1.25rem 0; }
+            main { padding: 2rem 1.25rem 3rem; }
+            .chooser-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .chooser-card { padding: 1.5rem; min-height: 0; }
+            p.chooser-lede { margin-bottom: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .brand-mark { height: 30px; }
+            h1.chooser-title { font-size: 1.75rem; }
+            p.chooser-lede { font-size: 1rem; }
+            .chooser-card h2 { font-size: 1.25rem; }
+            .chooser-card { padding: 1.25rem; gap: 1rem; }
+            .chooser-icon { width: 48px; height: 48px; }
+            .chooser-icon svg { width: 24px; height: 24px; }
+            .card-cta { width: 100%; }
+            .chooser-card--preview .preview-tag {
+                position: static;
+                align-self: flex-start;
+            }
+            .footnote { flex-direction: column; align-items: flex-start; }
+        }
+
+        /* — Reduced motion ———————————————————————————————————————————————— */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="page">
+        <header class="page-header">
+            <a href="OldUnera/index.html" aria-label="UNERA home">
+                <img src="NewUnera/NewLogo/Unera Black Text.svg" alt="UNERA Stablecoin" class="brand-mark">
+            </a>
+        </header>
+
+        <main id="main-content">
+            <section class="chooser" aria-labelledby="chooser-heading">
+                <span class="chooser-eyebrow-tag">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true">
+                        <path d="M324-111.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM440-162v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q41-45 62.5-100.5T800-480q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/>
+                    </svg>
+                    UNERA
+                </span>
+                <h1 id="chooser-heading" class="chooser-title">Welcome. Where would you like to go?</h1>
+                <p class="chooser-lede">
+                    The live UNERA site is fully available below. The new V2 redesign is in active development &mdash; have a look if you&rsquo;re reviewing the new brand system.
+                </p>
+
+                <div class="chooser-grid">
+                    <!-- Live site -->
+                    <a class="chooser-card chooser-card--live" href="OldUnera/index.html" aria-describedby="card-live-desc">
+                        <span class="chooser-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                                <path d="M324-111.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM440-162v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q41-45 62.5-100.5T800-480q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"/>
+                            </svg>
+                        </span>
+                        <span class="card-eyebrow"><span class="status-dot" aria-hidden="true"></span> Live site</span>
+                        <h2>Visit UNERA</h2>
+                        <p class="card-desc" id="card-live-desc">
+                            The current production experience &mdash; landing page, dashboard, wallet, and member flows.
+                        </p>
+                        <span class="card-cta">
+                            Open live site
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true">
+                                <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+                            </svg>
+                        </span>
+                    </a>
+
+                    <!-- V2 preview -->
+                    <a class="chooser-card chooser-card--preview" href="NewUnera/index.html" aria-describedby="card-preview-desc">
+                        <span class="preview-tag">Internal preview</span>
+                        <span class="chooser-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                                <path d="m760-600-50-110-110-50 110-50 50-110 50 110 110 50-110 50-50 110Zm0 560-50-110-110-50 110-50 50-110 50 110 110 50-110 50-50 110ZM360-160 260-380 40-480l220-100 100-220 100 220 220 100-220 100-100 220Z"/>
+                            </svg>
+                        </span>
+                        <span class="card-eyebrow"><span class="status-dot" aria-hidden="true"></span> In development</span>
+                        <h2>UNERA V2 redesign</h2>
+                        <p class="card-desc" id="card-preview-desc">
+                            In-progress redesign aligned with the new brand system &mdash; for stakeholder review only.
+                        </p>
+                        <span class="card-cta">
+                            Open V2 preview
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true">
+                                <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+
+                <p class="footnote">
+                    <span>
+                        Direct links: <a href="OldUnera/index.html">/OldUnera/</a> &middot; <a href="NewUnera/index.html">/NewUnera/</a> &middot; <a href="NewUnera/brand-style-guide.html">V2 brand style guide</a>
+                    </span>
+                    <span class="footnote-meta">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true">
+                            <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/>
+                        </svg>
+                        Internal landing page
+                    </span>
+                </p>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
