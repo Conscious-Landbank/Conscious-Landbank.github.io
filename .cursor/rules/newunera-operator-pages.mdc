@@ -1,0 +1,274 @@
+---
+description: Standards for UNERA V2 operator portal pages (operator-dashboard, operator-issuance, operator-hc-management, operator-por, operator-login) under NewUnera/. Covers the purple operator accent, tab-bar nav, operator avatar, alert banners, stats grid, and all patterns established in NewUnera/operator-dashboard.html.
+globs: NewUnera/operator-*.html
+alwaysApply: false
+---
+
+# NewUnera — Operator Portal Pages
+
+**Canonical reference:** [`NewUnera/operator-dashboard.html`](NewUnera/operator-dashboard.html)  
+All other operator pages must match it in structure, tokens, icons, and accessibility. All [new-brand-output.mdc](new-brand-output.mdc) and [newunera-color-system.mdc](newunera-color-system.mdc) rules apply in full — the sections below extend them for operator-specific patterns.
+
+---
+
+## 1. Output & File Naming
+
+- All operator pages live in `NewUnera/` and are named `operator-*.html`
+- Never modify or overwrite production consumer pages (`dashboard-enhanced.html`, `wallet-enhanced.html`, etc.)
+
+---
+
+## 2. Operator-Only CSS Tokens
+
+Add these tokens to `:root` **after** the standard V2 token block (copy from `operator-dashboard.html`):
+
+```css
+:root {
+    /* Operator nav — black chrome, distinct from consumer deep-blue nav */
+    --op-nav:                  var(--brand-black);    /* #000000 */
+
+    /* Operator accent — --brand-purple as the portal differentiator */
+    --op-accent:               var(--brand-purple);   /* #6a5770 */
+    --op-accent-ink:           var(--brand-white);
+
+    /* Surface tints — 10% purple matches #f0eef1 brand swatch */
+    --surface-operator:        color-mix(in srgb, var(--brand-purple) 10%, var(--brand-white));
+    --surface-operator-strong: color-mix(in srgb, var(--brand-purple) 18%, var(--brand-white));
+    --op-icon-well:            color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+}
+```
+
+**Portal color logic:**
+- **`--op-nav` (black `#000000`)** — nav chrome and primary action card; creates hard authority contrast vs the consumer deep-blue nav
+- **`--op-accent` (purple `#6a5770`)** — login button, tab underline, card hover borders, icon wells
+- **`--brand-cloud-blue` (`#ebfcf5`)** — op-pill background, alert banner surface, badge-success background, tab-badge background
+- **`--surface-operator` (~`#f0eef1`)** — body wash, table headers, dropdown headers, mobile tab hover
+
+Use `--surface-operator` for the body background, dropdown header, table header, mobile tab hover, and skeleton rows — it creates a subtle purple wash that visually distinguishes the operator portal from the consumer app without breaking the V2 brand.
+
+---
+
+## 3. Navigation — Tab-Bar Pattern
+
+The operator nav is **64 px tall** with a horizontal tab bar (different from the 44 px consumer nav-link bar). Copy the full `.nav` / `.tabs` / `.tab` block from `operator-dashboard.html`.
+
+### Logo + OPERATOR pill
+
+```html
+<a href="operator-dashboard.html" class="nav-brand" aria-label="UNERA Operator Home">
+    <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+    <span class="op-pill" aria-label="Operator portal">OPERATOR</span>
+</a>
+```
+
+```css
+.op-pill {
+    background: var(--brand-cloud-blue);   /* #ebfcf5 — matches alert banner surface */
+    color: var(--brand-deep-blue);         /* #173d47 — ~9:1 on cloud-blue; matches stat-value */
+    font-size: 0.625rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.125rem 0.5rem; border-radius: 980px;
+}
+```
+
+### Tab states
+
+```css
+.tab        { color: rgba(255,255,255,0.75); border-bottom: 2px solid transparent; }
+.tab:hover  { color: var(--brand-cloud-blue); }              /* cloud-blue on black = ~18:1 */
+.tab.active { color: var(--brand-cloud-blue);
+              border-bottom-color: var(--op-accent); }       /* purple underline = operator accent */
+```
+
+Focus rings on dark nav elements use `var(--brand-cloud-blue)` (not yellow):
+```css
+.nav-brand:focus         { outline: 3px solid var(--brand-cloud-blue); }
+.tab:focus-visible       { outline: 2px solid var(--brand-cloud-blue); }
+.op-user-profile:focus-visible { outline: 3px solid var(--brand-cloud-blue); }
+.hamburger:focus-visible { outline: 3px solid var(--brand-cloud-blue); }
+.skip-link:focus         { outline: 3px solid var(--brand-cloud-blue); }
+```
+
+- Active tab: cloud-blue text (~18:1 on black) + purple underline (operator differentiator)
+- HC Management tab badge: `background: var(--brand-cloud-blue); color: var(--brand-deep-blue); border: 2px solid var(--brand-deep-blue);` — deep-blue on cloud-blue ~9:1; never use yellow for badge
+
+### Operator avatar (small + dropdown)
+
+```css
+.op-avatar, .op-dropdown-avatar-lg {
+    background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+    color: var(--brand-white);   /* white on purple-earth mix — passes contrast */
+}
+```
+
+Dropdown header background: `var(--surface-operator)`.
+
+---
+
+## 4. Alert Banners (no CSS gradients)
+
+| State | Background | Border | CTA |
+|---|---|---|---|
+| Needs-Attention (warning) | `var(--brand-cloud-blue)` | `1px solid color-mix(in srgb, var(--brand-deep-blue) 12%, transparent)` | **black** fill / **white** text |
+| Reserve-warning (error) | `var(--surface-error-soft)` | `1px solid color-mix(in srgb, var(--brand-red) 22%, transparent)` | **black** fill / **white** text |
+
+```css
+.alert-cta {
+    background: var(--brand-black);
+    color: var(--brand-white);    /* white on black = 21:1 contrast */
+}
+.alert-cta:hover { background: rgba(0,0,0,0.8); }
+.alert-cta:focus-visible { outline: 3px solid var(--brand-black); outline-offset: 2px; }
+```
+
+Text color on both banners: `var(--brand-deep-blue)`. Never use orange or red gradients.  
+Icons: `warning` FILL=1 for attention banners, `error` FILL=1 for reserve-warning (both from `newunera-icons.mdc`).
+
+---
+
+## 5. Stat Cards & Icon Wells
+
+Stat icon wells use `--op-icon-well` (purple-tint) instead of the consumer's deep-blue tint:
+
+```css
+.stat-icon {
+    background: var(--op-icon-well);   /* color-mix(purple 16%, white) */
+    color: var(--brand-deep-blue);     /* deep-blue icon ink — 10.4:1 on purple-tinted well */
+}
+```
+
+Positive stat changes: `color: var(--fin-up)`. Negative: `color: var(--fin-down)`. Neutral notes: `color: var(--text-secondary)`.  
+Stat values: `font-size: var(--font-stat-size)` (2.5rem), `font-weight: 700`, `font-variant-numeric: tabular-nums`.
+
+---
+
+## 6. Quick Action Cards
+
+Secondary cards: `background: var(--surface-action)`, `color: var(--brand-deep-blue)` icon ink, `--op-icon-well` or `--surface-operator` icon chip background.
+
+Primary CTA card (e.g. "Review HC Applications"): uses **black** (`--op-nav`) — matches the nav chrome for strong visual authority:
+
+```css
+.action-card.primary                   { background: var(--op-nav); color: white;
+                                         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); }
+.action-card.primary:hover             { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4); }
+.action-card.primary .action-card-icon { background: var(--brand-white); }
+.action-card.primary .action-card-icon svg { fill: var(--brand-black); }
+```
+
+The SVG inside the white chip uses `fill: var(--brand-black)` — black on white chip on black card; the white chip provides the visual break.
+
+Secondary cards on hover: `border-color: var(--op-accent)` — purple hover border is consistent with the portal accent.
+
+---
+
+## 7. Badges (Operator Context)
+
+In the operator portal, status badges use the **purple accent family** rather than the financial `--fin-up` green. This is an administrative portal — completion/success here is an operator workflow outcome, not a P&L signal.
+
+```css
+.badge-success {
+    background: var(--brand-cloud-blue);   /* #ebfcf5 — cloud-blue tint */
+    color: var(--brand-deep-blue);         /* #173d47 — passes 9:1+ on cloud-blue */
+}
+.badge-warning { background: var(--surface-warning-soft); color: var(--brand-deep-blue); }
+.badge-error   { background: var(--error-bg); color: var(--error); }
+.badge-info    { background: var(--surface-sky); color: var(--brand-deep-blue); }
+```
+
+**Rule:** Do not use `--fin-up` (`#1a7a5e`) for operator status badges — that hue is reserved for financial P&L positive figures. Use `--brand-cloud-blue` background with `--brand-deep-blue` text for operator workflow completion states.
+
+---
+
+## 8. Page Title
+
+```css
+.page-title {
+    font-family: var(--font-display);
+    font-size: 3rem; font-weight: 700;
+    color: var(--text-primary);   /* same token as .stat-value — solid, no gradient text */
+    letter-spacing: -0.02em; line-height: 1.1;
+}
+```
+
+---
+
+## 9. Body Background
+
+```css
+body { background: var(--surface-operator); }
+```
+
+This gives the operator portal a ~`#f0eef1` purple wash (10% `--brand-purple`) vs the consumer `var(--brand-white)` canvas.
+
+---
+
+## 10. Mobile Menu
+
+- Overlay: `z-index: 10010` (above nav 10001 and dropdowns 10002) — per `side-sheet-z-index.mdc`
+- Active mobile tab: `background: var(--surface-operator-strong); border-left: 3px solid var(--op-accent);`
+- Close button icon: `close` FILL=1 Material Symbol — same path as `operator-dashboard.html`
+
+---
+
+## 11. Auth JS Contract
+
+Every operator page must carry the same auth guard + dev-mode bypass at the top of its `<script>`:
+
+```js
+const urlParams = new URLSearchParams(window.location.search);
+const devMode   = urlParams.has('dev') || urlParams.has('test');
+if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
+    window.location.href = 'operator-login.html';
+}
+```
+
+And a `logout()` function:
+
+```js
+function logout() {
+    localStorage.removeItem('operatorAuth');
+    localStorage.removeItem('operatorEmail');
+    window.location.href = 'operator-login.html';
+}
+```
+
+---
+
+## 12. Icon Mapping for Common Operator UI
+
+Copy paths verbatim from `operator-dashboard.html` or `newunera-icons.mdc`. All FILL=1 for wells/stat/banners; FILL=0 for action cards and nav glyphs.
+
+| Element | Material Symbol | FILL |
+|---|---|---|
+| Alert — Needs Attention | `warning` | 1 |
+| Alert — Reserve warning | `error` | 1 |
+| Stat — Total Issued / time | `schedule` | 0 |
+| Stat — Active HCs / users | `groups` | 0 |
+| Stat — Reserve Ratio / bank | `account_balance` | 1 |
+| Stat — Last Mint / calendar | `event` | 1 |
+| Action — Mint / issue tokens | `add_circle` | 0 |
+| Action — HC review / add user | `group_add` | 0 |
+| Action — Proof of Reserve | `verified` | 0 |
+| Dropdown / mobile — Log Out | `logout` | 0 |
+| Mobile menu close | `close` | 1 |
+
+---
+
+## 13. What NOT to Do
+
+- ❌ No `linear-gradient` / `radial-gradient` — use `color-mix` surfaces and solid tokens
+- ❌ No V1 hex colors (`#10B981`, `#0EA5E9`, `#EC4899`)
+- ❌ No Space Grotesk — TestFoundersGrotesk only
+- ❌ No `stroke=` on SVGs — Material Symbols use `fill="currentColor"` only
+- ❌ No `font-weight: 800` or `900` — max 700
+- ❌ No `--neutral-500` as text ink — use `--text-secondary` (`#3d6b78`)
+- ❌ No yellow or light-blue text on warm/white surfaces (WCAG 1.4.3)
+- ❌ No consumer-app patterns (e.g. `--gradient-primary` gradient text titles, old nav height 44px) — use operator-specific 64px tab-bar nav
+- ❌ Never save operator pages outside `NewUnera/`
+- ❌ Never use `--gradient-ink` (deep-blue) for the operator nav or primary action card — use `--op-nav` (black) for both
+- ❌ Never use `--fin-up` green for operator workflow badges — use `--brand-cloud-blue` background / `--brand-deep-blue` text
+- ❌ Never use deep-blue for the alert CTA on operator banners — use `var(--brand-black)` fill with `var(--brand-white)` text (21:1 contrast)
+- ❌ Never use `var(--brand-yellow)` anywhere in operator portal chrome — yellow is not part of the operator color scheme; use `var(--brand-cloud-blue)` for nav active/hover and white for button text
+- ❌ Never use `var(--gradient-warm)` as the needs-attention banner background — use `var(--brand-cloud-blue)` (#ebfcf5)
+- ❌ Never use `color: var(--brand-deep-blue)` for `.page-title` — use `var(--text-primary)` to stay aligned with `.stat-value`

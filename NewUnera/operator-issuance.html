@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stablecoin Issuance — UNERA Operator</title>
+
+    <!-- TestFoundersGrotesk — UNERA V2 brand font -->
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+    </style>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* ── UNERA V2 Brand Colors ─────────────────────────── */
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+
+            /* ── Semantic aliases ─────────────────────────────── */
+            --primary-green:     #173d47;
+            --primary-blue:      #90c2b8;
+            --accent-pink:       #ffffab;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+            --neutral-50:        #ffffff;
+
+            /* ── Legacy gradient names: solid fills only on product HTML ── */
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-dusk:     var(--brand-deep-blue);
+
+            /* ── Typography ───────────────────────────────────── */
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            /* ── Financial semantic tokens ────────────────────── */
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --fin-neutral:       #6b9090;
+            --fin-neutral-bg:    rgba(107, 144, 144, 0.10);
+
+            /* ── Semantic status aliases ──────────────────────── */
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+            --error-bg:          rgba(171, 87, 112, 0.10);
+
+            /* ── Accessibility ────────────────────────────────── */
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+
+            /* ── Surface tints ────────────────────────────────── */
+            --surface-impact:    color-mix(in srgb, var(--brand-cloud-blue) 22%, var(--brand-white));
+            --surface-action:    color-mix(in srgb, var(--brand-cloud-blue) 14%, var(--brand-white));
+            --surface-warm:      color-mix(in srgb, var(--brand-earth) 12%, var(--brand-white));
+            --surface-sky:       color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-deep:      color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white));
+            --surface-error-soft: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
+            --surface-warning-soft: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-white));
+
+            /* ── KPI stat sizes ───────────────────────────────── */
+            --font-stat-size:         2.5rem;
+            --font-stat-size-compact: 2rem;
+
+            /* ── Operator-only accent layer (purple-leaning) ───── */
+            --op-nav:              var(--brand-black);
+            --op-accent:           var(--brand-purple);
+            --op-accent-ink:       var(--brand-white);
+            --surface-operator:    color-mix(in srgb, var(--brand-purple) 10%, var(--brand-white));
+            --surface-operator-strong: color-mix(in srgb, var(--brand-purple) 18%, var(--brand-white));
+            --op-icon-well:        color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+        }
+
+        /* ── Reduced Motion ───────────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ── Base ─────────────────────────────────────────────── */
+        body {
+            font-family: var(--font-body);
+            background: var(--surface-operator);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* ── Skip Link ────────────────────────────────────────── */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 0;
+        }
+
+        /* ── Navigation ───────────────────────────────────────── */
+        .nav {
+            background: var(--op-nav);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .nav-brand:focus {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-img {
+            height: 24px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+
+        .op-pill {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            font-family: var(--font-body);
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.125rem 0.5rem;
+            border-radius: 980px;
+            line-height: 1.4;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        /* ── Tab bar ──────────────────────────────────────────── */
+        .tabs {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            padding: 0 1.5rem;
+            height: 64px;
+        }
+
+        .tab {
+            padding: 0 1.25rem;
+            height: 64px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: rgba(255,255,255,0.75);
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .tab:hover {
+            color: var(--brand-cloud-blue);
+            background: rgba(255,255,255,0.04);
+        }
+        .tab:focus-visible {
+            outline: 2px solid var(--brand-cloud-blue);
+            outline-offset: -2px;
+        }
+        .tab.active {
+            color: var(--brand-cloud-blue);
+            font-weight: 600;
+            border-bottom-color: var(--op-accent);
+        }
+
+        /* ── Tab badge ────────────────────────────────────────── */
+        .tab-badge {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            border: 2px solid var(--brand-deep-blue);
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.4rem;
+            border-radius: 980px;
+            min-width: 1.25rem;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* ── Operator user profile ────────────────────────────── */
+        .op-user-profile {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            min-height: 44px;
+        }
+        .op-user-profile:hover { background: rgba(255,255,255,0.08); }
+        .op-user-profile:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+
+        .op-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 600;
+            font-size: 0.813rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 260px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+        .op-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .op-dropdown-header {
+            padding: 1rem;
+            background: var(--surface-operator);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .op-dropdown-avatar-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown-email {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .op-dropdown-menu { padding: 0.5rem; }
+
+        .op-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 100%;
+            background: none;
+            border: none;
+            font-family: var(--font-body);
+            min-height: 44px;
+        }
+        .op-dropdown-item:hover {
+            background: var(--surface-operator);
+            color: var(--brand-deep-blue);
+        }
+        .op-dropdown-item:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .op-dropdown-item svg { fill: currentColor; flex-shrink: 0; }
+
+        /* ── Hamburger ────────────────────────────────────────── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            margin-left: auto;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.08); }
+        .hamburger:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--brand-white);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ── Mobile Menu ──────────────────────────────────────── */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10010;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--brand-white);
+            z-index: 10011;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-brand {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.938rem;
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-menu-close svg { fill: currentColor; }
+
+        .mobile-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .mobile-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            font-size: 0.938rem;
+            font-family: var(--font-body);
+            border-radius: 0.5rem;
+            text-align: left;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: background 0.15s;
+            min-height: 44px;
+        }
+        .mobile-tab:hover { background: var(--surface-operator); }
+        .mobile-tab:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-tab.active {
+            background: var(--surface-operator-strong);
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+            border-left: 3px solid var(--op-accent);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding-left: calc(1rem - 3px);
+        }
+
+        .mobile-nav-user {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .mobile-nav-email {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        .mobile-logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+        }
+        .mobile-logout-btn:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .mobile-logout-btn:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-logout-btn svg { fill: currentColor; }
+
+        /* ── Container ────────────────────────────────────────── */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2.75rem 4rem;
+        }
+
+        /* ── Page Header ──────────────────────────────────────── */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        /* ── Stats Grid ───────────────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-card);
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--brand-deep-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+        .stat-card:hover {
+            border-color: var(--brand-deep-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(23, 61, 71, 0.15);
+        }
+        .stat-card:hover::before { transform: scaleX(1); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: var(--font-stat-size);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-change {
+            font-size: 0.8125rem;
+            color: var(--fin-up);
+            font-weight: 500;
+        }
+        .stat-change.negative { color: var(--fin-down); }
+
+        .stat-sublabel {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* ── Supply health badge ──────────────────────────────── */
+        .supply-health-badge {
+            display: inline-block;
+            padding: 0.25rem 0.625rem;
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .supply-health-badge.healthy {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+        }
+        .supply-health-badge.at-limit {
+            background: var(--surface-warning-soft);
+            color: var(--brand-deep-blue);
+        }
+        .supply-health-badge.over-limit {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        /* ── Progress bar ─────────────────────────────────────── */
+        .progress-bar-wrap {
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.75rem;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--brand-deep-blue);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        /* ── Mint / Burn sections ─────────────────────────────── */
+        .mint-section,
+        .burn-section {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+        .mint-section:hover,
+        .burn-section:hover {
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 8px 24px rgba(23, 61, 71, 0.12);
+        }
+
+        /* Burn section accent bar — deep-blue (no gradient-burn) */
+        .burn-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--brand-deep-blue);
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+        .burn-section { padding-top: 2.25rem; }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        /* ── Forms ────────────────────────────────────────────── */
+        .form-group { margin-bottom: 1.5rem; }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .form-helper {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--brand-white);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input::placeholder { color: var(--neutral-400); }
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.12);
+        }
+
+        /* ── Inline warning ───────────────────────────────────── */
+        .inline-warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--surface-warning-soft);
+            border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        .inline-warning[hidden] { display: none; }
+        .inline-warning svg { fill: currentColor; color: var(--warning); flex-shrink: 0; margin-top: 0.05em; }
+
+        /* ── Preview card ─────────────────────────────────────── */
+        .preview-card {
+            padding: 1.25rem 1.5rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            transition: border-color 0.2s;
+        }
+        .burn-section .preview-card {
+            background: var(--surface-warning-soft);
+            border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+        }
+
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .preview-row:last-child { margin-bottom: 0; }
+
+        .preview-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .preview-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .preview-value.positive { color: var(--fin-up); }
+        .preview-value.negative { color: var(--fin-down); }
+        .burn-section .preview-value { color: var(--brand-deep-blue); }
+
+        /* ── Buttons ──────────────────────────────────────────── */
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s, box-shadow 0.2s, transform 0.15s;
+            font-family: var(--font-body);
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary:hover:not(:disabled) {
+            filter: brightness(0.92);
+            box-shadow: 0 4px 14px rgba(23, 61, 71, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active:not(:disabled) { transform: translateY(0); }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-primary:focus-visible {
+            outline: 3px solid rgba(23, 61, 71, 0.3);
+            outline-offset: 2px;
+        }
+
+        /* Burn button — deep-blue with red left-border accent to signal destructive */
+        .btn-burn {
+            border-left: 4px solid var(--brand-red);
+            border-radius: 0 0.75rem 0.75rem 0;
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-family: var(--font-body);
+            min-height: 46px;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .btn-secondary:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        /* Cap button width on larger screens */
+        @media (min-width: 769px) {
+            .mint-section .btn-primary,
+            .burn-section .btn-primary {
+                max-width: 620px;
+                margin-inline: auto;
+                display: flex;
+            }
+        }
+
+        /* ── History / Audit Log ──────────────────────────────── */
+        .history-section {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+        }
+
+        .history-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1 1 140px;
+        }
+
+        .filter-group label {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.5rem 0.75rem;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--brand-white);
+            min-width: 0;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.10);
+        }
+
+        .results-count {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-left: auto;
+            align-self: flex-end;
+        }
+
+        .history-table-wrap {
+            overflow-x: auto;
+            border-radius: 0.75rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .history-table-wrap::-webkit-scrollbar { display: none; }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 0.875rem 1rem;
+            background: var(--surface-operator);
+            border-bottom: 2px solid var(--border-subtle);
+            font-weight: 600;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .history-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .history-table tbody tr:nth-child(even) {
+            background: var(--neutral-100);
+        }
+
+        .history-table tbody tr:hover {
+            background: color-mix(in srgb, var(--brand-purple) 6%, var(--brand-white));
+        }
+
+        .history-table tr:last-child td { border-bottom: none; }
+
+        .history-row-clickable { cursor: pointer; }
+
+        .history-table tbody tr.expanded + tr.detail-row td {
+            padding: 1rem;
+            background: var(--surface-operator);
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* ── Copy button ──────────────────────────────────────── */
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 0.375rem;
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            border-radius: 4px;
+        }
+        .copy-btn:hover { color: var(--brand-deep-blue); }
+        .copy-btn:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .copy-btn svg { fill: currentColor; }
+
+        /* ── Badges ───────────────────────────────────────────── */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-success {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+        }
+        .badge-warning {
+            background: var(--surface-warning-soft);
+            color: var(--brand-deep-blue);
+        }
+        .badge-error {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+        .badge-neutral {
+            background: var(--neutral-200);
+            color: var(--text-secondary);
+        }
+
+        /* ── Empty state ──────────────────────────────────────── */
+        .history-empty {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .history-empty-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: var(--neutral-400);
+            fill: currentColor;
+        }
+        .history-empty-text {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .history-empty-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* ── Modal ────────────────────────────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10010;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            min-height: 44px;
+            min-width: 44px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: var(--neutral-100); }
+        .modal-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .modal-body { padding: 1.5rem; }
+        .modal-body.text-center { text-align: center; }
+
+        .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+        }
+        .notification-icon.warning {
+            background: var(--surface-warning-soft);
+            color: var(--brand-deep-blue);
+        }
+        .notification-icon svg { fill: currentColor; }
+
+        .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .modal-summary {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--surface-operator);
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .modal-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .modal-summary-row:last-child { margin-bottom: 0; }
+        .modal-summary-row span:first-child { color: var(--text-secondary); }
+        .modal-summary-row span:last-child { font-weight: 600; color: var(--text-primary); }
+
+        .confirm-checkbox-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .confirm-checkbox-wrap input {
+            margin-top: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--brand-deep-blue);
+            flex-shrink: 0;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        .notification-modal .modal-footer {
+            padding: 0 1.5rem 1.5rem;
+            border-top: none;
+        }
+        .notification-modal .modal-body { padding: 2rem 1.5rem; }
+
+        /* ── sr-only ──────────────────────────────────────────── */
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 960px) {
+            #operatorProfile,
+            .tabs { display: none !important; }
+            .hamburger { display: flex; }
+            .nav { padding: 0 1rem; }
+            .page-title { font-size: 2rem; }
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem 1.5rem 3rem; }
+            .stat-value { font-size: var(--font-stat-size-compact); }
+            .results-count { margin-left: 0; }
+            .filter-group {
+                flex: 1 1 calc(50% - 0.5rem);
+                min-width: calc(50% - 0.5rem);
+            }
+            input, select { font-size: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .page-title { font-size: 1.75rem; }
+            .container { padding: 1.25rem 1rem 3rem; }
+            .filter-group { flex: 1 1 100%; min-width: 100%; }
+            .modal-footer { flex-direction: column; }
+            .modal-footer .btn-primary,
+            .modal-footer .btn-secondary { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="nav" role="navigation" aria-label="Operator navigation">
+            <a href="operator-dashboard.html" class="nav-brand" aria-label="UNERA Operator Home">
+                <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <span class="op-pill" aria-label="Operator portal">OPERATOR</span>
+            </a>
+
+            <div class="tabs" role="tablist" aria-label="Operator sections">
+                <a href="operator-dashboard.html" class="tab" role="tab" aria-selected="false">Dashboard</a>
+                <span class="tab active" role="tab" aria-current="page" aria-selected="true">Stablecoin Issuance</span>
+                <a href="operator-hc-management.html" class="tab" role="tab" aria-selected="false" aria-label="HC Management, 2 pending items">
+                    HC Management
+                    <span class="tab-badge" aria-hidden="true">2</span>
+                </a>
+                <a href="operator-por.html" class="tab" role="tab" aria-selected="false">Proof of Reserve</a>
+            </div>
+
+            <!-- Operator profile dropdown -->
+            <div class="op-user-profile"
+                 onclick="toggleOperatorDropdown()"
+                 id="operatorProfile"
+                 role="button"
+                 aria-expanded="false"
+                 aria-haspopup="true"
+                 aria-label="Operator profile menu"
+                 tabindex="0">
+                <div class="op-avatar" id="operatorAvatar" aria-hidden="true">OP</div>
+                <div class="op-dropdown" id="operatorDropdown" role="menu" aria-label="Operator account menu" onclick="event.stopPropagation()">
+                    <div class="op-dropdown-header">
+                        <div class="op-dropdown-avatar-lg" id="operatorDropdownAvatar" aria-hidden="true">OP</div>
+                        <div class="op-dropdown-email" id="operatorEmail"></div>
+                    </div>
+                    <div class="op-dropdown-menu">
+                        <button class="op-dropdown-item" role="menuitem" onclick="logout()">
+                            <!-- logout FILL=0 — Material Symbols Outlined -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                            </svg>
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hamburger (mobile) -->
+            <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-modal="true" aria-label="Operator navigation menu">
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-brand">Operator Menu</span>
+            <button class="mobile-menu-close" aria-label="Close navigation menu">
+                <!-- close FILL=1 — Material Symbols Outlined -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                </svg>
+            </button>
+        </div>
+        <nav class="mobile-nav-tabs" aria-label="Operator sections">
+            <a href="operator-dashboard.html" class="mobile-tab">Dashboard</a>
+            <span class="mobile-tab active" aria-current="page">Stablecoin Issuance</span>
+            <a href="operator-hc-management.html" class="mobile-tab" aria-label="HC Management, 2 pending items">
+                HC Management
+                <span class="tab-badge" aria-hidden="true">2</span>
+            </a>
+            <a href="operator-por.html" class="mobile-tab">Proof of Reserve</a>
+        </nav>
+        <div class="mobile-nav-user">
+            <div class="mobile-nav-email" id="mobileOperatorEmail"></div>
+            <button class="mobile-logout-btn" onclick="logout()">
+                <!-- logout FILL=0 — Material Symbols Outlined -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                </svg>
+                Log Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container" role="main">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Stablecoin Issuance</h1>
+                <p class="page-subtitle">Mint new tokens and monitor supply metrics.</p>
+            </div>
+        </div>
+
+        <!-- Supply Overview -->
+        <div class="stats-grid" role="region" aria-label="Supply overview">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Current Total Supply</span>
+                    <span class="supply-health-badge healthy" id="supply-health">Healthy</span>
+                </div>
+                <div class="stat-value" id="total-supply">$2,845,290</div>
+                <div class="stat-change" id="supply-trend">↑ +2.4% from last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Last Mint Amount</div>
+                <div class="stat-value" id="last-mint">$50,000</div>
+                <div class="stat-sublabel" id="last-mint-date">Mar 8, 2026</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Minted This Month</div>
+                <div class="stat-value" id="month-minted">$425,000</div>
+                <div class="stat-sublabel">of 5,000,000 monthly limit</div>
+                <div class="progress-bar-wrap" role="progressbar" aria-valuenow="8.5" aria-valuemin="0" aria-valuemax="100" aria-label="8.5% of monthly mint limit used">
+                    <div class="progress-bar-fill" id="month-progress" style="width: 8.5%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mint Form -->
+        <section class="mint-section" aria-labelledby="mint-title">
+            <h2 id="mint-title" class="section-title">Mint New Tokens</h2>
+            <form id="mintForm" onsubmit="handleMint(event)" novalidate>
+                <div class="form-group">
+                    <label for="amount" class="form-label">Amount to Mint (USDX)</label>
+                    <input type="number" id="amount" class="form-input" placeholder="50000" min="1" max="1000000" required oninput="updatePreview()" aria-describedby="amount-helper mint-threshold-warning">
+                    <p class="form-helper" id="amount-helper">Minimum: 1 USDX · Maximum: 1,000,000 USDX per transaction</p>
+                    <div class="inline-warning" id="mint-threshold-warning" hidden role="alert">
+                        <!-- warning FILL=1 — Material Symbols Outlined -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                            <path d="M480-120q-17 0-28.5-11.5T440-160v-40q0-17 11.5-28.5T480-240q17 0 28.5 11.5T520-200v40q0 17-11.5 28.5T480-120Zm-40-160v-480h80v480h-80Z"/>
+                        </svg>
+                        <span id="mint-threshold-text">Large mint — ensure fiat deposit has cleared.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason" class="form-label">Reason</label>
+                    <select id="reason" class="form-select" required>
+                        <option value="">Select reason…</option>
+                        <option value="fiat-deposit">Fiat Deposit Received</option>
+                        <option value="corporate-treasury">Corporate Treasury</option>
+                        <option value="cross-chain-bridge">Cross-Chain Bridge</option>
+                        <option value="reserve-topup">Reserve Top-Up</option>
+                        <option value="compliance-adjustment">Compliance Adjustment</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reference" class="form-label">Reference Number</label>
+                    <input type="text" id="reference" class="form-input" placeholder="REF-2026-001" required>
+                    <p class="form-helper">Enter wire transfer ID, deposit receipt number, or compliance ticket reference for audit trail</p>
+                </div>
+
+                <div class="preview-card">
+                    <div class="preview-row">
+                        <span class="preview-label">New Total Supply</span>
+                        <span class="preview-value" id="new-supply">$2,845,290</span>
+                    </div>
+                    <div class="preview-row">
+                        <span class="preview-label">Change Amount</span>
+                        <span class="preview-value positive" id="change-amount">+$0</span>
+                    </div>
+                    <div class="preview-row">
+                        <span class="preview-label">Change %</span>
+                        <span class="preview-value positive" id="change-pct">+0%</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <!-- add_circle FILL=0 — Material Symbols Outlined -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                        <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                    </svg>
+                    Confirm Mint
+                </button>
+            </form>
+        </section>
+
+        <!-- Burn / Redemption Form -->
+        <section class="burn-section" aria-labelledby="burn-title">
+            <h2 id="burn-title" class="section-title">Burn / Redemption</h2>
+            <form id="burnForm" onsubmit="handleBurn(event)" novalidate>
+                <div class="form-group">
+                    <label for="burn-amount" class="form-label">Amount to Burn (USDX)</label>
+                    <input type="number" id="burn-amount" class="form-input" placeholder="10000" min="1" max="1000000" required oninput="updateBurnPreview()">
+                </div>
+                <div class="form-group">
+                    <label for="burn-reason" class="form-label">Redemption Reason</label>
+                    <select id="burn-reason" class="form-select" required>
+                        <option value="">Select reason…</option>
+                        <option value="fiat-withdrawal">Fiat Withdrawal</option>
+                        <option value="redemption">Redemption</option>
+                        <option value="reserve-rebalance">Reserve Rebalance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="burn-destination" class="form-label">Destination Wallet Address</label>
+                    <input type="text" id="burn-destination" class="form-input" placeholder="0x…" required>
+                </div>
+                <div class="form-group">
+                    <label for="burn-reference" class="form-label">Reference</label>
+                    <input type="text" id="burn-reference" class="form-input" placeholder="REF-BURN-001">
+                </div>
+                <div class="preview-card">
+                    <div class="preview-row">
+                        <span class="preview-label">Tokens Removed</span>
+                        <span class="preview-value negative" id="burn-amount-preview">-$0</span>
+                    </div>
+                    <div class="preview-row">
+                        <span class="preview-label">New Total Supply After Burn</span>
+                        <span class="preview-value" id="burn-new-supply">$2,845,290</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary btn-burn">
+                    <!-- local_fire_department FILL=0 — Material Symbols Outlined -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                        <path d="M480-80q-117 0-198.5-81.5T200-360q0-94 55.5-168T401-634q-2 15-2.5 29.5T398-576q0 56 21.5 107.5T482-372q24-33 38-71.5T534-524q46 41 76 97t30 107q0 117-81.5 198.5T480-80Zm0-80q83 0 141.5-58.5T680-360q0-47-21-90t-59-73q-8 36-24 68.5T534-396q-52-24-83-68.5T420-556q0-14 1.5-27.5T425-611q-55 50-90 117.5T300-360q0 75 58.5 127.5T480-160Zm0-320Z"/>
+                    </svg>
+                    Confirm Burn
+                </button>
+            </form>
+        </section>
+
+        <!-- Minting Audit Log -->
+        <div class="history-section" aria-labelledby="history-title">
+            <h2 id="history-title" class="section-title">Minting Audit Log</h2>
+            <div class="history-filters">
+                <div class="filter-group">
+                    <label for="filter-date-from">From</label>
+                    <input type="date" id="filter-date-from">
+                </div>
+                <div class="filter-group">
+                    <label for="filter-date-to">To</label>
+                    <input type="date" id="filter-date-to">
+                </div>
+                <div class="filter-group">
+                    <label for="filter-type">Type</label>
+                    <select id="filter-type">
+                        <option value="all">All</option>
+                        <option value="mint">Mint</option>
+                        <option value="burn">Burn</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-status">Status</label>
+                    <select id="filter-status">
+                        <option value="all">All</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="pending">Pending</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                </div>
+                <span class="results-count" id="results-count" aria-live="polite">Showing 10 of 10 transactions</span>
+            </div>
+            <div class="history-table-wrap">
+                <table class="history-table" aria-describedby="history-caption">
+                    <caption id="history-caption" class="sr-only">Minting and burn history with transaction hash, amount, type, reason, actor, and status</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Date/Time</th>
+                            <th scope="col">Tx Hash</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Actor</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-list">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="history-empty" id="history-empty" hidden>
+                <!-- description FILL=0 — Material Symbols Outlined -->
+                <svg class="history-empty-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
+                </svg>
+                <p class="history-empty-text">No transactions match your filters</p>
+                <p class="history-empty-desc">Try adjusting the date range or filter criteria.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle" aria-describedby="confirmationMessage confirmationSummary">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Confirm Mint</h2>
+                <button class="modal-close" onclick="closeConfirmationModal()" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon warning" aria-hidden="true">
+                    <!-- warning FILL=1 — Material Symbols Outlined -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor">
+                        <path d="M480-120q-17 0-28.5-11.5T440-160v-40q0-17 11.5-28.5T480-240q17 0 28.5 11.5T520-200v40q0 17-11.5 28.5T480-120Zm-40-160v-480h80v480h-80Z"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="confirmationMessage"></p>
+                <div class="modal-summary" id="confirmationSummary"></div>
+                <div class="confirm-checkbox-wrap">
+                    <input type="checkbox" id="confirmCheckbox" aria-describedby="confirmCheckboxLabel">
+                    <label for="confirmCheckbox" id="confirmCheckboxLabel">I confirm the fiat deposit has cleared and this mint is authorised</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeConfirmationModal()">Cancel</button>
+                <button class="btn-primary" id="confirmButton" style="width:auto; min-width:120px;" disabled>Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationTitle" aria-describedby="notificationMessage">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="notificationTitle" class="modal-title">Success</h2>
+                <button class="modal-close" onclick="closeNotificationModal()" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="notification-icon" aria-hidden="true">
+                    <!-- check FILL=1 — Material Symbols Outlined -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor">
+                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+                    </svg>
+                </div>
+                <p class="notification-message" id="notificationMessage" role="status" aria-live="polite"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeNotificationModal()" style="width:100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth guard — dev bypass via ?dev or ?test
+        (function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var devMode = urlParams.has('dev') || urlParams.has('test');
+            if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
+                window.location.href = 'operator-login.html';
+            }
+            var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
+            var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
+            var avatarEl = document.getElementById('operatorAvatar');
+            var dropdownAvatarEl = document.getElementById('operatorDropdownAvatar');
+            var emailEl = document.getElementById('operatorEmail');
+            var mobileEmailEl = document.getElementById('mobileOperatorEmail');
+            if (avatarEl) avatarEl.textContent = initial;
+            if (dropdownAvatarEl) dropdownAvatarEl.textContent = initial;
+            if (emailEl) emailEl.textContent = operatorEmailVal;
+            if (mobileEmailEl) mobileEmailEl.textContent = operatorEmailVal;
+        })();
+
+        function toggleOperatorDropdown() {
+            var dropdown = document.getElementById('operatorDropdown');
+            var btn = document.getElementById('operatorProfile');
+            if (dropdown && btn) {
+                var isOpen = dropdown.classList.toggle('show');
+                btn.setAttribute('aria-expanded', isOpen);
+            }
+        }
+        document.addEventListener('click', function(e) {
+            var profile = document.getElementById('operatorProfile');
+            var dropdown = document.getElementById('operatorDropdown');
+            if (profile && dropdown && !profile.contains(e.target)) {
+                dropdown.classList.remove('show');
+                profile.setAttribute('aria-expanded', 'false');
+            }
+        });
+        document.getElementById('operatorProfile')?.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleOperatorDropdown(); }
+        });
+
+        function logout() {
+            localStorage.removeItem('operatorAuth');
+            localStorage.removeItem('operatorEmail');
+            window.location.href = 'operator-login.html';
+        }
+
+        // Mobile menu
+        (function() {
+            var hamburger = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var mobileOverlay = document.querySelector('.mobile-menu-overlay');
+            var mobileClose = document.querySelector('.mobile-menu-close');
+            function openMenu() {
+                hamburger.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                mobileOverlay.removeAttribute('aria-hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                mobileOverlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+            if (hamburger) hamburger.addEventListener('click', function() {
+                mobileMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+            if (mobileOverlay) mobileOverlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+            });
+        })();
+
+        // Mock data
+        let currentSupply = 2845290;
+        let monthMinted = 425000;
+        const monthlyLimit = 5000000;
+        const THRESHOLD_LARGE_MINT = 500000;
+
+        const mintHistory = [
+            { date: '2026-02-11 10:30', amount: 50000, reason: 'Fiat Deposit Received', type: 'mint', txHash: '0x7a3f...9c2', fullHash: '0x7a3f2b1c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9c2', actor: 'admin@unera.io', status: 'confirmed', reference: 'REF-2026-042' },
+            { date: '2026-02-10 14:15', amount: 100000, reason: 'Reserve Top-Up', type: 'mint', txHash: '0x8b4e...1d3', fullHash: '0x8b4e3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f1d3', actor: 'admin@unera.io', status: 'confirmed', reference: 'REF-2026-041' },
+            { date: '2026-02-08 09:45', amount: 75000, reason: 'Fiat Deposit Received', type: 'mint', txHash: '0x2c5a...7f', fullHash: '0x2c5a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f', actor: 'operator@unera.io', status: 'confirmed', reference: 'REF-2026-039' },
+            { date: '2026-02-06 16:20', amount: 200000, reason: 'Fiat Deposit Received', type: 'mint', txHash: '0x9d1e...4a', fullHash: '0x9d1e0f1e2d3c4b5a6f7e8d9c0b1a2f3e4d5c4a', actor: 'admin@unera.io', status: 'confirmed', reference: 'REF-2026-038' },
+            { date: '2026-02-04 11:00', amount: 50000, reason: 'Compliance Adjustment', type: 'mint', txHash: '0x3f8b...2c', fullHash: '0x3f8b2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d2c', actor: 'admin@unera.io', status: 'confirmed', reference: 'REF-2026-036' },
+            { date: '2026-02-01 13:30', amount: 150000, reason: 'Fiat Deposit Received', type: 'mint', txHash: '0x1a6c...9e', fullHash: '0x1a6c9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b9e', actor: 'admin@unera.io', status: 'confirmed', reference: 'REF-2026-035' },
+            { date: '2026-01-28 10:15', amount: 100000, reason: 'Reserve Top-Up', type: 'mint', txHash: '0x5e2d...8b', fullHash: '0x5e2d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8b', actor: 'operator@unera.io', status: 'confirmed', reference: 'REF-2026-032' },
+            { date: '2026-01-25 15:45', amount: 80000, reason: 'Fiat Deposit Received', type: 'mint', txHash: '0x4b7...3f', fullHash: '0x4b7a6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f3f', actor: 'admin@unera.io', status: 'confirmed', reference: 'REF-2026-030' },
+            { date: '2026-01-22 09:20', amount: 60000, reason: 'Fiat Deposit Received', type: 'mint', txHash: '0x6c9...1a', fullHash: '0x6c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b1a', actor: 'admin@unera.io', status: 'pending', reference: 'REF-2026-028' },
+            { date: '2026-01-20 14:00', amount: 125000, reason: 'Fiat Deposit Received', type: 'mint', txHash: '0x2e4...5d', fullHash: '0x2e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d5d', actor: 'admin@unera.io', status: 'confirmed', reference: 'REF-2026-026' }
+        ];
+
+        const statusBadge = { confirmed: 'badge-success', pending: 'badge-warning', failed: 'badge-error', cancelled: 'badge-neutral' };
+        const statusLabel = { confirmed: 'Confirmed', pending: 'Pending', failed: 'Failed', cancelled: 'Cancelled' };
+
+        function loadHistory() {
+            var tbody = document.getElementById('history-list');
+            var filtered = filterHistory();
+            var table = document.querySelector('.history-table');
+            var emptyEl = document.getElementById('history-empty');
+
+            if (filtered.length === 0) {
+                table.style.display = 'none';
+                emptyEl.hidden = false;
+            } else {
+                table.style.display = 'table';
+                emptyEl.hidden = true;
+                tbody.innerHTML = filtered.map(function(record, i) {
+                    var origIdx = mintHistory.indexOf(record);
+                    var amtColor = record.type === 'mint' ? 'var(--fin-up)' : 'var(--fin-down)';
+                    return '<tr class="history-row-clickable" data-orig-idx="' + origIdx + '" data-tx="' + (record.fullHash || record.txHash) + '" data-ref="' + (record.reference || '') + '" tabindex="0" role="button" aria-label="Expand row ' + (i + 1) + '">' +
+                        '<td style="color:var(--text-secondary);font-size:0.875rem;">' + record.date + '</td>' +
+                        '<td>' +
+                            '<span style="font-family:monospace;font-size:0.875rem;">' + record.txHash + '</span>' +
+                            '<button class="copy-btn" data-tx-copy="' + (record.fullHash || record.txHash) + '" onclick="event.stopPropagation();copyTx(this.getAttribute(\'data-tx-copy\'))" aria-label="Copy transaction hash">' +
+                                '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>' +
+                            '</button>' +
+                        '</td>' +
+                        '<td style="font-weight:700;color:' + amtColor + ';">' + (record.type === 'mint' ? '+' : '-') + '$' + Math.abs(record.amount).toLocaleString() + '</td>' +
+                        '<td style="font-weight:500;">' + (record.type === 'mint' ? 'Mint' : 'Burn') + '</td>' +
+                        '<td><span class="badge badge-success">' + record.reason + '</span></td>' +
+                        '<td style="color:var(--text-secondary);font-size:0.875rem;">' + record.actor + '</td>' +
+                        '<td><span class="badge ' + (statusBadge[record.status] || 'badge-neutral') + '">' + (statusLabel[record.status] || record.status) + '</span></td>' +
+                    '</tr>';
+                }).join('');
+            }
+
+            document.getElementById('results-count').textContent = 'Showing ' + filtered.length + ' of ' + mintHistory.length + ' transactions';
+
+            tbody.querySelectorAll('.history-row-clickable').forEach(function(row) {
+                row.addEventListener('click', function() { toggleRowDetail(row); });
+                row.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRowDetail(row); } });
+            });
+        }
+
+        function filterHistory() {
+            var type = document.getElementById('filter-type')?.value || 'all';
+            var status = document.getElementById('filter-status')?.value || 'all';
+            var from = document.getElementById('filter-date-from')?.value;
+            var to = document.getElementById('filter-date-to')?.value;
+            return mintHistory.filter(function(r) {
+                if (type !== 'all' && r.type !== type) return false;
+                if (status !== 'all' && r.status !== status) return false;
+                var rDate = r.date.slice(0, 10);
+                if (from && rDate < from) return false;
+                if (to && rDate > to) return false;
+                return true;
+            });
+        }
+
+        function toggleRowDetail(row) {
+            var origIdx = row.getAttribute('data-orig-idx');
+            var tx = row.getAttribute('data-tx');
+            var ref = row.getAttribute('data-ref');
+            var record = mintHistory[parseInt(origIdx, 10)];
+            if (!record) return;
+            var detail = row.nextElementSibling;
+            if (detail && detail.classList.contains('detail-row')) {
+                detail.remove();
+                row.classList.remove('expanded');
+                return;
+            }
+            detail = document.createElement('tr');
+            detail.className = 'detail-row';
+            detail.innerHTML = '<td colspan="7"><strong>Reference:</strong> ' + (ref || 'N/A') + ' · <strong>Tx Hash:</strong> ' + (record.fullHash || tx) + ' · <strong>Fiat Receipt ID:</strong> ' + (record.reference || 'N/A') + '</td>';
+            row.after(detail);
+            row.classList.add('expanded');
+        }
+
+        function copyTx(hash) {
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(hash);
+            } else {
+                var ta = document.createElement('textarea');
+                ta.value = hash;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+        }
+
+        document.getElementById('filter-type')?.addEventListener('change', loadHistory);
+        document.getElementById('filter-status')?.addEventListener('change', loadHistory);
+        document.getElementById('filter-date-from')?.addEventListener('change', loadHistory);
+        document.getElementById('filter-date-to')?.addEventListener('change', loadHistory);
+
+        function updatePreview() {
+            var amount = parseFloat(document.getElementById('amount').value) || 0;
+            var newSupply = currentSupply + amount;
+            var changePct = currentSupply > 0 ? ((amount / currentSupply) * 100).toFixed(2) : 0;
+            document.getElementById('new-supply').textContent = '$' + newSupply.toLocaleString();
+            document.getElementById('change-amount').textContent = amount > 0 ? '+$' + amount.toLocaleString() : '$0';
+            document.getElementById('change-pct').textContent = amount > 0 ? '+' + changePct + '%' : '+0%';
+            var warning = document.getElementById('mint-threshold-warning');
+            var text = document.getElementById('mint-threshold-text');
+            if (amount > THRESHOLD_LARGE_MINT) {
+                warning.hidden = false;
+                text.textContent = 'Large mint — this will increase supply by ' + changePct + '%. Ensure fiat deposit has cleared.';
+            } else {
+                warning.hidden = true;
+            }
+        }
+
+        function updateBurnPreview() {
+            var amount = parseFloat(document.getElementById('burn-amount').value) || 0;
+            var newSupply = Math.max(0, currentSupply - amount);
+            document.getElementById('burn-amount-preview').textContent = '-$' + amount.toLocaleString();
+            document.getElementById('burn-new-supply').textContent = '$' + newSupply.toLocaleString();
+        }
+
+        function handleMint(event) {
+            event.preventDefault();
+            var amount = parseFloat(document.getElementById('amount').value);
+            var reason = document.getElementById('reason').options[document.getElementById('reason').selectedIndex].text;
+            var reference = document.getElementById('reference').value;
+            var newSupply = currentSupply + amount;
+            showConfirmation({
+                amount: amount,
+                reason: reason,
+                reference: reference,
+                newSupply: newSupply,
+                onConfirm: function() {
+                    var now = new Date();
+                    var dateStr = now.toISOString().slice(0, 16).replace('T', ' ');
+                    var txHash = '0x' + Math.random().toString(16).slice(2, 10) + '...' + Math.random().toString(16).slice(2, 6);
+                    mintHistory.unshift({
+                        date: dateStr,
+                        amount: amount,
+                        reason: document.getElementById('reason').options[document.getElementById('reason').selectedIndex].text,
+                        type: 'mint',
+                        txHash: txHash,
+                        fullHash: '0x' + Math.random().toString(16).slice(2, 42),
+                        actor: 'admin@unera.io',
+                        status: 'confirmed',
+                        reference: reference
+                    });
+                    setTimeout(function() {
+                        showNotification('Successfully minted $' + amount.toLocaleString() + ' USDX. Reference: ' + reference, 'Mint Successful');
+                        document.getElementById('mintForm').reset();
+                        currentSupply = newSupply;
+                        updatePreview();
+                        monthMinted += amount;
+                        document.getElementById('total-supply').textContent = '$' + currentSupply.toLocaleString();
+                        document.getElementById('month-minted').textContent = '$' + monthMinted.toLocaleString();
+                        document.getElementById('month-progress').style.width = Math.min(100, (monthMinted / monthlyLimit) * 100) + '%';
+                        loadHistory();
+                    }, 500);
+                }
+            });
+        }
+
+        function handleBurn(event) {
+            event.preventDefault();
+            var amount = parseFloat(document.getElementById('burn-amount').value);
+            var newSupply = Math.max(0, currentSupply - amount);
+            showNotification('Burn flow would reduce supply to $' + newSupply.toLocaleString() + '. (Demo mode)', 'Burn Confirmation');
+            document.getElementById('burnForm').reset();
+            updateBurnPreview();
+        }
+
+        function showConfirmation(opts) {
+            var modal = document.getElementById('confirmationModal');
+            document.getElementById('confirmationMessage').textContent = 'You are about to mint $' + opts.amount.toLocaleString() + ' USDX. This action will increase the total supply.';
+            document.getElementById('confirmationSummary').innerHTML =
+                '<div class="modal-summary-row"><span>Amount</span><span>$' + opts.amount.toLocaleString() + '</span></div>' +
+                '<div class="modal-summary-row"><span>New Supply</span><span>$' + opts.newSupply.toLocaleString() + '</span></div>' +
+                '<div class="modal-summary-row"><span>Reason</span><span>' + opts.reason + '</span></div>' +
+                '<div class="modal-summary-row"><span>Reference</span><span>' + opts.reference + '</span></div>' +
+                '<div class="modal-summary-row"><span>Timestamp</span><span>' + new Date().toLocaleString() + '</span></div>';
+            var cb = document.getElementById('confirmCheckbox');
+            var btn = document.getElementById('confirmButton');
+            cb.checked = false;
+            btn.disabled = true;
+            cb.onchange = function() { btn.disabled = !cb.checked; };
+            btn.onclick = function() {
+                if (!cb.checked) return;
+                closeConfirmationModal();
+                if (opts.onConfirm) opts.onConfirm();
+            };
+            modal.classList.add('active');
+            trapFocus(modal);
+            document.addEventListener('keydown', escHandlerConfirm);
+            function escHandlerConfirm(e) {
+                if (e.key === 'Escape') {
+                    closeConfirmationModal();
+                    document.removeEventListener('keydown', escHandlerConfirm);
+                }
+            }
+        }
+
+        function trapFocus(elem) {
+            var focusable = elem.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+            first?.focus();
+            elem.addEventListener('keydown', function handler(e) {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey) {
+                    if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
+                } else {
+                    if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
+                }
+            });
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('active');
+            document.getElementById('confirmCheckbox').checked = false;
+            document.getElementById('confirmButton').disabled = true;
+        }
+
+        function showNotification(message, title) {
+            var modal = document.getElementById('notificationModal');
+            document.getElementById('notificationTitle').textContent = title || 'Success';
+            document.getElementById('notificationMessage').textContent = message;
+            modal.classList.add('active');
+            trapFocus(modal);
+            document.addEventListener('keydown', function escHandlerNotif(e) {
+                if (e.key === 'Escape') {
+                    closeNotificationModal();
+                    document.removeEventListener('keydown', escHandlerNotif);
+                }
+            });
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+        }
+
+        loadHistory();
+        updatePreview();
+    </script>
+</body>
+</html>

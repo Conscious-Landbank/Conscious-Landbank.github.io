@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof of Reserve — UNERA Operator</title>
+
+    <!-- TestFoundersGrotesk — UNERA V2 brand font -->
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+    </style>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* ── UNERA V2 Brand Colors ─────────────────────────── */
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+
+            /* ── Semantic aliases ─────────────────────────────── */
+            --primary-green:     #173d47;
+            --primary-blue:      #90c2b8;
+            --accent-pink:       #ffffab;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+            --neutral-50:        #ffffff;
+
+            /* ── Legacy gradient names: solid fills only on product HTML ── */
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-dusk:     var(--brand-deep-blue);
+
+            /* ── Typography ───────────────────────────────────── */
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            /* ── Financial semantic tokens ────────────────────── */
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --fin-neutral:       #6b9090;
+            --fin-neutral-bg:    rgba(107, 144, 144, 0.10);
+
+            /* ── Semantic status aliases ──────────────────────── */
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+            --error-bg:          rgba(171, 87, 112, 0.10);
+
+            /* ── Accessibility ────────────────────────────────── */
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+
+            /* ── Surface tints ────────────────────────────────── */
+            --surface-impact:    color-mix(in srgb, var(--brand-cloud-blue) 22%, var(--brand-white));
+            --surface-action:    color-mix(in srgb, var(--brand-cloud-blue) 14%, var(--brand-white));
+            --surface-warm:      color-mix(in srgb, var(--brand-earth) 12%, var(--brand-white));
+            --surface-sky:       color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-deep:      color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white));
+            --surface-error-soft: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
+            --surface-warning-soft: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-white));
+
+            /* ── KPI stat sizes ───────────────────────────────── */
+            --font-stat-size:         2.5rem;
+            --font-stat-size-compact: 2rem;
+
+            /* ── Operator-only accent layer (purple-leaning) ───── */
+            --op-nav:              var(--brand-black);
+            --op-accent:           var(--brand-purple);
+            --op-accent-ink:       var(--brand-white);
+            --surface-operator:    color-mix(in srgb, var(--brand-purple) 10%, var(--brand-white));
+            --surface-operator-strong: color-mix(in srgb, var(--brand-purple) 18%, var(--brand-white));
+            --op-icon-well:        color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+        }
+
+        /* ── Reduced Motion ───────────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ── Base ─────────────────────────────────────────────── */
+        body {
+            font-family: var(--font-body);
+            background: var(--surface-operator);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* ── Skip Link ────────────────────────────────────────── */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 0;
+        }
+
+        /* ── Navigation ───────────────────────────────────────── */
+        .nav {
+            background: var(--op-nav);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .nav-brand:focus {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-img {
+            height: 24px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+
+        .op-pill {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            font-family: var(--font-body);
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.125rem 0.5rem;
+            border-radius: 980px;
+            line-height: 1.4;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        /* ── Tab bar ──────────────────────────────────────────── */
+        .tabs {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            padding: 0 1.5rem;
+            height: 64px;
+        }
+
+        .tab {
+            padding: 0 1.25rem;
+            height: 64px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: rgba(255,255,255,0.75);
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .tab:hover {
+            color: var(--brand-cloud-blue);
+            background: rgba(255,255,255,0.04);
+        }
+        .tab:focus-visible {
+            outline: 2px solid var(--brand-cloud-blue);
+            outline-offset: -2px;
+        }
+        .tab.active {
+            color: var(--brand-cloud-blue);
+            font-weight: 600;
+            border-bottom-color: var(--op-accent);
+        }
+
+        /* ── Tab badge ────────────────────────────────────────── */
+        .tab-badge {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            border: 2px solid var(--brand-deep-blue);
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.4rem;
+            border-radius: 980px;
+            min-width: 1.25rem;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* ── Operator user profile ────────────────────────────── */
+        .op-user-profile {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            min-height: 44px;
+        }
+        .op-user-profile:hover { background: rgba(255,255,255,0.08); }
+        .op-user-profile:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+
+        .op-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 600;
+            font-size: 0.813rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 260px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+        .op-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .op-dropdown-header {
+            padding: 1rem;
+            background: var(--surface-operator);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .op-dropdown-avatar-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown-email {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .op-dropdown-menu { padding: 0.5rem; }
+
+        .op-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 100%;
+            background: none;
+            border: none;
+            font-family: var(--font-body);
+            min-height: 44px;
+        }
+        .op-dropdown-item:hover {
+            background: var(--surface-operator);
+            color: var(--brand-deep-blue);
+        }
+        .op-dropdown-item:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .op-dropdown-item svg { fill: currentColor; flex-shrink: 0; }
+
+        /* ── Hamburger ────────────────────────────────────────── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            margin-left: auto;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.08); }
+        .hamburger:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--brand-white);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ── Mobile Menu ──────────────────────────────────────── */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10010;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--brand-white);
+            z-index: 10011;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-brand {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.938rem;
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-menu-close svg { fill: currentColor; }
+
+        .mobile-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .mobile-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            font-size: 0.938rem;
+            font-family: var(--font-body);
+            border-radius: 0.5rem;
+            text-align: left;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: background 0.15s;
+            min-height: 44px;
+        }
+        .mobile-tab:hover { background: var(--surface-operator); }
+        .mobile-tab:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-tab.active {
+            background: var(--surface-operator-strong);
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+            border-left: 3px solid var(--op-accent);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding-left: calc(1rem - 3px);
+        }
+
+        .mobile-nav-user {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .mobile-nav-email {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        .mobile-logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+        }
+        .mobile-logout-btn:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .mobile-logout-btn:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-logout-btn svg { fill: currentColor; }
+
+        /* ── Container ────────────────────────────────────────── */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2.75rem 4rem;
+        }
+
+        /* ── Page Header ──────────────────────────────────────── */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        /* ── Reserve Overview Cards ───────────────────────────── */
+        .reserve-overview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .reserve-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+        .reserve-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--brand-deep-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+        .reserve-card:hover {
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 12px 32px rgba(23, 61, 71, 0.15);
+            transform: translateY(-4px);
+        }
+        .reserve-card:hover::before { transform: scaleX(1); }
+
+        .reserve-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .reserve-value {
+            font-family: var(--font-display);
+            font-size: var(--font-stat-size);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        .reserve-value.positive { color: var(--fin-up); }
+
+        .ratio-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.875rem;
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            border-radius: 980px;
+            font-size: 0.8125rem;
+            font-weight: 700;
+        }
+
+        .ratio-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--fin-up);
+            flex-shrink: 0;
+        }
+
+        /* ── Section Cards ────────────────────────────────────── */
+        .section {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        /* ── Reserve Table ────────────────────────────────────── */
+        .reserve-table-wrapper {
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .reserve-table-wrapper::-webkit-scrollbar { display: none; }
+
+        .reserve-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reserve-table th {
+            text-align: left;
+            padding: 0.875rem 1rem;
+            background: var(--surface-operator);
+            border-bottom: 2px solid var(--border-subtle);
+            font-weight: 600;
+            font-size: 0.813rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .reserve-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .reserve-table tr:last-child td { border-bottom: none; }
+
+        .reserve-table tbody tr:hover {
+            background: color-mix(in srgb, var(--brand-purple) 6%, var(--brand-white));
+        }
+
+        .reserve-table tfoot tr td {
+            font-weight: 700;
+            background: var(--surface-operator);
+            border-top: 2px solid var(--border-subtle);
+            border-bottom: none;
+        }
+
+        /* ── Audit List ───────────────────────────────────────── */
+        .audit-list-wrap {
+            overflow-x: auto;
+            border-radius: 0.75rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .audit-list-wrap::-webkit-scrollbar { display: none; }
+
+        .audit-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        .audit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .audit-item:hover {
+            background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white));
+            border-color: var(--border-subtle);
+        }
+
+        .audit-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .audit-date {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-primary);
+        }
+
+        /* ── Badges ───────────────────────────────────────────── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+        }
+
+        .badge svg { fill: currentColor; flex-shrink: 0; }
+
+        /* ── View Button ──────────────────────────────────────── */
+        .btn-view {
+            padding: 0.625rem 1.25rem;
+            background: var(--brand-white);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-view:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .btn-view:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        /* ── sr-only ──────────────────────────────────────────── */
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 960px) {
+            #operatorProfile,
+            .tabs { display: none !important; }
+            .hamburger { display: flex; }
+            .nav { padding: 0 1rem; }
+            .page-title { font-size: 2rem; }
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .reserve-overview { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem 1.5rem 3rem; }
+            .reserve-value { font-size: var(--font-stat-size-compact); }
+        }
+
+        @media (max-width: 480px) {
+            .reserve-overview { grid-template-columns: 1fr; }
+            .page-title { font-size: 1.75rem; }
+            .container { padding: 1.25rem 1rem 3rem; }
+            .reserve-card { padding: 1.5rem; }
+            .section { padding: 1.5rem; }
+            .audit-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="nav" role="navigation" aria-label="Operator navigation">
+            <a href="operator-dashboard.html" class="nav-brand" aria-label="UNERA Operator Home">
+                <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <span class="op-pill" aria-label="Operator portal">OPERATOR</span>
+            </a>
+
+            <div class="tabs" role="tablist" aria-label="Operator sections">
+                <a href="operator-dashboard.html" class="tab" role="tab" aria-selected="false">Dashboard</a>
+                <a href="operator-issuance.html" class="tab" role="tab" aria-selected="false">Stablecoin Issuance</a>
+                <a href="operator-hc-management.html" class="tab" role="tab" aria-selected="false" aria-label="HC Management, 2 pending items">
+                    HC Management
+                    <span class="tab-badge" aria-hidden="true">2</span>
+                </a>
+                <span class="tab active" role="tab" aria-current="page" aria-selected="true">Proof of Reserve</span>
+            </div>
+
+            <!-- Operator profile dropdown -->
+            <div class="op-user-profile"
+                 onclick="toggleOperatorDropdown()"
+                 id="operatorProfile"
+                 role="button"
+                 aria-expanded="false"
+                 aria-haspopup="true"
+                 aria-label="Operator profile menu"
+                 tabindex="0">
+                <div class="op-avatar" id="operatorAvatar" aria-hidden="true">OP</div>
+                <div class="op-dropdown" id="operatorDropdown" role="menu" aria-label="Operator account menu" onclick="event.stopPropagation()">
+                    <div class="op-dropdown-header">
+                        <div class="op-dropdown-avatar-lg" id="operatorDropdownAvatar" aria-hidden="true">OP</div>
+                        <div class="op-dropdown-email" id="operatorEmail"></div>
+                    </div>
+                    <div class="op-dropdown-menu">
+                        <button class="op-dropdown-item" role="menuitem" onclick="logout()">
+                            <!-- logout FILL=0 — Material Symbols Outlined -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                            </svg>
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hamburger (mobile) -->
+            <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-modal="true" aria-label="Operator navigation menu">
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-brand">Operator Menu</span>
+            <button class="mobile-menu-close" aria-label="Close navigation menu">
+                <!-- close FILL=1 — Material Symbols Outlined -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                </svg>
+            </button>
+        </div>
+        <nav class="mobile-nav-tabs" aria-label="Operator sections">
+            <a href="operator-dashboard.html" class="mobile-tab">Dashboard</a>
+            <a href="operator-issuance.html" class="mobile-tab">Stablecoin Issuance</a>
+            <a href="operator-hc-management.html" class="mobile-tab" aria-label="HC Management, 2 pending items">
+                HC Management
+                <span class="tab-badge" aria-hidden="true">2</span>
+            </a>
+            <span class="mobile-tab active" aria-current="page">Proof of Reserve</span>
+        </nav>
+        <div class="mobile-nav-user">
+            <div class="mobile-nav-email" id="mobileOperatorEmail"></div>
+            <button class="mobile-logout-btn" onclick="logout()">
+                <!-- logout FILL=0 — Material Symbols Outlined -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                </svg>
+                Log Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container" role="main">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Proof of Reserve</h1>
+                <p class="page-subtitle">Real-time reserve backing and audit information</p>
+            </div>
+        </div>
+
+        <!-- Reserve Overview -->
+        <div class="reserve-overview" role="region" aria-label="Reserve overview">
+            <div class="reserve-card">
+                <div class="reserve-label">Total Reserve</div>
+                <div class="reserve-value">$2,994,250</div>
+            </div>
+
+            <div class="reserve-card">
+                <div class="reserve-label">Total Tokens Issued</div>
+                <div class="reserve-value">$2,845,290</div>
+            </div>
+
+            <div class="reserve-card">
+                <div class="reserve-label">Backing Ratio</div>
+                <div class="reserve-value positive">105.2%</div>
+                <div class="ratio-indicator" role="status" aria-label="Backing ratio status: Above Minimum">
+                    <span class="ratio-dot" aria-hidden="true"></span>
+                    Above Minimum
+                </div>
+            </div>
+        </div>
+
+        <!-- Reserve Breakdown -->
+        <section class="section" aria-labelledby="breakdown-title">
+            <h2 id="breakdown-title" class="section-title">Reserve Asset Breakdown</h2>
+            <div class="reserve-table-wrapper">
+                <table class="reserve-table" aria-describedby="breakdown-caption">
+                    <caption id="breakdown-caption" class="sr-only">Reserve asset breakdown showing asset type, CAD amount, and percentage allocation</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Asset Type</th>
+                            <th scope="col">Amount (CAD)</th>
+                            <th scope="col">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 500;">Bank Deposits</td>
+                            <td style="font-weight: 600; font-variant-numeric: tabular-nums;">$1,797,150</td>
+                            <td>60%</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 500;">Stablecoins (USDC)</td>
+                            <td style="font-weight: 600; font-variant-numeric: tabular-nums;">$898,575</td>
+                            <td>30%</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 500;">Treasury Bonds</td>
+                            <td style="font-weight: 600; font-variant-numeric: tabular-nums;">$239,620</td>
+                            <td>8%</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 500;">Cash Equivalent</td>
+                            <td style="font-weight: 600; font-variant-numeric: tabular-nums;">$58,905</td>
+                            <td>2%</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Total</td>
+                            <td style="font-variant-numeric: tabular-nums;">$2,994,250</td>
+                            <td>100%</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <!-- Audit Records -->
+        <section class="section" aria-labelledby="audit-title">
+            <h2 id="audit-title" class="section-title">Audit Records</h2>
+            <div class="audit-list-wrap">
+                <ul class="audit-list">
+                    <li class="audit-item">
+                        <div class="audit-info">
+                            <span class="audit-date">2026-02-01</span>
+                            <span class="badge badge-success" aria-label="Status: Verified">
+                                <!-- check_circle FILL=1 — Material Symbols Outlined -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                                </svg>
+                                Verified
+                            </span>
+                        </div>
+                        <button class="btn-view">View Report</button>
+                    </li>
+                    <li class="audit-item">
+                        <div class="audit-info">
+                            <span class="audit-date">2026-01-01</span>
+                            <span class="badge badge-success" aria-label="Status: Verified">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                                </svg>
+                                Verified
+                            </span>
+                        </div>
+                        <button class="btn-view">View Report</button>
+                    </li>
+                    <li class="audit-item">
+                        <div class="audit-info">
+                            <span class="audit-date">2025-12-01</span>
+                            <span class="badge badge-success" aria-label="Status: Verified">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                                </svg>
+                                Verified
+                            </span>
+                        </div>
+                        <button class="btn-view">View Report</button>
+                    </li>
+                    <li class="audit-item">
+                        <div class="audit-info">
+                            <span class="audit-date">2025-11-01</span>
+                            <span class="badge badge-success" aria-label="Status: Verified">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                                </svg>
+                                Verified
+                            </span>
+                        </div>
+                        <button class="btn-view">View Report</button>
+                    </li>
+                    <li class="audit-item">
+                        <div class="audit-info">
+                            <span class="audit-date">2025-10-01</span>
+                            <span class="badge badge-success" aria-label="Status: Verified">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                                </svg>
+                                Verified
+                            </span>
+                        </div>
+                        <button class="btn-view">View Report</button>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Auth guard — dev bypass via ?dev or ?test
+        (function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var devMode = urlParams.has('dev') || urlParams.has('test');
+            if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
+                window.location.href = 'operator-login.html';
+            }
+            var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
+            var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
+            var avatarEl = document.getElementById('operatorAvatar');
+            var dropdownAvatarEl = document.getElementById('operatorDropdownAvatar');
+            var emailEl = document.getElementById('operatorEmail');
+            var mobileEmailEl = document.getElementById('mobileOperatorEmail');
+            if (avatarEl) avatarEl.textContent = initial;
+            if (dropdownAvatarEl) dropdownAvatarEl.textContent = initial;
+            if (emailEl) emailEl.textContent = operatorEmailVal;
+            if (mobileEmailEl) mobileEmailEl.textContent = operatorEmailVal;
+        })();
+
+        function toggleOperatorDropdown() {
+            var dropdown = document.getElementById('operatorDropdown');
+            var btn = document.getElementById('operatorProfile');
+            if (dropdown && btn) {
+                var isOpen = dropdown.classList.toggle('show');
+                btn.setAttribute('aria-expanded', isOpen);
+            }
+        }
+        document.addEventListener('click', function(e) {
+            var profile = document.getElementById('operatorProfile');
+            var dropdown = document.getElementById('operatorDropdown');
+            if (profile && dropdown && !profile.contains(e.target)) {
+                dropdown.classList.remove('show');
+                profile.setAttribute('aria-expanded', 'false');
+            }
+        });
+        document.getElementById('operatorProfile')?.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleOperatorDropdown(); }
+        });
+
+        function logout() {
+            localStorage.removeItem('operatorAuth');
+            localStorage.removeItem('operatorEmail');
+            window.location.href = 'operator-login.html';
+        }
+
+        // Mobile menu
+        (function() {
+            var hamburger = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var mobileOverlay = document.querySelector('.mobile-menu-overlay');
+            var mobileClose = document.querySelector('.mobile-menu-close');
+            function openMenu() {
+                hamburger.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                mobileOverlay.removeAttribute('aria-hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.add('active');
+                mobileOverlay.setAttribute('aria-hidden', 'true');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            if (hamburger) hamburger.addEventListener('click', function() {
+                mobileMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+            if (mobileOverlay) mobileOverlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+            });
+        })();
+    </script>
+</body>
+</html>
