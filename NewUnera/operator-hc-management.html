@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HC Management - UNERA Operator</title>
+
+    <!-- TestFoundersGrotesk — UNERA V2 brand font -->
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+    </style>
+
+    <!-- CropperJS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* ── UNERA V2 Brand Colors ─────────────────────────── */
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+
+            /* ── Semantic aliases ─────────────────────────────── */
+            --primary-green:     #173d47;
+            --primary-blue:      #90c2b8;
+            --accent-pink:       #ffffab;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+            --neutral-50:        #ffffff;
+
+            /* ── Legacy gradient names: solid fills only on product HTML ── */
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-dusk:     var(--brand-deep-blue);
+
+            /* ── Typography ───────────────────────────────────── */
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            /* ── Financial semantic tokens ────────────────────── */
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --fin-neutral:       #6b9090;
+            --fin-neutral-bg:    rgba(107, 144, 144, 0.10);
+
+            /* ── Semantic status aliases ──────────────────────── */
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+            --error-bg:          rgba(171, 87, 112, 0.10);
+
+            /* ── Accessibility ────────────────────────────────── */
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+
+            /* ── Surface tints ────────────────────────────────── */
+            --surface-impact:    color-mix(in srgb, var(--brand-cloud-blue) 22%, var(--brand-white));
+            --surface-action:    color-mix(in srgb, var(--brand-cloud-blue) 14%, var(--brand-white));
+            --surface-warm:      color-mix(in srgb, var(--brand-earth) 12%, var(--brand-white));
+            --surface-sky:       color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-deep:      color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white));
+            --surface-error-soft: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
+            --surface-warning-soft: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-white));
+
+            /* ── KPI stat sizes ───────────────────────────────── */
+            --font-stat-size:         2.5rem;
+            --font-stat-size-compact: 2rem;
+
+            /* ── Operator-only accent layer (purple-leaning) ───── */
+            --op-nav:              var(--brand-black);
+            --op-accent:           var(--brand-purple);
+            --op-accent-ink:       var(--brand-white);
+            --surface-operator:    color-mix(in srgb, var(--brand-purple) 10%, var(--brand-white));
+            --surface-operator-strong: color-mix(in srgb, var(--brand-purple) 18%, var(--brand-white));
+            --op-icon-well:        color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+        }
+
+        /* ── Reduced Motion ───────────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ── Base ─────────────────────────────────────────────── */
+        body {
+            font-family: var(--font-body);
+            background: var(--surface-operator);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* ── Skip Link ────────────────────────────────────────── */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 3px solid var(--brand-cloud-blue);
+        }
+
+        /* ── Navigation ───────────────────────────────────────── */
+        .nav {
+            background: var(--op-nav);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .nav-brand:focus {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-img {
+            height: 24px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+
+        .op-pill {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            font-family: var(--font-body);
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.125rem 0.5rem;
+            border-radius: 980px;
+            line-height: 1.4;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        /* ── Tab bar ──────────────────────────────────────────── */
+        .tabs {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            padding: 0 1.5rem;
+            height: 64px;
+        }
+
+        .tab {
+            padding: 0 1.25rem;
+            height: 64px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: rgba(255,255,255,0.75);
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .tab:hover {
+            color: var(--brand-cloud-blue);
+            background: rgba(255,255,255,0.04);
+        }
+        .tab:focus-visible {
+            outline: 2px solid var(--brand-cloud-blue);
+            outline-offset: -2px;
+        }
+        .tab.active {
+            color: var(--brand-cloud-blue);
+            font-weight: 600;
+            border-bottom-color: var(--op-accent);
+        }
+
+        /* ── Tab badge ────────────────────────────────────────── */
+        .tab-badge {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            border: 2px solid var(--brand-deep-blue);
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.4rem;
+            border-radius: 980px;
+            min-width: 1.25rem;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* ── Operator user profile ────────────────────────────── */
+        .op-user-profile {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            min-height: 44px;
+        }
+        .op-user-profile:hover { background: rgba(255,255,255,0.08); }
+        .op-user-profile:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+
+        .op-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 600;
+            font-size: 0.813rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 260px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+        .op-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .op-dropdown-header {
+            padding: 1rem;
+            background: var(--surface-operator);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .op-dropdown-avatar-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown-email {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .op-dropdown-menu { padding: 0.5rem; }
+
+        .op-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 100%;
+            background: none;
+            border: none;
+            font-family: var(--font-body);
+            min-height: 44px;
+        }
+        .op-dropdown-item:hover {
+            background: var(--surface-operator);
+            color: var(--brand-deep-blue);
+        }
+        .op-dropdown-item:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .op-dropdown-item svg { fill: currentColor; flex-shrink: 0; }
+
+        /* ── Hamburger ────────────────────────────────────────── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            margin-left: auto;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.08); }
+        .hamburger:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--brand-white);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ── Mobile Menu Overlay ──────────────────────────────── */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10010;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--brand-white);
+            z-index: 10011;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-brand {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.938rem;
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-menu-close svg { fill: currentColor; }
+
+        .mobile-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .mobile-tab {
+            display: flex;
+            padding: 1rem;
+            font-size: 0.938rem;
+            font-family: var(--font-body);
+            border-radius: 0.5rem;
+            text-align: left;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: background 0.15s;
+            min-height: 44px;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .mobile-tab:hover { background: var(--surface-operator); }
+        .mobile-tab:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-tab.active {
+            background: var(--surface-operator-strong);
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+            border-left: 3px solid var(--op-accent);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding-left: calc(1rem - 3px);
+        }
+
+        .mobile-nav-user {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .mobile-nav-email {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        .mobile-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+            justify-content: center;
+        }
+        .mobile-logout-btn:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .mobile-logout-btn:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-logout-btn svg { fill: currentColor; }
+
+        /* ── Main Container ───────────────────────────────────── */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2.75rem 4rem;
+        }
+
+        /* ── Page Header ──────────────────────────────────────── */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        /* ── Buttons ──────────────────────────────────────────── */
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background: var(--neutral-800);
+            box-shadow: 0 4px 14px rgba(23, 61, 71, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-primary:focus-visible {
+            outline: 3px solid rgba(23, 61, 71, 0.3);
+            outline-offset: 2px;
+        }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-secondary:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .btn-secondary:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .btn-edit {
+            padding: 0.5rem 1rem;
+            background: var(--brand-white);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        .btn-edit:hover {
+            border-color: var(--op-accent);
+            background: var(--surface-operator);
+            color: var(--brand-deep-blue);
+        }
+        .btn-edit:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .btn-edit svg { fill: currentColor; flex-shrink: 0; }
+
+        /* ── HC Section card ──────────────────────────────────── */
+        .hc-section {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .hc-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--brand-deep-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+        .hc-section:hover::before { transform: scaleX(1); }
+        .hc-section:hover {
+            border-color: var(--op-accent);
+            box-shadow: 0 8px 24px rgba(106, 87, 112, 0.12);
+        }
+
+        /* ── HC Table ─────────────────────────────────────────── */
+        .hc-table-wrap {
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .hc-table-wrap::-webkit-scrollbar { display: none; }
+
+        .hc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .hc-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: var(--surface-operator);
+            border-bottom: 1px solid var(--border-subtle);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .hc-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+        .hc-table tr:last-child td { border-bottom: none; }
+        .hc-table tbody tr:hover { background: var(--surface-operator); }
+
+        /* ── Status Badges ────────────────────────────────────── */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .badge-active {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+        }
+        .badge-inactive {
+            background: var(--surface-warning-soft);
+            color: var(--brand-deep-blue);
+        }
+
+        /* ── Toggle switch ────────────────────────────────────── */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--neutral-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .toggle[aria-checked="true"] { background: var(--brand-deep-blue); }
+        .toggle-slider {
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 20px; height: 20px;
+            background: var(--brand-white);
+            border-radius: 50%;
+            transition: left 0.2s;
+        }
+        .toggle[aria-checked="true"] .toggle-slider { left: 26px; }
+        .toggle:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .toggle.toggle-sm {
+            width: 36px;
+            height: 18px;
+        }
+        .toggle.toggle-sm .toggle-slider {
+            width: 14px;
+            height: 14px;
+        }
+        .toggle.toggle-sm[aria-checked="true"] .toggle-slider { left: 20px; }
+
+        /* ── Skeleton ─────────────────────────────────────────── */
+        .hc-skeleton { padding: 0.5rem 0; }
+        .skeleton-row {
+            height: 52px;
+            background: var(--neutral-200);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            animation: skeleton-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes skeleton-pulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.45; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton-row { animation: none; opacity: 1; }
+        }
+
+        /* ── Empty state ──────────────────────────────────────── */
+        .hc-empty {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .hc-empty-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: var(--op-icon-well);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-deep-blue);
+        }
+        .hc-empty-icon svg { fill: currentColor; }
+        .hc-empty-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .hc-empty-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ── HC Drawer (#hcModal) ─────────────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            z-index: 10010;
+        }
+        .modal-overlay.active { display: block; }
+
+        #hcModal.modal-overlay {
+            display: none;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+        #hcModal.modal-overlay.active { display: flex; }
+
+        #hcModal .drawer {
+            display: flex;
+            flex-direction: column;
+            background: var(--brand-white);
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            overflow-y: auto;
+            border-radius: 0;
+            box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+            animation: slideInRight 0.3s ease-out;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to   { transform: translateX(0); }
+        }
+
+        #hcModal .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+        }
+        #hcModal .drawer-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        #hcModal .drawer-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        #hcModal .drawer-close:hover {
+            background: var(--surface-operator);
+            color: var(--text-primary);
+        }
+        #hcModal .drawer-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        #hcModal .drawer-close svg { fill: currentColor; }
+
+        #hcModal .drawer form {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        #hcModal .drawer-body {
+            padding: 2rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+        #hcModal .drawer-footer {
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Form ─────────────────────────────────────────────── */
+        .form-group { margin-bottom: 1.5rem; }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.625rem;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--brand-white);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.1);
+        }
+        .form-input.error, .form-textarea.error {
+            border-color: var(--brand-red);
+        }
+        .form-error {
+            display: block;
+            font-size: 0.813rem;
+            color: var(--brand-red);
+            margin-top: 0.375rem;
+        }
+
+        /* ── Toggle group (drawer) ────────────────────────────── */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .toggle-label {
+            font-size: 0.938rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* ── Upload Zone ──────────────────────────────────────── */
+        .upload-zone {
+            border: 2px dashed var(--border-subtle);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .upload-zone:hover {
+            border-color: var(--brand-deep-blue);
+            background: rgba(23, 61, 71, 0.02);
+        }
+        .upload-zone:focus-visible {
+            outline: 3px solid rgba(23, 61, 71, 0.2);
+            outline-offset: 2px;
+            border-color: var(--brand-deep-blue);
+        }
+        .upload-zone.drag-over {
+            border-color: var(--brand-deep-blue);
+            border-style: solid;
+            background: rgba(23, 61, 71, 0.03);
+        }
+
+        .upload-zone-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            fill: currentColor;
+        }
+        .upload-text {
+            font-weight: 500;
+            color: var(--text-primary);
+            display: block;
+        }
+        .upload-hint {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .upload-preview { width: 100%; }
+        .upload-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+        }
+        .upload-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 0.75rem;
+        }
+        .btn-replace, .btn-remove {
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            cursor: pointer;
+            min-height: 46px;
+            transition: background 0.2s;
+            color: var(--text-primary);
+        }
+        .btn-replace:hover, .btn-remove:hover { background: var(--neutral-300); }
+        .btn-remove { color: var(--brand-red); }
+        .btn-replace:focus-visible, .btn-remove:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .upload-progress { width: 100%; }
+        .progress-bar {
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--brand-deep-blue);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        #upload-filename {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-error {
+            color: var(--brand-red);
+            font-size: 0.875rem;
+        }
+        .btn-retry {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--neutral-200);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-primary);
+        }
+        .btn-retry:hover { background: var(--neutral-300); }
+        .btn-retry:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        /* ── Confirm Dialog ───────────────────────────────────── */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 10020;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirm-overlay.active { display: flex; }
+
+        .confirm-dialog {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+        }
+        .confirm-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        .confirm-message {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        .btn-confirm {
+            padding: 0.75rem 1.5rem;
+            background: var(--brand-red);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            min-height: 46px;
+            transition: all 0.2s;
+        }
+        .btn-confirm:hover { filter: brightness(0.9); }
+        .btn-confirm:focus-visible {
+            outline: 2px solid var(--brand-red);
+            outline-offset: 2px;
+        }
+
+        /* ── Cropper Modal ────────────────────────────────────── */
+        #cropperModal.modal-overlay {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10020;
+        }
+        #cropperModal.modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            max-width: 560px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: var(--surface-operator); color: var(--text-primary); }
+        .modal-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .modal-body { padding: 1.5rem; flex: 1; }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Toast ────────────────────────────────────────────── */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10030;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            background: var(--brand-white);
+            border-left: 4px solid var(--brand-deep-blue);
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            min-width: 280px;
+            animation: toastIn 0.25s ease-out;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .toast.toast-error { border-left-color: var(--brand-red); }
+        .toast-text { font-size: 0.875rem; color: var(--text-primary); flex: 1; }
+        .toast-dismiss {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            padding: 0.25rem;
+            line-height: 1;
+            min-width: 28px;
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        .toast-dismiss:hover { color: var(--text-primary); background: var(--surface-operator); }
+        .toast-dismiss:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        /* ── sr-only ──────────────────────────────────────────── */
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 960px) {
+            #operatorProfile,
+            .tabs {
+                display: none !important;
+            }
+            .hamburger { display: flex; }
+            .nav { padding: 0 1rem; }
+            .page-title { font-size: 2rem; }
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            /* Responsive table — stacked card layout */
+            .hc-table, .hc-table thead, .hc-table tbody,
+            .hc-table tr, .hc-table th, .hc-table td {
+                display: block;
+            }
+            .hc-table thead, .hc-table thead tr {
+                position: absolute;
+                width: 1px; height: 1px;
+                padding: 0; margin: -1px;
+                overflow: hidden;
+                clip: rect(0,0,0,0);
+            }
+            .hc-table tbody tr {
+                background: var(--brand-white);
+                border: 1px solid var(--border-subtle);
+                border-radius: 0.75rem;
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+                box-shadow: var(--shadow-card);
+            }
+            .hc-table tbody tr:hover { background: var(--surface-operator); }
+            .hc-table td {
+                border: none;
+                padding: 0.5rem 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .hc-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                flex-shrink: 0;
+            }
+            .hc-table td[data-label="Action"]::before { display: none; }
+            .hc-table td:last-child {
+                flex-direction: row-reverse;
+                justify-content: flex-start;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--border-subtle);
+                margin-top: 0.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem 1.5rem 3rem; }
+            #hcModal .drawer { max-width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 1.25rem 1rem 3rem; }
+            .page-title { font-size: 1.75rem; }
+            .hc-section { padding: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="nav" role="navigation" aria-label="Operator navigation">
+            <a href="operator-dashboard.html" class="nav-brand" aria-label="UNERA Operator Home">
+                <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <span class="op-pill" aria-label="Operator portal">OPERATOR</span>
+            </a>
+
+            <div class="tabs" role="tablist" aria-label="Operator sections">
+                <a href="operator-dashboard.html" class="tab" role="tab" aria-selected="false">Dashboard</a>
+                <a href="operator-issuance.html" class="tab" role="tab" aria-selected="false">Stablecoin Issuance</a>
+                <span class="tab active" role="tab" aria-current="page" aria-selected="true" aria-label="HC Management, 2 pending items">
+                    HC Management
+                    <span class="tab-badge" id="tabHcBadge" aria-hidden="true">2</span>
+                </span>
+                <a href="operator-por.html" class="tab" role="tab" aria-selected="false">Proof of Reserve</a>
+            </div>
+
+            <!-- Operator profile dropdown -->
+            <div class="op-user-profile"
+                 onclick="toggleOperatorDropdown()"
+                 id="operatorProfile"
+                 role="button"
+                 aria-expanded="false"
+                 aria-haspopup="true"
+                 aria-label="Operator profile menu"
+                 tabindex="0">
+                <div class="op-avatar" id="operatorAvatar" aria-hidden="true">OP</div>
+                <div class="op-dropdown" id="operatorDropdown" role="menu" aria-label="Operator account menu" onclick="event.stopPropagation()">
+                    <div class="op-dropdown-header">
+                        <div class="op-dropdown-avatar-lg" id="operatorDropdownAvatar" aria-hidden="true">OP</div>
+                        <div class="op-dropdown-email" id="operatorEmail"></div>
+                    </div>
+                    <div class="op-dropdown-menu">
+                        <button class="op-dropdown-item" role="menuitem" onclick="logout()">
+                            <!-- logout FILL=0 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                            </svg>
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hamburger (mobile) -->
+            <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-modal="true" aria-label="Operator navigation menu">
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-brand">Operator Menu</span>
+            <button class="mobile-menu-close" aria-label="Close navigation menu">
+                <!-- close FILL=1 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                </svg>
+            </button>
+        </div>
+        <nav class="mobile-nav-tabs" aria-label="Operator sections">
+            <a href="operator-dashboard.html" class="mobile-tab">Dashboard</a>
+            <a href="operator-issuance.html" class="mobile-tab">Stablecoin Issuance</a>
+            <span class="mobile-tab active" aria-current="page" aria-label="HC Management, current page">
+                HC Management
+                <span class="tab-badge" id="mobileHcBadge" aria-hidden="true">2</span>
+            </span>
+            <a href="operator-por.html" class="mobile-tab">Proof of Reserve</a>
+        </nav>
+        <div class="mobile-nav-user">
+            <div class="mobile-nav-email" id="mobileOperatorEmail"></div>
+            <button class="mobile-logout-btn" onclick="logout()" aria-label="Log out of operator portal">
+                <!-- logout FILL=0 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                </svg>
+                Log Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container" role="main">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Humanity Centre Management</h1>
+                <p class="page-subtitle">Create and manage Humanity Centre profiles visible in the public directory.</p>
+            </div>
+            <button class="btn-primary" onclick="openAddModal()" id="addHcBtn" aria-label="Add a new Humanity Centre">
+                <!-- add_circle FILL=0 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                </svg>
+                Add New HC
+            </button>
+        </div>
+
+        <!-- HC Section -->
+        <section class="hc-section" aria-labelledby="hc-section-heading">
+            <h2 id="hc-section-heading" class="sr-only">Humanity Centres</h2>
+
+            <!-- Skeleton loader -->
+            <div class="hc-skeleton" id="hcSkeleton" aria-hidden="true">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+            </div>
+
+            <!-- Empty state -->
+            <div class="hc-empty" id="hcEmpty" style="display: none;" role="status">
+                <div class="hc-empty-icon" aria-hidden="true">
+                    <!-- groups FILL=0 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor">
+                        <path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 48.5 46.5T720-305v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780Zm-455-80h311q-10-20-55.5-35T480-370q-55 0-100.5 15T325-320ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Z"/>
+                    </svg>
+                </div>
+                <p class="hc-empty-text">No Humanity Centres yet</p>
+                <p class="hc-empty-desc">Add your first Humanity Centre to get started.</p>
+                <button class="btn-primary" onclick="openAddModal()">Add your first Humanity Centre</button>
+            </div>
+
+            <!-- HC Table -->
+            <div class="hc-table-wrap" id="hcTableWrap" style="display: none;">
+                <table class="hc-table" id="hcTable" aria-describedby="hc-table-caption">
+                    <caption id="hc-table-caption" class="sr-only">List of Humanity Centres with name, location, status, and edit action</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hc-list">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         HC Drawer (#hcModal) — right side-sheet
+    ════════════════════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="hcModal" aria-hidden="true">
+        <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+            <div class="drawer-header">
+                <h2 class="drawer-title" id="drawer-title">Add Humanity Centre</h2>
+                <button class="drawer-close" onclick="closeModal()" aria-label="Close drawer">
+                    <!-- close FILL=1 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                        <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form id="hcForm" onsubmit="handleSave(event)" novalidate>
+                <div class="drawer-body">
+
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label class="form-label" for="hc-name">Name <span aria-hidden="true">*</span></label>
+                        <input type="text" id="hc-name" class="form-input"
+                               placeholder="Nairobi Hope Centre"
+                               required
+                               aria-required="true"
+                               aria-describedby="hc-name-error">
+                        <span id="hc-name-error" class="form-error" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label class="form-label" for="hc-location">Location <span aria-hidden="true">*</span></label>
+                        <input type="text" id="hc-location" class="form-input"
+                               placeholder="Nairobi, Kenya"
+                               required
+                               aria-required="true"
+                               aria-describedby="hc-location-error">
+                        <span id="hc-location-error" class="form-error" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label class="form-label" for="hc-description">Description <span aria-hidden="true">*</span></label>
+                        <textarea id="hc-description" class="form-textarea"
+                                  placeholder="Describe the centre's mission and programs..."
+                                  required
+                                  aria-required="true"
+                                  aria-describedby="hc-description-error"></textarea>
+                        <span id="hc-description-error" class="form-error" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Image upload -->
+                    <div class="form-group" id="image-upload-group">
+                        <label class="form-label" id="upload-label">Centre Image</label>
+                        <div id="image-upload-zone" class="upload-zone"
+                             role="button"
+                             tabindex="0"
+                             aria-labelledby="upload-label"
+                             aria-describedby="upload-hint">
+                            <input type="file" id="hc-image-file" accept="image/jpeg,image/png,image/webp" hidden aria-hidden="true">
+                            <input type="hidden" id="hc-image" name="hc-image">
+
+                            <!-- Default state -->
+                            <div class="upload-zone-content" id="upload-zone-content">
+                                <!-- cloud_upload FILL=0 -->
+                                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q17-72 72-117t132-45q90 0 153.5 59.5T634-546q67 7 116.5 57.5T800-377q0 91-64.5 154T580-160H260Zm0-80h320q57 0 98.5-39.5T720-377q0-56-40.5-95.5T584-512l-56-4-18-54q-17-53-60-86.5T354-690q-57 0-100.5 35.5T195-558l-14 56-58 8q-48 8-78 44t-30 72q0 56 39.5 94T260-240Zm220-240Z"/>
+                                </svg>
+                                <span class="upload-text">Drag &amp; drop or click to browse</span>
+                                <span class="upload-hint" id="upload-hint">JPG, PNG, WebP · Max 5MB</span>
+                            </div>
+
+                            <!-- Preview state -->
+                            <div class="upload-preview" id="upload-preview" style="display: none;">
+                                <img id="upload-preview-img" src="" alt="Centre image preview">
+                                <div class="upload-actions">
+                                    <button type="button" class="btn-replace" onclick="replaceImage(event)">Replace</button>
+                                    <button type="button" class="btn-remove" onclick="removeImage(event)">Remove</button>
+                                </div>
+                            </div>
+
+                            <!-- Progress state -->
+                            <div class="upload-progress" id="upload-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
+                                <span id="upload-filename"></span>
+                            </div>
+
+                            <!-- Error state -->
+                            <div class="upload-error" id="upload-error" style="display: none;" role="alert">
+                                <span id="upload-error-text"></span>
+                                <button type="button" class="btn-retry" onclick="retryUpload(event)">Retry</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status toggle -->
+                    <div class="form-group">
+                        <label class="form-label" id="status-toggle-label">Status</label>
+                        <div class="toggle-group">
+                            <button type="button"
+                                    class="toggle"
+                                    id="status-toggle"
+                                    role="switch"
+                                    aria-checked="true"
+                                    aria-labelledby="status-toggle-label"
+                                    aria-describedby="status-label"
+                                    onclick="toggleStatus()"
+                                    onkeydown="toggleStatusKeydown(event)">
+                                <span class="toggle-slider"></span>
+                            </button>
+                            <span id="status-label" class="toggle-label">Active</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="drawer-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary" style="flex: 1;">Save HC</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         Deactivation Confirm Dialog
+    ════════════════════════════════════════════════════════════ -->
+    <div class="confirm-overlay" id="confirmOverlay"
+         role="alertdialog"
+         aria-modal="true"
+         aria-labelledby="confirm-title"
+         aria-describedby="confirm-message"
+         aria-hidden="true">
+        <div class="confirm-dialog">
+            <h3 class="confirm-title" id="confirm-title">Deactivate Humanity Centre?</h3>
+            <p class="confirm-message" id="confirm-message">This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.</p>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" style="flex: none; padding: 0.75rem 1.25rem;" onclick="cancelDeactivate()">Cancel</button>
+                <button type="button" class="btn-confirm" onclick="confirmDeactivate()">Deactivate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         Cropper Modal
+    ════════════════════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="cropperModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cropper-title">
+            <div class="modal-header">
+                <h2 class="modal-title" id="cropper-title">Crop Image</h2>
+                <button class="modal-close" onclick="closeCropper()" aria-label="Close crop modal">
+                    <!-- close FILL=1 (text fallback for icon) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                        <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="max-height: 400px; min-height: 300px; overflow: hidden;">
+                    <img id="cropperImage" src="" alt="Image to crop" style="max-width: 100%; display: block;">
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-secondary);">Crop to 16:9 aspect ratio for best display.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeCropper()">Cancel</button>
+                <button type="button" class="btn-primary" style="flex: 1;" onclick="applyCrop()">Apply Crop</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CropperJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+    <script>
+        // ── Auth guard ─────────────────────────────────────────
+        const urlParams = new URLSearchParams(window.location.search);
+        const devMode   = urlParams.has('dev') || urlParams.has('test');
+
+        if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
+            window.location.href = 'operator-login.html';
+        }
+
+        // ── Load operator email + avatar initial ───────────────
+        var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
+        var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
+
+        var avatarEl          = document.getElementById('operatorAvatar');
+        var dropdownAvatarEl  = document.getElementById('operatorDropdownAvatar');
+        var emailEl           = document.getElementById('operatorEmail');
+        var mobileEmailEl     = document.getElementById('mobileOperatorEmail');
+
+        if (avatarEl)         avatarEl.textContent         = initial;
+        if (dropdownAvatarEl) dropdownAvatarEl.textContent  = initial;
+        if (emailEl)          emailEl.textContent           = operatorEmailVal;
+        if (mobileEmailEl)    mobileEmailEl.textContent     = operatorEmailVal;
+
+        // ── Operator dropdown toggle ───────────────────────────
+        function toggleOperatorDropdown() {
+            var dropdown = document.getElementById('operatorDropdown');
+            var btn      = document.getElementById('operatorProfile');
+            if (dropdown && btn) {
+                var isOpen = dropdown.classList.toggle('show');
+                btn.setAttribute('aria-expanded', isOpen);
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            var profile  = document.getElementById('operatorProfile');
+            var dropdown = document.getElementById('operatorDropdown');
+            if (profile && dropdown && !profile.contains(e.target)) {
+                dropdown.classList.remove('show');
+                profile.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.getElementById('operatorProfile').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleOperatorDropdown();
+            }
+        });
+
+        // ── Mobile menu ────────────────────────────────────────
+        (function() {
+            var hamburger  = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var overlay    = document.querySelector('.mobile-menu-overlay');
+            var closeBtn   = document.querySelector('.mobile-menu-close');
+
+            function openMenu() {
+                hamburger.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenu.classList.add('active');
+                overlay.classList.add('active');
+                overlay.removeAttribute('aria-hidden');
+                mobileMenu.removeAttribute('aria-hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+                mobileMenu.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            if (hamburger) hamburger.addEventListener('click', function() {
+                mobileMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+            if (overlay)  overlay.addEventListener('click', closeMenu);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+            });
+        })();
+
+        // ── Logout ─────────────────────────────────────────────
+        function logout() {
+            localStorage.removeItem('operatorAuth');
+            localStorage.removeItem('operatorEmail');
+            window.location.href = 'operator-login.html';
+        }
+
+        // ── Mock HC data (12 rows) ─────────────────────────────
+        var humanityCentres = [
+            { id: 1,  name: 'Nairobi Hope Centre',      location: 'Nairobi, Kenya',        description: 'Community support centre.',           status: 'Active',   image: '' },
+            { id: 2,  name: 'Mumbai Community Centre',   location: 'Mumbai, India',          description: 'Local outreach programs.',             status: 'Active',   image: '' },
+            { id: 3,  name: 'São Paulo Care Centre',     location: 'São Paulo, Brazil',      description: 'Healthcare and education.',            status: 'Active',   image: '' },
+            { id: 4,  name: 'Dhaka Relief Centre',       location: 'Dhaka, Bangladesh',      description: 'Disaster relief and support.',         status: 'Active',   image: '' },
+            { id: 5,  name: 'Lagos Community Hub',       location: 'Lagos, Nigeria',         description: 'Youth and skills training.',           status: 'Active',   image: '' },
+            { id: 6,  name: 'Manila Support Centre',     location: 'Manila, Philippines',    description: 'Family support services.',             status: 'Inactive', image: '' },
+            { id: 7,  name: 'Cairo Aid Centre',          location: 'Cairo, Egypt',           description: 'Emergency aid distribution.',          status: 'Active',   image: '' },
+            { id: 8,  name: 'Port-au-Prince Centre',     location: 'Haiti',                  description: 'Rebuilding and recovery.',             status: 'Active',   image: '' },
+            { id: 9,  name: 'Jakarta Hope Centre',       location: 'Jakarta, Indonesia',     description: 'Education and shelter.',               status: 'Active',   image: '' },
+            { id: 10, name: 'Karachi Community Centre',  location: 'Karachi, Pakistan',      description: 'Community development.',               status: 'Active',   image: '' },
+            { id: 11, name: 'Lima Support Centre',       location: 'Lima, Peru',             description: 'Healthcare access.',                   status: 'Active',   image: '' },
+            { id: 12, name: 'Kampala Care Centre',       location: 'Kampala, Uganda',        description: 'Child and family care.',               status: 'Active',   image: '' }
+        ];
+
+        var currentHC              = null;
+        var lastFocusBeforeModal   = null;
+        var pendingDeactivateHC    = null;
+        var cropperInstance        = null;
+        var pendingCropFile        = null;
+        var MAX_FILE_SIZE          = 5 * 1024 * 1024;
+        var ACCEPTED_TYPES         = ['image/jpeg', 'image/png', 'image/webp'];
+
+        // ── Toast ──────────────────────────────────────────────
+        function showToast(message, isError) {
+            var container = document.getElementById('toastContainer');
+            var toast     = document.createElement('div');
+            toast.className   = 'toast' + (isError ? ' toast-error' : '');
+            toast.setAttribute('role', 'status');
+            toast.innerHTML   =
+                '<span class="toast-text">' + escapeHtml(message) + '</span>' +
+                '<button class="toast-dismiss" aria-label="Dismiss notification">&times;</button>';
+            container.appendChild(toast);
+            var dismiss = function() { toast.remove(); };
+            toast.querySelector('.toast-dismiss').onclick = dismiss;
+            setTimeout(dismiss, 4000);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ── Form validation ────────────────────────────────────
+        function validateField(id) {
+            var input   = document.getElementById(id);
+            var errorEl = document.getElementById(id + '-error');
+            var val     = input.value.trim();
+            var msg     = '';
+            if (id === 'hc-name'        && !val) msg = 'Centre name is required.';
+            if (id === 'hc-location'    && !val) msg = 'Location is required.';
+            if (id === 'hc-description' && !val) msg = 'Description is required.';
+            errorEl.textContent = msg;
+            input.classList.toggle('error', !!msg);
+            return !msg;
+        }
+
+        function validateForm() {
+            var fields = ['hc-name', 'hc-location', 'hc-description'];
+            var valid  = true;
+            for (var i = 0; i < fields.length; i++) {
+                if (!validateField(fields[i])) valid = false;
+            }
+            if (!valid) {
+                var firstError = document.querySelector('.form-input.error, .form-textarea.error');
+                if (firstError) { firstError.focus(); firstError.scrollIntoView({ block: 'center' }); }
+            }
+            return valid;
+        }
+
+        function clearFormErrors() {
+            ['hc-name', 'hc-location', 'hc-description'].forEach(function(id) {
+                document.getElementById(id).classList.remove('error');
+                document.getElementById(id + '-error').textContent = '';
+            });
+        }
+
+        // ── Upload zone ────────────────────────────────────────
+        function resetUploadZone() {
+            document.getElementById('upload-zone-content').style.display = 'flex';
+            document.getElementById('upload-preview').style.display      = 'none';
+            document.getElementById('upload-progress').style.display     = 'none';
+            document.getElementById('upload-error').style.display        = 'none';
+            document.getElementById('image-upload-zone').classList.remove('drag-over');
+            document.getElementById('hc-image').value      = '';
+            document.getElementById('hc-image-file').value = '';
+        }
+
+        function showUploadPreview(dataUrl) {
+            document.getElementById('upload-zone-content').style.display = 'none';
+            document.getElementById('upload-progress').style.display     = 'none';
+            document.getElementById('upload-error').style.display        = 'none';
+            document.getElementById('upload-preview-img').src            = dataUrl;
+            document.getElementById('upload-preview').style.display      = 'block';
+            document.getElementById('hc-image').value                    = dataUrl;
+        }
+
+        function showUploadError(text) {
+            document.getElementById('upload-zone-content').style.display = 'none';
+            document.getElementById('upload-preview').style.display      = 'none';
+            document.getElementById('upload-progress').style.display     = 'none';
+            document.getElementById('upload-error-text').textContent     = text;
+            document.getElementById('upload-error').style.display        = 'block';
+        }
+
+        function processFile(file) {
+            if (ACCEPTED_TYPES.indexOf(file.type) === -1) {
+                showUploadError('Only JPG, PNG, and WebP images are accepted.');
+                return;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                showUploadError('File too large. Maximum size is 5MB.');
+                return;
+            }
+            document.getElementById('upload-zone-content').style.display = 'none';
+            document.getElementById('upload-error').style.display        = 'none';
+            document.getElementById('upload-progress').style.display     = 'block';
+            document.getElementById('upload-filename').textContent       = file.name;
+            document.getElementById('progress-fill').style.width         = '30%';
+            pendingCropFile = file;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('progress-fill').style.width = '100%';
+                setTimeout(function() {
+                    openCropper(e.target.result);
+                    document.getElementById('upload-progress').style.display = 'none';
+                }, 200);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setupUploadZone() {
+            var zone      = document.getElementById('image-upload-zone');
+            var fileInput = document.getElementById('hc-image-file');
+
+            zone.addEventListener('click', function() { fileInput.click(); });
+            zone.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+            });
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', function() {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]);
+            });
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length) processFile(fileInput.files[0]);
+            });
+        }
+
+        function replaceImage(e) {
+            e.stopPropagation();
+            document.getElementById('hc-image-file').click();
+        }
+
+        function removeImage(e) {
+            e.stopPropagation();
+            resetUploadZone();
+        }
+
+        function retryUpload(e) {
+            e.stopPropagation();
+            document.getElementById('upload-error').style.display        = 'none';
+            document.getElementById('upload-zone-content').style.display = 'flex';
+            document.getElementById('hc-image-file').click();
+        }
+
+        // ── Cropper ────────────────────────────────────────────
+        function openCropper(src) {
+            var img = document.getElementById('cropperImage');
+            img.src = src;
+            document.getElementById('cropperModal').classList.add('active');
+            document.getElementById('cropperModal').setAttribute('aria-hidden', 'false');
+            if (typeof Cropper !== 'undefined') {
+                setTimeout(function() {
+                    if (cropperInstance) cropperInstance.destroy();
+                    cropperInstance = new Cropper(img, { aspectRatio: 16 / 9, viewMode: 1 });
+                }, 100);
+            } else {
+                var reader = new FileReader();
+                reader.onload = function(e) { showUploadPreview(e.target.result); };
+                if (pendingCropFile) reader.readAsDataURL(pendingCropFile);
+                closeCropper();
+            }
+        }
+
+        function closeCropper() {
+            document.getElementById('cropperModal').classList.remove('active');
+            document.getElementById('cropperModal').setAttribute('aria-hidden', 'true');
+            if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+        }
+
+        function applyCrop() {
+            if (cropperInstance) {
+                var canvas = cropperInstance.getCroppedCanvas();
+                if (canvas) showUploadPreview(canvas.toDataURL('image/jpeg', 0.9));
+            }
+            closeCropper();
+        }
+
+        // ── Deactivation confirm ───────────────────────────────
+        function requestDeactivate() {
+            document.getElementById('confirm-message').textContent =
+                'This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.';
+            document.getElementById('confirmOverlay').classList.add('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'false');
+            pendingDeactivateHC = { fromModal: true };
+            document.addEventListener('keydown', handleConfirmEscape);
+            setTimeout(function() {
+                var cancelBtn = document.querySelector('.confirm-actions .btn-secondary');
+                if (cancelBtn) cancelBtn.focus();
+            }, 50);
+        }
+
+        function cancelDeactivate() {
+            document.getElementById('confirmOverlay').classList.remove('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'true');
+            pendingDeactivateHC = null;
+            document.removeEventListener('keydown', handleConfirmEscape);
+        }
+
+        function handleConfirmEscape(e) {
+            if (e.key === 'Escape') cancelDeactivate();
+        }
+
+        function confirmDeactivate() {
+            document.removeEventListener('keydown', handleConfirmEscape);
+
+            if (pendingDeactivateHC && pendingDeactivateHC.rowId) {
+                // Deactivation from table row toggle
+                var hc = humanityCentres.find(function(h) { return h.id === pendingDeactivateHC.rowId; });
+                if (hc) {
+                    hc.status = 'Inactive';
+                    loadHCs();
+                    showToast(hc.name + ' deactivated.');
+                }
+            } else if (pendingDeactivateHC && pendingDeactivateHC.fromModal) {
+                // Deactivation from drawer toggle
+                var toggle = document.getElementById('status-toggle');
+                var label  = document.getElementById('status-label');
+                toggle.setAttribute('aria-checked', 'false');
+                label.textContent = 'Inactive';
+            }
+
+            document.getElementById('confirmOverlay').classList.remove('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'true');
+            pendingDeactivateHC = null;
+        }
+
+        function toggleRowStatus(id) {
+            var hc = humanityCentres.find(function(h) { return h.id === id; });
+            if (!hc) return;
+            if (hc.status === 'Inactive') {
+                hc.status = 'Active';
+                loadHCs();
+                showToast(hc.name + ' activated.');
+                return;
+            }
+            pendingDeactivateHC = { rowId: id };
+            document.getElementById('confirm-message').textContent =
+                'This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.';
+            document.getElementById('confirmOverlay').classList.add('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'false');
+            document.addEventListener('keydown', handleConfirmEscape);
+            setTimeout(function() {
+                var cancelBtn = document.querySelector('.confirm-actions .btn-secondary');
+                if (cancelBtn) cancelBtn.focus();
+            }, 50);
+        }
+
+        // ── Status toggle in drawer ────────────────────────────
+        function toggleStatus() {
+            var toggle   = document.getElementById('status-toggle');
+            var label    = document.getElementById('status-label');
+            var isActive = toggle.getAttribute('aria-checked') === 'true';
+            if (isActive) {
+                requestDeactivate();
+                return;
+            }
+            toggle.setAttribute('aria-checked', 'true');
+            label.textContent = 'Active';
+        }
+
+        function toggleStatusKeydown(e) {
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleStatus(); }
+        }
+
+        // ── Focus trap ─────────────────────────────────────────
+        function trapFocus(modal) {
+            var focusables = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            var first = focusables[0];
+            var last  = focusables[focusables.length - 1];
+            if (first) first.focus();
+            modal.addEventListener('keydown', function handler(e) {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey) {
+                    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+                } else {
+                    if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+                }
+            });
+        }
+
+        // ── Load HCs into table ────────────────────────────────
+        function loadHCs() {
+            var skeleton  = document.getElementById('hcSkeleton');
+            var empty     = document.getElementById('hcEmpty');
+            var tableWrap = document.getElementById('hcTableWrap');
+            var tbody     = document.getElementById('hc-list');
+
+            skeleton.style.display  = 'block';
+            skeleton.removeAttribute('aria-hidden');
+            empty.style.display     = 'none';
+            tableWrap.style.display = 'none';
+
+            setTimeout(function() {
+                skeleton.style.display = 'none';
+                skeleton.setAttribute('aria-hidden', 'true');
+
+                if (humanityCentres.length === 0) {
+                    empty.style.display = 'block';
+                } else {
+                    tableWrap.style.display = 'block';
+                    tbody.innerHTML = humanityCentres.map(function(hc) {
+                        var isActive = hc.status === 'Active';
+                        return '<tr>' +
+                            '<td data-label="Name" style="font-weight: 500;">' + escapeHtml(hc.name) + '</td>' +
+                            '<td data-label="Location" style="color: var(--text-secondary);">' + escapeHtml(hc.location) + '</td>' +
+                            '<td data-label="Status" style="display: flex; align-items: center; gap: 0.5rem;">' +
+                                '<span class="badge ' + (isActive ? 'badge-active' : 'badge-inactive') + '">' + escapeHtml(hc.status) + '</span>' +
+                                '<button type="button" class="toggle toggle-sm" role="switch"' +
+                                    ' aria-checked="' + isActive + '"' +
+                                    ' aria-label="' + (isActive ? 'Deactivate' : 'Activate') + ' ' + escapeHtml(hc.name) + '"' +
+                                    ' onclick="toggleRowStatus(' + hc.id + ')">' +
+                                    '<span class="toggle-slider"></span>' +
+                                '</button>' +
+                            '</td>' +
+                            '<td data-label="Action">' +
+                                '<button class="btn-edit" onclick="openEditModal(' + hc.id + ')" aria-label="Edit ' + escapeHtml(hc.name) + '">' +
+                                    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>' +
+                                    'Edit' +
+                                '</button>' +
+                            '</td>' +
+                        '</tr>';
+                    }).join('');
+                }
+            }, 300);
+        }
+
+        // ── Open Add modal ─────────────────────────────────────
+        function openAddModal() {
+            currentHC           = null;
+            lastFocusBeforeModal = document.activeElement;
+            document.getElementById('drawer-title').textContent = 'Add Humanity Centre';
+            document.getElementById('hcForm').reset();
+            clearFormErrors();
+            resetUploadZone();
+            var toggle = document.getElementById('status-toggle');
+            var label  = document.getElementById('status-label');
+            toggle.setAttribute('aria-checked', 'true');
+            label.textContent = 'Active';
+            document.getElementById('hcModal').classList.add('active');
+            document.getElementById('hcModal').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            setTimeout(function() { trapFocus(document.getElementById('hcModal')); }, 50);
+            document.addEventListener('keydown', handleModalEscape);
+        }
+
+        // ── Open Edit modal ────────────────────────────────────
+        function openEditModal(id) {
+            currentHC = humanityCentres.find(function(hc) { return hc.id === id; });
+            if (!currentHC) return;
+            lastFocusBeforeModal = document.activeElement;
+            document.getElementById('drawer-title').textContent    = 'Edit Humanity Centre';
+            document.getElementById('hc-name').value               = currentHC.name;
+            document.getElementById('hc-location').value           = currentHC.location;
+            document.getElementById('hc-description').value        = currentHC.description || '';
+            clearFormErrors();
+            resetUploadZone();
+            if (currentHC.image) showUploadPreview(currentHC.image);
+            var isActive = currentHC.status === 'Active';
+            var toggle   = document.getElementById('status-toggle');
+            var label    = document.getElementById('status-label');
+            toggle.setAttribute('aria-checked', isActive ? 'true' : 'false');
+            label.textContent = currentHC.status;
+            document.getElementById('hcModal').classList.add('active');
+            document.getElementById('hcModal').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            setTimeout(function() { trapFocus(document.getElementById('hcModal')); }, 50);
+            document.addEventListener('keydown', handleModalEscape);
+        }
+
+        function handleModalEscape(e) {
+            if (e.key === 'Escape') closeModal();
+        }
+
+        // ── Close modal ────────────────────────────────────────
+        function closeModal() {
+            document.getElementById('hcModal').classList.remove('active');
+            document.getElementById('hcModal').setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleModalEscape);
+            if (lastFocusBeforeModal && lastFocusBeforeModal.focus) lastFocusBeforeModal.focus();
+        }
+
+        // ── Handle save ────────────────────────────────────────
+        function handleSave(event) {
+            event.preventDefault();
+            if (!validateForm()) return;
+            var name        = document.getElementById('hc-name').value.trim();
+            var location    = document.getElementById('hc-location').value.trim();
+            var description = document.getElementById('hc-description').value.trim();
+            var image       = document.getElementById('hc-image').value;
+            var isActive    = document.getElementById('status-toggle').getAttribute('aria-checked') === 'true';
+
+            if (currentHC) {
+                currentHC.name        = name;
+                currentHC.location    = location;
+                currentHC.description = description;
+                currentHC.image       = image;
+                currentHC.status      = isActive ? 'Active' : 'Inactive';
+            } else {
+                var newId = Math.max.apply(null, humanityCentres.map(function(h) { return h.id; }).concat([0])) + 1;
+                humanityCentres.push({
+                    id: newId, name: name, location: location,
+                    description: description, image: image,
+                    status: isActive ? 'Active' : 'Inactive'
+                });
+            }
+
+            closeModal();
+            loadHCs();
+            showToast(name + ' saved successfully.');
+        }
+
+        // ── Blur validation ────────────────────────────────────
+        ['hc-name', 'hc-location', 'hc-description'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('blur', function() { validateField(id); });
+        });
+
+        // ── Init ───────────────────────────────────────────────
+        setupUploadZone();
+        loadHCs();
+    </script>
+</body>
+</html>
