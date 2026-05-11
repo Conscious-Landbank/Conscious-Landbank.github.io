@@ -19,8 +19,6 @@
         @font-face { font-family:'TestFoundersGrotesk'; src:url('../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
     </style>
 
-    <!-- CropperJS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -693,6 +691,61 @@
             border-collapse: collapse;
         }
 
+        /* ── Table search + filters ─────────────────────────── */
+        .table-toolbar {
+            padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle);
+            display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+        }
+        .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 340px; }
+        .search-wrap svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); fill: var(--text-secondary); pointer-events: none; }
+        .search-input {
+            width: 100%; padding: 0.625rem 1rem 0.625rem 2.25rem;
+            border: 1.5px solid var(--border-subtle); border-radius: 0.625rem;
+            font-size: 0.875rem; font-family: var(--font-body); background: var(--brand-white);
+            color: var(--text-primary); transition: border-color 0.2s;
+        }
+        .search-input:focus { outline: none; border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.08); }
+        .filter-chips-bar { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+        .filter-chip {
+            padding: 0.375rem 0.75rem; border: 1.5px solid var(--border-subtle);
+            border-radius: 980px; font-size: 0.813rem; font-weight: 500; cursor: pointer;
+            background: var(--brand-white); color: var(--text-secondary); font-family: var(--font-body);
+            transition: all 0.15s; min-height: 36px;
+        }
+        .filter-chip:hover { border-color: var(--op-accent); color: var(--brand-deep-blue); }
+        .filter-chip.active { background: var(--surface-operator-strong); border-color: var(--op-accent); color: var(--brand-deep-blue); font-weight: 600; }
+        .filter-chip:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+
+        /* ── New column styles ──────────────────────────────── */
+        .slug-mini { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 0.125rem; }
+        .region-pill {
+            display: inline-block; padding: 0.188rem 0.625rem; border-radius: 980px; font-size: 0.75rem;
+            font-weight: 600; background: var(--surface-sky); color: var(--brand-deep-blue);
+        }
+        .cat-pill-stack { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+        .cat-pill {
+            display: inline-block; padding: 0.125rem 0.5rem; border-radius: 980px; font-size: 0.7rem;
+            font-weight: 600; letter-spacing: 0.02em; text-transform: capitalize;
+            background: var(--surface-operator-strong); color: var(--brand-deep-blue);
+        }
+        .cat-pill-more { background: var(--neutral-200); color: var(--text-secondary); }
+        .completeness-meter { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+        .meter-track { width: 52px; height: 6px; background: var(--neutral-200); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+        .meter-fill { height: 100%; border-radius: 3px; background: var(--fin-up); transition: width 0.3s; }
+        .meter-fill.warn { background: var(--warning); }
+        .meter-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
+        .meter-label.done { color: var(--fin-up); }
+        .btn-view {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            padding: 0.375rem 0.75rem; border: 1.5px solid var(--border-subtle);
+            border-radius: 0.5rem; font-size: 0.813rem; font-weight: 500; font-family: var(--font-body);
+            color: var(--text-secondary); text-decoration: none; background: transparent;
+            transition: all 0.15s; min-height: 36px;
+        }
+        .btn-view:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .btn-view:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-view svg { fill: currentColor; }
+
         .hc-table th {
             text-align: left;
             padding: 0.75rem 1rem;
@@ -729,7 +782,7 @@
             color: var(--brand-deep-blue);
         }
         .badge-inactive {
-            background: var(--surface-warning-soft);
+            background: var(--surface-operator-strong);
             color: var(--brand-deep-blue);
         }
 
@@ -818,278 +871,10 @@
             margin-bottom: 1.5rem;
         }
 
-        /* ── HC Drawer (#hcModal) ─────────────────────────────── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            display: none;
-            z-index: 10010;
-        }
-        .modal-overlay.active { display: block; }
+        /* Drawer CSS removed — editing handled by operator-hc-edit.html */
 
-        #hcModal.modal-overlay {
-            display: none;
-            align-items: flex-start;
-            justify-content: flex-end;
-        }
-        #hcModal.modal-overlay.active { display: flex; }
 
-        #hcModal .drawer {
-            display: flex;
-            flex-direction: column;
-            background: var(--brand-white);
-            width: 100%;
-            max-width: 480px;
-            height: 100vh;
-            overflow-y: auto;
-            border-radius: 0;
-            box-shadow: -8px 0 32px rgba(0,0,0,0.12);
-            animation: slideInRight 0.3s ease-out;
-        }
-        @keyframes slideInRight {
-            from { transform: translateX(100%); }
-            to   { transform: translateX(0); }
-        }
 
-        #hcModal .drawer-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-        }
-        #hcModal .drawer-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        #hcModal .drawer-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 44px;
-            min-height: 44px;
-        }
-        #hcModal .drawer-close:hover {
-            background: var(--surface-operator);
-            color: var(--text-primary);
-        }
-        #hcModal .drawer-close:focus-visible {
-            outline: 2px solid var(--brand-deep-blue);
-            outline-offset: 2px;
-        }
-        #hcModal .drawer-close svg { fill: currentColor; }
-
-        #hcModal .drawer form {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-height: 0;
-        }
-        #hcModal .drawer-body {
-            padding: 2rem;
-            flex: 1;
-            overflow-y: auto;
-        }
-        #hcModal .drawer-footer {
-            padding: 1rem 2rem;
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            gap: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        /* ── Form ─────────────────────────────────────────────── */
-        .form-group { margin-bottom: 1.5rem; }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1.5px solid var(--border-subtle);
-            border-radius: 0.625rem;
-            font-size: 1rem;
-            font-family: var(--font-body);
-            color: var(--text-primary);
-            background: var(--brand-white);
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--brand-deep-blue);
-            box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.1);
-        }
-        .form-input.error, .form-textarea.error {
-            border-color: var(--brand-red);
-        }
-        .form-error {
-            display: block;
-            font-size: 0.813rem;
-            color: var(--brand-red);
-            margin-top: 0.375rem;
-        }
-
-        /* ── Toggle group (drawer) ────────────────────────────── */
-        .toggle-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .toggle-label {
-            font-size: 0.938rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* ── Upload Zone ──────────────────────────────────────── */
-        .upload-zone {
-            border: 2px dashed var(--border-subtle);
-            border-radius: 0.75rem;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .upload-zone:hover {
-            border-color: var(--brand-deep-blue);
-            background: rgba(23, 61, 71, 0.02);
-        }
-        .upload-zone:focus-visible {
-            outline: 3px solid rgba(23, 61, 71, 0.2);
-            outline-offset: 2px;
-            border-color: var(--brand-deep-blue);
-        }
-        .upload-zone.drag-over {
-            border-color: var(--brand-deep-blue);
-            border-style: solid;
-            background: rgba(23, 61, 71, 0.03);
-        }
-
-        .upload-zone-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .upload-icon {
-            width: 40px;
-            height: 40px;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-            fill: currentColor;
-        }
-        .upload-text {
-            font-weight: 500;
-            color: var(--text-primary);
-            display: block;
-        }
-        .upload-hint {
-            font-size: 0.813rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        .upload-preview { width: 100%; }
-        .upload-preview img {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 0.5rem;
-            object-fit: cover;
-            display: block;
-            margin: 0 auto;
-        }
-        .upload-actions {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-top: 0.75rem;
-        }
-        .btn-replace, .btn-remove {
-            padding: 0.5rem 1rem;
-            background: var(--neutral-200);
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            font-family: var(--font-body);
-            cursor: pointer;
-            min-height: 46px;
-            transition: background 0.2s;
-            color: var(--text-primary);
-        }
-        .btn-replace:hover, .btn-remove:hover { background: var(--neutral-300); }
-        .btn-remove { color: var(--brand-red); }
-        .btn-replace:focus-visible, .btn-remove:focus-visible {
-            outline: 2px solid var(--brand-deep-blue);
-            outline-offset: 2px;
-        }
-
-        .upload-progress { width: 100%; }
-        .progress-bar {
-            height: 6px;
-            background: var(--neutral-200);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--brand-deep-blue);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        #upload-filename {
-            font-size: 0.813rem;
-            color: var(--text-secondary);
-        }
-
-        .upload-error {
-            color: var(--brand-red);
-            font-size: 0.875rem;
-        }
-        .btn-retry {
-            margin-top: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--neutral-200);
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            font-family: var(--font-body);
-            cursor: pointer;
-            transition: background 0.2s;
-            color: var(--text-primary);
-        }
-        .btn-retry:hover { background: var(--neutral-300); }
-        .btn-retry:focus-visible {
-            outline: 2px solid var(--brand-deep-blue);
-            outline-offset: 2px;
-        }
 
         /* ── Confirm Dialog ───────────────────────────────────── */
         .confirm-overlay {
@@ -1148,67 +933,6 @@
             outline-offset: 2px;
         }
 
-        /* ── Cropper Modal ────────────────────────────────────── */
-        #cropperModal.modal-overlay {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10020;
-        }
-        #cropperModal.modal-overlay.active { display: flex; }
-
-        .modal {
-            background: var(--brand-white);
-            border-radius: 1.25rem;
-            max-width: 560px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-        }
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        .modal-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .modal-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            transition: background 0.2s;
-        }
-        .modal-close:hover { background: var(--surface-operator); color: var(--text-primary); }
-        .modal-close:focus-visible {
-            outline: 2px solid var(--brand-deep-blue);
-            outline-offset: 2px;
-        }
-        .modal-body { padding: 1.5rem; flex: 1; }
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            gap: 0.75rem;
-            flex-shrink: 0;
-        }
 
         /* ── Toast ────────────────────────────────────────────── */
         .toast-container {
@@ -1333,7 +1057,6 @@
 
         @media (max-width: 768px) {
             .container { padding: 1.5rem 1.5rem 3rem; }
-            #hcModal .drawer { max-width: 100%; }
         }
 
         @media (max-width: 480px) {
@@ -1442,9 +1165,9 @@
         <div class="page-header">
             <div>
                 <h1 class="page-title">Humanity Centre Management</h1>
-                <p class="page-subtitle">Create and manage Humanity Centre profiles visible in the public directory.</p>
+                <p class="page-subtitle">Create and manage Humanity Centre profiles. They appear in <a href="explore-centres.html" style="color:var(--op-accent);font-weight:500;">the public directory</a>.</p>
             </div>
-            <button class="btn-primary" onclick="openAddModal()" id="addHcBtn" aria-label="Add a new Humanity Centre">
+            <button class="btn-primary" onclick="window.location.href='operator-hc-edit.html'" id="addHcBtn" aria-label="Add a new Humanity Centre">
                 <!-- add_circle FILL=0 -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
                     <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
@@ -1474,19 +1197,37 @@
                     </svg>
                 </div>
                 <p class="hc-empty-text">No Humanity Centres yet</p>
-                <p class="hc-empty-desc">Add your first Humanity Centre to get started.</p>
-                <button class="btn-primary" onclick="openAddModal()">Add your first Humanity Centre</button>
+                <p class="hc-empty-desc">Add your first Humanity Centre. Complete profiles include programs, gallery, and a testimonial so donors see real impact.</p>
+                <button class="btn-primary" onclick="window.location.href='operator-hc-edit.html'">Add your first Humanity Centre</button>
             </div>
 
             <!-- HC Table -->
             <div class="hc-table-wrap" id="hcTableWrap" style="display: none;">
+                <!-- Toolbar: search + region filter -->
+                <div class="table-toolbar">
+                    <div class="search-wrap" role="search">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                        <input type="search" class="search-input" id="hc-search" placeholder="Search centres…" aria-label="Search Humanity Centres" oninput="filterTable()">
+                    </div>
+                    <div class="filter-chips-bar" role="group" aria-label="Filter by region">
+                        <button type="button" class="filter-chip active" data-region="all" onclick="setRegionFilter(this)">All</button>
+                        <button type="button" class="filter-chip" data-region="Africa" onclick="setRegionFilter(this)">Africa</button>
+                        <button type="button" class="filter-chip" data-region="Asia" onclick="setRegionFilter(this)">Asia</button>
+                        <button type="button" class="filter-chip" data-region="Americas" onclick="setRegionFilter(this)">Americas</button>
+                        <button type="button" class="filter-chip" data-region="Europe" onclick="setRegionFilter(this)">Europe</button>
+                        <button type="button" class="filter-chip" data-region="Oceania" onclick="setRegionFilter(this)">Oceania</button>
+                    </div>
+                </div>
                 <table class="hc-table" id="hcTable" aria-describedby="hc-table-caption">
-                    <caption id="hc-table-caption" class="sr-only">List of Humanity Centres with name, location, status, and edit action</caption>
+                    <caption id="hc-table-caption" class="sr-only">List of Humanity Centres with name, location, region, categories, profile completeness, last updated, and actions</caption>
                     <thead>
                         <tr>
                             <th scope="col">Name</th>
                             <th scope="col">Location</th>
-                            <th scope="col">Status</th>
+                            <th scope="col">Region</th>
+                            <th scope="col">Categories</th>
+                            <th scope="col">Completeness</th>
+                            <th scope="col">Last Updated</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -1494,136 +1235,13 @@
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
+                <div id="hc-no-results" style="display:none;padding:2rem;text-align:center;color:var(--text-secondary);font-size:0.938rem;">No centres match your search.</div>
             </div>
         </section>
 
     </main>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         HC Drawer (#hcModal) — right side-sheet
-    ════════════════════════════════════════════════════════════ -->
-    <div class="modal-overlay" id="hcModal" aria-hidden="true">
-        <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
-            <div class="drawer-header">
-                <h2 class="drawer-title" id="drawer-title">Add Humanity Centre</h2>
-                <button class="drawer-close" onclick="closeModal()" aria-label="Close drawer">
-                    <!-- close FILL=1 -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
-                        <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-                    </svg>
-                </button>
-            </div>
-
-            <form id="hcForm" onsubmit="handleSave(event)" novalidate>
-                <div class="drawer-body">
-
-                    <!-- Name -->
-                    <div class="form-group">
-                        <label class="form-label" for="hc-name">Name <span aria-hidden="true">*</span></label>
-                        <input type="text" id="hc-name" class="form-input"
-                               placeholder="Nairobi Hope Centre"
-                               required
-                               aria-required="true"
-                               aria-describedby="hc-name-error">
-                        <span id="hc-name-error" class="form-error" role="alert" aria-live="polite"></span>
-                    </div>
-
-                    <!-- Location -->
-                    <div class="form-group">
-                        <label class="form-label" for="hc-location">Location <span aria-hidden="true">*</span></label>
-                        <input type="text" id="hc-location" class="form-input"
-                               placeholder="Nairobi, Kenya"
-                               required
-                               aria-required="true"
-                               aria-describedby="hc-location-error">
-                        <span id="hc-location-error" class="form-error" role="alert" aria-live="polite"></span>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="form-group">
-                        <label class="form-label" for="hc-description">Description <span aria-hidden="true">*</span></label>
-                        <textarea id="hc-description" class="form-textarea"
-                                  placeholder="Describe the centre's mission and programs..."
-                                  required
-                                  aria-required="true"
-                                  aria-describedby="hc-description-error"></textarea>
-                        <span id="hc-description-error" class="form-error" role="alert" aria-live="polite"></span>
-                    </div>
-
-                    <!-- Image upload -->
-                    <div class="form-group" id="image-upload-group">
-                        <label class="form-label" id="upload-label">Centre Image</label>
-                        <div id="image-upload-zone" class="upload-zone"
-                             role="button"
-                             tabindex="0"
-                             aria-labelledby="upload-label"
-                             aria-describedby="upload-hint">
-                            <input type="file" id="hc-image-file" accept="image/jpeg,image/png,image/webp" hidden aria-hidden="true">
-                            <input type="hidden" id="hc-image" name="hc-image">
-
-                            <!-- Default state -->
-                            <div class="upload-zone-content" id="upload-zone-content">
-                                <!-- cloud_upload FILL=0 -->
-                                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
-                                    <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q17-72 72-117t132-45q90 0 153.5 59.5T634-546q67 7 116.5 57.5T800-377q0 91-64.5 154T580-160H260Zm0-80h320q57 0 98.5-39.5T720-377q0-56-40.5-95.5T584-512l-56-4-18-54q-17-53-60-86.5T354-690q-57 0-100.5 35.5T195-558l-14 56-58 8q-48 8-78 44t-30 72q0 56 39.5 94T260-240Zm220-240Z"/>
-                                </svg>
-                                <span class="upload-text">Drag &amp; drop or click to browse</span>
-                                <span class="upload-hint" id="upload-hint">JPG, PNG, WebP · Max 5MB</span>
-                            </div>
-
-                            <!-- Preview state -->
-                            <div class="upload-preview" id="upload-preview" style="display: none;">
-                                <img id="upload-preview-img" src="" alt="Centre image preview">
-                                <div class="upload-actions">
-                                    <button type="button" class="btn-replace" onclick="replaceImage(event)">Replace</button>
-                                    <button type="button" class="btn-remove" onclick="removeImage(event)">Remove</button>
-                                </div>
-                            </div>
-
-                            <!-- Progress state -->
-                            <div class="upload-progress" id="upload-progress" style="display: none;">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="progress-fill"></div>
-                                </div>
-                                <span id="upload-filename"></span>
-                            </div>
-
-                            <!-- Error state -->
-                            <div class="upload-error" id="upload-error" style="display: none;" role="alert">
-                                <span id="upload-error-text"></span>
-                                <button type="button" class="btn-retry" onclick="retryUpload(event)">Retry</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Status toggle -->
-                    <div class="form-group">
-                        <label class="form-label" id="status-toggle-label">Status</label>
-                        <div class="toggle-group">
-                            <button type="button"
-                                    class="toggle"
-                                    id="status-toggle"
-                                    role="switch"
-                                    aria-checked="true"
-                                    aria-labelledby="status-toggle-label"
-                                    aria-describedby="status-label"
-                                    onclick="toggleStatus()"
-                                    onkeydown="toggleStatusKeydown(event)">
-                                <span class="toggle-slider"></span>
-                            </button>
-                            <span id="status-label" class="toggle-label">Active</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="drawer-footer">
-                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn-primary" style="flex: 1;">Save HC</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Drawer removed — editing handled by operator-hc-edit.html -->
 
     <!-- ═══════════════════════════════════════════════════════════
          Deactivation Confirm Dialog
@@ -1647,35 +1265,7 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         Cropper Modal
-    ════════════════════════════════════════════════════════════ -->
-    <div class="modal-overlay" id="cropperModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cropper-title">
-            <div class="modal-header">
-                <h2 class="modal-title" id="cropper-title">Crop Image</h2>
-                <button class="modal-close" onclick="closeCropper()" aria-label="Close crop modal">
-                    <!-- close FILL=1 (text fallback for icon) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
-                        <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div style="max-height: 400px; min-height: 300px; overflow: hidden;">
-                    <img id="cropperImage" src="" alt="Image to crop" style="max-width: 100%; display: block;">
-                </div>
-                <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-secondary);">Crop to 16:9 aspect ratio for best display.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeCropper()">Cancel</button>
-                <button type="button" class="btn-primary" style="flex: 1;" onclick="applyCrop()">Apply Crop</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CropperJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <!-- Cropper modal removed — image cropping handled in operator-hc-edit.html -->
 
     <script>
         // ── Auth guard ─────────────────────────────────────────
@@ -1770,29 +1360,24 @@
             window.location.href = 'operator-login.html';
         }
 
-        // ── Mock HC data (12 rows) ─────────────────────────────
+        // ── Mock HC data (12 rows) — enriched with region/categories/completeness ──
         var humanityCentres = [
-            { id: 1,  name: 'Nairobi Hope Centre',      location: 'Nairobi, Kenya',        description: 'Community support centre.',           status: 'Active',   image: '' },
-            { id: 2,  name: 'Mumbai Community Centre',   location: 'Mumbai, India',          description: 'Local outreach programs.',             status: 'Active',   image: '' },
-            { id: 3,  name: 'São Paulo Care Centre',     location: 'São Paulo, Brazil',      description: 'Healthcare and education.',            status: 'Active',   image: '' },
-            { id: 4,  name: 'Dhaka Relief Centre',       location: 'Dhaka, Bangladesh',      description: 'Disaster relief and support.',         status: 'Active',   image: '' },
-            { id: 5,  name: 'Lagos Community Hub',       location: 'Lagos, Nigeria',         description: 'Youth and skills training.',           status: 'Active',   image: '' },
-            { id: 6,  name: 'Manila Support Centre',     location: 'Manila, Philippines',    description: 'Family support services.',             status: 'Inactive', image: '' },
-            { id: 7,  name: 'Cairo Aid Centre',          location: 'Cairo, Egypt',           description: 'Emergency aid distribution.',          status: 'Active',   image: '' },
-            { id: 8,  name: 'Port-au-Prince Centre',     location: 'Haiti',                  description: 'Rebuilding and recovery.',             status: 'Active',   image: '' },
-            { id: 9,  name: 'Jakarta Hope Centre',       location: 'Jakarta, Indonesia',     description: 'Education and shelter.',               status: 'Active',   image: '' },
-            { id: 10, name: 'Karachi Community Centre',  location: 'Karachi, Pakistan',      description: 'Community development.',               status: 'Active',   image: '' },
-            { id: 11, name: 'Lima Support Centre',       location: 'Lima, Peru',             description: 'Healthcare access.',                   status: 'Active',   image: '' },
-            { id: 12, name: 'Kampala Care Centre',       location: 'Kampala, Uganda',        description: 'Child and family care.',               status: 'Active',   image: '' }
+            { id:1,  name:'Nairobi Hope Centre',      slug:'nairobi-hope-centre',      location:'Kibera, Nairobi, Kenya',     region:'Africa',   categories:['education','healthcare','nutrition'], completeness:6, lastUpdated:'2 days ago',   status:'Active'   },
+            { id:2,  name:'Mumbai Community Centre',  slug:'mumbai-community-centre',  location:'Dharavi, Mumbai, India',     region:'Asia',     categories:['education','skills'],                 completeness:4, lastUpdated:'1 week ago',   status:'Active'   },
+            { id:3,  name:'São Paulo Care Centre',    slug:'sao-paulo-care-centre',    location:'São Paulo, Brazil',          region:'Americas', categories:['healthcare','nutrition'],             completeness:3, lastUpdated:'3 days ago',   status:'Active'   },
+            { id:4,  name:'Dhaka Relief Centre',      slug:'dhaka-relief-centre',      location:'Dhaka, Bangladesh',          region:'Asia',     categories:['water','healthcare'],                 completeness:2, lastUpdated:'5 days ago',   status:'Active'   },
+            { id:5,  name:'Lagos Community Hub',      slug:'lagos-community-hub',      location:'Lagos, Nigeria',             region:'Africa',   categories:['skills','education'],                 completeness:5, lastUpdated:'Yesterday',     status:'Active'   },
+            { id:6,  name:'Manila Support Centre',    slug:'manila-support-centre',    location:'Manila, Philippines',        region:'Asia',     categories:['healthcare','nutrition'],             completeness:2, lastUpdated:'2 weeks ago',  status:'Inactive' },
+            { id:7,  name:'Cairo Aid Centre',         slug:'cairo-aid-centre',         location:'Cairo, Egypt',               region:'Africa',   categories:['water','environment'],                completeness:3, lastUpdated:'4 days ago',   status:'Active'   },
+            { id:8,  name:'Port-au-Prince Centre',    slug:'port-au-prince-centre',    location:'Port-au-Prince, Haiti',      region:'Americas', categories:['healthcare','nutrition','water'],     completeness:4, lastUpdated:'1 week ago',   status:'Active'   },
+            { id:9,  name:'Jakarta Hope Centre',      slug:'jakarta-hope-centre',      location:'Jakarta, Indonesia',         region:'Asia',     categories:['education','skills'],                 completeness:5, lastUpdated:'3 days ago',   status:'Active'   },
+            { id:10, name:'Karachi Community Centre', slug:'karachi-community-centre', location:'Karachi, Pakistan',          region:'Asia',     categories:['education'],                          completeness:1, lastUpdated:'3 weeks ago',  status:'Active'   },
+            { id:11, name:'Lima Support Centre',      slug:'lima-support-centre',      location:'Lima, Peru',                 region:'Americas', categories:['healthcare'],                         completeness:3, lastUpdated:'6 days ago',   status:'Active'   },
+            { id:12, name:'Kampala Care Centre',      slug:'kampala-care-centre',      location:'Kampala, Uganda',            region:'Africa',   categories:['nutrition','healthcare','education'],  completeness:4, lastUpdated:'2 days ago',   status:'Active'   }
         ];
 
-        var currentHC              = null;
-        var lastFocusBeforeModal   = null;
         var pendingDeactivateHC    = null;
-        var cropperInstance        = null;
-        var pendingCropFile        = null;
-        var MAX_FILE_SIZE          = 5 * 1024 * 1024;
-        var ACCEPTED_TYPES         = ['image/jpeg', 'image/png', 'image/webp'];
+        var activeRegionFilter     = 'all';
 
         // ── Toast ──────────────────────────────────────────────
         function showToast(message, isError) {
@@ -1817,183 +1402,33 @@
                 .replace(/"/g, '&quot;');
         }
 
-        // ── Form validation ────────────────────────────────────
-        function validateField(id) {
-            var input   = document.getElementById(id);
-            var errorEl = document.getElementById(id + '-error');
-            var val     = input.value.trim();
-            var msg     = '';
-            if (id === 'hc-name'        && !val) msg = 'Centre name is required.';
-            if (id === 'hc-location'    && !val) msg = 'Location is required.';
-            if (id === 'hc-description' && !val) msg = 'Description is required.';
-            errorEl.textContent = msg;
-            input.classList.toggle('error', !!msg);
-            return !msg;
-        }
-
-        function validateForm() {
-            var fields = ['hc-name', 'hc-location', 'hc-description'];
-            var valid  = true;
-            for (var i = 0; i < fields.length; i++) {
-                if (!validateField(fields[i])) valid = false;
-            }
-            if (!valid) {
-                var firstError = document.querySelector('.form-input.error, .form-textarea.error');
-                if (firstError) { firstError.focus(); firstError.scrollIntoView({ block: 'center' }); }
-            }
-            return valid;
-        }
-
-        function clearFormErrors() {
-            ['hc-name', 'hc-location', 'hc-description'].forEach(function(id) {
-                document.getElementById(id).classList.remove('error');
-                document.getElementById(id + '-error').textContent = '';
+        // ── Search + filter ────────────────────────────────────
+        function filterTable() {
+            var query  = (document.getElementById('hc-search').value || '').toLowerCase().trim();
+            var tbody  = document.getElementById('hc-list');
+            var noRes  = document.getElementById('hc-no-results');
+            var rows   = tbody.querySelectorAll('tr');
+            var shown  = 0;
+            rows.forEach(function(row) {
+                var name     = (row.dataset.name     || '').toLowerCase();
+                var location = (row.dataset.location || '').toLowerCase();
+                var region   = (row.dataset.region   || '');
+                var matchQ   = !query || name.indexOf(query)>=0 || location.indexOf(query)>=0;
+                var matchR   = activeRegionFilter==='all' || region===activeRegionFilter;
+                var visible  = matchQ && matchR;
+                row.style.display = visible ? '' : 'none';
+                if (visible) shown++;
             });
+            noRes.style.display = shown===0 ? '' : 'none';
+        }
+        function setRegionFilter(btn) {
+            document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+            btn.classList.add('active');
+            activeRegionFilter = btn.dataset.region;
+            filterTable();
         }
 
-        // ── Upload zone ────────────────────────────────────────
-        function resetUploadZone() {
-            document.getElementById('upload-zone-content').style.display = 'flex';
-            document.getElementById('upload-preview').style.display      = 'none';
-            document.getElementById('upload-progress').style.display     = 'none';
-            document.getElementById('upload-error').style.display        = 'none';
-            document.getElementById('image-upload-zone').classList.remove('drag-over');
-            document.getElementById('hc-image').value      = '';
-            document.getElementById('hc-image-file').value = '';
-        }
-
-        function showUploadPreview(dataUrl) {
-            document.getElementById('upload-zone-content').style.display = 'none';
-            document.getElementById('upload-progress').style.display     = 'none';
-            document.getElementById('upload-error').style.display        = 'none';
-            document.getElementById('upload-preview-img').src            = dataUrl;
-            document.getElementById('upload-preview').style.display      = 'block';
-            document.getElementById('hc-image').value                    = dataUrl;
-        }
-
-        function showUploadError(text) {
-            document.getElementById('upload-zone-content').style.display = 'none';
-            document.getElementById('upload-preview').style.display      = 'none';
-            document.getElementById('upload-progress').style.display     = 'none';
-            document.getElementById('upload-error-text').textContent     = text;
-            document.getElementById('upload-error').style.display        = 'block';
-        }
-
-        function processFile(file) {
-            if (ACCEPTED_TYPES.indexOf(file.type) === -1) {
-                showUploadError('Only JPG, PNG, and WebP images are accepted.');
-                return;
-            }
-            if (file.size > MAX_FILE_SIZE) {
-                showUploadError('File too large. Maximum size is 5MB.');
-                return;
-            }
-            document.getElementById('upload-zone-content').style.display = 'none';
-            document.getElementById('upload-error').style.display        = 'none';
-            document.getElementById('upload-progress').style.display     = 'block';
-            document.getElementById('upload-filename').textContent       = file.name;
-            document.getElementById('progress-fill').style.width         = '30%';
-            pendingCropFile = file;
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('progress-fill').style.width = '100%';
-                setTimeout(function() {
-                    openCropper(e.target.result);
-                    document.getElementById('upload-progress').style.display = 'none';
-                }, 200);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function setupUploadZone() {
-            var zone      = document.getElementById('image-upload-zone');
-            var fileInput = document.getElementById('hc-image-file');
-
-            zone.addEventListener('click', function() { fileInput.click(); });
-            zone.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
-            });
-            zone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                zone.classList.add('drag-over');
-            });
-            zone.addEventListener('dragleave', function() {
-                zone.classList.remove('drag-over');
-            });
-            zone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                zone.classList.remove('drag-over');
-                if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]);
-            });
-            fileInput.addEventListener('change', function() {
-                if (fileInput.files.length) processFile(fileInput.files[0]);
-            });
-        }
-
-        function replaceImage(e) {
-            e.stopPropagation();
-            document.getElementById('hc-image-file').click();
-        }
-
-        function removeImage(e) {
-            e.stopPropagation();
-            resetUploadZone();
-        }
-
-        function retryUpload(e) {
-            e.stopPropagation();
-            document.getElementById('upload-error').style.display        = 'none';
-            document.getElementById('upload-zone-content').style.display = 'flex';
-            document.getElementById('hc-image-file').click();
-        }
-
-        // ── Cropper ────────────────────────────────────────────
-        function openCropper(src) {
-            var img = document.getElementById('cropperImage');
-            img.src = src;
-            document.getElementById('cropperModal').classList.add('active');
-            document.getElementById('cropperModal').setAttribute('aria-hidden', 'false');
-            if (typeof Cropper !== 'undefined') {
-                setTimeout(function() {
-                    if (cropperInstance) cropperInstance.destroy();
-                    cropperInstance = new Cropper(img, { aspectRatio: 16 / 9, viewMode: 1 });
-                }, 100);
-            } else {
-                var reader = new FileReader();
-                reader.onload = function(e) { showUploadPreview(e.target.result); };
-                if (pendingCropFile) reader.readAsDataURL(pendingCropFile);
-                closeCropper();
-            }
-        }
-
-        function closeCropper() {
-            document.getElementById('cropperModal').classList.remove('active');
-            document.getElementById('cropperModal').setAttribute('aria-hidden', 'true');
-            if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-        }
-
-        function applyCrop() {
-            if (cropperInstance) {
-                var canvas = cropperInstance.getCroppedCanvas();
-                if (canvas) showUploadPreview(canvas.toDataURL('image/jpeg', 0.9));
-            }
-            closeCropper();
-        }
-
-        // ── Deactivation confirm ───────────────────────────────
-        function requestDeactivate() {
-            document.getElementById('confirm-message').textContent =
-                'This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.';
-            document.getElementById('confirmOverlay').classList.add('active');
-            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'false');
-            pendingDeactivateHC = { fromModal: true };
-            document.addEventListener('keydown', handleConfirmEscape);
-            setTimeout(function() {
-                var cancelBtn = document.querySelector('.confirm-actions .btn-secondary');
-                if (cancelBtn) cancelBtn.focus();
-            }, 50);
-        }
-
+        // ── Deactivation confirm (row-level quick toggle) ──────
         function cancelDeactivate() {
             document.getElementById('confirmOverlay').classList.remove('active');
             document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'true');
@@ -2009,19 +1444,12 @@
             document.removeEventListener('keydown', handleConfirmEscape);
 
             if (pendingDeactivateHC && pendingDeactivateHC.rowId) {
-                // Deactivation from table row toggle
                 var hc = humanityCentres.find(function(h) { return h.id === pendingDeactivateHC.rowId; });
                 if (hc) {
                     hc.status = 'Inactive';
                     loadHCs();
                     showToast(hc.name + ' deactivated.');
                 }
-            } else if (pendingDeactivateHC && pendingDeactivateHC.fromModal) {
-                // Deactivation from drawer toggle
-                var toggle = document.getElementById('status-toggle');
-                var label  = document.getElementById('status-label');
-                toggle.setAttribute('aria-checked', 'false');
-                label.textContent = 'Inactive';
             }
 
             document.getElementById('confirmOverlay').classList.remove('active');
@@ -2050,40 +1478,6 @@
             }, 50);
         }
 
-        // ── Status toggle in drawer ────────────────────────────
-        function toggleStatus() {
-            var toggle   = document.getElementById('status-toggle');
-            var label    = document.getElementById('status-label');
-            var isActive = toggle.getAttribute('aria-checked') === 'true';
-            if (isActive) {
-                requestDeactivate();
-                return;
-            }
-            toggle.setAttribute('aria-checked', 'true');
-            label.textContent = 'Active';
-        }
-
-        function toggleStatusKeydown(e) {
-            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleStatus(); }
-        }
-
-        // ── Focus trap ─────────────────────────────────────────
-        function trapFocus(modal) {
-            var focusables = modal.querySelectorAll(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            );
-            var first = focusables[0];
-            var last  = focusables[focusables.length - 1];
-            if (first) first.focus();
-            modal.addEventListener('keydown', function handler(e) {
-                if (e.key !== 'Tab') return;
-                if (e.shiftKey) {
-                    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
-                } else {
-                    if (document.activeElement === last) { e.preventDefault(); first.focus(); }
-                }
-            });
-        }
 
         // ── Load HCs into table ────────────────────────────────
         function loadHCs() {
@@ -2107,124 +1501,59 @@
                     tableWrap.style.display = 'block';
                     tbody.innerHTML = humanityCentres.map(function(hc) {
                         var isActive = hc.status === 'Active';
-                        return '<tr>' +
-                            '<td data-label="Name" style="font-weight: 500;">' + escapeHtml(hc.name) + '</td>' +
-                            '<td data-label="Location" style="color: var(--text-secondary);">' + escapeHtml(hc.location) + '</td>' +
-                            '<td data-label="Status" style="display: flex; align-items: center; gap: 0.5rem;">' +
-                                '<span class="badge ' + (isActive ? 'badge-active' : 'badge-inactive') + '">' + escapeHtml(hc.status) + '</span>' +
-                                '<button type="button" class="toggle toggle-sm" role="switch"' +
-                                    ' aria-checked="' + isActive + '"' +
-                                    ' aria-label="' + (isActive ? 'Deactivate' : 'Activate') + ' ' + escapeHtml(hc.name) + '"' +
-                                    ' onclick="toggleRowStatus(' + hc.id + ')">' +
-                                    '<span class="toggle-slider"></span>' +
-                                '</button>' +
+                        var cats = hc.categories || [];
+                        var catPills = cats.slice(0,2).map(function(c){ return '<span class="cat-pill">'+escapeHtml(c)+'</span>'; }).join('');
+                        if(cats.length>2) catPills += '<span class="cat-pill cat-pill-more">+' + (cats.length-2) + '</span>';
+                        var pct = Math.round((hc.completeness/6)*100);
+                        var isDone = hc.completeness >= 6;
+                        return '<tr data-name="'+escapeHtml(hc.name)+'" data-location="'+escapeHtml(hc.location)+'" data-region="'+escapeHtml(hc.region || '')+'">' +
+                            '<td data-label="Name">' +
+                                '<span style="font-weight:600;">' + escapeHtml(hc.name) + '</span>' +
+                                '<code class="slug-mini">' + escapeHtml(hc.slug||'') + '</code>' +
                             '</td>' +
+                            '<td data-label="Location" style="color:var(--text-secondary);">' + escapeHtml(hc.location) + '</td>' +
+                            '<td data-label="Region"><span class="region-pill">' + escapeHtml(hc.region||'—') + '</span></td>' +
+                            '<td data-label="Categories"><div class="cat-pill-stack">' + (catPills||'<span style="color:var(--text-secondary);font-size:0.75rem;">—</span>') + '</div></td>' +
+                            '<td data-label="Completeness">' +
+                                '<div class="completeness-meter">' +
+                                    '<div class="meter-track"><div class="meter-fill' + (!isDone && pct<67?' warn':'') + '" style="width:'+pct+'%"></div></div>' +
+                                    '<span class="meter-label' + (isDone?' done':'') + '">' + hc.completeness + '/6</span>' +
+                                '</div>' +
+                            '</td>' +
+                            '<td data-label="Last Updated" style="color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(hc.lastUpdated||'—') + '</td>' +
                             '<td data-label="Action">' +
-                                '<button class="btn-edit" onclick="openEditModal(' + hc.id + ')" aria-label="Edit ' + escapeHtml(hc.name) + '">' +
-                                    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>' +
-                                    'Edit' +
-                                '</button>' +
+                                '<div style="display:flex;align-items:center;gap:0.375rem;flex-wrap:wrap;">' +
+                                    '<a href="centre-detail.html?id=' + escapeHtml(hc.slug||hc.id) + '" target="_blank" rel="noopener" class="btn-view" aria-label="View '+escapeHtml(hc.name)+' on public directory">' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>' +
+                                        'View' +
+                                    '</a>' +
+                                    '<a href="operator-hc-edit.html?id=' + escapeHtml(hc.slug||hc.id) + '" class="btn-edit" aria-label="Edit ' + escapeHtml(hc.name) + '">' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>' +
+                                        'Edit' +
+                                    '</a>' +
+                                    '<button type="button" class="toggle toggle-sm" role="switch"' +
+                                        ' aria-checked="' + isActive + '"' +
+                                        ' aria-label="' + (isActive ? 'Deactivate' : 'Activate') + ' ' + escapeHtml(hc.name) + '"' +
+                                        ' aria-describedby="badge-' + hc.id + '"' +
+                                        ' onclick="toggleRowStatus(' + hc.id + ')">' +
+                                        '<span class="toggle-slider"></span>' +
+                                    '</button>' +
+                                    '<span id="badge-' + hc.id + '" class="badge ' + (isActive ? 'badge-active' : 'badge-inactive') + '" aria-hidden="true">' + escapeHtml(hc.status) + '</span>' +
+                                '</div>' +
                             '</td>' +
                         '</tr>';
                     }).join('');
+                    filterTable();
                 }
             }, 300);
         }
 
-        // ── Open Add modal ─────────────────────────────────────
-        function openAddModal() {
-            currentHC           = null;
-            lastFocusBeforeModal = document.activeElement;
-            document.getElementById('drawer-title').textContent = 'Add Humanity Centre';
-            document.getElementById('hcForm').reset();
-            clearFormErrors();
-            resetUploadZone();
-            var toggle = document.getElementById('status-toggle');
-            var label  = document.getElementById('status-label');
-            toggle.setAttribute('aria-checked', 'true');
-            label.textContent = 'Active';
-            document.getElementById('hcModal').classList.add('active');
-            document.getElementById('hcModal').setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-            setTimeout(function() { trapFocus(document.getElementById('hcModal')); }, 50);
-            document.addEventListener('keydown', handleModalEscape);
-        }
-
-        // ── Open Edit modal ────────────────────────────────────
-        function openEditModal(id) {
-            currentHC = humanityCentres.find(function(hc) { return hc.id === id; });
-            if (!currentHC) return;
-            lastFocusBeforeModal = document.activeElement;
-            document.getElementById('drawer-title').textContent    = 'Edit Humanity Centre';
-            document.getElementById('hc-name').value               = currentHC.name;
-            document.getElementById('hc-location').value           = currentHC.location;
-            document.getElementById('hc-description').value        = currentHC.description || '';
-            clearFormErrors();
-            resetUploadZone();
-            if (currentHC.image) showUploadPreview(currentHC.image);
-            var isActive = currentHC.status === 'Active';
-            var toggle   = document.getElementById('status-toggle');
-            var label    = document.getElementById('status-label');
-            toggle.setAttribute('aria-checked', isActive ? 'true' : 'false');
-            label.textContent = currentHC.status;
-            document.getElementById('hcModal').classList.add('active');
-            document.getElementById('hcModal').setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-            setTimeout(function() { trapFocus(document.getElementById('hcModal')); }, 50);
-            document.addEventListener('keydown', handleModalEscape);
-        }
-
-        function handleModalEscape(e) {
-            if (e.key === 'Escape') closeModal();
-        }
-
-        // ── Close modal ────────────────────────────────────────
-        function closeModal() {
-            document.getElementById('hcModal').classList.remove('active');
-            document.getElementById('hcModal').setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-            document.removeEventListener('keydown', handleModalEscape);
-            if (lastFocusBeforeModal && lastFocusBeforeModal.focus) lastFocusBeforeModal.focus();
-        }
-
-        // ── Handle save ────────────────────────────────────────
-        function handleSave(event) {
-            event.preventDefault();
-            if (!validateForm()) return;
-            var name        = document.getElementById('hc-name').value.trim();
-            var location    = document.getElementById('hc-location').value.trim();
-            var description = document.getElementById('hc-description').value.trim();
-            var image       = document.getElementById('hc-image').value;
-            var isActive    = document.getElementById('status-toggle').getAttribute('aria-checked') === 'true';
-
-            if (currentHC) {
-                currentHC.name        = name;
-                currentHC.location    = location;
-                currentHC.description = description;
-                currentHC.image       = image;
-                currentHC.status      = isActive ? 'Active' : 'Inactive';
-            } else {
-                var newId = Math.max.apply(null, humanityCentres.map(function(h) { return h.id; }).concat([0])) + 1;
-                humanityCentres.push({
-                    id: newId, name: name, location: location,
-                    description: description, image: image,
-                    status: isActive ? 'Active' : 'Inactive'
-                });
-            }
-
-            closeModal();
-            loadHCs();
-            showToast(name + ' saved successfully.');
-        }
-
-        // ── Blur validation ────────────────────────────────────
-        ['hc-name', 'hc-location', 'hc-description'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) el.addEventListener('blur', function() { validateField(id); });
-        });
+        // ── Status toggle (drawer removed — kept for row-level quick toggle) ──
+        function toggleStatus() { /* no-op — drawer removed */ }
+        function toggleStatusKeydown(e) { if(e.key===' '||e.key==='Enter'){e.preventDefault();toggleStatus();} }
+        function trapFocus() {}
 
         // ── Init ───────────────────────────────────────────────
-        setupUploadZone();
         loadHCs();
     </script>
 </body>
