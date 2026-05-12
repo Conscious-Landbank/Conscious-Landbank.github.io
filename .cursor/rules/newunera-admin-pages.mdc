@@ -1,33 +1,37 @@
 ---
-description: Standards for UNERA V2 operator portal pages (operator-dashboard, operator-issuance, operator-hc-management, operator-por, operator-login) under NewUnera/. Covers the purple operator accent, tab-bar nav, operator avatar, alert banners, stats grid, and all patterns established in NewUnera/operator-dashboard.html.
-globs: NewUnera/operator-*.html
+description: Standards for UNERA V2 admin web apps (UNERA Admin + UNERA Stablecoin Admin) under NewUnera/UneraAdmin/ and NewUnera/USAdmin/. Covers the purple admin accent, tab-bar nav, admin avatar, alert banners, stats grid, and all patterns established in the canonical dashboard.
+globs: NewUnera/UneraAdmin/**/*.html, NewUnera/USAdmin/**/*.html
 alwaysApply: false
 ---
 
-# NewUnera — Operator Portal Pages
+# NewUnera — Admin Web App Pages (UNERA Admin + UNERA Stablecoin Admin)
 
-**Canonical reference:** [`NewUnera/operator-dashboard.html`](NewUnera/operator-dashboard.html)  
-All other operator pages must match it in structure, tokens, icons, and accessibility. All [new-brand-output.mdc](new-brand-output.mdc) and [newunera-color-system.mdc](newunera-color-system.mdc) rules apply in full — the sections below extend them for operator-specific patterns.
+**Canonical reference:** [`NewUnera/USAdmin/dashboard.html`](NewUnera/USAdmin/dashboard.html)  
+All other admin pages must match it in structure, tokens, icons, and accessibility. All [new-brand-output.mdc](new-brand-output.mdc) and [newunera-color-system.mdc](newunera-color-system.mdc) rules apply in full — the sections below extend them for admin-specific patterns.
 
 ---
 
 ## 1. Output & File Naming
 
-- All operator pages live in `NewUnera/` and are named `operator-*.html`
+- **UNERA Admin** pages live in `NewUnera/UneraAdmin/` — named `login.html`, `dashboard.html`, `hc-management.html`, `hc-edit.html`
+- **UNERA Stablecoin Admin** pages live in `NewUnera/USAdmin/` — named `login.html`, `dashboard.html`, `issuance.html`, `por.html`
+- `hc-*.html` pages are **UneraAdmin-only** (consumer-side HC content management)
+- `issuance.html` and `por.html` are **USAdmin-only** (stablecoin treasury operations)
+- Each folder has its own `login.html` and `dashboard.html`
 - Never modify or overwrite production consumer pages (`dashboard-enhanced.html`, `wallet-enhanced.html`, etc.)
 
 ---
 
-## 2. Operator-Only CSS Tokens
+## 2. Admin-Only CSS Tokens
 
-Add these tokens to `:root` **after** the standard V2 token block (copy from `operator-dashboard.html`):
+Add these tokens to `:root` **after** the standard V2 token block (copy from `USAdmin/dashboard.html`):
 
 ```css
 :root {
-    /* Operator nav — black chrome, distinct from consumer deep-blue nav */
+    /* Admin nav — black chrome, distinct from consumer deep-blue nav */
     --op-nav:                  var(--brand-black);    /* #000000 */
 
-    /* Operator accent — --brand-purple as the portal differentiator */
+    /* Admin accent — --brand-purple as the portal differentiator */
     --op-accent:               var(--brand-purple);   /* #6a5770 */
     --op-accent-ink:           var(--brand-white);
 
@@ -38,26 +42,35 @@ Add these tokens to `:root` **after** the standard V2 token block (copy from `op
 }
 ```
 
-**Portal color logic:**
+**Admin color logic:**
 - **`--op-nav` (black `#000000`)** — nav chrome and primary action card; creates hard authority contrast vs the consumer deep-blue nav
 - **`--op-accent` (purple `#6a5770`)** — login button, tab underline, card hover borders, icon wells
 - **`--brand-cloud-blue` (`#ebfcf5`)** — op-pill background, alert banner surface, badge-success background, tab-badge background
 - **`--surface-operator` (~`#f0eef1`)** — body wash, table headers, dropdown headers, mobile tab hover
 
-Use `--surface-operator` for the body background, dropdown header, table header, mobile tab hover, and skeleton rows — it creates a subtle purple wash that visually distinguishes the operator portal from the consumer app without breaking the V2 brand.
+Use `--surface-operator` for the body background, dropdown header, table header, mobile tab hover, and skeleton rows — it creates a subtle purple wash that visually distinguishes the admin apps from the consumer app without breaking the V2 brand.
 
 ---
 
 ## 3. Navigation — Tab-Bar Pattern
 
-The operator nav is **64 px tall** with a horizontal tab bar (different from the 44 px consumer nav-link bar). Copy the full `.nav` / `.tabs` / `.tab` block from `operator-dashboard.html`.
+The admin nav is **64 px tall** with a horizontal tab bar (different from the 44 px consumer nav-link bar). Copy the full `.nav` / `.tabs` / `.tab` block from `USAdmin/dashboard.html`.
 
-### Logo + OPERATOR pill
+### Logo + admin pill
+
+Per-app pill text (pill CSS is identical for both apps):
 
 ```html
-<a href="operator-dashboard.html" class="nav-brand" aria-label="UNERA Operator Home">
-    <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
-    <span class="op-pill" aria-label="Operator portal">OPERATOR</span>
+<!-- UneraAdmin/*.html -->
+<a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
+    <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+    <span class="op-pill" aria-label="UNERA Admin portal">UNERA ADMIN</span>
+</a>
+
+<!-- USAdmin/*.html -->
+<a href="dashboard.html" class="nav-brand" aria-label="UNERA Stablecoin Admin Home">
+    <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+    <span class="op-pill" aria-label="UNERA Stablecoin Admin portal">UNERA STABLECOIN ADMIN</span>
 </a>
 ```
 
@@ -71,13 +84,20 @@ The operator nav is **64 px tall** with a horizontal tab bar (different from the
 }
 ```
 
+### Scoped tab sets per app
+
+**UneraAdmin tabs:** Dashboard + HC Management only
+**USAdmin tabs:** Dashboard + Stablecoin Issuance + Proof of Reserve only
+
+Do not add tabs that link to the other app's pages.
+
 ### Tab states
 
 ```css
 .tab        { color: rgba(255,255,255,0.75); border-bottom: 2px solid transparent; }
 .tab:hover  { color: var(--brand-cloud-blue); }              /* cloud-blue on black = ~18:1 */
 .tab.active { color: var(--brand-cloud-blue);
-              border-bottom-color: var(--op-accent); }       /* purple underline = operator accent */
+              border-bottom-color: var(--op-accent); }       /* purple underline = admin accent */
 ```
 
 Focus rings on dark nav elements use `var(--brand-cloud-blue)` (not yellow):
@@ -89,10 +109,10 @@ Focus rings on dark nav elements use `var(--brand-cloud-blue)` (not yellow):
 .skip-link:focus         { outline: 3px solid var(--brand-cloud-blue); }
 ```
 
-- Active tab: cloud-blue text (~18:1 on black) + purple underline (operator differentiator)
+- Active tab: cloud-blue text (~18:1 on black) + purple underline (admin differentiator)
 - HC Management tab badge: `background: var(--brand-cloud-blue); color: var(--brand-deep-blue); border: 2px solid var(--brand-deep-blue);` — deep-blue on cloud-blue ~9:1; never use yellow for badge
 
-### Operator avatar (small + dropdown)
+### Admin avatar (small + dropdown)
 
 ```css
 .op-avatar, .op-dropdown-avatar-lg {
@@ -158,13 +178,13 @@ Primary CTA card (e.g. "Review HC Applications"): uses **black** (`--op-nav`) �
 
 The SVG inside the white chip uses `fill: var(--brand-black)` — black on white chip on black card; the white chip provides the visual break.
 
-Secondary cards on hover: `border-color: var(--op-accent)` — purple hover border is consistent with the portal accent.
+Secondary cards on hover: `border-color: var(--op-accent)` — purple hover border is consistent with the admin accent.
 
 ---
 
-## 7. Badges (Operator Context)
+## 7. Badges (Admin Context)
 
-In the operator portal, status badges use the **purple accent family** rather than the financial `--fin-up` green. This is an administrative portal — completion/success here is an operator workflow outcome, not a P&L signal.
+In the admin apps, status badges use the **purple accent family** rather than the financial `--fin-up` green. This is an administrative portal — completion/success here is an admin workflow outcome, not a P&L signal.
 
 ```css
 .badge-success {
@@ -176,7 +196,7 @@ In the operator portal, status badges use the **purple accent family** rather th
 .badge-info    { background: var(--surface-sky); color: var(--brand-deep-blue); }
 ```
 
-**Rule:** Do not use `--fin-up` (`#1a7a5e`) for operator status badges — that hue is reserved for financial P&L positive figures. Use `--brand-cloud-blue` background with `--brand-deep-blue` text for operator workflow completion states.
+**Rule:** Do not use `--fin-up` (`#1a7a5e`) for admin status badges — that hue is reserved for financial P&L positive figures. Use `--brand-cloud-blue` background with `--brand-deep-blue` text for admin workflow completion states.
 
 ---
 
@@ -199,7 +219,7 @@ In the operator portal, status badges use the **purple accent family** rather th
 body { background: var(--surface-operator); }
 ```
 
-This gives the operator portal a ~`#f0eef1` purple wash (10% `--brand-purple`) vs the consumer `var(--brand-white)` canvas.
+This gives the admin apps a ~`#f0eef1` purple wash (10% `--brand-purple`) vs the consumer `var(--brand-white)` canvas.
 
 ---
 
@@ -207,19 +227,19 @@ This gives the operator portal a ~`#f0eef1` purple wash (10% `--brand-purple`) v
 
 - Overlay: `z-index: 10010` (above nav 10001 and dropdowns 10002) — per `side-sheet-z-index.mdc`
 - Active mobile tab: `background: var(--surface-operator-strong); border-left: 3px solid var(--op-accent);`
-- Close button icon: `close` FILL=1 Material Symbol — same path as `operator-dashboard.html`
+- Close button icon: `close` FILL=1 Material Symbol — same path as `USAdmin/dashboard.html`
 
 ---
 
 ## 11. Auth JS Contract
 
-Every operator page must carry the same auth guard + dev-mode bypass at the top of its `<script>`:
+Every admin page must carry the same auth guard + dev-mode bypass at the top of its `<script>`:
 
 ```js
 const urlParams = new URLSearchParams(window.location.search);
 const devMode   = urlParams.has('dev') || urlParams.has('test');
 if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
-    window.location.href = 'operator-login.html';
+    window.location.href = 'login.html';
 }
 ```
 
@@ -229,15 +249,27 @@ And a `logout()` function:
 function logout() {
     localStorage.removeItem('operatorAuth');
     localStorage.removeItem('operatorEmail');
-    window.location.href = 'operator-login.html';
+    window.location.href = 'login.html';
 }
 ```
 
+**localStorage key note:** The keys `operatorAuth` and `operatorEmail` are shared across both apps intentionally (single sign-on across admin portals). Renaming them to app-scoped keys is a deferred follow-up.
+
 ---
 
-## 12. Icon Mapping for Common Operator UI
+## 12. Asset Paths
 
-Copy paths verbatim from `operator-dashboard.html` or `newunera-icons.mdc`. All FILL=1 for wells/stat/banners; FILL=0 for action cards and nav glyphs.
+Because pages are now one level deeper inside `NewUnera/UneraAdmin/` or `NewUnera/USAdmin/`, all relative paths gain one extra `../`:
+
+- Logo SVG: `src="../NewLogo/Unera White Text Nav.svg"`
+- Font faces: `url('../../Brand Guide/TestFoundersGrotesk-*.otf')`
+- Back-to-homepage link: `href="../index.html"`
+
+---
+
+## 13. Icon Mapping for Common Admin UI
+
+Copy paths verbatim from `USAdmin/dashboard.html` or `newunera-icons.mdc`. All FILL=1 for wells/stat/banners; FILL=0 for action cards and nav glyphs.
 
 | Element | Material Symbol | FILL |
 |---|---|---|
@@ -255,7 +287,7 @@ Copy paths verbatim from `operator-dashboard.html` or `newunera-icons.mdc`. All 
 
 ---
 
-## 13. What NOT to Do
+## 14. What NOT to Do
 
 - ❌ No `linear-gradient` / `radial-gradient` — use `color-mix` surfaces and solid tokens
 - ❌ No V1 hex colors (`#10B981`, `#0EA5E9`, `#EC4899`)
@@ -264,11 +296,12 @@ Copy paths verbatim from `operator-dashboard.html` or `newunera-icons.mdc`. All 
 - ❌ No `font-weight: 800` or `900` — max 700
 - ❌ No `--neutral-500` as text ink — use `--text-secondary` (`#3d6b78`)
 - ❌ No yellow or light-blue text on warm/white surfaces (WCAG 1.4.3)
-- ❌ No consumer-app patterns (e.g. `--gradient-primary` gradient text titles, old nav height 44px) — use operator-specific 64px tab-bar nav
-- ❌ Never save operator pages outside `NewUnera/`
-- ❌ Never use `--gradient-ink` (deep-blue) for the operator nav or primary action card — use `--op-nav` (black) for both
-- ❌ Never use `--fin-up` green for operator workflow badges — use `--brand-cloud-blue` background / `--brand-deep-blue` text
-- ❌ Never use deep-blue for the alert CTA on operator banners — use `var(--brand-black)` fill with `var(--brand-white)` text (21:1 contrast)
-- ❌ Never use `var(--brand-yellow)` anywhere in operator portal chrome — yellow is not part of the operator color scheme; use `var(--brand-cloud-blue)` for nav active/hover and white for button text
+- ❌ No consumer-app patterns (e.g. `--gradient-primary` gradient text titles, old nav height 44px) — use admin-specific 64px tab-bar nav
+- ❌ Never save admin pages outside `NewUnera/UneraAdmin/` or `NewUnera/USAdmin/`
+- ❌ Never use `--gradient-ink` (deep-blue) for the admin nav or primary action card — use `--op-nav` (black) for both
+- ❌ Never use `--fin-up` green for admin workflow badges — use `--brand-cloud-blue` background / `--brand-deep-blue` text
+- ❌ Never use deep-blue for the alert CTA on admin banners — use `var(--brand-black)` fill with `var(--brand-white)` text (21:1 contrast)
+- ❌ Never use `var(--brand-yellow)` anywhere in admin portal chrome — yellow is not part of the admin color scheme; use `var(--brand-cloud-blue)` for nav active/hover and white for button text
 - ❌ Never use `var(--gradient-warm)` as the needs-attention banner background — use `var(--brand-cloud-blue)` (#ebfcf5)
 - ❌ Never use `color: var(--brand-deep-blue)` for `.page-title` — use `var(--text-primary)` to stay aligned with `.stat-value`
+- ❌ Never add cross-app tab links (UneraAdmin tabs must not link to issuance.html/por.html; USAdmin tabs must not link to hc-management.html/hc-edit.html)
