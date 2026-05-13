@@ -650,6 +650,102 @@
         }
         .btn-edit svg { fill: currentColor; flex-shrink: 0; }
 
+        /* ── Stats Grid (admin KPI strip) ─────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+        }
+
+        .stat-card.stat-card-link {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.2s;
+            text-align: left;
+            width: 100%;
+        }
+        button.stat-card.stat-card-link {
+            appearance: none;
+            -webkit-appearance: none;
+            font: inherit;
+        }
+        .stat-card.stat-card-link:hover {
+            border-color: var(--op-accent);
+            box-shadow: 0 8px 24px rgba(106, 87, 112, 0.15);
+            transform: translateY(-4px);
+        }
+        .stat-card.stat-card-link:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .stat-card.stat-card-link[aria-pressed="true"] {
+            border-color: var(--op-accent);
+            box-shadow: 0 4px 16px rgba(106, 87, 112, 0.12);
+        }
+
+        .stat-card.has-pending,
+        .stat-card.has-alert {
+            border-color: color-mix(in srgb, var(--warning) 40%, transparent);
+            background: color-mix(in srgb, var(--warning) 3%, var(--brand-white));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 1rem;
+            background: var(--op-icon-well);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-deep-blue);
+            flex-shrink: 0;
+        }
+        .stat-icon svg {
+            fill: currentColor;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: var(--font-stat-size);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-change {
+            font-size: 0.813rem;
+            color: var(--fin-up);
+            font-weight: 500;
+        }
+        .stat-change.negative { color: var(--fin-down); }
+        .stat-change.neutral  { color: var(--text-secondary); }
+
         /* ── HC Section card ──────────────────────────────────── */
         .hc-section {
             background: var(--brand-white);
@@ -783,6 +879,10 @@
         }
         .badge-inactive {
             background: var(--surface-operator-strong);
+            color: var(--brand-deep-blue);
+        }
+        .badge-warning {
+            background: var(--surface-warning-soft);
             color: var(--brand-deep-blue);
         }
 
@@ -1008,6 +1108,9 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
 
             /* Responsive table — stacked card layout */
             .hc-table, .hc-table thead, .hc-table tbody,
@@ -1057,11 +1160,13 @@
 
         @media (max-width: 768px) {
             .container { padding: 1.5rem 1.5rem 3rem; }
+            .stat-value { font-size: var(--font-stat-size-compact); }
         }
 
         @media (max-width: 480px) {
             .container { padding: 1.25rem 1rem 3rem; }
             .page-title { font-size: 1.75rem; }
+            .stats-grid { grid-template-columns: 1fr; }
             .hc-section { padding: 1.25rem; }
         }
     </style>
@@ -1185,6 +1290,71 @@
                     <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
                 </svg>
                 Add New HC
+            </button>
+        </div>
+
+        <!-- Humanity Centre KPIs -->
+        <div class="stats-grid" role="region" aria-labelledby="hc-stats-heading">
+            <h2 id="hc-stats-heading" class="sr-only">Humanity Centre statistics</h2>
+
+            <button type="button" class="stat-card stat-card-link has-pending" id="hc-stat-pending-card" aria-pressed="false"
+                    onclick="setHcStatFilter('pending', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Pending approval</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- schedule FILL=0 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                            <path d="m614-310 51-51-149-149v-210h-72v240l170 170ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-pending">2</div>
+                <div class="stat-change neutral" id="hc-stat-pending-caption">Awaiting operator review</div>
+            </button>
+
+            <button type="button" class="stat-card stat-card-link" id="hc-stat-live-card" aria-pressed="false"
+                    onclick="setHcStatFilter('live', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Live in directory</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- groups FILL=0 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                            <path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 48.5 46.5T720-305v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780Zm-455-80h311q-10-20-55.5-35T480-370q-55 0-100.5 15T325-320ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-live">11</div>
+                <div class="stat-change neutral" id="hc-stat-live-caption">1 inactive · 2 pending</div>
+            </button>
+
+            <button type="button" class="stat-card stat-card-link has-alert" id="hc-stat-incomplete-card" aria-pressed="false"
+                    onclick="setHcStatFilter('incomplete', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Incomplete profiles</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- checklist Material Symbols outlined (24 × 24) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5.55 19L2 15.45l1.4-1.4l2.125 2.125l4.25-4.25l1.4 1.425zm0-8L2 7.45l1.4-1.4l2.125 2.125l4.25-4.25l1.4 1.425zM13 17v-2h9v2zm0-8V7h9v2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-incomplete">10</div>
+                <div class="stat-change neutral" id="hc-stat-incomplete-caption">Under 100% checklist</div>
+            </button>
+
+            <button type="button" class="stat-card stat-card-link" id="hc-stat-inactive-card" aria-pressed="false"
+                    onclick="setHcStatFilter('inactive', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Inactive</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- visibility_off Material Symbols -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="m19.8 22.6l-4.2-4.15q-.875.275-1.762.413T12 19q-3.775 0-6.725-2.087T1 11.5q.525-1.325 1.325-2.463T4.15 7L1.4 4.2l1.4-1.4l18.4 18.4zM12 16q.275 0 .513-.025t.512-.1l-5.4-5.4q-.075.275-.1.513T7.5 11.5q0 1.875 1.313 3.188T12 16m7.3.45l-3.175-3.15q.175-.425.275-.862t.1-.938q0-1.875-1.312-3.187T12 7q-.5 0-.937.1t-.863.3L7.65 4.85q1.025-.425 2.1-.637T12 4q3.775 0 6.725 2.088T23 11.5q-.575 1.475-1.513 2.738T19.3 16.45m-4.625-4.6l-3-3q.7-.125 1.288.113t1.012.687t.613 1.038t.087 1.162"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-inactive">1</div>
+                <div class="stat-change neutral">Hidden from public directory</div>
             </button>
         </div>
 
@@ -1374,8 +1544,8 @@
 
         // ── Mock HC data (12 rows) — enriched with region/categories/completeness ──
         var humanityCentres = [
-            { id:1,  name:'Nairobi Hope Centre',      slug:'nairobi-hope-centre',      location:'Kibera, Nairobi, Kenya',     region:'Africa',   categories:['education','healthcare','nutrition'], completeness:6, lastUpdated:'2 days ago',   status:'Active'   },
-            { id:2,  name:'Mumbai Community Centre',  slug:'mumbai-community-centre',  location:'Dharavi, Mumbai, India',     region:'Asia',     categories:['education','skills'],                 completeness:4, lastUpdated:'1 week ago',   status:'Active'   },
+            { id:1,  name:'Nairobi Hope Centre',      slug:'nairobi-hope-centre',      location:'Kibera, Nairobi, Kenya',     region:'Africa',   categories:['education','healthcare','nutrition'], completeness:6, lastUpdated:'2 days ago',   status:'Active',   pendingApproval:true  },
+            { id:2,  name:'Mumbai Community Centre',  slug:'mumbai-community-centre',  location:'Dharavi, Mumbai, India',     region:'Asia',     categories:['education','skills'],                 completeness:4, lastUpdated:'1 week ago',   status:'Active',   pendingApproval:true  },
             { id:3,  name:'São Paulo Care Centre',    slug:'sao-paulo-care-centre',    location:'São Paulo, Brazil',          region:'Americas', categories:['healthcare','nutrition'],             completeness:3, lastUpdated:'3 days ago',   status:'Active'   },
             { id:4,  name:'Dhaka Relief Centre',      slug:'dhaka-relief-centre',      location:'Dhaka, Bangladesh',          region:'Asia',     categories:['water','healthcare'],                 completeness:2, lastUpdated:'5 days ago',   status:'Active'   },
             { id:5,  name:'Lagos Community Hub',      slug:'lagos-community-hub',      location:'Lagos, Nigeria',             region:'Africa',   categories:['skills','education'],                 completeness:5, lastUpdated:'Yesterday',     status:'Active'   },
@@ -1390,8 +1560,81 @@
 
         var pendingDeactivateHC    = null;
         var activeRegionFilter     = 'all';
+        var activeStatFilter       = 'all';
 
-        // ── Toast ──────────────────────────────────────────────
+        function formatStatInt(n) {
+            return Math.max(0, Number(n) || 0).toLocaleString('en-CA');
+        }
+
+        function setHcStatFilter(key, btn) {
+            var next = (activeStatFilter === key) ? 'all' : key;
+            activeStatFilter = next;
+            document.querySelectorAll('.stats-grid .stat-card-link').forEach(function(el) {
+                el.setAttribute('aria-pressed', el === btn && next !== 'all' ? 'true' : 'false');
+            });
+            filterTable();
+            var search = document.getElementById('hc-search');
+            if (search && tableWrapDisplayed()) search.focus({ preventScroll: true });
+        }
+
+        function tableWrapDisplayed() {
+            var wrap = document.getElementById('hcTableWrap');
+            return wrap && wrap.style.display !== 'none';
+        }
+
+        /**
+         * Recompute Humanity Centre KPIs from mock data — keeps cards aligned with toggles / edits.
+         */
+        function updateHcOverviewStats() {
+            var pending    = humanityCentres.filter(function(h) { return h.pendingApproval === true; }).length;
+            var active     = humanityCentres.filter(function(h) { return h.status === 'Active'; }).length;
+            var inactive   = humanityCentres.filter(function(h) { return h.status === 'Inactive'; }).length;
+            var incomplete = humanityCentres.filter(function(h) { return Number(h.completeness) < 6; }).length;
+
+            var elP = document.getElementById('hc-stat-pending');
+            var elL = document.getElementById('hc-stat-live');
+            var elI = document.getElementById('hc-stat-incomplete');
+            var elN = document.getElementById('hc-stat-inactive');
+            if (elP) elP.textContent = formatStatInt(pending);
+            if (elL) elL.textContent = formatStatInt(active);
+            if (elI) elI.textContent = formatStatInt(incomplete);
+            if (elN) elN.textContent = formatStatInt(inactive);
+
+            var capLive = document.getElementById('hc-stat-live-caption');
+            if (capLive) capLive.textContent = formatStatInt(inactive) + ' inactive · ' + formatStatInt(pending) + ' pending';
+
+            var worst = null;
+            humanityCentres.forEach(function(h) {
+                if (Number(h.completeness) >= 6) return;
+                if (!worst || Number(h.completeness) < Number(worst.completeness)) worst = h;
+            });
+            var capInc = document.getElementById('hc-stat-incomplete-caption');
+            if (capInc) {
+                capInc.textContent = worst
+                    ? ('Lowest score: ' + worst.name + ' (' + worst.completeness + '/6)')
+                    : 'All profiles complete';
+            }
+
+            var pendingCard = document.getElementById('hc-stat-pending-card');
+            if (pendingCard) pendingCard.classList.toggle('has-pending', pending > 0);
+
+            var incompleteCard = document.getElementById('hc-stat-incomplete-card');
+            if (incompleteCard) incompleteCard.classList.toggle('has-alert', incomplete > 0);
+
+            ['hc-stat-pending-card','hc-stat-live-card','hc-stat-incomplete-card','hc-stat-inactive-card'].forEach(function(id, idx) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var lbl = [['Pending approval', pending], ['Live in directory', active], ['Incomplete profiles', incomplete], ['Inactive', inactive]][idx];
+                el.setAttribute('aria-label',
+                    lbl[0] + ', ' + formatStatInt(lbl[1]) + '. Toggle filter on the Humanity Centre table below.');
+            });
+
+            var tabB    = document.getElementById('tabHcBadge');
+            var mobB    = document.getElementById('mobileHcBadge');
+            var pendingStr = String(pending);
+            if (tabB) tabB.textContent = pendingStr;
+            if (mobB) mobB.textContent = pendingStr;
+        }
         function showToast(message, isError) {
             var container = document.getElementById('toastContainer');
             var toast     = document.createElement('div');
@@ -1415,10 +1658,22 @@
         }
 
         // ── Search + filter ────────────────────────────────────
+        function rowPassesStatFilter(row) {
+            if (activeStatFilter === 'all') return true;
+            switch (activeStatFilter) {
+                case 'pending':    return row.getAttribute('data-pending') === 'true';
+                case 'incomplete': return row.getAttribute('data-incomplete') === 'true';
+                case 'inactive':   return row.getAttribute('data-inactive') === 'true';
+                case 'live':       return row.getAttribute('data-live') === 'true';
+                default:           return true;
+            }
+        }
+
         function filterTable() {
             var query  = (document.getElementById('hc-search').value || '').toLowerCase().trim();
             var tbody  = document.getElementById('hc-list');
             var noRes  = document.getElementById('hc-no-results');
+            if (!tbody || !noRes) return;
             var rows   = tbody.querySelectorAll('tr');
             var shown  = 0;
             rows.forEach(function(row) {
@@ -1427,7 +1682,8 @@
                 var region   = (row.dataset.region   || '');
                 var matchQ   = !query || name.indexOf(query)>=0 || location.indexOf(query)>=0;
                 var matchR   = activeRegionFilter==='all' || region===activeRegionFilter;
-                var visible  = matchQ && matchR;
+                var matchS   = rowPassesStatFilter(row);
+                var visible  = matchQ && matchR && matchS;
                 row.style.display = visible ? '' : 'none';
                 if (visible) shown++;
             });
@@ -1509,18 +1765,30 @@
 
                 if (humanityCentres.length === 0) {
                     empty.style.display = 'block';
+                    updateHcOverviewStats();
                 } else {
                     tableWrap.style.display = 'block';
                     tbody.innerHTML = humanityCentres.map(function(hc) {
                         var isActive = hc.status === 'Active';
+                        var pend     = hc.pendingApproval === true;
                         var cats = hc.categories || [];
                         var catPills = cats.slice(0,2).map(function(c){ return '<span class="cat-pill">'+escapeHtml(c)+'</span>'; }).join('');
                         if(cats.length>2) catPills += '<span class="cat-pill cat-pill-more">+' + (cats.length-2) + '</span>';
                         var pct = Math.round((hc.completeness/6)*100);
                         var isDone = hc.completeness >= 6;
-                        return '<tr data-name="'+escapeHtml(hc.name)+'" data-location="'+escapeHtml(hc.location)+'" data-region="'+escapeHtml(hc.region || '')+'">' +
+                        var pendingPill = pend ? '<span class="badge badge-warning" style="margin-left:0.25rem;">Pending</span>' : '';
+                        var isIncomplete = Number(hc.completeness) < 6;
+                        var isInactiveRow = hc.status === 'Inactive';
+                        var isLivePublic = isActive && !pend;
+                        return '<tr data-name="'+escapeHtml(hc.name)+'" data-location="'+escapeHtml(hc.location)+'" data-region="'+escapeHtml(hc.region || '')+'"' +
+                            ' data-pending="' + (pend ? 'true' : 'false') + '"' +
+                            ' data-incomplete="' + (isIncomplete ? 'true' : 'false') + '"' +
+                            ' data-inactive="' + (isInactiveRow ? 'true' : 'false') + '"' +
+                            ' data-live="' + (isLivePublic ? 'true' : 'false') + '">' +
                             '<td data-label="Name">' +
-                                '<span style="font-weight:600;">' + escapeHtml(hc.name) + '</span>' +
+                                '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.25rem;margin-bottom:0.125rem;">' +
+                                    '<span style="font-weight:600;">' + escapeHtml(hc.name) + '</span>' + pendingPill +
+                                '</div>' +
                                 '<code class="slug-mini">' + escapeHtml(hc.slug||'') + '</code>' +
                             '</td>' +
                             '<td data-label="Location" style="color:var(--text-secondary);">' + escapeHtml(hc.location) + '</td>' +
@@ -1556,6 +1824,7 @@
                         '</tr>';
                     }).join('');
                     filterTable();
+                    updateHcOverviewStats();
                 }
             }, 300);
         }
@@ -1566,6 +1835,7 @@
         function trapFocus() {}
 
         // ── Init ───────────────────────────────────────────────
+        updateHcOverviewStats();
         loadHCs();
     </script>
 </body>
