@@ -1,0 +1,53 @@
+---
+description: Material Symbols FILL=1 only for NewUnera notifications page list, notification bell dropdown (`#notificationPanel`), and related inline SVGs on `notifications.html`
+alwaysApply: false
+---
+
+# NewUnera — Notifications icon rails (filled glyphs)
+
+**Scope:** [`NewUnera/notifications.html`](../NewUnera/notifications.html)
+
+**Family:** Material Symbols Outlined (`viewBox="0 -960 960 960"`, `opsz` 24 paths), **FILL=1** exports only.
+
+## Surfaces (all must use filled paths + `fill="currentColor"`; no strokes)
+
+| Region | Notes |
+|--------|--------|
+| `#notification-list` `.notification-card-icon` | Type wells: transaction, system, listing, donation, remittance, verification |
+| `#notificationPanel` `.notif-panel-header` | e.g. `close` / dismiss control SVGs — use filled `close` path from [`newunera-icons.mdc`](newunera-icons.mdc) §6 |
+| `#notificationPanel` `.notif-list-wrapper` | `.notif-item-icon` type glyphs (JS: `PANEL_ICON_PATHS`) + row dismiss icon |
+| `.notification-bell-btn` `.notif-bell-icon` | Canonical `notifications` slug from [`brand-style-guide.html`](../NewUnera/brand-style-guide.html) icon specimens |
+
+## CSS guard (match implementation)
+
+Scoped rules should enforce **fill-only** rendering and forbid accidental stroke styling:
+
+```css
+#notificationPanel svg,
+.notification-bell-btn .notif-bell-icon,
+#notification-list .notification-card-icon svg {
+    fill: currentColor;
+    stroke: none;
+}
+```
+
+Do **not** add `stroke`, `stroke-width`, or `fill="none"` on these inline SVGs.
+
+## Canonical slug → path source of truth
+
+Align **type** icons with **filled** columns in `NewUnera/brand-style-guide.html` (Icon library table):
+
+| Notification type | Material slug | FILL=1 reference |
+|-------------------|---------------|-------------------|
+| `transaction` | `paid` | First column (filled ring / inner disk) |
+| `system` | `lock` | Second column (solid body) |
+| `listing` | `home` | Filled home |
+| `donation` | `favorite` | Filled heart |
+| `remittance` | `payments` | Filled bill + card |
+| `verification` | `verified` (shield + check) | Verified shield row |
+
+Keep **`NOTIFICATION_ICONS`** (full `<svg>` for list cards) and **`PANEL_ICON_PATHS`** (`<path d="…">` only for the panel) **in sync** on every glyph change.
+
+## Relation to global policy
+
+This is an **exception** to the generic “micro-glyphs / small panel icons = FILL 0” hints in [`.cursor/rules/newunera-icons.mdc`](newunera-icons.mdc) §2 — notifications are a **dense finance-style rail** and use filled category glyphs by design.

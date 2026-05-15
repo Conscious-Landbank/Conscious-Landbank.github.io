@@ -357,6 +357,143 @@
         .demo-btn:focus, .demo-btn:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
         .demo-btn.active { border-color: var(--brand-deep-blue); background: var(--brand-deep-blue); color: var(--brand-white); }
 
+        /* ── KYC dashboard-alert demo modals (same chrome as dashboard notificationModal) ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10010;
+            animation: kycModalFadeIn 0.2s ease-out;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        @keyframes kycModalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .kyc-demo-modal-shell.modal {
+            background: var(--brand-white);
+            border-radius: 16px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: kycModalSlideUp 0.3s ease-out;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .kyc-demo-modal-shell.modal::-webkit-scrollbar {
+            display: none;
+        }
+        @keyframes kycModalSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .kyc-demo-modal-shell .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .kyc-demo-modal-shell .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .kyc-demo-modal-shell .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            color: var(--text-secondary);
+        }
+        .kyc-demo-modal-shell .modal-close:hover {
+            background: var(--neutral-100);
+        }
+        .kyc-demo-modal-shell .modal-close:focus,
+        .kyc-demo-modal-shell .modal-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .kyc-demo-modal-shell .modal-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .kyc-demo-modal-shell .modal-body::-webkit-scrollbar {
+            display: none;
+        }
+        .kyc-demo-modal-shell .modal-footer {
+            flex-shrink: 0;
+            padding: 0 1.5rem 1.5rem;
+            border-top: none;
+        }
+        .kyc-demo-modal-shell .modal-footer.kyc-demo-modal-footer {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+        .kyc-demo-modal-shell .modal-footer.kyc-demo-modal-footer .btn {
+            flex: 1 1 0;
+            width: auto;
+            min-width: 0;
+            min-height: 46px;
+        }
+        .kyc-demo-modal-shell .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: var(--brand-white);
+        }
+        .kyc-demo-modal-shell .notification-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+        .kyc-demo-modal-shell .notification-icon.warning {
+            background: var(--warning);
+            color: var(--brand-white);
+        }
+        .kyc-demo-modal-shell .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+            text-align: center;
+        }
+        body.kyc-demo-modal-open {
+            overflow: hidden;
+        }
+
         /* ── Result icon — unified 72×72 rounded square (replaces 100px circle variants) ── */
         .result-icon-wrap {
             width: 72px; height: 72px; border-radius: 1.25rem;
@@ -668,6 +805,8 @@
                     </p>
                     <div class="demo-test-btns" role="group" aria-label="Demo control">
                         <button class="demo-btn" onclick="goToStep(2)" type="button">Preview Flow</button>
+                        <button class="demo-btn" onclick="openKycDashboardAlertDemoModal('blocked')" type="button">Blocked alert</button>
+                        <button class="demo-btn" onclick="openKycDashboardAlertDemoModal('retry')" type="button">Retry alert</button>
                     </div>
                 </div>
             </div>
@@ -734,6 +873,49 @@
     </div><!-- /.container -->
 </main>
 
+<!-- Demo: dashboard-style KYC alert scenarios (notification modal chrome) -->
+<div class="modal-overlay" id="kycBlockedDemoModal" role="dialog" aria-modal="true" aria-labelledby="kycBlockedDemoTitle" aria-describedby="kycBlockedDemoDesc" onclick="if (event.target === this) closeKycDashboardAlertDemoModal()">
+    <div class="modal notification-modal kyc-demo-modal-shell" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 id="kycBlockedDemoTitle" class="modal-title">Identity verification unavailable</h2>
+            <button type="button" class="modal-close" onclick="closeKycDashboardAlertDemoModal()" aria-label="Close dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="notification-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+            </div>
+            <p id="kycBlockedDemoDesc" class="notification-message">You're not able to complete identity verification on this account while we review it. Please contact support for next steps.</p>
+        </div>
+        <div class="modal-footer kyc-demo-modal-footer">
+            <a class="btn btn-primary" href="mailto:support@unera.ca" aria-label="Contact UNERA support about your verification status">Contact support</a>
+            <button type="button" class="btn btn-secondary" onclick="closeKycDashboardAlertDemoModal()">OK</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="kycRetryDemoModal" role="dialog" aria-modal="true" aria-labelledby="kycRetryDemoTitle" aria-describedby="kycRetryDemoDesc" onclick="if (event.target === this) closeKycDashboardAlertDemoModal()">
+    <div class="modal notification-modal kyc-demo-modal-shell" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 id="kycRetryDemoTitle" class="modal-title">Verification needs another try</h2>
+            <button type="button" class="modal-close" onclick="closeKycDashboardAlertDemoModal()" aria-label="Close dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="notification-icon warning" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>
+            </div>
+            <p id="kycRetryDemoDesc" class="notification-message">Additional information is needed to complete your identity check. Please resume the verification flow to resubmit.</p>
+        </div>
+        <div class="modal-footer kyc-demo-modal-footer">
+            <button type="button" class="btn btn-primary" onclick="resumeVerificationFromDemoModal()" aria-label="Resume identity verification">Resume verification</button>
+            <button type="button" class="btn btn-secondary" onclick="closeKycDashboardAlertDemoModal()">OK</button>
+        </div>
+    </div>
+</div>
+
 <!-- Toast notification -->
 <div class="toast" id="kycToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
@@ -766,6 +948,37 @@
 
     /* ── Handoff timer ── */
     let handoffTimer = null;
+
+    /* ── Dashboard KYC alert demo modals (blocked / retry scenarios) ── */
+    function openKycDashboardAlertDemoModal(kind) {
+        const id = kind === 'blocked' ? 'kycBlockedDemoModal' : 'kycRetryDemoModal';
+        const overlay = document.getElementById(id);
+        if (!overlay) return;
+        closeKycDashboardAlertDemoModal();
+        overlay.classList.add('active');
+        document.body.classList.add('kyc-demo-modal-open');
+        const closeBtn = overlay.querySelector('.modal-close');
+        if (closeBtn) closeBtn.focus();
+    }
+
+    function closeKycDashboardAlertDemoModal() {
+        ['kycBlockedDemoModal', 'kycRetryDemoModal'].forEach(mid => {
+            const el = document.getElementById(mid);
+            if (el) el.classList.remove('active');
+        });
+        document.body.classList.remove('kyc-demo-modal-open');
+    }
+
+    function resumeVerificationFromDemoModal() {
+        closeKycDashboardAlertDemoModal();
+        goToStep(2);
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (!document.body.classList.contains('kyc-demo-modal-open')) return;
+        closeKycDashboardAlertDemoModal();
+    });
 
     /* ── Step navigation ── */
     function goToStep(n) {
