@@ -623,32 +623,55 @@
             outline-offset: 2px;
         }
 
+        /* Table row actions — keep in sync with user / kyc / team */
+        .btn-view,
         .btn-edit {
-            padding: 0.5rem 1rem;
-            background: var(--brand-white);
-            border: 1.5px solid var(--border-subtle);
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            font-family: var(--font-body);
-            cursor: pointer;
-            transition: all 0.2s;
-            min-height: 46px;
-            color: var(--text-primary);
+            box-sizing: border-box;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.375rem;
+            min-height: 46px;
+            min-width: 7.75rem;
+            padding: 0 0.75rem;
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border-subtle);
+            background: var(--brand-white);
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s, background 0.15s;
+        }
+        .btn-view:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
         }
         .btn-edit:hover {
             border-color: var(--op-accent);
             background: var(--surface-operator);
             color: var(--brand-deep-blue);
         }
+        .btn-view:focus-visible,
         .btn-edit:focus-visible {
             outline: 2px solid var(--brand-deep-blue);
             outline-offset: 2px;
         }
-        .btn-edit svg { fill: currentColor; flex-shrink: 0; }
+        .btn-view svg,
+        .btn-edit svg {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        @media (max-width: 480px) {
+            .btn-view,
+            .btn-edit {
+                min-width: min(100%, 7.75rem);
+            }
+        }
 
         /* ── Stats Grid (admin KPI strip) ─────────────────────── */
         .stats-grid {
@@ -747,15 +770,16 @@
         .stat-change.neutral  { color: var(--text-secondary); }
 
         /* ── HC Section card ──────────────────────────────────── */
+        /* Match `.user-section`: no outer padding — toolbar / table use `.table-toolbar` padding */
         .hc-section {
             background: var(--brand-white);
             border-radius: 1.25rem;
-            padding: 2rem;
+            padding: 0;
             border: 1px solid var(--border-subtle);
             box-shadow: var(--shadow-card);
             position: relative;
             overflow: hidden;
-            transition: all 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .hc-section::before {
@@ -790,27 +814,65 @@
         /* ── Table search + filters ─────────────────────────── */
         .table-toolbar {
             padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle);
-            display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+            display: flex; align-items: flex-start; gap: 0.75rem; flex-wrap: wrap;
         }
-        .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 340px; }
+        .toolbar-rows { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .toolbar-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; width: 100%; }
+        .toolbar-row--search { align-items: flex-end; }
+        .toolbar-filter-summary {
+            display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-left: auto;
+        }
+        .filter-count-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--brand-deep-blue); color: var(--brand-white); border-radius: 980px;
+            font-size: 0.688rem; font-weight: 700; min-width: 1.25rem; height: 1.25rem; padding: 0 0.35rem;
+        }
+        .filter-summary-text { font-size: 0.813rem; color: var(--text-secondary); }
+        .search-wrap { position: relative; flex: 1; min-width: 240px; max-width: 360px; }
         .search-wrap svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); fill: var(--text-secondary); pointer-events: none; }
         .search-input {
             width: 100%; padding: 0.625rem 1rem 0.625rem 2.25rem;
             border: 1.5px solid var(--border-subtle); border-radius: 0.625rem;
-            font-size: 0.875rem; font-family: var(--font-body); background: var(--brand-white);
+            font-size: 1rem; font-family: var(--font-body); background: var(--brand-white);
             color: var(--text-primary); transition: border-color 0.2s;
         }
         .search-input:focus { outline: none; border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.08); }
+        .filter-group { display: flex; flex-direction: column; gap: 0.25rem; }
+        .filter-group-label {
+            font-size: 0.688rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--text-secondary); padding: 0 0.125rem;
+        }
         .filter-chips-bar { display: flex; gap: 0.375rem; flex-wrap: wrap; }
         .filter-chip {
-            padding: 0.375rem 0.75rem; border: 1.5px solid var(--border-subtle);
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.5rem 0.875rem; border: 1.5px solid var(--border-subtle);
             border-radius: 980px; font-size: 0.813rem; font-weight: 500; cursor: pointer;
             background: var(--brand-white); color: var(--text-secondary); font-family: var(--font-body);
-            transition: all 0.15s; min-height: 36px;
+            transition: border-color 0.15s, color 0.15s, background 0.15s; min-height: 44px;
         }
         .filter-chip:hover { border-color: var(--op-accent); color: var(--brand-deep-blue); }
         .filter-chip.active { background: var(--surface-operator-strong); border-color: var(--op-accent); color: var(--brand-deep-blue); font-weight: 600; }
         .filter-chip:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-clear-all {
+            font-size: 0.813rem; font-weight: 600; font-family: var(--font-body);
+            color: var(--op-accent); background: none; border: none; cursor: pointer;
+            padding: 0.25rem 0; min-height: 44px; text-decoration: underline;
+        }
+        .btn-clear-all:hover { color: var(--brand-deep-blue); }
+        .btn-clear-all:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) {
+            .filter-chip, .search-input, .btn-clear-all { transition: none; }
+        }
+
+        .table-result-bar {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+            min-height: 2.25rem;
+            display: flex;
+            align-items: center;
+        }
 
         /* ── New column styles ──────────────────────────────── */
         .slug-mini { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 0.125rem; }
@@ -831,17 +893,6 @@
         .meter-fill.warn { background: var(--warning); }
         .meter-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
         .meter-label.done { color: var(--fin-up); }
-        .btn-view {
-            display: inline-flex; align-items: center; gap: 0.25rem;
-            padding: 0.375rem 0.75rem; border: 1.5px solid var(--border-subtle);
-            border-radius: 0.5rem; font-size: 0.813rem; font-weight: 500; font-family: var(--font-body);
-            color: var(--text-secondary); text-decoration: none; background: transparent;
-            transition: all 0.15s; min-height: 36px;
-        }
-        .btn-view:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
-        .btn-view:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-        .btn-view svg { fill: currentColor; }
-
         .hc-table th {
             text-align: left;
             padding: 0.75rem 1rem;
@@ -925,7 +976,7 @@
         .toggle.toggle-sm[aria-checked="true"] .toggle-slider { left: 20px; }
 
         /* ── Skeleton ─────────────────────────────────────────── */
-        .hc-skeleton { padding: 0.5rem 0; }
+        .hc-skeleton { padding: 1rem 1.5rem; }
         .skeleton-row {
             height: 52px;
             background: var(--neutral-200);
@@ -943,7 +994,7 @@
 
         /* ── Empty state ──────────────────────────────────────── */
         .hc-empty {
-            padding: 3rem 2rem;
+            padding: 3rem 1.5rem;
             text-align: center;
         }
         .hc-empty-icon {
@@ -1132,6 +1183,7 @@
                 margin-bottom: 0.75rem;
                 box-shadow: var(--shadow-card);
             }
+            .hc-table tbody tr:first-child { margin-top: 0.75rem; }
             .hc-table tbody tr:hover { background: var(--surface-operator); }
             .hc-table td {
                 border: none;
@@ -1161,13 +1213,18 @@
         @media (max-width: 768px) {
             .container { padding: 1.5rem 1.5rem 3rem; }
             .stat-value { font-size: var(--font-stat-size-compact); }
+            .table-toolbar { flex-direction: column; }
+            .toolbar-rows .toolbar-row { flex-direction: column; align-items: stretch; }
+            .toolbar-filter-summary { margin-left: 0; }
+            .filter-group { flex-direction: column; }
         }
 
         @media (max-width: 480px) {
             .container { padding: 1.25rem 1rem 3rem; }
             .page-title { font-size: 1.75rem; }
             .stats-grid { grid-template-columns: 1fr; }
-            .hc-section { padding: 1.25rem; }
+            .search-wrap { max-width: 100%; }
+            .filter-chip { flex: 1 1 auto; justify-content: center; min-width: 2.75rem; }
         }
     </style>
 </head>
@@ -1181,7 +1238,7 @@
         <nav class="nav" role="navigation" aria-label="UNERA Admin navigation">
             <a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
                 <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
-                <span class="op-pill" aria-label="UNERA Admin portal">UNERA ADMIN</span>
+                <span class="op-pill" aria-label="Admin portal">ADMIN</span>
             </a>
 
             <div class="tabs" role="tablist" aria-label="Admin sections">
@@ -1385,20 +1442,37 @@
 
             <!-- HC Table -->
             <div class="hc-table-wrap" id="hcTableWrap" style="display: none;">
-                <!-- Toolbar: search + region filter -->
+                <!-- Toolbar: search row + filter row (matches user-management pattern) -->
                 <div class="table-toolbar">
-                    <div class="search-wrap" role="search">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
-                        <input type="search" class="search-input" id="hc-search" placeholder="Search centres…" aria-label="Search Humanity Centres" oninput="filterTable()">
+                    <div class="toolbar-rows">
+                        <div class="toolbar-row toolbar-row--search">
+                            <div class="search-wrap" role="search">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                                <input type="search" class="search-input" id="hc-search" placeholder="Search centres…" aria-label="Search Humanity Centres" oninput="filterTable()">
+                            </div>
+                            <div class="toolbar-filter-summary" id="hcFilterSummary" aria-live="polite" hidden>
+                                <span class="filter-count-badge" aria-hidden="true">0</span>
+                                <span class="filter-summary-text"></span>
+                                <button type="button" class="btn-clear-all" id="hcClearAllBtn">Clear all</button>
+                            </div>
+                        </div>
+                        <div class="toolbar-row toolbar-row--filters">
+                            <div class="filter-group">
+                                <span class="filter-group-label" id="hc-region-label">Region</span>
+                                <div class="filter-chips-bar" role="group" aria-labelledby="hc-region-label">
+                                    <button type="button" class="filter-chip active" data-region="all" aria-pressed="true" onclick="setRegionFilter(this)">All</button>
+                                    <button type="button" class="filter-chip" data-region="Africa" aria-pressed="false" onclick="setRegionFilter(this)">Africa</button>
+                                    <button type="button" class="filter-chip" data-region="Asia" aria-pressed="false" onclick="setRegionFilter(this)">Asia</button>
+                                    <button type="button" class="filter-chip" data-region="Americas" aria-pressed="false" onclick="setRegionFilter(this)">Americas</button>
+                                    <button type="button" class="filter-chip" data-region="Europe" aria-pressed="false" onclick="setRegionFilter(this)">Europe</button>
+                                    <button type="button" class="filter-chip" data-region="Oceania" aria-pressed="false" onclick="setRegionFilter(this)">Oceania</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="filter-chips-bar" role="group" aria-label="Filter by region">
-                        <button type="button" class="filter-chip active" data-region="all" onclick="setRegionFilter(this)">All</button>
-                        <button type="button" class="filter-chip" data-region="Africa" onclick="setRegionFilter(this)">Africa</button>
-                        <button type="button" class="filter-chip" data-region="Asia" onclick="setRegionFilter(this)">Asia</button>
-                        <button type="button" class="filter-chip" data-region="Americas" onclick="setRegionFilter(this)">Americas</button>
-                        <button type="button" class="filter-chip" data-region="Europe" onclick="setRegionFilter(this)">Europe</button>
-                        <button type="button" class="filter-chip" data-region="Oceania" onclick="setRegionFilter(this)">Oceania</button>
-                    </div>
+                </div>
+                <div class="table-result-bar" id="hcResultBar" aria-live="polite" aria-atomic="true">
+                    <span id="hcResultCount"></span>
                 </div>
                 <table class="hc-table" id="hcTable" aria-describedby="hc-table-caption">
                     <caption id="hc-table-caption" class="sr-only">List of Humanity Centres with name, location, region, categories, profile completeness, last updated, and actions</caption>
@@ -1417,7 +1491,7 @@
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
-                <div id="hc-no-results" style="display:none;padding:2rem;text-align:center;color:var(--text-secondary);font-size:0.938rem;">No centres match your search.</div>
+                <div id="hc-no-results" style="display:none;padding:2rem 1.5rem;text-align:center;color:var(--text-secondary);font-size:0.938rem;">No centres match your search.</div>
             </div>
         </section>
 
@@ -1449,14 +1523,11 @@
 
     <!-- Cropper modal removed — image cropping handled in operator-hc-edit.html -->
 
+    <script src="operator-session.js"></script>
     <script>
         // ── Auth guard ─────────────────────────────────────────
-        const urlParams = new URLSearchParams(window.location.search);
-        const devMode   = urlParams.has('dev') || urlParams.has('test');
-
-        if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
-            window.location.href = 'login.html';
-        }
+        UneraAdminAuth.guardAppPage();
+        var devMode = UneraAdminAuth.isDevMode();
 
         // ── Load operator email + avatar initial ───────────────
         var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
@@ -1537,9 +1608,7 @@
 
         // ── Logout ─────────────────────────────────────────────
         function logout() {
-            localStorage.removeItem('operatorAuth');
-            localStorage.removeItem('operatorEmail');
-            window.location.href = 'login.html';
+            UneraAdminAuth.logout();
         }
 
         // ── Mock HC data (12 rows) — enriched with region/categories/completeness ──
@@ -1688,10 +1757,63 @@
                 if (visible) shown++;
             });
             noRes.style.display = shown===0 ? '' : 'none';
+            updateHcFilterSummary();
+            updateHcResultCount(shown, rows.length);
+        }
+
+        function updateHcResultCount(filteredLen, totalLen) {
+            var countEl = document.getElementById('hcResultCount');
+            if (!countEl) return;
+            var hasFilters = countHcActiveFilters() > 0;
+            countEl.textContent = hasFilters
+                ? (filteredLen + ' of ' + totalLen + ' centres')
+                : (filteredLen + ' centres');
+        }
+
+        function countHcActiveFilters() {
+            var n = 0;
+            if (activeStatFilter !== 'all') n++;
+            if (activeRegionFilter !== 'all') n++;
+            var q = (document.getElementById('hc-search').value || '').trim();
+            if (q) n++;
+            return n;
+        }
+        function updateHcFilterSummary() {
+            var el = document.getElementById('hcFilterSummary');
+            if (!el) return;
+            var count = countHcActiveFilters();
+            el.hidden = count === 0;
+            var badge = el.querySelector('.filter-count-badge');
+            var txt = el.querySelector('.filter-summary-text');
+            if (badge) badge.textContent = count;
+            if (txt) txt.textContent = count === 1 ? '1 filter active' : count + ' filters active';
+        }
+        function clearHcFilters() {
+            activeStatFilter = 'all';
+            activeRegionFilter = 'all';
+            document.querySelectorAll('.stats-grid .stat-card-link').forEach(function(el) {
+                el.setAttribute('aria-pressed', 'false');
+            });
+            var search = document.getElementById('hc-search');
+            if (search) search.value = '';
+            var bar = document.querySelector('#hcTableWrap .filter-chips-bar');
+            if (bar) {
+                bar.querySelectorAll('.filter-chip').forEach(function(c) {
+                    var on = c.dataset.region === 'all';
+                    c.classList.toggle('active', on);
+                    c.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            }
+            filterTable();
         }
         function setRegionFilter(btn) {
-            document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
-            btn.classList.add('active');
+            var bar = btn.closest('.filter-chips-bar');
+            if (!bar) return;
+            bar.querySelectorAll('.filter-chip').forEach(function(c) {
+                var on = c === btn;
+                c.classList.toggle('active', on);
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
             activeRegionFilter = btn.dataset.region;
             filterTable();
         }
@@ -1804,11 +1926,11 @@
                             '<td data-label="Action">' +
                                 '<div style="display:flex;align-items:center;gap:0.375rem;flex-wrap:wrap;">' +
                                     '<a href="centre-detail.html?id=' + escapeHtml(hc.slug||hc.id) + '" target="_blank" rel="noopener" class="btn-view" aria-label="View '+escapeHtml(hc.name)+' on public directory">' +
-                                        '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>' +
                                         'View' +
                                     '</a>' +
                                     '<a href="hc-edit.html?id=' + escapeHtml(hc.slug||hc.id) + '" class="btn-edit" aria-label="Edit ' + escapeHtml(hc.name) + '">' +
-                                        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>' +
                                         'Edit' +
                                     '</a>' +
                                     '<button type="button" class="toggle toggle-sm" role="switch"' +
@@ -1826,6 +1948,7 @@
                     filterTable();
                     updateHcOverviewStats();
                 }
+                UneraAdminAuth.applyPortalRbac('hc-management');
             }, 300);
         }
 
@@ -1836,6 +1959,9 @@
 
         // ── Init ───────────────────────────────────────────────
         updateHcOverviewStats();
+        UneraAdminAuth.applyPortalRbac('hc-management');
+        var hcClearBtn = document.getElementById('hcClearAllBtn');
+        if (hcClearBtn) hcClearBtn.addEventListener('click', clearHcFilters);
         loadHCs();
     </script>
 </body>

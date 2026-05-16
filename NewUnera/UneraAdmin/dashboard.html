@@ -853,6 +853,17 @@
             box-shadow: var(--shadow-card);
         }
 
+        .table-result-bar {
+            padding: 0.5rem 0;
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 0.75rem;
+            min-height: 2.25rem;
+            display: flex;
+            align-items: center;
+        }
+
         .activity-table-wrap {
             overflow-x: auto;
             border-radius: 0.75rem;
@@ -1029,7 +1040,7 @@
         <nav class="nav" role="navigation" aria-label="UNERA Admin navigation">
             <a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
                 <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
-                <span class="op-pill" aria-label="UNERA Admin portal">UNERA ADMIN</span>
+                <span class="op-pill" aria-label="Admin portal">ADMIN</span>
             </a>
 
             <div class="tabs" role="tablist" aria-label="Admin sections">
@@ -1261,6 +1272,9 @@
         <!-- Recent Activity -->
         <div class="activity-section" aria-labelledby="activity-title">
             <h3 id="activity-title" class="section-title">Recent Activity</h3>
+            <div class="table-result-bar" id="activityResultBar" aria-live="polite" aria-atomic="true" style="display: none;">
+                <span id="activityResultCount"></span>
+            </div>
             <div class="activity-table-wrap">
                 <table class="activity-table" aria-describedby="activity-caption">
                     <caption id="activity-caption" class="sr-only">Recent admin activity including HC changes, KYC reviews, and account management actions</caption>
@@ -1294,14 +1308,10 @@
 
     </main>
 
+    <script src="operator-session.js"></script>
     <script>
-        // Dev/test mode: bypass auth when ?dev=true or ?test=true
-        const urlParams = new URLSearchParams(window.location.search);
-        const devMode = urlParams.has('dev') || urlParams.has('test');
-
-        if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
-            window.location.href = 'login.html';
-        }
+        UneraAdminAuth.guardAppPage();
+        var devMode = UneraAdminAuth.isDevMode();
 
         // Load operator email + avatar initial
         var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
@@ -1422,12 +1432,20 @@
             }
 
             function renderActivity() {
+                var resultBar = document.getElementById('activityResultBar');
+                var resultCount = document.getElementById('activityResultCount');
                 if (recentActivity.length === 0) {
                     table.style.display = 'none';
                     emptyEl.style.display = 'block';
+                    if (resultBar) resultBar.style.display = 'none';
                 } else {
                     table.style.display = 'table';
                     emptyEl.style.display = 'none';
+                    var n = recentActivity.length;
+                    if (resultBar) resultBar.style.display = 'flex';
+                    if (resultCount) {
+                        resultCount.textContent = n === 1 ? '1 activity' : n + ' activities';
+                    }
                     tbody.innerHTML = recentActivity.map(function(a) {
                         return '<tr>' +
                             '<td style="color: var(--text-secondary); font-variant-numeric: tabular-nums;">' + a.time + '</td>' +
@@ -1495,10 +1513,10 @@
         })();
 
         function logout() {
-            localStorage.removeItem('operatorAuth');
-            localStorage.removeItem('operatorEmail');
-            window.location.href = 'login.html';
+            UneraAdminAuth.logout();
         }
+
+        UneraAdminAuth.applyPortalRbac('dashboard');
 
         // Init
         loadActivity();

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — UNERA Admin</title>
+    <title>Accept invite — UNERA Admin</title>
 
     <!-- TestFoundersGrotesk — UNERA V2 brand font -->
     <style>
@@ -247,6 +247,21 @@
             margin-bottom: 2rem;
         }
 
+        /* ── Invite: token / expiry banner ──────────────────── */
+        .error-banner {
+            display: none;
+            padding: 0.875rem 1rem;
+            border-radius: 0.75rem;
+            background: var(--surface-error-soft);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            border: 1px solid color-mix(in srgb, var(--brand-red) 22%, transparent);
+        }
+        .error-banner.visible {
+            display: block;
+        }
+
         /* ── Form ───────────────────────────────────────────── */
         .form-group {
             margin-bottom: 1.375rem;
@@ -280,6 +295,44 @@
             box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.12);
         }
 
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.375rem;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+        .password-wrapper .form-input {
+            padding-right: 3.5rem;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 0.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-family: var(--font-body);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0 0.5rem;
+        }
+        .password-toggle:focus {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .password-toggle:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* ── Primary Button ─────────────────────────────────── */
         .btn-primary {
             width: 100%;
@@ -300,17 +353,28 @@
             gap: 0.5rem;
             letter-spacing: 0.01em;
         }
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             filter: brightness(0.9);
             box-shadow: 0 4px 14px rgba(106, 87, 112, 0.3);
         }
-        .btn-primary:active {
+        .btn-primary:active:not(:disabled) {
             transform: translateY(1px);
             filter: brightness(0.85);
         }
         .btn-primary:focus {
             outline: 2px solid var(--op-accent);
             outline-offset: 3px;
+        }
+        .btn-primary:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            filter: none;
+            box-shadow: none;
+            transform: none;
+        }
+        .btn-primary:disabled:hover {
+            filter: none;
+            box-shadow: none;
         }
 
         /* ── Security Note ───────────────────────────────────── */
@@ -381,19 +445,6 @@
             box-shadow: 0 0 0 3px rgba(171, 87, 112, 0.12);
         }
 
-        .text-link-pwd {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--brand-deep-blue);
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .text-link-pwd:hover { text-decoration: underline; text-underline-offset: 2px; }
-        .text-link-pwd:focus-visible {
-            outline: 2px solid var(--brand-deep-blue);
-            outline-offset: 2px;
-        }
-
         /* ── Responsive ──────────────────────────────────────── */
         @media (max-width: 480px) {
             .auth-header {
@@ -417,10 +468,8 @@
     </style>
 </head>
 <body>
-    <!-- Skip link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Auth Header — brand identity before login -->
     <header class="auth-header" role="banner">
         <a href="../index.html" class="nav-brand" aria-label="UNERA Admin home">
             <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
@@ -428,163 +477,189 @@
         </a>
     </header>
 
-    <!-- Main -->
+    <!-- Password rules (demo): min 8 chars, one digit, one special from []!@#$%^&* -->
     <main id="main-content" class="auth-body">
-        <div class="login-card" role="region" aria-label="UNERA Admin login">
+        <div class="login-card" role="region" aria-label="Accept UNERA Admin invite">
 
-            <!-- Operator badge -->
             <div class="operator-badge" aria-hidden="true">
-                <!-- verified_user FILL=1 — Material Symbols Outlined -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
                     <path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/>
                 </svg>
                 Unera Admin
             </div>
 
-            <h1 class="login-title">UNERA Admin Access</h1>
-            <p class="login-subtitle">Secure login for authorised operators only</p>
+            <h1 class="login-title">Complete your admin invite</h1>
+            <p class="login-subtitle">Set a password for your operator account. You will enroll MFA on first sign-in.</p>
 
-            <p id="invitedLine" class="login-subtitle" style="display:none;color:var(--brand-deep-blue);font-weight:600;margin-top:-1rem;margin-bottom:1.25rem;" role="status">
-                Your invite is ready. Sign in with your new password to continue setup.
-            </p>
+            <div id="expiredBanner" class="error-banner" role="alert">This invite link has expired. Request a new invite from your administrator.</div>
 
-            <form id="operatorLoginForm" onsubmit="handleLogin(event)" novalidate>
+            <form id="inviteForm" novalidate>
                 <div class="form-group">
-                    <label for="email" class="form-label">Admin Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        class="form-input"
-                        placeholder="admin@unera.io"
-                        required
-                        autocomplete="email"
-                        aria-describedby="email-error"
-                        aria-required="true"
-                    >
-                    <span id="email-error" class="form-error" role="alert" aria-live="polite"></span>
+                    <label class="form-label" for="fullName">Display name (optional)</label>
+                    <input type="text" class="form-input" id="fullName" autocomplete="name" aria-label="Display name" placeholder="Your name">
                 </div>
 
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        class="form-input"
-                        placeholder="••••••••"
-                        required
-                        autocomplete="current-password"
-                        aria-describedby="password-error"
-                        aria-required="true"
-                    >
-                    <span id="password-error" class="form-error" role="alert" aria-live="polite"></span>
-                    <p style="margin-top:0.5rem;margin-bottom:0;">
-                        <a href="forgot-password.html" class="text-link-pwd">Forgot password?</a>
-                    </p>
+                    <label class="form-label" for="pw1">Password</label>
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            class="form-input"
+                            id="pw1"
+                            autocomplete="new-password"
+                            required
+                            aria-describedby="pwHint pw1-error"
+                            aria-required="true"
+                            placeholder="••••••••"
+                        >
+                        <button type="button" class="password-toggle" id="toggle1" aria-label="Show password">Show</button>
+                    </div>
+                    <p class="form-hint" id="pwHint">Use at least 8 characters with one number and one special character ([]!@#$%^&amp;*).</p>
+                    <span id="pw1-error" class="form-error" role="alert" aria-live="polite"></span>
                 </div>
 
-                <button type="submit" class="btn-primary">
-                    Sign In
-                </button>
+                <div class="form-group">
+                    <label class="form-label" for="pw2">Confirm password</label>
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            class="form-input"
+                            id="pw2"
+                            autocomplete="new-password"
+                            required
+                            aria-describedby="pw2-error"
+                            aria-required="true"
+                            placeholder="••••••••"
+                        >
+                        <button type="button" class="password-toggle" id="toggle2" aria-label="Show password">Show</button>
+                    </div>
+                    <span id="pw2-error" class="form-error" role="alert" aria-live="polite"></span>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">Activate account</button>
             </form>
 
-            <!-- Security note -->
             <div class="security-note" role="note">
-                <!-- lock FILL=1 — Material Symbols Outlined -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
                     <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/>
                 </svg>
-                <span>After you sign in, you'll either set up an authenticator (first time) or enter a one-time code (returning device).</span>
+                <span>Access is invite-only; operator actions are audit-logged. After activation, enroll MFA when you first sign in.</span>
             </div>
 
             <hr class="card-divider" aria-hidden="true">
 
-            <!-- Back link -->
-            <a href="../index.html" class="back-link">
-                <!-- arrow_forward FILL=0 (flipped via scaleX(-1)) — Material Symbols Outlined -->
+            <a href="login.html" class="back-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
                     <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
                 </svg>
-                Back to homepage
+                Back to sign in
             </a>
-
         </div>
     </main>
-
-    <!--
-      Demo localStorage keys (operator portal):
-      operatorAuth, operatorEmail, operatorPortalRole (viewer|support|compliance|super_admin),
-      operatorMfaPending, operatorMfaEnrolled, operatorInviteToken (optional).
-      Demo: login.html?dev — dev bypass; login.html?role=viewer — forces role after MFA.
-      Mock OTP / enroll: code 123456 or any 6 digits (see mfa-verify / mfa-enroll comments).
-    -->
     <script src="operator-session.js"></script>
     <script>
-        function clearErrors() {
-            ['email', 'password'].forEach(function(id) {
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var token = params.get('token');
+            var expired = params.has('expired');
+            var form = document.getElementById('inviteForm');
+            var submitBtn = document.getElementById('submitBtn');
+            var expiredBanner = document.getElementById('expiredBanner');
+            var inviteAllowed = (typeof UneraAdminAuth !== 'undefined' && UneraAdminAuth.isDevMode()) || token === 'demo' || params.has('dev');
+
+            function clearPwErrors() {
+                ['pw1', 'pw2'].forEach(function (id) {
+                    var input = document.getElementById(id);
+                    var err = document.getElementById(id + '-error');
+                    if (input) input.classList.remove('input-error');
+                    if (err) {
+                        err.textContent = '';
+                        err.classList.remove('visible');
+                    }
+                });
+            }
+
+            function showPwError(fieldId, message) {
+                var input = document.getElementById(fieldId);
+                var err = document.getElementById(fieldId + '-error');
+                if (input) input.classList.add('input-error');
+                if (err) {
+                    err.textContent = message;
+                    err.classList.add('visible');
+                }
+            }
+
+            function wirePwClearOnInput(id) {
                 var input = document.getElementById(id);
-                var error = document.getElementById(id + '-error');
-                if (input) { input.classList.remove('input-error'); }
-                if (error) { error.textContent = ''; error.classList.remove('visible'); }
-            });
-        }
-
-        function showError(fieldId, message) {
-            var input = document.getElementById(fieldId);
-            var error = document.getElementById(fieldId + '-error');
-            if (input) { input.classList.add('input-error'); }
-            if (error) { error.textContent = message; error.classList.add('visible'); }
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            clearErrors();
-
-            var email = document.getElementById('email').value.trim();
-            var password = document.getElementById('password').value;
-            var valid = true;
-
-            if (!email) {
-                showError('email', 'Please enter your admin email address.');
-                valid = false;
-            }
-            if (!password) {
-                showError('password', 'Please enter your password.');
-                valid = false;
+                if (!input) return;
+                input.addEventListener('input', function () {
+                    var err = document.getElementById(id + '-error');
+                    if (input.classList.contains('input-error')) {
+                        input.classList.remove('input-error');
+                        if (err) {
+                            err.textContent = '';
+                            err.classList.remove('visible');
+                        }
+                    }
+                });
             }
 
-            if (!valid) { return; }
-
-            var roleFromUrl = new URLSearchParams(window.location.search).get('role');
-            if (roleFromUrl === 'viewer' || roleFromUrl === 'support' || roleFromUrl === 'compliance' || roleFromUrl === 'super_admin') {
-                sessionStorage.setItem('pendingOperatorRole', roleFromUrl);
-            }
-
-            localStorage.setItem('operatorEmail', email);
-            localStorage.setItem('operatorMfaPending', 'true');
-            window.location.href = UneraAdminAuth.postPasswordMfaTarget();
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var qs = new URLSearchParams(window.location.search);
-            var roleQ = qs.get('role');
-            if (roleQ === 'viewer' || roleQ === 'support' || roleQ === 'compliance' || roleQ === 'super_admin') {
-                sessionStorage.setItem('pendingOperatorRole', roleQ);
-            }
-            if (qs.has('invited')) {
-                var inviteEl = document.getElementById('invitedLine');
-                if (inviteEl) inviteEl.style.display = 'block';
-            }
-
-            if (UneraAdminAuth.isDevMode()) return;
-
-            if (localStorage.getItem('operatorAuth') === 'true' && localStorage.getItem('operatorMfaPending') !== 'true') {
-                window.location.replace('dashboard.html');
+            if (expired) {
+                expiredBanner.classList.add('visible');
+                submitBtn.disabled = true;
+                if (form) form.querySelectorAll('input, button.password-toggle').forEach(function (el) { el.disabled = true; });
                 return;
             }
-            if (localStorage.getItem('operatorMfaPending') === 'true') {
-                window.location.replace(UneraAdminAuth.postPasswordMfaTarget());
+            if (!inviteAllowed) {
+                expiredBanner.textContent = 'Invalid or missing invite token. On a deployed host, use ?token=demo or ?dev. Local file / localhost opens without extra params.';
+                expiredBanner.classList.add('visible');
+                submitBtn.disabled = true;
+                if (form) form.querySelectorAll('input, button.password-toggle').forEach(function (el) { el.disabled = true; });
+                return;
             }
-        });
+
+            function wireToggle(btn, input) {
+                btn.addEventListener('click', function () {
+                    if (btn.disabled) return;
+                    var show = input.type === 'password';
+                    input.type = show ? 'text' : 'password';
+                    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                    btn.textContent = show ? 'Hide' : 'Show';
+                });
+            }
+            wireToggle(document.getElementById('toggle1'), document.getElementById('pw1'));
+            wireToggle(document.getElementById('toggle2'), document.getElementById('pw2'));
+            wirePwClearOnInput('pw1');
+            wirePwClearOnInput('pw2');
+
+            var SPECIAL_RE = /[!@#$%^&*[\]]/;
+            function validatePassword(pw) {
+                if (pw.length < 8) return 'Password must be at least 8 characters.';
+                if (!/\d/.test(pw)) return 'Include at least one digit.';
+                if (!SPECIAL_RE.test(pw)) return 'Include at least one special character from []!@#$%^&*.';
+                return '';
+            }
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (submitBtn.disabled) return;
+                clearPwErrors();
+                var p1 = document.getElementById('pw1').value;
+                var p2 = document.getElementById('pw2').value;
+                var err = validatePassword(p1);
+                if (err) {
+                    showPwError('pw1', err);
+                    return;
+                }
+                if (p1 !== p2) {
+                    showPwError('pw2', 'Passwords do not match.');
+                    return;
+                }
+                var t = params.get('token');
+                if (t) localStorage.setItem('operatorInviteToken', t);
+                window.location.href = 'login.html?invited=1';
+            });
+        })();
     </script>
 </body>
 </html>

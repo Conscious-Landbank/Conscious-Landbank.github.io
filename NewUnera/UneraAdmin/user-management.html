@@ -360,12 +360,24 @@
             padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle);
             display: flex; align-items: flex-start; gap: 0.75rem; flex-wrap: wrap;
         }
+        .toolbar-rows { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .toolbar-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; width: 100%; }
+        .toolbar-row--search { align-items: flex-end; }
+        .toolbar-filter-summary {
+            display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-left: auto;
+        }
+        .filter-count-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--brand-deep-blue); color: var(--brand-white); border-radius: 980px;
+            font-size: 0.688rem; font-weight: 700; min-width: 1.25rem; height: 1.25rem; padding: 0 0.35rem;
+        }
+        .filter-summary-text { font-size: 0.813rem; color: var(--text-secondary); }
         .search-wrap { position: relative; flex: 1; min-width: 240px; max-width: 360px; }
         .search-wrap svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); fill: var(--text-secondary); pointer-events: none; }
         .search-input {
             width: 100%; padding: 0.625rem 1rem 0.625rem 2.25rem;
             border: 1.5px solid var(--border-subtle); border-radius: 0.625rem;
-            font-size: 0.875rem; font-family: var(--font-body);
+            font-size: 1rem; font-family: var(--font-body);
             background: var(--brand-white); color: var(--text-primary); transition: border-color 0.2s;
         }
         .search-input:focus { outline: none; border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.08); }
@@ -373,10 +385,11 @@
         .filter-group-label { font-size: 0.688rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); padding: 0 0.125rem; }
         .filter-chips-bar { display: flex; gap: 0.375rem; flex-wrap: wrap; }
         .filter-chip {
-            padding: 0.375rem 0.75rem; border: 1.5px solid var(--border-subtle);
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.5rem 0.875rem; border: 1.5px solid var(--border-subtle);
             border-radius: 980px; font-size: 0.813rem; font-weight: 500; cursor: pointer;
             background: var(--brand-white); color: var(--text-secondary);
-            font-family: var(--font-body); transition: all 0.15s; min-height: 34px;
+            font-family: var(--font-body); transition: border-color 0.15s, color 0.15s, background 0.15s; min-height: 44px;
         }
         .filter-chip:hover { border-color: var(--op-accent); color: var(--brand-deep-blue); }
         .filter-chip.active { background: var(--surface-operator-strong); border-color: var(--op-accent); color: var(--brand-deep-blue); font-weight: 600; }
@@ -384,12 +397,32 @@
         .date-range-wrap { display: flex; gap: 0.375rem; align-items: center; flex-wrap: wrap; }
         .date-range-wrap input[type="date"] {
             padding: 0.375rem 0.625rem; border: 1.5px solid var(--border-subtle);
-            border-radius: 0.5rem; font-size: 0.813rem; font-family: var(--font-body);
+            border-radius: 0.5rem; font-size: 1rem; font-family: var(--font-body);
             background: var(--brand-white); color: var(--text-primary);
-            transition: border-color 0.2s; min-height: 34px;
+            transition: border-color 0.2s; min-height: 44px;
         }
         .date-range-wrap input[type="date"]:focus { outline: none; border-color: var(--brand-deep-blue); }
         .date-range-sep { font-size: 0.813rem; color: var(--text-secondary); }
+        .btn-clear-all {
+            font-size: 0.813rem; font-weight: 600; font-family: var(--font-body);
+            color: var(--op-accent); background: none; border: none; cursor: pointer;
+            padding: 0.25rem 0; min-height: 44px; text-decoration: underline;
+        }
+        .btn-clear-all:hover { color: var(--brand-deep-blue); }
+        .btn-clear-all:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) {
+            .filter-chip, .search-input, .date-range-wrap input[type="date"], .btn-clear-all { transition: none; }
+        }
+
+        .table-result-bar {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+            min-height: 2.25rem;
+            display: flex;
+            align-items: center;
+        }
 
         /* ── Users Table ───────────────────────────────────────── */
         .user-table-wrap { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
@@ -442,18 +475,38 @@
         /* Wallet pill */
         .wallet-pill { display: inline-flex; align-items: center; gap: 0.25rem; }
 
-        /* ── Action button ─────────────────────────────────────── */
+        /* ── Table row actions — keep in sync with hc / kyc / team ─ */
         .btn-view {
-            display: inline-flex; align-items: center; gap: 0.25rem;
-            padding: 0.375rem 0.75rem; border: 1.5px solid var(--border-subtle);
-            border-radius: 0.5rem; font-size: 0.813rem; font-weight: 500;
-            font-family: var(--font-body); color: var(--text-secondary);
-            text-decoration: none; background: transparent;
-            transition: all 0.15s; min-height: 36px; cursor: pointer;
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            min-height: 46px;
+            min-width: 7.75rem;
+            padding: 0 0.75rem;
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border-subtle);
+            background: var(--brand-white);
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s, background 0.15s;
         }
         .btn-view:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
         .btn-view:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-        .btn-view svg { fill: currentColor; }
+        .btn-view svg {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        @media (max-width: 480px) {
+            .btn-view { min-width: min(100%, 7.75rem); }
+        }
 
         /* ── Skeleton ──────────────────────────────────────────── */
         .user-skeleton { padding: 0.5rem 0; }
@@ -712,6 +765,7 @@
                 border-radius: 0.75rem; padding: 1rem; margin-bottom: 0.75rem;
                 box-shadow: var(--shadow-card);
             }
+            .user-table tbody tr:first-child { margin-top: 0.75rem; }
             .user-table tbody tr:hover { background: var(--surface-operator); }
             .user-table td {
                 border: none; padding: 0.5rem 0;
@@ -733,12 +787,19 @@
             .stat-value { font-size: var(--font-stat-size-compact); }
             .drawer { width: 100vw; }
             .table-toolbar { flex-direction: column; }
+            .toolbar-rows .toolbar-row { flex-direction: column; align-items: stretch; }
+            .toolbar-filter-summary { margin-left: 0; }
             .filter-group { flex-direction: column; }
         }
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
             .page-title { font-size: 1.75rem; }
             .container { padding: 1.25rem 1rem 3rem; }
+            .date-range-wrap { flex-direction: column; align-items: flex-start; }
+            .date-range-wrap input[type="date"] { width: 100%; }
+            .date-range-sep { display: none; }
+            .search-wrap { max-width: 100%; }
+            .filter-chip { flex: 1 1 auto; justify-content: center; min-width: 2.75rem; }
         }
     </style>
 </head>
@@ -752,7 +813,7 @@
         <nav class="nav" role="navigation" aria-label="UNERA Admin navigation">
             <a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
                 <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
-                <span class="op-pill" aria-label="UNERA Admin portal">UNERA ADMIN</span>
+                <span class="op-pill" aria-label="Admin portal">ADMIN</span>
             </a>
 
             <div class="tabs" role="tablist" aria-label="Admin sections">
@@ -948,59 +1009,71 @@
 
                 <!-- Toolbar -->
                 <div class="table-toolbar">
-                    <div class="search-wrap" role="search">
-                        <!-- search FILL=0 -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
-                        <input type="search" class="search-input" id="user-search"
-                               placeholder="Search by name, email or user ID…"
-                               aria-label="Search users" oninput="filterTable()">
-                    </div>
-
-                    <div class="filter-group">
-                        <span class="filter-group-label" id="filter-account-label">Account</span>
-                        <div class="filter-chips-bar" role="group" aria-labelledby="filter-account-label">
-                            <button type="button" class="filter-chip active" data-account="all" onclick="setChipFilter('account', this)">All</button>
-                            <button type="button" class="filter-chip" data-account="active" onclick="setChipFilter('account', this)">Active</button>
-                            <button type="button" class="filter-chip" data-account="locked" onclick="setChipFilter('account', this)">Locked</button>
+                    <div class="toolbar-rows">
+                        <div class="toolbar-row toolbar-row--search">
+                            <div class="search-wrap" role="search">
+                                <!-- search FILL=0 -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                                <input type="search" class="search-input" id="user-search"
+                                       placeholder="Search by name, email or user ID…"
+                                       aria-label="Search users" oninput="filterTable()">
+                            </div>
+                            <div class="toolbar-filter-summary" id="userFilterSummary" aria-live="polite" hidden>
+                                <span class="filter-count-badge" aria-hidden="true">0</span>
+                                <span class="filter-summary-text"></span>
+                                <button type="button" class="btn-clear-all" id="userClearAllBtn">Clear all</button>
+                            </div>
+                        </div>
+                        <div class="toolbar-row toolbar-row--filters">
+                            <div class="filter-group">
+                                <span class="filter-group-label" id="filter-account-label">Account</span>
+                                <div class="filter-chips-bar" role="group" aria-labelledby="filter-account-label">
+                                    <button type="button" class="filter-chip active" data-account="all" onclick="setChipFilter('account', this)" aria-pressed="true">All</button>
+                                    <button type="button" class="filter-chip" data-account="active" onclick="setChipFilter('account', this)" aria-pressed="false">Active</button>
+                                    <button type="button" class="filter-chip" data-account="locked" onclick="setChipFilter('account', this)" aria-pressed="false">Locked</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-group-label" id="filter-kyc-label">KYC Status</span>
+                                <div class="filter-chips-bar" role="group" aria-labelledby="filter-kyc-label">
+                                    <button type="button" class="filter-chip active" data-kyc="all" onclick="setChipFilter('kyc', this)" aria-pressed="true">All KYC</button>
+                                    <button type="button" class="filter-chip" data-kyc="verified" onclick="setChipFilter('kyc', this)" aria-pressed="false">Verified</button>
+                                    <button type="button" class="filter-chip" data-kyc="pending" onclick="setChipFilter('kyc', this)" aria-pressed="false">Pending</button>
+                                    <button type="button" class="filter-chip" data-kyc="rejected" onclick="setChipFilter('kyc', this)" aria-pressed="false">Rejected</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-group-label" id="filter-twofa-label">2FA</span>
+                                <div class="filter-chips-bar" role="group" aria-labelledby="filter-twofa-label">
+                                    <button type="button" class="filter-chip active" data-twofa="all" onclick="setChipFilter('twofa', this)" aria-pressed="true">All 2FA</button>
+                                    <button type="button" class="filter-chip" data-twofa="on" onclick="setChipFilter('twofa', this)" aria-pressed="false">2FA On</button>
+                                    <button type="button" class="filter-chip" data-twofa="off" onclick="setChipFilter('twofa', this)" aria-pressed="false">2FA Off</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="toolbar-row toolbar-row--dates">
+                            <div class="filter-group">
+                                <span class="filter-group-label" id="filter-role-label">Role</span>
+                                <div class="filter-chips-bar" role="group" aria-labelledby="filter-role-label">
+                                    <button type="button" class="filter-chip active" data-role="all" onclick="setChipFilter('role', this)" aria-pressed="true">All roles</button>
+                                    <button type="button" class="filter-chip" data-role="user" onclick="setChipFilter('role', this)" aria-pressed="false">User</button>
+                                    <button type="button" class="filter-chip" data-role="operator" onclick="setChipFilter('role', this)" aria-pressed="false">Operator</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-group-label" id="date-range-label">Joined between</span>
+                                <div class="date-range-wrap" role="group" aria-labelledby="date-range-label">
+                                    <input type="date" id="date-from" aria-label="Joined from date" onchange="filterTable()">
+                                    <span class="date-range-sep" aria-hidden="true">–</span>
+                                    <input type="date" id="date-to" aria-label="Joined to date" onchange="filterTable()">
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="filter-group">
-                        <span class="filter-group-label" id="filter-kyc-label">KYC Status</span>
-                        <div class="filter-chips-bar" role="group" aria-labelledby="filter-kyc-label">
-                            <button type="button" class="filter-chip active" data-kyc="all" onclick="setChipFilter('kyc', this)">All KYC</button>
-                            <button type="button" class="filter-chip" data-kyc="verified" onclick="setChipFilter('kyc', this)">Verified</button>
-                            <button type="button" class="filter-chip" data-kyc="pending" onclick="setChipFilter('kyc', this)">Pending</button>
-                            <button type="button" class="filter-chip" data-kyc="rejected" onclick="setChipFilter('kyc', this)">Rejected</button>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <span class="filter-group-label" id="filter-twofa-label">2FA</span>
-                        <div class="filter-chips-bar" role="group" aria-labelledby="filter-twofa-label">
-                            <button type="button" class="filter-chip active" data-twofa="all" onclick="setChipFilter('twofa', this)">All 2FA</button>
-                            <button type="button" class="filter-chip" data-twofa="on" onclick="setChipFilter('twofa', this)">2FA On</button>
-                            <button type="button" class="filter-chip" data-twofa="off" onclick="setChipFilter('twofa', this)">2FA Off</button>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <span class="filter-group-label" id="filter-role-label">Role</span>
-                        <div class="filter-chips-bar" role="group" aria-labelledby="filter-role-label">
-                            <button type="button" class="filter-chip active" data-role="all" onclick="setChipFilter('role', this)">All roles</button>
-                            <button type="button" class="filter-chip" data-role="user" onclick="setChipFilter('role', this)">User</button>
-                            <button type="button" class="filter-chip" data-role="operator" onclick="setChipFilter('role', this)">Operator</button>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <span class="filter-group-label" id="date-range-label">Joined between</span>
-                        <div class="date-range-wrap" role="group" aria-labelledby="date-range-label">
-                            <input type="date" id="date-from" aria-label="Joined from date" onchange="filterTable()">
-                            <span class="date-range-sep" aria-hidden="true">–</span>
-                            <input type="date" id="date-to" aria-label="Joined to date" onchange="filterTable()">
-                        </div>
-                    </div>
+                <div class="table-result-bar" id="userResultBar" aria-live="polite" aria-atomic="true">
+                    <span id="userResultCount"></span>
                 </div>
 
                 <!-- Table -->
@@ -1161,13 +1234,12 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
+    <script src="operator-session.js"></script>
     <script>
         // ── Auth guard ──────────────────────────────────────────
+        UneraAdminAuth.guardAppPage();
         var urlParams = new URLSearchParams(window.location.search);
-        var devMode   = urlParams.has('dev') || urlParams.has('test');
-        if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
-            window.location.href = 'login.html';
-        }
+        var devMode   = UneraAdminAuth.isDevMode();
 
         // ── Load operator identity ──────────────────────────────
         var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
@@ -1228,9 +1300,7 @@
 
         // ── Logout ──────────────────────────────────────────────
         function logout() {
-            localStorage.removeItem('operatorAuth');
-            localStorage.removeItem('operatorEmail');
-            window.location.href = 'login.html';
+            UneraAdminAuth.logout();
         }
 
         // ── Helpers ─────────────────────────────────────────────
@@ -1298,8 +1368,10 @@
         // ── Stat cards filter shortcut ───────────────────────────
         function applyAccountFilter(val) {
             activeFilters.account = val;
-            document.querySelectorAll('[data-account]').forEach(function(c) {
-                c.classList.toggle('active', c.dataset.account === val);
+            document.querySelectorAll('.filter-chips-bar .filter-chip[data-account]').forEach(function(c) {
+                var on = c.dataset.account === val;
+                c.classList.toggle('active', on);
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
             });
             filterTable();
         }
@@ -1308,9 +1380,11 @@
         function setChipFilter(group, btn) {
             var val = btn.dataset[group];
             activeFilters[group] = val;
-            var bars = btn.closest('.filter-chips-bar').querySelectorAll('.filter-chip');
-            bars.forEach(function(c) { c.classList.remove('active'); });
-            btn.classList.add('active');
+            btn.closest('.filter-chips-bar').querySelectorAll('.filter-chip').forEach(function(c) {
+                var on = c === btn;
+                c.classList.toggle('active', on);
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
             filterTable();
         }
 
@@ -1344,6 +1418,58 @@
             });
 
             noRes.style.display = shown === 0 ? '' : 'none';
+            updateUserFilterSummary();
+            updateUserResultCount(shown, rows.length);
+        }
+
+        function updateUserResultCount(filteredLen, totalLen) {
+            var countEl = document.getElementById('userResultCount');
+            if (!countEl) return;
+            var hasFilters = countUserActiveFilters() > 0;
+            countEl.textContent = hasFilters
+                ? (filteredLen + ' of ' + totalLen + ' accounts')
+                : (filteredLen + ' accounts');
+        }
+
+        function countUserActiveFilters() {
+            var n = 0;
+            if (activeFilters.account !== 'all') n++;
+            if (activeFilters.kyc !== 'all') n++;
+            if (activeFilters.twofa !== 'all') n++;
+            if (activeFilters.role !== 'all') n++;
+            var q = (document.getElementById('user-search').value || '').trim();
+            if (q) n++;
+            if (document.getElementById('date-from').value) n++;
+            if (document.getElementById('date-to').value) n++;
+            return n;
+        }
+
+        function updateUserFilterSummary() {
+            var el = document.getElementById('userFilterSummary');
+            if (!el) return;
+            var count = countUserActiveFilters();
+            el.hidden = count === 0;
+            var badge = el.querySelector('.filter-count-badge');
+            var txt = el.querySelector('.filter-summary-text');
+            if (badge) badge.textContent = count;
+            if (txt) txt.textContent = count === 1 ? '1 filter active' : count + ' filters active';
+        }
+
+        function clearUserFilters() {
+            activeFilters = { account: 'all', kyc: 'all', twofa: 'all', role: 'all' };
+            document.getElementById('user-search').value = '';
+            document.getElementById('date-from').value = '';
+            document.getElementById('date-to').value = '';
+            document.querySelectorAll('#userTableWrap .filter-chips-bar .filter-chip').forEach(function(c) {
+                var isAll = false;
+                if (c.hasAttribute('data-account')) isAll = c.dataset.account === 'all';
+                else if (c.hasAttribute('data-kyc')) isAll = c.dataset.kyc === 'all';
+                else if (c.hasAttribute('data-twofa')) isAll = c.dataset.twofa === 'all';
+                else if (c.hasAttribute('data-role')) isAll = c.dataset.role === 'all';
+                c.classList.toggle('active', isAll);
+                c.setAttribute('aria-pressed', isAll ? 'true' : 'false');
+            });
+            filterTable();
         }
 
         // ── Badge generators ─────────────────────────────────────
@@ -1410,6 +1536,7 @@
                 renderUserRows();
                 applyUrlFilter();
                 filterTable();
+                UneraAdminAuth.applyPortalRbac('user-management');
             }, 350);
         }
 
@@ -1451,7 +1578,7 @@
                     '<td data-label="Role">' + roleBadge(u.role) + '</td>' +
                     '<td data-label="Action" onclick="event.stopPropagation();">' +
                         '<button type="button" class="btn-view" onclick="openUserDrawer(\'' + escapeHtml(u.id) + '\')" aria-label="Open details for ' + escapeHtml(u.name) + '">' +
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm120-80v-560H200v560h120Zm80 0h360v-560H400v560Zm-80 0H200h120Z"/></svg>' +
                             'Open' +
                         '</button>' +
                     '</td>' +
@@ -1464,8 +1591,10 @@
             var filterParam = urlParams.get('filter');
             if (filterParam === 'locked') {
                 activeFilters.account = 'locked';
-                document.querySelectorAll('[data-account]').forEach(function(c) {
-                    c.classList.toggle('active', c.dataset.account === 'locked');
+                document.querySelectorAll('.filter-chips-bar .filter-chip[data-account]').forEach(function(c) {
+                    var on = c.dataset.account === 'locked';
+                    c.classList.toggle('active', on);
+                    c.setAttribute('aria-pressed', on ? 'true' : 'false');
                 });
             }
             var userParam = urlParams.get('user');
@@ -1576,6 +1705,7 @@
             // Wire up write actions
             lockToggle.onclick = function() { requestAction(isLocked ? 'unlock' : 'lock'); };
             document.getElementById('forceResetBtn').onclick = function() { requestAction('reset'); };
+            UneraAdminAuth.applyPortalRbac('user-management');
         }
 
         function closeUserDrawer() {
@@ -1791,6 +1921,8 @@
 
         // ── Init ─────────────────────────────────────────────────
         loadUsers();
+        var userClearBtn = document.getElementById('userClearAllBtn');
+        if (userClearBtn) userClearBtn.addEventListener('click', clearUserFilters);
         updateStats();
     </script>
 </body>

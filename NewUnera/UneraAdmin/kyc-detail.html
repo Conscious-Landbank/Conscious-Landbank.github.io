@@ -554,7 +554,7 @@
         <nav class="nav" role="navigation" aria-label="UNERA Admin navigation">
             <a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
                 <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
-                <span class="op-pill" aria-label="UNERA Admin portal">UNERA ADMIN</span>
+                <span class="op-pill" aria-label="Admin portal">ADMIN</span>
             </a>
 
             <div class="tabs" role="tablist" aria-label="Admin sections">
@@ -859,13 +859,12 @@
     <!-- Toast -->
     <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
+    <script src="operator-session.js"></script>
     <script>
         // ── Auth guard ──────────────────────────────────────────
+        UneraAdminAuth.guardAppPage();
         var urlParams    = new URLSearchParams(window.location.search);
-        var devMode      = urlParams.has('dev') || urlParams.has('test');
-        if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
-            window.location.href = 'login.html';
-        }
+        var devMode      = UneraAdminAuth.isDevMode();
         var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
         var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
         ['operatorAvatar','operatorDropdownAvatar'].forEach(function(id) {
@@ -904,7 +903,7 @@
             document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu(); });
         })();
 
-        function logout() { localStorage.removeItem('operatorAuth'); localStorage.removeItem('operatorEmail'); window.location.href = 'login.html'; }
+        function logout() { UneraAdminAuth.logout(); }
 
         // ── Helpers ─────────────────────────────────────────────
         function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -1186,6 +1185,7 @@
 
         // ── Init ─────────────────────────────────────────────────
         loadDetail();
+        UneraAdminAuth.applyPortalRbac('kyc-detail');
     </script>
 </body>
 </html>

@@ -867,7 +867,7 @@
         <nav class="nav" role="navigation" aria-label="UNERA Admin navigation">
             <a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
                 <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
-                <span class="op-pill" aria-label="UNERA Admin portal">UNERA ADMIN</span>
+                <span class="op-pill" aria-label="Admin portal">ADMIN</span>
             </a>
             <div class="tabs" role="tablist" aria-label="Admin sections">
                 <a href="dashboard.html" class="tab" role="tab" aria-selected="false">Dashboard</a>
@@ -1638,14 +1638,12 @@
 
     <!-- CropperJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="operator-session.js"></script>
 
     <script>
     // ── Auth guard ────────────────────────────────────────────
-    var urlParams = new URLSearchParams(window.location.search);
-    var devMode   = urlParams.has('dev') || urlParams.has('test');
-    if (!devMode && localStorage.getItem('operatorAuth') !== 'true') {
-        window.location.href = 'login.html';
-    }
+    UneraAdminAuth.guardAppPage();
+    var devMode = UneraAdminAuth.isDevMode();
 
     // ── Operator avatar / email ───────────────────────────────
     var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
@@ -1655,9 +1653,7 @@
 
     // ── Logout ────────────────────────────────────────────────
     function logout() {
-        localStorage.removeItem('operatorAuth');
-        localStorage.removeItem('operatorEmail');
-        window.location.href = 'login.html';
+        UneraAdminAuth.logout();
     }
 
     // ── Operator dropdown ─────────────────────────────────────
@@ -2324,6 +2320,7 @@
         var quoteEl=document.getElementById('hc-quote');
         if(quoteEl&&quoteEl.value) updateCharCounter(quoteEl,'quote-counter',280);
     })();
+    UneraAdminAuth.applyPortalRbac('hc-edit');
     </script>
 </body>
 </html>
