@@ -92,13 +92,6 @@
         }
     }
 
-    function guardTeamSuperAdmin() {
-        if (isDevMode()) return;
-        if (global.localStorage.getItem('operatorPortalRole') !== 'super_admin') {
-            global.location.href = 'dashboard.html';
-        }
-    }
-
     function logout() {
         global.localStorage.removeItem('operatorAuth');
         global.localStorage.removeItem('operatorMfaPending');
@@ -317,6 +310,7 @@
                 supportSels = ['#detailStatusSelect', '#detailAuditNote', '#detailSaveBtn', '#kycConfirmActionBtn'];
                 break;
             case 'team':
+                /* Invites / lifecycle actions: super_admin only. Others may open this page (deep link) but cannot mutate. */
                 viewerSels = [
                     '#openInviteModal',
                     '#teamEmptyInviteBtn',
@@ -328,6 +322,8 @@
                     '#teamConfirmActionBtn',
                     '#teamAuditNote'
                 ];
+                supportSels = viewerSels.slice();
+                complianceSels = viewerSels.slice();
                 break;
             default:
                 break;
@@ -354,7 +350,6 @@
         guardAppPage: guardAppPage,
         guardMfaEnrollPage: guardMfaEnrollPage,
         guardMfaVerifyPage: guardMfaVerifyPage,
-        guardTeamSuperAdmin: guardTeamSuperAdmin,
         logout: logout,
         applyPortalRbac: applyPortalRbac
     };
