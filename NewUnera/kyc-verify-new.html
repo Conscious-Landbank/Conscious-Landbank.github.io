@@ -341,7 +341,7 @@
         }
         .sumsub-handoff-progress-fill {
             height: 100%; width: 0%; background: var(--brand-deep-blue); border-radius: 2px;
-            transition: width 1.5s linear;
+            transition: width 6s linear;
         }
         /* Demo controls on screen 2 */
         .demo-separator { border: none; border-top: 1.5px dashed var(--neutral-300); margin: 1.25rem 0 1rem; }
@@ -823,7 +823,7 @@
                     We're handing you off to our verification partner. Please complete all the steps in the panel below.
                 </p>
 
-                <!-- Fake progress bar — animates to 100% over 1.5 s -->
+                <!-- Fake progress bar — animates to 100% over 6 s -->
                 <div class="sumsub-handoff-progress" aria-hidden="true">
                     <div class="sumsub-handoff-progress-fill" id="handoffProgressFill"></div>
                 </div>
@@ -946,7 +946,8 @@
         maxretries: { title: 'Account Locked',             sub: 'Try again after the cooldown period' },
     };
 
-    /* ── Handoff timer ── */
+    /* ── Handoff timer (Screen 2 — Sumsub loading) ── */
+    const HANDOFF_DURATION_MS = 6000;
     let handoffTimer = null;
 
     /* ── Dashboard KYC alert demo modals (blocked / retry scenarios) ── */
@@ -1004,7 +1005,7 @@
                 handoffTimer = setTimeout(() => {
                     renderOutcome();
                     goToStep(3);
-                }, 1600);
+                }, HANDOFF_DURATION_MS);
             }
         }
     }
@@ -1097,11 +1098,11 @@
         document.getElementById('pageTitle').textContent    = h.title;
         document.getElementById('pageSubtitle').textContent = h.sub;
 
-        /* ── SVG icons for result-icon-wrap (36×36) ── */
+        /* ── SVG icons for result-icon-wrap (36×36, FILL=1) — canonical NewUnera paths ── */
         const icons = {
             success: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>`,
-            review:  `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-80v-80h80v80h-80Zm0-160v-320h80v320h-80Z"/></svg>`,
-            error:   `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-80v-80h80v80h-80Zm0-160v-320h80v320h-80Z"/></svg>`,
+            review:  `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Zm28 168-108-108v-240h80v210l92 92-64 46Z"/></svg>`,
+            error:   `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M508.5-291.5Q520-303 520-320t-11.5-28.5Q497-360 480-360t-28.5 11.5Q440-337 440-320t11.5 28.5Q463-280 480-280t28.5-11.5ZM440-440h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>`,
             locked:  `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>`,
         };
 
