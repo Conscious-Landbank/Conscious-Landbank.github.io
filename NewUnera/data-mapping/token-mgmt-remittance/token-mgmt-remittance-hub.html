@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNERA — Stablecoin Management &amp; Remittance · Developer Walkthrough</title>
+    <link rel="stylesheet" href="../_shared/data-mapping-core.css">
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../../../Brand Guide/TestFoundersGrotesk-Regular.otf") format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../../../Brand Guide/TestFoundersGrotesk-Semibold.otf") format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../../../Brand Guide/TestFoundersGrotesk-Bold.otf") format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+
+        :root {
+            --brand-deep-blue: #173d47;
+            --brand-yellow: #ffffab;
+            --brand-cloud-blue: #ebfcf5;
+            --brand-white: #ffffff;
+            --text-primary: #173d47;
+            --text-secondary: #3d6b78;
+            --border-subtle: rgba(23, 61, 71, 0.15);
+            --fin-up: #1a7a5e;
+            --warning: #b8a030;
+            --font-body: 'TestFoundersGrotesk', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--brand-cloud-blue);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .skip-link {
+            position: absolute; top: -40px; left: 0;
+            background: var(--brand-deep-blue); color: var(--brand-white);
+            padding: 8px 16px; z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600;
+        }
+        .skip-link:focus { top: 0; outline: 2px solid var(--brand-yellow); }
+
+        .hub-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+        .hub-banner {
+            background: color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9375rem;
+            color: var(--brand-deep-blue);
+        }
+
+        h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .hub-lead { color: var(--text-secondary); margin-bottom: 2rem; max-width: 60ch; }
+
+        h2 { font-size: 1.375rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+        h3 { font-size: 1.0625rem; font-weight: 600; margin: 0 0 0.5rem; }
+
+        .card {
+            background: var(--brand-white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        th, td { text-align: left; padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+        th { font-weight: 600; background: color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white)); }
+
+        .pill { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; }
+        .pill-live { background: color-mix(in srgb, var(--fin-up) 15%, var(--brand-white)); color: var(--fin-up); }
+        .pill-partial { background: color-mix(in srgb, var(--warning) 30%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .pill-planned { background: color-mix(in srgb, var(--warning) 50%, var(--brand-white)); color: var(--brand-deep-blue); border: 1px dashed var(--warning); }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-height: 46px; padding: 0.625rem 1.125rem;
+            border-radius: 0.75rem; font-weight: 600; font-size: 0.875rem;
+            text-decoration: none; border: none; cursor: pointer; font-family: inherit;
+        }
+        .btn-primary { background: var(--brand-deep-blue); color: var(--brand-white); }
+        .btn-primary:hover { filter: brightness(0.92); }
+        .btn-secondary { background: transparent; color: var(--text-secondary); border: 2px solid var(--border-subtle); }
+        .btn-secondary:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .btn:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+
+        .epic-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .epic-card ul { margin: 0.5rem 0 0 1.125rem; font-size: 0.875rem; color: var(--text-secondary); }
+        .epic-card li { margin-bottom: 0.375rem; }
+        .epic-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+
+        .screen-gallery { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+        .screen-card .meta { font-size: 0.8125rem; color: var(--text-secondary); margin: 0.375rem 0 0.75rem; }
+
+        .controls { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0; }
+
+        .mermaid-wrap {
+            background: var(--brand-white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .help-box {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.75rem;
+        }
+
+        .hub-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); font-size: 0.875rem; color: var(--text-secondary); }
+        .hub-footer a { color: var(--brand-deep-blue); font-weight: 600; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.625rem; }
+            table { font-size: 0.8125rem; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body data-dm-round="token-mgmt-remittance">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="hub-wrap">
+        <main id="main-content">
+            <div class="hub-banner" role="status">
+                Presentation round: <strong>token-mgmt-remittance</strong> (Feature Tracking rows 33–43).
+                Full copies of production pages with additive data-mapping tooltips only. Production files are unchanged.
+            </div>
+
+            <h1>Stablecoin Management &amp; Remittance</h1>
+            <p class="hub-lead">Developer walkthrough for frontend and backend teams. Open an annotated screen, toggle <strong>Data map ON</strong>, then hover or focus any highlighted field for FE/BE integration guidance.</p>
+
+            <section aria-labelledby="matrix-title">
+                <h2 id="matrix-title">Feature matrix (rows 33–43)</h2>
+                <div class="card" style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Feature</th>
+                                <th>Sub-feature</th>
+                                <th>Status</th>
+                                <th>Screen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>33</td><td>Stablecoin Management</td><td>Balance display</td><td><span class="pill pill-live">Done</span></td><td><a href="screens/token-mgmt-remittance-dashboard-enhanced.html">Dashboard</a> · <a href="screens/token-mgmt-remittance-wallet-enhanced.html">Wallet</a></td></tr>
+                            <tr><td>34</td><td>Stablecoin Management</td><td>Recent transactions w/ status</td><td><span class="pill pill-live">Done</span></td><td><a href="screens/token-mgmt-remittance-wallet-enhanced.html#transactionList">Wallet history</a></td></tr>
+                            <tr><td>35</td><td>Stablecoin Management</td><td>Quick actions (send, purchase)</td><td><span class="pill pill-live">Done</span></td><td><a href="screens/token-mgmt-remittance-dashboard-enhanced.html#actions-title">Dashboard</a></td></tr>
+                            <tr><td>36</td><td>Stablecoin Management</td><td>Visual summaries (KPI, sparklines)</td><td><span class="pill pill-live">Done</span></td><td><a href="screens/token-mgmt-remittance-dashboard-enhanced.html#impact-title">Dashboard KPIs</a></td></tr>
+                            <tr><td>37</td><td>Stablecoin Management</td><td>Transaction status alerts</td><td><span class="pill pill-live">Done</span></td><td><a href="screens/token-mgmt-remittance-notifications.html">Notifications</a></td></tr>
+                            <tr><td>38</td><td>Stablecoin Management</td><td>Donation + remittance history hub</td><td><span class="pill pill-planned">Missing</span></td><td><a href="screens/token-mgmt-remittance-wallet-enhanced.html#transactionList">Wallet</a> (planned tooltip)</td></tr>
+                            <tr><td>39</td><td>Stablecoin Remittance</td><td>Send to wallet address</td><td><span class="pill pill-live">Done</span></td><td><a href="screens/token-mgmt-remittance-send-enhanced.html">Send</a></td></tr>
+                            <tr><td>40</td><td>Stablecoin Remittance</td><td>Payee (bank) — Saved accounts</td><td><span class="pill pill-partial">Partial</span></td><td><a href="screens/token-mgmt-remittance-send-enhanced.html">Send · Bank</a></td></tr>
+                            <tr><td>41</td><td>Stablecoin Remittance</td><td>Wallet payee book</td><td><span class="pill pill-planned">Missing</span></td><td><a href="screens/token-mgmt-remittance-send-enhanced.html">Send · External</a></td></tr>
+                            <tr><td>42</td><td>Stablecoin Remittance</td><td>Crypto-to-crypto matching</td><td><span class="pill pill-planned">Missing</span></td><td><a href="screens/token-mgmt-remittance-send-enhanced.html">Send · Review</a></td></tr>
+                            <tr><td>43</td><td>Stablecoin Remittance</td><td>Transfer confirmation / receipt</td><td><span class="pill pill-partial">Partial</span></td><td><a href="screens/token-mgmt-remittance-send-enhanced.html">Send · Review + Success</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section aria-labelledby="stories-title">
+                <h2 id="stories-title">User stories &amp; launch paths</h2>
+                <p class="help-box">Persona: <strong>Jane Smith</strong> — KYC verified, wallet connected. On Send screens, set <code>localStorage.kycStatus=verified</code> and <code>localStorage.walletAddress</code> before walking the flow.</p>
+                <div class="epic-grid">
+                    <article class="card epic-card">
+                        <h3>Epic A — Morning portfolio check</h3>
+                        <p class="help-box">Rows 33–37, 34</p>
+                        <ul>
+                            <li><strong>A1</strong> KPIs + info tooltips</li>
+                            <li><strong>A2</strong> Quick Actions</li>
+                            <li><strong>A3</strong> Recent Activity</li>
+                            <li><strong>A4</strong> Notification bell → inbox</li>
+                            <li><strong>A5</strong> Wallet balances + history</li>
+                        </ul>
+                        <div class="epic-actions">
+                            <a class="btn btn-primary" href="screens/token-mgmt-remittance-dashboard-enhanced.html#impact-title">Launch Dashboard</a>
+                            <a class="btn btn-secondary" href="screens/token-mgmt-remittance-wallet-enhanced.html#balances-title">Launch Wallet</a>
+                            <a class="btn btn-secondary" href="screens/token-mgmt-remittance-notifications.html">Launch Inbox</a>
+                        </div>
+                    </article>
+                    <article class="card epic-card">
+                        <h3>Epic B — External wallet remittance</h3>
+                        <p class="help-box">Rows 39, 41–43</p>
+                        <ul>
+                            <li><strong>B1</strong> External wallet send flow</li>
+                            <li><strong>B2</strong> Planned saved wallets (row 41)</li>
+                            <li><strong>B3</strong> Planned recipient receives (row 42)</li>
+                            <li><strong>B4</strong> Review + success receipt</li>
+                        </ul>
+                        <div class="epic-actions">
+                            <a class="btn btn-primary" href="screens/token-mgmt-remittance-send-enhanced.html">Launch Send</a>
+                        </div>
+                    </article>
+                    <article class="card epic-card">
+                        <h3>Epic C — Bank withdrawal</h3>
+                        <p class="help-box">Row 40</p>
+                        <ul>
+                            <li><strong>C1</strong> Bank branch → saved TD account</li>
+                        </ul>
+                        <div class="epic-actions">
+                            <a class="btn btn-secondary" href="screens/token-mgmt-remittance-send-enhanced.html">Launch Send</a>
+                        </div>
+                    </article>
+                    <article class="card epic-card">
+                        <h3>Epic D — History hub gap</h3>
+                        <p class="help-box">Row 38</p>
+                        <ul>
+                            <li><strong>D1</strong> Planned All / Remittances / Donations tabs</li>
+                        </ul>
+                        <div class="epic-actions">
+                            <a class="btn btn-secondary" href="screens/token-mgmt-remittance-wallet-enhanced.html#transactionList">Wallet history</a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section aria-labelledby="flow-title">
+                <h2 id="flow-title">User flow</h2>
+                <div class="mermaid-wrap">
+                    <pre class="mermaid">
+flowchart TD
+  Hub[token-mgmt-remittance-hub.html]
+  Dash[token-mgmt-remittance-dashboard-enhanced.html]
+  Wallet[token-mgmt-remittance-wallet-enhanced.html]
+  Inbox[token-mgmt-remittance-notifications.html]
+  Send[token-mgmt-remittance-send-enhanced.html]
+  Hub --> Dash
+  Hub --> Wallet
+  Hub --> Inbox
+  Hub --> Send
+  Dash --> Wallet
+  Dash --> Inbox
+  Dash --> Send
+  Send --> Wallet
+  Inbox --> Wallet
+                    </pre>
+                </div>
+            </section>
+
+            <section aria-labelledby="gallery-title">
+                <h2 id="gallery-title">Annotated screens</h2>
+                <div class="screen-gallery">
+                    <article class="card screen-card">
+                        <h3>Dashboard</h3>
+                        <p class="meta">38 catalog entries · rows 33–37</p>
+                        <a class="btn btn-primary" href="screens/token-mgmt-remittance-dashboard-enhanced.html">Open</a>
+                    </article>
+                    <article class="card screen-card">
+                        <h3>Wallet</h3>
+                        <p class="meta">42 catalog entries · rows 33–34, 38</p>
+                        <a class="btn btn-primary" href="screens/token-mgmt-remittance-wallet-enhanced.html">Open</a>
+                    </article>
+                    <article class="card screen-card">
+                        <h3>Notifications</h3>
+                        <p class="meta">18 catalog entries · row 37</p>
+                        <a class="btn btn-primary" href="screens/token-mgmt-remittance-notifications.html">Open</a>
+                    </article>
+                    <article class="card screen-card">
+                        <h3>Send / Remittance</h3>
+                        <p class="meta">52 catalog entries · rows 39–43</p>
+                        <a class="btn btn-primary" href="screens/token-mgmt-remittance-send-enhanced.html">Open</a>
+                    </article>
+                </div>
+                <div class="controls">
+                    <a class="btn btn-secondary" href="token-mgmt-remittance-catalog.json" download="token-mgmt-remittance-catalog.json">Download catalog JSON</a>
+                </div>
+                <div class="card help-box">
+                    <strong>Mapping mode help:</strong> On any annotated screen, click <strong>Data map ON</strong> (bottom-left). Hover or Tab to a dotted field to open the side panel with What / Frontend / Backend / Example. Press Escape to close the panel.
+                </div>
+            </section>
+
+            <section aria-labelledby="api-title">
+                <h2 id="api-title">Proposed backend API (reference)</h2>
+                <div class="card" style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Method</th><th>Endpoint</th><th>Purpose</th></tr></thead>
+                        <tbody>
+                            <tr><td>GET</td><td>/api/users/me</td><td>Display name, KYC status</td></tr>
+                            <tr><td>GET</td><td>/api/wallet/balances</td><td>Portfolio + per-asset balances</td></tr>
+                            <tr><td>GET</td><td>/api/portfolio/summary</td><td>KPI aggregates</td></tr>
+                            <tr><td>GET</td><td>/api/portfolio/history?range=30d</td><td>Sparkline points</td></tr>
+                            <tr><td>GET</td><td>/api/transactions?…</td><td>Activity + wallet history</td></tr>
+                            <tr><td>GET</td><td>/api/transactions/{id}</td><td>Detail sheet</td></tr>
+                            <tr><td>GET</td><td>/api/notifications</td><td>Inbox + bell</td></tr>
+                            <tr><td>PATCH</td><td>/api/notifications/{id}/read</td><td>Mark read</td></tr>
+                            <tr><td>GET</td><td>/api/payees/bank-accounts</td><td>Row 40 saved banks</td></tr>
+                            <tr><td>GET/POST</td><td>/api/payees/wallets</td><td>Row 41 planned</td></tr>
+                            <tr><td>GET</td><td>/api/remittance/quote</td><td>Row 42 planned</td></tr>
+                            <tr><td>POST</td><td>/api/remittance/send</td><td>Submit transfer</td></tr>
+                            <tr><td>GET</td><td>/api/remittance/{id}</td><td>Receipt / status</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="help-box">All backend references in tooltips are <strong>proposed contracts</strong> — not implemented in the HTML prototype.</p>
+            </section>
+
+            <footer class="hub-footer">
+                <p><a href="../../index.html">← Back to NewUnera index</a> · Regenerate catalog: <code>node build-catalog.mjs</code></p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+    </script>
+</body>
+</html>

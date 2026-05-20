@@ -1,0 +1,2597 @@
+{
+  "version": "1.0",
+  "round": "token-mgmt-remittance",
+  "generatedAt": "2026-05-20T11:35:17.421Z",
+  "entryCount": 150,
+  "entries": [
+    {
+      "id": "dashboard.user.displayName",
+      "featureRow": null,
+      "featureName": "",
+      "label": "Welcome headline",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".page-title",
+      "panel": {
+        "what": "Greeting headline showing the authenticated user's display name (“Jane Smith”).",
+        "frontend": "Prototype: static text in HTML. Production: hydrate from session after login — GET /api/users/me → user.displayName. Fallback: email local-part.",
+        "backend": "GET /api/users/me → { \"displayName\": \"Jane Smith\", \"email\": \"jane@example.com\" }",
+        "example": {
+          "displayName": "Jane Smith"
+        }
+      }
+    },
+    {
+      "id": "dashboard.user.subtitle",
+      "featureRow": null,
+      "featureName": "",
+      "label": "Page subtitle",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".page-subtitle",
+      "panel": {
+        "what": "Supporting tagline under the welcome header; sets context for impact tracking.",
+        "frontend": "Static copy in HTML / CMS string key dashboard.subtitle.",
+        "backend": "Optional CMS GET /api/copy/dashboard or hardcoded i18n.",
+        "example": "One Flow. Many Lives. - Track your impact and manage your contributions"
+      }
+    },
+    {
+      "id": "dashboard.impact.portfolio.value",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Total Portfolio (KPI)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total portfolio\"] .impact-value",
+      "panel": {
+        "what": "Total portfolio value across all UNERA assets in display currency (CAD/USD per user pref).",
+        "frontend": "Prototype: static $10,240. Production: sum accounts[].balanceFiat from balances API; format with Intl.NumberFormat.",
+        "backend": "GET /api/wallet/balances → { \"portfolio\": { \"totalFiat\": 10240, \"currency\": \"CAD\" } }",
+        "example": {
+          "totalFiat": 10240,
+          "currency": "CAD"
+        }
+      },
+      "seeAlso": [
+        "wallet.portfolio.total"
+      ]
+    },
+    {
+      "id": "dashboard.impact.portfolio.walletHint",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Portfolio wallet hint",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total portfolio\"] .impact-detail",
+      "panel": {
+        "what": "Truncated connected wallet address + primary network label for trust/context.",
+        "frontend": "Prototype: hardcoded 0x742d...3a8f • Ethereum. Production: localStorage.walletAddress or GET /api/wallet/primary → truncate + resolve chain name.",
+        "backend": "GET /api/wallet/primary → { \"address\": \"0x742d35Cc…\", \"network\": \"ethereum\" }",
+        "example": {
+          "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
+          "network": "ethereum"
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.portfolio.sparkline",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Portfolio sparkline",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total portfolio\"] .impact-sparkline",
+      "panel": {
+        "what": "Mini 30-day portfolio trend line (SVG polyline); visual summary only.",
+        "frontend": "Prototype: static SVG points. Production: map GET /api/portfolio/history?range=30d → normalize Y coords into viewBox.",
+        "backend": "GET /api/portfolio/history?range=30d → { \"points\": [{ \"date\": \"2026-05-01\", \"value\": 9800 }, …] }",
+        "example": {
+          "points": [
+            {
+              "date": "2026-05-19",
+              "value": 10240
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.portfolio.trend",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Portfolio trend pill",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total portfolio\"] .impact-trend",
+      "panel": {
+        "what": "Period delta label (e.g. “+$2,400 this month”) with up/down styling.",
+        "frontend": "Compute current - startOfPeriod from history API; apply .impact-trend / --fin-up classes.",
+        "backend": "Same history endpoint; server may return changeAbs, changePct, period.",
+        "example": {
+          "changeAbs": 2400,
+          "period": "month",
+          "direction": "up"
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.portfolio.infoTooltip",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Portfolio info (i)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total portfolio\"] .info-tooltip",
+      "panel": {
+        "what": "Native UI info affordance (i) — product copy explaining KPI semantics (distinct from data-mapping panel).",
+        "frontend": "data-tooltip attribute in HTML; optional CMS.",
+        "backend": "N/A — copy deck.",
+        "example": "Your total portfolio value across all assets"
+      }
+    },
+    {
+      "id": "dashboard.impact.yield.value",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Yield Generated (KPI)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Yield generated\"] .impact-value",
+      "panel": {
+        "what": "Cumulative yield generated from stablecoin reserves allocated to impact.",
+        "frontend": "Static $486.50 in prototype. Production: GET /api/portfolio/summary → yield.totalFiat.",
+        "backend": "GET /api/portfolio/summary → { \"yield\": { \"totalFiat\": 486.5 } }",
+        "example": {
+          "yield": {
+            "totalFiat": 486.5
+          }
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.yield.trend",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Yield trend pill",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Yield generated\"] .impact-trend",
+      "panel": {
+        "what": "Recent yield accrual trend (e.g. “+$42 this week”).",
+        "frontend": "Derived from yield history aggregation.",
+        "backend": "GET /api/yield/history?range=7d",
+        "example": {
+          "changeAbs": 42,
+          "period": "week"
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.donations.value",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Total Donations (KPI)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total donations\"] .impact-value",
+      "panel": {
+        "what": "Lifetime donation total to Humanity Centres (informational KPI — not row 44 scope).",
+        "frontend": "Static $5,240. Production: GET /api/donations/summary → totalFiat.",
+        "backend": "GET /api/donations/summary → { \"totalFiat\": 5240, \"centresCount\": 3 }",
+        "example": {
+          "totalFiat": 5240,
+          "centresCount": 3
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.donations.detail",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Donations centres count",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total donations\"] .impact-detail",
+      "panel": {
+        "what": "Secondary stat — number of centres supported.",
+        "frontend": "From donations summary centresCount.",
+        "backend": "Included in donations summary payload.",
+        "example": {
+          "centresCount": 3
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.lives.value",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Lives Impacted (KPI)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Lives impacted\"] .impact-value",
+      "panel": {
+        "what": "Estimated impact reach metric (model-driven, not on-chain).",
+        "frontend": "Static 1,240+. Production: impact metrics service.",
+        "backend": "GET /api/impact/lives → { \"estimate\": 1240, \"display\": \"1,240+\" }",
+        "example": {
+          "estimate": 1240
+        }
+      }
+    },
+    {
+      "id": "dashboard.actions.wallet",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "Quick Action — Wallet",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "a.action-card--wallet",
+      "panel": {
+        "what": "Navigation CTA to wallet balances and transaction history.",
+        "frontend": "href=\"wallet-enhanced.html\" (in duplicate: same folder).",
+        "backend": "N/A — routing.",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "dashboard.actions.buyStablecoins",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "Quick Action — Buy stablecoins",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "a.action-card.primary[aria-label*=\"Buy stablecoins\"]",
+      "panel": {
+        "what": "Primary CTA to fiat/crypto on-ramp (get-unera-cad.html).",
+        "frontend": "handleActionClick(Stablecoin/get-unera-cad.html) — checks KYC/wallet gates.",
+        "backend": "N/A — navigation; gates use kycStatus / wallet bind state.",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "dashboard.actions.exchange",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "Quick Action — Exchange",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "a.action-card--exchange",
+      "panel": {
+        "what": "CTA to token swap flow.",
+        "frontend": "href / handleActionClick → exchange.html",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "dashboard.actions.exploreCentres",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "Quick Action — Explore Centres",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "a.action-card--explore",
+      "panel": {
+        "what": "CTA to HC directory (adjacent to donations, out of row 44 scope).",
+        "frontend": "href=\"explore-centres.html\"",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "dashboard.actions.uneraCadHub",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "UNERA CAD hub card",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".unera-cad-hub-card",
+      "panel": {
+        "what": "Entity-scoped hub for Get/Redeem UNERA CAD (Stablecoin app partition).",
+        "frontend": "Links to Stablecoin/get-unera-cad.html, Stablecoin/redeem-unera-cad.html",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "dashboard.activity.item.typeBadge",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity type badge (row 1)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:first-child .activity-type-badge",
+      "panel": {
+        "what": "Transaction category chip (Donation, Yield, Send, etc.) for scanability.",
+        "frontend": "Prototype: static HTML. Production: transaction.category → badge component map.",
+        "backend": "GET /api/transactions?limit=5 → [{ \"category\": \"donation\", … }]",
+        "example": {
+          "category": "donation",
+          "label": "Donation"
+        }
+      }
+    },
+    {
+      "id": "dashboard.activity.item.title",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity title (row 1)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:first-child .activity-title",
+      "panel": {
+        "what": "Human-readable activity headline.",
+        "frontend": "transaction.title or template from type + counterparty.",
+        "backend": "transactions[].title",
+        "example": "Donation to Nairobi Humanity Centre"
+      }
+    },
+    {
+      "id": "dashboard.activity.item.description",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity description (row 1)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:first-child .activity-description",
+      "panel": {
+        "what": "Optional narrative line for impact context.",
+        "frontend": "transaction.description or generated copy.",
+        "backend": "transactions[].description",
+        "example": "Your donation helped provide meals…"
+      }
+    },
+    {
+      "id": "dashboard.activity.item.meta.time",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity timestamp (row 1)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:first-child .activity-meta span:first-child",
+      "panel": {
+        "what": "Relative or absolute timestamp.",
+        "frontend": "formatRelativeTime(transaction.createdAt) — same helper as notifications.",
+        "backend": "ISO8601 createdAt",
+        "example": {
+          "createdAt": "2026-05-20T08:00:00Z"
+        }
+      }
+    },
+    {
+      "id": "dashboard.activity.item.meta.currency",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity currency (row 1)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:first-child .activity-meta span:last-child",
+      "panel": {
+        "what": "Asset ticker for the activity row.",
+        "frontend": "transaction.currency (hCAD, hUSD, …)",
+        "backend": "transactions[].currency",
+        "example": {
+          "currency": "hCAD"
+        }
+      }
+    },
+    {
+      "id": "dashboard.activity.item.amount",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity amount (row 1)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:first-child .activity-amount-value",
+      "panel": {
+        "what": "Signed amount display; green positive for inflows/donations display convention.",
+        "frontend": "Format with sign + --fin-up / --fin-down classes.",
+        "backend": "transactions[].amount, direction",
+        "example": {
+          "amount": 250,
+          "direction": "out",
+          "display": "+$250.00"
+        }
+      }
+    },
+    {
+      "id": "dashboard.activity.viewAll",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "View all activity",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-section .view-all-link",
+      "panel": {
+        "what": "Deep link to full wallet transaction history.",
+        "frontend": "href=\"wallet-enhanced.html\"",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "dashboard.notifications.badge",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Notification badge count",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "#notifBadge",
+      "panel": {
+        "what": "Unread notification count on bell icon.",
+        "frontend": "notifications.filter(n => !n.read).length from clb_notifications localStorage; seeded on dashboard load.",
+        "backend": "GET /api/notifications/unread-count + WS push increment.",
+        "example": {
+          "unreadCount": 4
+        }
+      }
+    },
+    {
+      "id": "dashboard.notifications.panel.item",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Bell panel — remittance (n5)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "#notificationList .notif-item[data-id=\"n5\"]",
+      "panel": {
+        "what": "Remittance-type notification — surfaces transfer completion (row 37 + remittance cross-link).",
+        "frontend": "Object in clb_notifications: { id, type:remittance, title, message, ctaUrl, ctaLabel }. Click marks read + navigates.",
+        "backend": "GET /api/notifications + PATCH …/read; push via new_notification WS.",
+        "example": {
+          "id": "n5",
+          "type": "remittance",
+          "title": "Remittance Sent",
+          "message": "25 CTC sent to family wallet — delivered on Polygon",
+          "read": false,
+          "ctaUrl": "wallet-enhanced.html",
+          "ctaLabel": "View transaction"
+        }
+      }
+    },
+    {
+      "id": "dashboard.notifications.panel.unreadDot",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Unread dot (bell panel)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "#notificationList .notif-item:not(.read) .notif-unread-dot",
+      "panel": {
+        "what": "Visual unread indicator per notification row.",
+        "frontend": "Rendered when read === false.",
+        "backend": "notifications[].read",
+        "example": {
+          "read": false
+        }
+      }
+    },
+    {
+      "id": "dashboard.nav.walletLink",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "Nav — Wallet link",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".nav-link[href*=\"wallet-enhanced\"]",
+      "panel": {
+        "what": "Persistent nav entry to wallet.",
+        "frontend": "Static nav href",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "dashboard.kyc.alertBanner",
+      "featureRow": null,
+      "featureName": "",
+      "label": "KYC alert banner",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": "#kycAlert",
+      "panel": {
+        "what": "KYC status banner when unverified (adjacent gate for rows 35, 39).",
+        "frontend": "Shown when localStorage.kycStatus !== verified",
+        "backend": "GET /api/users/me → kycStatus",
+        "example": {
+          "kycStatus": "pending"
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.yield.infoTooltip",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Yield info (i)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Yield generated\"] .info-tooltip",
+      "panel": {
+        "what": "Product info tooltip explaining yield KPI semantics.",
+        "frontend": "data-tooltip: Yield generated from your stablecoin reserves - 100% goes to impact",
+        "backend": "N/A — copy deck.",
+        "example": "Yield generated from your stablecoin reserves - 100% goes to impact"
+      }
+    },
+    {
+      "id": "dashboard.impact.yield.sparkline",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Yield sparkline",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Yield generated\"] .impact-sparkline",
+      "panel": {
+        "what": "Mini trend line for yield accrual over time.",
+        "frontend": "Static SVG in prototype; production from yield history API.",
+        "backend": "GET /api/yield/history?range=30d",
+        "example": {
+          "points": [
+            {
+              "date": "2026-05-19",
+              "value": 486.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.donations.infoTooltip",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Donations info (i)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total donations\"] .info-tooltip",
+      "panel": {
+        "what": "Product info tooltip for lifetime donations KPI.",
+        "frontend": "data-tooltip: Total amount donated to Humanity Centres",
+        "backend": "N/A — copy deck.",
+        "example": "Total amount donated to Humanity Centres"
+      }
+    },
+    {
+      "id": "dashboard.impact.donations.sparkline",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Donations sparkline",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Total donations\"] .impact-sparkline",
+      "panel": {
+        "what": "Visual trend for donation velocity.",
+        "frontend": "Static SVG; production maps donation history.",
+        "backend": "GET /api/donations/history?range=30d",
+        "example": {
+          "points": [
+            {
+              "date": "2026-05-19",
+              "value": 5240
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "dashboard.impact.lives.infoTooltip",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Lives impacted info (i)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".impact-card[aria-label*=\"Lives impacted\"] .info-tooltip",
+      "panel": {
+        "what": "Explains model-driven lives impacted estimate.",
+        "frontend": "data-tooltip: Estimated number of lives positively impacted by your contributions",
+        "backend": "N/A — copy deck.",
+        "example": "Estimated number of lives positively impacted by your contributions"
+      }
+    },
+    {
+      "id": "dashboard.activity.row2.title",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity title (row 2 — Yield)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:nth-child(2) .activity-title",
+      "panel": {
+        "what": "Second activity row — yield accrual headline.",
+        "frontend": "Static Yield Generated; production from transactions feed.",
+        "backend": "transactions[].title",
+        "example": "Yield Generated"
+      }
+    },
+    {
+      "id": "dashboard.activity.row2.amount",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity amount (row 2)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:nth-child(2) .activity-amount-value",
+      "panel": {
+        "what": "Yield amount with positive styling.",
+        "frontend": "amount--positive class; format currency.",
+        "backend": "transactions[].amount",
+        "example": {
+          "amount": 42.5,
+          "display": "+$42.50"
+        }
+      }
+    },
+    {
+      "id": "dashboard.activity.row3.title",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity title (row 3 — Donation)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:nth-child(3) .activity-title",
+      "panel": {
+        "what": "Third activity row — donation to Toronto HC.",
+        "frontend": "Static copy; maps to donation category.",
+        "backend": "transactions[].title",
+        "example": "Donation to Toronto HC"
+      }
+    },
+    {
+      "id": "dashboard.activity.row3.meta",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Activity meta (row 3)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.dashboard-enhanced",
+      "selector": ".activity-list .activity-item:nth-child(3) .activity-meta",
+      "panel": {
+        "what": "Timestamp and asset ticker for row 3.",
+        "frontend": "Relative time + currency span.",
+        "backend": "createdAt, currency",
+        "example": {
+          "createdAt": "2026-05-17T12:00:00Z",
+          "currency": "hUSD"
+        }
+      }
+    },
+    {
+      "id": "wallet.impact.totalDonations",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Wallet — total donations",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".impact-summary-wallet .impact-stat-mini:first-child .stat-value",
+      "panel": {
+        "what": "Mini impact stat — total donations from wallet context.",
+        "frontend": "Static in HTML section .impact-summary-wallet",
+        "backend": "GET /api/donations/summary",
+        "example": {
+          "totalFiat": 5240
+        }
+      }
+    },
+    {
+      "id": "wallet.impact.centresSupported",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Centres supported",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".impact-stat-mini:nth-child(2) .stat-value",
+      "panel": {
+        "what": "Count of Humanity Centres supported.",
+        "frontend": "Static 3",
+        "backend": "donations.summary.centresCount",
+        "example": {
+          "centresCount": 3
+        }
+      }
+    },
+    {
+      "id": "wallet.impact.lives",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Lives impacted (wallet)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".impact-stat-mini:nth-child(3) .stat-value",
+      "panel": {
+        "what": "Lives impacted estimate on wallet page.",
+        "frontend": "Static 120+",
+        "backend": "GET /api/impact/lives",
+        "example": {
+          "estimate": 120
+        }
+      }
+    },
+    {
+      "id": "wallet.portfolio.total",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Portfolio total",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#portfolioTotal",
+      "panel": {
+        "what": "Authoritative total portfolio on wallet (more detailed than dashboard KPI).",
+        "frontend": "Static $8,250.00; production balances API sum.",
+        "backend": "GET /api/wallet/balances → portfolio.totalFiat",
+        "example": {
+          "totalFiat": 8250,
+          "currency": "CAD"
+        }
+      },
+      "seeAlso": [
+        "dashboard.impact.portfolio.value"
+      ]
+    },
+    {
+      "id": "wallet.portfolio.change",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "Portfolio change %",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".summary-stat-card:first-child .stat-change",
+      "panel": {
+        "what": "Portfolio period change percentage.",
+        "frontend": "Derived from history; class positive → --fin-up",
+        "backend": "portfolio.changePct7d",
+        "example": {
+          "changePct7d": 3.2
+        }
+      }
+    },
+    {
+      "id": "wallet.portfolio.trustChip",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Portfolio trust chip",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".portfolio-trust-chip",
+      "panel": {
+        "what": "Trust signal — reserves backing copy.",
+        "frontend": "Static copy + icon",
+        "backend": "Optional link to PoR public page stats",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "wallet.asset.hCAD.balance",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "hCAD balance",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#hcadBalance",
+      "panel": {
+        "what": "hCAD token balance (display units + ticker).",
+        "frontend": "#hcadBalance text; privacy blur via .balance-amount.hidden",
+        "backend": "balances.accounts[] where symbol=hCAD",
+        "example": {
+          "symbol": "hCAD",
+          "amount": "3500.00",
+          "fiatCad": 3500
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hCAD.fiat",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "hCAD fiat equivalent",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hCAD\"] .portfolio-asset-row-fiat",
+      "panel": {
+        "what": "Fiat equivalent + cross-rate hint.",
+        "frontend": "Computed from FX service",
+        "backend": "balances.accounts[].fiat + fxRate",
+        "example": {
+          "fiatCad": 3500,
+          "fiatUsd": 2600
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hCAD.change7d",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "hCAD 7d change",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hCAD\"] .balance-change",
+      "panel": {
+        "what": "7-day balance delta for asset row.",
+        "frontend": "data-tooltip native + --fin-up styling",
+        "backend": "GET /api/wallet/balances?includeChange=7d",
+        "example": {
+          "changePct7d": 2.5
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hCAD.allocationPct",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "hCAD allocation %",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hCAD\"] .portfolio-asset-row-pct",
+      "panel": {
+        "what": "Percent of total portfolio in this asset.",
+        "frontend": "amount / portfolioTotal * 100",
+        "backend": "Server-calculated allocationPct",
+        "example": {
+          "allocationPct": 42.4
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hCAD.sendAction",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "hCAD Send CTA",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hCAD\"] a[href*=\"send-enhanced\"]",
+      "panel": {
+        "what": "Per-asset Send CTA — deep link to remittance with asset query.",
+        "frontend": "send-enhanced.html?asset=hCAD",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "wallet.asset.hUSD.balance",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "hUSD balance",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#husdBalance",
+      "panel": {
+        "what": "hUSD token balance (display units + ticker).",
+        "frontend": "#husdBalance text; privacy blur via .balance-amount.hidden",
+        "backend": "balances.accounts[] where symbol=hUSD",
+        "example": {
+          "symbol": "hUSD",
+          "amount": "2500.00",
+          "fiatCad": 2500
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hUSD.fiat",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "hUSD fiat equivalent",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hUSD\"] .portfolio-asset-row-fiat",
+      "panel": {
+        "what": "Fiat equivalent + cross-rate hint.",
+        "frontend": "Computed from FX service",
+        "backend": "balances.accounts[].fiat + fxRate",
+        "example": {
+          "fiatCad": 2500,
+          "fiatUsd": 1850
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hUSD.change7d",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "hUSD 7d change",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hUSD\"] .balance-change",
+      "panel": {
+        "what": "7-day balance delta for asset row.",
+        "frontend": "data-tooltip native + --fin-up styling",
+        "backend": "GET /api/wallet/balances?includeChange=7d",
+        "example": {
+          "changePct7d": 2.5
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hUSD.allocationPct",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "hUSD allocation %",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hUSD\"] .portfolio-asset-row-pct",
+      "panel": {
+        "what": "Percent of total portfolio in this asset.",
+        "frontend": "amount / portfolioTotal * 100",
+        "backend": "Server-calculated allocationPct",
+        "example": {
+          "allocationPct": 30.3
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hUSD.sendAction",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "hUSD Send CTA",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hUSD\"] a[href*=\"send-enhanced\"]",
+      "panel": {
+        "what": "Per-asset Send CTA — deep link to remittance with asset query.",
+        "frontend": "send-enhanced.html?asset=hUSD",
+        "backend": "N/A",
+        "example": "N/A"
+      },
+      "seeAlso": [
+        "send.method.external"
+      ]
+    },
+    {
+      "id": "wallet.asset.hEUR.balance",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "hEUR balance",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#heurBalance",
+      "panel": {
+        "what": "hEUR token balance (display units + ticker).",
+        "frontend": "#heurBalance text; privacy blur via .balance-amount.hidden",
+        "backend": "balances.accounts[] where symbol=hEUR",
+        "example": {
+          "symbol": "hEUR",
+          "amount": "1250.00",
+          "fiatCad": 1250
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hEUR.fiat",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "hEUR fiat equivalent",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hEUR\"] .portfolio-asset-row-fiat",
+      "panel": {
+        "what": "Fiat equivalent + cross-rate hint.",
+        "frontend": "Computed from FX service",
+        "backend": "balances.accounts[].fiat + fxRate",
+        "example": {
+          "fiatCad": 2500,
+          "fiatUsd": 1850
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hEUR.change7d",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "hEUR 7d change",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hEUR\"] .balance-change",
+      "panel": {
+        "what": "7-day balance delta for asset row.",
+        "frontend": "data-tooltip native + --fin-up styling",
+        "backend": "GET /api/wallet/balances?includeChange=7d",
+        "example": {
+          "changePct7d": 2.5
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hEUR.allocationPct",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "hEUR allocation %",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hEUR\"] .portfolio-asset-row-pct",
+      "panel": {
+        "what": "Percent of total portfolio in this asset.",
+        "frontend": "amount / portfolioTotal * 100",
+        "backend": "Server-calculated allocationPct",
+        "example": {
+          "allocationPct": 30.3
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.hEUR.sendAction",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "hEUR Send CTA",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"hEUR\"] a[href*=\"send-enhanced\"]",
+      "panel": {
+        "what": "Per-asset Send CTA — deep link to remittance with asset query.",
+        "frontend": "send-enhanced.html?asset=hEUR",
+        "backend": "N/A",
+        "example": "N/A"
+      },
+      "seeAlso": [
+        "send.method.external"
+      ]
+    },
+    {
+      "id": "wallet.asset.HUMA.balance",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "HUMA balance",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#humaBalance",
+      "panel": {
+        "what": "HUMA token balance (display units + ticker).",
+        "frontend": "#humaBalance text; privacy blur via .balance-amount.hidden",
+        "backend": "balances.accounts[] where symbol=HUMA",
+        "example": {
+          "symbol": "HUMA",
+          "amount": "425.50",
+          "fiatCad": 1250
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.HUMA.fiat",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "HUMA fiat equivalent",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"HUMA\"] .portfolio-asset-row-fiat",
+      "panel": {
+        "what": "Fiat equivalent + cross-rate hint.",
+        "frontend": "Computed from FX service",
+        "backend": "balances.accounts[].fiat + fxRate",
+        "example": {
+          "fiatCad": 2500,
+          "fiatUsd": 1850
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.HUMA.change7d",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "HUMA 7d change",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"HUMA\"] .balance-change",
+      "panel": {
+        "what": "7-day balance delta for asset row.",
+        "frontend": "data-tooltip native + --fin-up styling",
+        "backend": "GET /api/wallet/balances?includeChange=7d",
+        "example": {
+          "changePct7d": 2.5
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.HUMA.allocationPct",
+      "featureRow": 36,
+      "featureName": "Stablecoin Management · Visual summaries",
+      "label": "HUMA allocation %",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"HUMA\"] .portfolio-asset-row-pct",
+      "panel": {
+        "what": "Percent of total portfolio in this asset.",
+        "frontend": "amount / portfolioTotal * 100",
+        "backend": "Server-calculated allocationPct",
+        "example": {
+          "allocationPct": 30.3
+        }
+      }
+    },
+    {
+      "id": "wallet.asset.HUMA.sendAction",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "HUMA Send CTA",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "[data-asset=\"HUMA\"] a[href*=\"send-enhanced\"]",
+      "panel": {
+        "what": "Per-asset Send CTA — deep link to remittance with asset query.",
+        "frontend": "send-enhanced.html?asset=HUMA",
+        "backend": "N/A",
+        "example": "N/A"
+      },
+      "seeAlso": [
+        "send.method.external"
+      ]
+    },
+    {
+      "id": "wallet.privacy.toggle",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Privacy toggle",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#privacyToggle",
+      "panel": {
+        "what": "Hide/show balance amounts client-side for privacy.",
+        "frontend": "toggleBalancePrivacy() toggles .balance-amount.hidden; persist localStorage.balanceHidden",
+        "backend": "N/A — client preference PATCH /api/users/preferences optional",
+        "example": {
+          "balanceHidden": true
+        }
+      }
+    },
+    {
+      "id": "wallet.quickActions.buy",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "Wallet — Buy",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".quick-actions a[href*=\"get-unera-cad\"], .quick-actions button[onclick*=\"get-unera-cad\"]",
+      "panel": {
+        "what": "Wallet-level buy stablecoins action.",
+        "frontend": "Link to Stablecoin get flow",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "wallet.quickActions.send",
+      "featureRow": 35,
+      "featureName": "Stablecoin Management · Quick actions",
+      "label": "Wallet — Send",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".quick-actions a[href*=\"send-enhanced\"]",
+      "panel": {
+        "what": "Wallet-level send/remittance entry.",
+        "frontend": "send-enhanced.html",
+        "backend": "N/A",
+        "example": "N/A"
+      },
+      "seeAlso": [
+        "send.method.external"
+      ]
+    },
+    {
+      "id": "wallet.history.search",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "History search",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#searchInput",
+      "panel": {
+        "what": "Client-side filter across visible transaction rows; prod uses query param.",
+        "frontend": "searchTransactions() filters DOM; prod: debounce → GET /api/transactions?search=",
+        "backend": "GET /api/transactions?search=alice",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "wallet.history.filters.button",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Filter button",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#filterBtn",
+      "panel": {
+        "what": "Opens filter modal — type, status, currency, date range.",
+        "frontend": "activeFilters object in page JS; presets in walletFilterPresets localStorage",
+        "backend": "Query params on transactions API",
+        "example": {
+          "status": [
+            "pending"
+          ],
+          "currency": "hCAD"
+        }
+      }
+    },
+    {
+      "id": "wallet.history.row.status",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Tx status (pending row)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#transactionList .transaction-item:nth-child(3) .transaction-status",
+      "panel": {
+        "what": "Status label on row (Completed / Pending / Failed) — use tx003 pending row.",
+        "frontend": "Static HTML class .transaction-status.pending",
+        "backend": "transactions[].status enum: completed|pending|failed|cancelled",
+        "example": {
+          "id": "tx003",
+          "status": "pending",
+          "title": "Bank Transfer In"
+        }
+      }
+    },
+    {
+      "id": "wallet.history.row.amount",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Tx amount (row 1)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#transactionList .transaction-item:nth-child(1) .amount-primary",
+      "panel": {
+        "what": "Primary amount column with direction color.",
+        "frontend": "Classes positive|negative|neutral",
+        "backend": "amount, direction",
+        "example": {
+          "amount": 500,
+          "direction": "in"
+        }
+      }
+    },
+    {
+      "id": "wallet.history.row.remittance",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Remittance row (tx005)",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#transactionList .transaction-item[aria-label*=\"Sent\"]",
+      "panel": {
+        "what": "Remittance/send row example (tx005 Bob Chen).",
+        "frontend": "Static row; category sent / remittance",
+        "backend": "GET /api/transactions?category=remittance",
+        "example": {
+          "category": "remittance",
+          "counterparty": "Bob Chen"
+        }
+      }
+    },
+    {
+      "id": "wallet.history.planned.tabsHub",
+      "featureRow": 38,
+      "featureName": "Stablecoin Management · Donation + remittance history hub",
+      "label": "Planned — History tabs hub",
+      "status": "planned",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": ".history-section .section-header, .history-section #transactionList",
+      "panel": {
+        "what": "PLANNED: Tab strip above history — All | Remittances | Donations — filtering one ledger without separate pages.",
+        "frontend": "Tab → set activeFilters.categories or ?category=remittance|donation. Today: single list + manual filter chip only.",
+        "backend": "GET /api/transactions?category=remittance|donation|all",
+        "example": {
+          "category": "remittance",
+          "total": 42
+        }
+      },
+      "presenterNote": "Row 38 gap — no tabs in current UI. This tooltip documents the planned hub."
+    },
+    {
+      "id": "wallet.history.detail.transactionId",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Detail — transaction ID",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#transactionList .transaction-item[onclick*=\"tx001\"]",
+      "panel": {
+        "what": "Unique transaction identifier in side sheet (open tx001 first).",
+        "frontend": "showTransactionDetail(tx001) populates sheet",
+        "backend": "GET /api/transactions/tx001",
+        "example": {
+          "id": "tx001",
+          "externalRef": "TX-2026-001"
+        }
+      },
+      "presenterNote": "Click tx001 row before hovering."
+    },
+    {
+      "id": "wallet.history.export.button",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Export results",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#exportContainer .export-btn",
+      "panel": {
+        "what": "Export filtered transaction list to CSV/PDF.",
+        "frontend": "showExportDialog() when filters active; exportContainer shown after filter apply",
+        "backend": "GET /api/transactions/export?format=csv&…",
+        "example": {
+          "format": "csv",
+          "rowCount": 10
+        }
+      }
+    },
+    {
+      "id": "wallet.history.loadMore",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Load more transactions",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#loadMoreBtn",
+      "panel": {
+        "what": "Pagination sentinel — loads next page of history.",
+        "frontend": "loadMoreTransactions() appends rows; scrollSentinel for infinite scroll",
+        "backend": "GET /api/transactions?cursor=…",
+        "example": {
+          "shown": 10,
+          "total": 15
+        }
+      }
+    },
+    {
+      "id": "wallet.history.dateGroup.header",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Date group header",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#transactionList .date-header:first-child",
+      "panel": {
+        "what": "Groups transactions by day (Today, Yesterday, …).",
+        "frontend": "Static date headers in prototype; production groups by createdAt date",
+        "backend": "Server may return grouped sections",
+        "example": "Today"
+      }
+    },
+    {
+      "id": "wallet.history.activeFilters",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Active filter chips",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#activeFilters",
+      "panel": {
+        "what": "Removable chips summarizing applied filters.",
+        "frontend": "Rendered when activeFilters has selections; clear via chip dismiss",
+        "backend": "Mirrors query params sent to transactions API",
+        "example": {
+          "status": [
+            "pending"
+          ],
+          "currency": "hCAD"
+        }
+      }
+    },
+    {
+      "id": "wallet.history.detail.fee",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Detail — fee line",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#transactionList .transaction-item:nth-child(1) .transaction-meta",
+      "panel": {
+        "what": "Network/fiat fee on transaction detail (when sheet opens).",
+        "frontend": "Populated in showTransactionDetail from mock tx object",
+        "backend": "transactions[].fee",
+        "example": {
+          "fee": 0,
+          "currency": "CAD"
+        }
+      },
+      "presenterNote": "Detail sheet is JS-driven; hover row after opening detail if implemented."
+    },
+    {
+      "id": "wallet.history.detail.network",
+      "featureRow": 34,
+      "featureName": "Stablecoin Management · Recent transactions",
+      "label": "Detail — network",
+      "status": "live",
+      "screen": "token-mgmt-remittance.wallet-enhanced",
+      "selector": "#transactionList .transaction-item[onclick*=\"tx005\"]",
+      "panel": {
+        "what": "Chain/network for on-chain remittance rows.",
+        "frontend": "Static meta on remittance row",
+        "backend": "transactions[].network",
+        "example": {
+          "network": "polygon",
+          "txHash": "0xabc…"
+        }
+      }
+    },
+    {
+      "id": "notifications.page.title",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Inbox page title",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".page-title",
+      "panel": {
+        "what": "Inbox page heading.",
+        "frontend": "Static",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.tabs.all",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Tab — All",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".tabs .tab.active",
+      "panel": {
+        "what": "Filter tab — show all notification types.",
+        "frontend": "filterNotifications(all)",
+        "backend": "Client filter on array; prod GET /api/notifications",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.tabs.remittance",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Tab — Remittances",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".tabs .tab[onclick*=\"remittance\"]",
+      "panel": {
+        "what": "Filter to remittance-type alerts only.",
+        "frontend": "Filter where type === remittance",
+        "backend": "GET /api/notifications?type=remittance",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.tabs.transaction",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Tab — Transactions",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".tabs .tab[onclick*=\"transaction\"]",
+      "panel": {
+        "what": "Filter to generic transaction confirmations.",
+        "frontend": "type === transaction",
+        "backend": "Query param filter",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.item.n5.title",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "n5 — title",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": "#notification-list li[data-id=\"n5\"] .notification-card-title, #notification-list [data-id=\"n5\"]",
+      "panel": {
+        "what": "Remittance notification headline.",
+        "frontend": "From DEFAULT_NOTIFICATIONS seed / clb_notifications",
+        "backend": "notifications[].title",
+        "example": "Remittance Sent"
+      }
+    },
+    {
+      "id": "notifications.item.n5.message",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "n5 — message",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": "#notification-list [data-id=\"n5\"] .notification-card-message",
+      "panel": {
+        "what": "Body copy — amount, asset, network delivery detail.",
+        "frontend": "message field",
+        "backend": "Push payload from remittance service on status=delivered",
+        "example": "25 CTC sent to family wallet — delivered on Polygon"
+      }
+    },
+    {
+      "id": "notifications.item.n5.cta",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "n5 — CTA",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": "#notification-list [data-id=\"n5\"] a.notification-card-cta, #notification-list [data-id=\"n5\"]",
+      "panel": {
+        "what": "Deep link CTA to wallet history.",
+        "frontend": "ctaUrl: wallet-enhanced.html, ctaLabel: View transaction",
+        "backend": "notifications[].ctaUrl / ctaLabel",
+        "example": {
+          "ctaUrl": "wallet-enhanced.html",
+          "ctaLabel": "View transaction"
+        }
+      }
+    },
+    {
+      "id": "notifications.item.n1.transaction",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "n1 — transaction confirmed",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": "#notification-list [data-id=\"n1\"]",
+      "panel": {
+        "what": "On-chain transaction confirmed alert.",
+        "frontend": "type: transaction",
+        "backend": "Created when tx reaches confirmed",
+        "example": {
+          "type": "transaction",
+          "title": "Transaction Confirmed"
+        }
+      }
+    },
+    {
+      "id": "notifications.item.timestamp",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Relative timestamp",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".notification-card .notification-card-time, #notification-list .notification-card-time",
+      "panel": {
+        "what": "Relative time display.",
+        "frontend": "formatRelativeTime(iso) — dashboard shares helper",
+        "backend": "ISO8601 timestamp",
+        "example": {
+          "timestamp": "2026-05-15T12:00:00Z"
+        }
+      }
+    },
+    {
+      "id": "notifications.item.readState",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Read state styling",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".notification-card.unread",
+      "panel": {
+        "what": "Read vs unread styling + badge eligibility.",
+        "frontend": "read: true|false; toggle on click",
+        "backend": "PATCH /api/notifications/{id}/read",
+        "example": {
+          "read": false
+        }
+      }
+    },
+    {
+      "id": "notifications.emptyState",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Empty state",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": "#empty-state",
+      "panel": {
+        "what": "Zero-notification UX.",
+        "frontend": "Shown when filtered list empty",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.markAllRead",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Mark all read",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".bulk-actions button[onclick*=\"markAllNotificationsRead\"]",
+      "panel": {
+        "what": "Bulk action — mark entire inbox read.",
+        "frontend": "markAllNotificationsRead(); renderPageList()",
+        "backend": "PATCH /api/notifications/mark-all-read",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.clearAll",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Clear all",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".bulk-actions button[onclick*=\"clearAllNotifications\"]",
+      "panel": {
+        "what": "Removes all notifications from client store.",
+        "frontend": "clearAllNotifications(); renderPageList()",
+        "backend": "DELETE /api/notifications (proposed)",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.typeIcon.remittance",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Type icon — remittance",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".notification-card.remittance .notification-card-icon",
+      "panel": {
+        "what": "Visual type discriminator for remittance alerts.",
+        "frontend": "CSS .notification-card.remittance::before accent",
+        "backend": "notifications[].type drives icon map",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.tabs.verification",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Tab — Verification",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".tabs .tab[onclick*=\"verification\"]",
+      "panel": {
+        "what": "KYC/identity verification notifications filter.",
+        "frontend": "filterNotifications(verification)",
+        "backend": "GET /api/notifications?type=verification",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.tabs.system",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Tab — Security",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".tabs .tab[onclick*=\"system\"]",
+      "panel": {
+        "what": "Security/system alerts filter.",
+        "frontend": "filterNotifications(system)",
+        "backend": "GET /api/notifications?type=system",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.tabs.unread",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Tab — Unread",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".tabs .tab[onclick*=\"unread\"]",
+      "panel": {
+        "what": "Shows only unread notifications.",
+        "frontend": "filterNotifications(unread)",
+        "backend": "GET /api/notifications?read=false",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "notifications.tabs.donation",
+      "featureRow": 37,
+      "featureName": "Stablecoin Management · Transaction status alerts",
+      "label": "Tab — Donations",
+      "status": "live",
+      "screen": "token-mgmt-remittance.notifications",
+      "selector": ".tabs .tab[onclick*=\"donation\"]",
+      "panel": {
+        "what": "Donation-type notification filter.",
+        "frontend": "filterNotifications(donation)",
+        "backend": "GET /api/notifications?type=donation",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.prereq.kyc",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "KYC prerequisite",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#kycAction, #stepPrereq .prereq-item:first-child",
+      "panel": {
+        "what": "KYC verification gate before send.",
+        "frontend": "appState.kycVerified = localStorage.kycStatus === verified",
+        "backend": "GET /api/users/me → kycStatus: verified|pending|rejected",
+        "example": {
+          "kycStatus": "verified"
+        }
+      }
+    },
+    {
+      "id": "send.prereq.wallet",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Wallet prerequisite",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#walletAction",
+      "panel": {
+        "what": "Wallet connection gate.",
+        "frontend": "appState.walletConnected = !!localStorage.walletAddress",
+        "backend": "GET /api/wallet/primary or bind endpoint",
+        "example": {
+          "walletConnected": true
+        }
+      }
+    },
+    {
+      "id": "send.method.unera",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Method — UNERA user",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".send-option[data-option=\"unera\"]",
+      "panel": {
+        "what": "Rail: send to registered UNERA user by email.",
+        "frontend": "Sets appState.sendOption = unera; fee = 0",
+        "backend": "POST /api/transfers/internal",
+        "example": {
+          "rail": "unera_user",
+          "fee": 0
+        }
+      }
+    },
+    {
+      "id": "send.method.external",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Method — External wallet",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".send-option[data-option=\"external\"]",
+      "panel": {
+        "what": "Rail: on-chain send to external wallet (row 39 primary).",
+        "frontend": "appState.sendOption = external; fee = $2.50 flat in mock",
+        "backend": "POST /api/remittance/send + chain broadcast",
+        "example": {
+          "rail": "external_wallet",
+          "fee": 2.5
+        }
+      }
+    },
+    {
+      "id": "send.method.bank",
+      "featureRow": 40,
+      "featureName": "Stablecoin Remittance · Payee (bank)",
+      "label": "Method — Bank withdrawal",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".send-option[data-option=\"bank\"]",
+      "panel": {
+        "what": "Rail: fiat withdrawal to saved bank account.",
+        "frontend": "appState.sendOption = bank; fee = 1% min $1",
+        "backend": "POST /api/withdrawals/bank",
+        "example": {
+          "rail": "bank",
+          "feePct": 1,
+          "feeMin": 1
+        }
+      }
+    },
+    {
+      "id": "send.external.network.ethereum",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Network — Ethereum",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .network-card:first-child",
+      "panel": {
+        "what": "Target chain selection — determines address format & fees.",
+        "frontend": "selectNetwork(Ethereum) → appState.selectedNetwork",
+        "backend": "GET /api/chains/supported + quote uses network",
+        "example": {
+          "network": "ethereum",
+          "chainId": 1
+        }
+      },
+      "presenterNote": "Select External + Continue to step 3 first."
+    },
+    {
+      "id": "send.external.network.grid",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Network grid",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .network-grid",
+      "panel": {
+        "what": "Full network picker (Ethereum, BNB, Polygon, Arbitrum).",
+        "frontend": "Injected HTML in renderStep3()",
+        "backend": "Supported networks list from config service",
+        "example": {
+          "networks": [
+            "ethereum",
+            "bnb",
+            "polygon",
+            "arbitrum"
+          ]
+        }
+      },
+      "presenterNote": "Select External + Continue to step 3 first."
+    },
+    {
+      "id": "send.external.address.input",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Wallet address input",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#walletAddress",
+      "panel": {
+        "what": "Destination wallet address (checksummed hex or compatible).",
+        "frontend": "updateWalletAddress() → appState.walletAddress",
+        "backend": "Validated server-side; stored on transfer as toAddress",
+        "example": {
+          "toAddress": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+        }
+      },
+      "presenterNote": "Select External + Continue to step 3 first."
+    },
+    {
+      "id": "send.external.address.validBadge",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Address verified badge",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#addressVerifiedBadge",
+      "panel": {
+        "what": "Client-side format validation feedback only — not on-chain checksum proof.",
+        "frontend": "checkAddressFormat() — shows if length ≥ 20 and starts with 0x",
+        "backend": "Server validates EIP-55 checksum before submit",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.external.planned.savedWallets",
+      "featureRow": 41,
+      "featureName": "Stablecoin Remittance · Wallet payee book",
+      "label": "Planned — Saved wallets",
+      "status": "planned",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .section-title, #step3Card",
+      "panel": {
+        "what": "PLANNED: Saved Wallets panel — .saved-methods-list pattern mirroring bank branch. Rows: label, network chip, truncated address, Send again.",
+        "frontend": "GET /api/payees/wallets → render cards; select → prefills #walletAddress + network. Save this wallet checkbox on confirm step.",
+        "backend": "GET /api/payees/wallets; POST /api/payees/wallets",
+        "example": {
+          "payees": [
+            {
+              "id": "wp_1",
+              "label": "Cousin — Base USDC",
+              "network": "base",
+              "addressMasked": "0x71C7…976F",
+              "lastUsedAt": "2026-05-01T10:00:00Z"
+            }
+          ]
+        }
+      },
+      "presenterNote": "Row 41 — UI not built. Tooltip anchored to external wallet section title."
+    },
+    {
+      "id": "send.amount.availableBalance",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Available balance",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#availableBalance",
+      "panel": {
+        "what": "Spendable balance for selected primary currency (appState.primaryCurrency default hUSD).",
+        "frontend": "appState.balances[primaryCurrency] formatted in goToStep(4)",
+        "backend": "GET /api/wallet/balances → available minus pending holds",
+        "example": {
+          "available": 2500,
+          "currency": "hUSD"
+        }
+      }
+    },
+    {
+      "id": "send.amount.input",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Amount input",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#amountInput",
+      "panel": {
+        "what": "User-entered send amount (display currency).",
+        "frontend": "validateAmount() → appState.amount; max = available",
+        "backend": "Validated against limits on POST /api/remittance/send",
+        "example": {
+          "amount": 100,
+          "currency": "hUSD"
+        }
+      }
+    },
+    {
+      "id": "send.amount.feePreview",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Fee preview",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#feePreview",
+      "panel": {
+        "what": "Estimated fee before review — $0 unera, $2.50 external, 1% bank.",
+        "frontend": "Computed in validateAmount() from sendOption",
+        "backend": "GET /api/remittance/quote returns authoritative fee",
+        "example": {
+          "fee": 2.5,
+          "feeCurrency": "USD"
+        }
+      }
+    },
+    {
+      "id": "send.amount.usdEquiv",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "USD equivalent",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#sendUsdEquivVal",
+      "panel": {
+        "what": "FX equivalent hint under amount field.",
+        "frontend": "Client FX rate table in JS",
+        "backend": "Quote service FX rate",
+        "example": {
+          "amountUsd": 100
+        }
+      }
+    },
+    {
+      "id": "send.review.type",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Review — send type",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#reviewType",
+      "panel": {
+        "what": "Human label for selected rail on review step.",
+        "frontend": "Populated in goToStep(5) from appState.sendOption",
+        "backend": "Response echo rail",
+        "example": "External Wallet"
+      },
+      "presenterNote": "Advance to step 5 with sample amount $100."
+    },
+    {
+      "id": "send.review.destination",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Review — destination",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#reviewDestination",
+      "panel": {
+        "what": "Recipient summary — address + network or bank mask.",
+        "frontend": "Built from appState.walletAddress + selectedNetwork or bank method",
+        "backend": "toAddress, network on transfer record",
+        "example": {
+          "toAddress": "0x71C7…",
+          "network": "ethereum"
+        }
+      }
+    },
+    {
+      "id": "send.review.amount",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Review — amount",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#reviewAmount",
+      "panel": {
+        "what": "Principal amount excl. fee.",
+        "frontend": "appState.amount",
+        "backend": "transfer.amount",
+        "example": {
+          "amount": 100
+        }
+      }
+    },
+    {
+      "id": "send.review.fee",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Review — fee",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#reviewFee",
+      "panel": {
+        "what": "Fee line item.",
+        "frontend": "appState.fee",
+        "backend": "transfer.fee",
+        "example": {
+          "fee": 2.5
+        }
+      }
+    },
+    {
+      "id": "send.review.total",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Review — total",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#reviewTotal",
+      "panel": {
+        "what": "Total debit = amount + fee (bank may differ).",
+        "frontend": "amount + fee",
+        "backend": "transfer.totalDebit",
+        "example": {
+          "total": 102.5
+        }
+      }
+    },
+    {
+      "id": "send.review.note",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Review — note",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#reviewNote",
+      "panel": {
+        "what": "Optional memo/reference.",
+        "frontend": "appState.note",
+        "backend": "transfer.memo",
+        "example": {
+          "memo": "Family support May"
+        }
+      }
+    },
+    {
+      "id": "send.review.planned.recipientReceives",
+      "featureRow": 42,
+      "featureName": "Stablecoin Remittance · Crypto-to-crypto matching",
+      "label": "Planned — Recipient receives",
+      "status": "planned",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step5 .card, #step5 .section-title",
+      "panel": {
+        "what": "PLANNED: Recipient receives callout — e.g. 98.50 USDC on Base after route fees/slippage, quoted rate, ETA.",
+        "frontend": "On entering step 5, call quote API with fromAsset=hUSD, toAsset=USDC, network=base, render card below summary items.",
+        "backend": "GET /api/remittance/quote?fromAsset=hUSD&toAsset=USDC&network=base&amount=100",
+        "example": {
+          "send": {
+            "amount": 100,
+            "asset": "hUSD"
+          },
+          "receive": {
+            "amount": "98.50",
+            "asset": "USDC",
+            "network": "base"
+          },
+          "rate": 0.985,
+          "slippageBps": 50,
+          "etaMinutes": 15,
+          "expiresAt": "2026-05-20T12:15:00Z"
+        }
+      },
+      "presenterNote": "Row 42 — card not in DOM. Advance to step 5; hover review card area."
+    },
+    {
+      "id": "send.processing.title",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Processing title",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step6 .processing-title",
+      "panel": {
+        "what": "In-flight state while backend/settlement runs.",
+        "frontend": "Shown between confirm and success; processSend() timeout mock",
+        "backend": "Async job; poll GET /api/remittance/{id} or WS",
+        "example": {
+          "status": "processing"
+        }
+      }
+    },
+    {
+      "id": "send.success.amount",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Success amount",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#successAmount",
+      "panel": {
+        "what": "Confirmation hero amount — uses --fin-up per financial direction rules.",
+        "frontend": "Set in processSend() success handler",
+        "backend": "Final settled amount from transfer record",
+        "example": {
+          "amount": 100,
+          "currency": "hUSD"
+        }
+      }
+    },
+    {
+      "id": "send.success.destination",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Success destination",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#successDestination",
+      "panel": {
+        "what": "Recipient echo on success screen.",
+        "frontend": "Same as review destination",
+        "backend": "transfer.toAddress",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.success.transactionId",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Success transaction ID",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#transactionId",
+      "panel": {
+        "what": "Internal transfer ID / receipt reference (not yet link to standalone receipt page).",
+        "frontend": "Mock TX-2026-XXXX generated client-side",
+        "backend": "POST /api/remittance/send → { id, txHash }",
+        "example": {
+          "id": "TX-2026-001",
+          "txHash": "0xabc123…"
+        }
+      }
+    },
+    {
+      "id": "send.success.heroPattern",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Success hero pattern",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step7 .success-icon-animated",
+      "panel": {
+        "what": "Success hero uses .success-state + #step7 — gap: canonical pattern is #step-complete + .success-screen.",
+        "frontend": "Align DOM ids when product fix ships; data-mapping documents current state.",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.bank.savedAccounts.header",
+      "featureRow": 40,
+      "featureName": "Stablecoin Remittance · Payee (bank)",
+      "label": "Saved accounts header",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .withdrawal-methods-header",
+      "panel": {
+        "what": "Saved bank accounts section label + add-new affordance.",
+        "frontend": "showAddBankMock() alert only — no real CRUD",
+        "backend": "POST /api/payees/bank-accounts",
+        "example": "N/A"
+      },
+      "presenterNote": "Bank branch — step 2 → Bank → Continue."
+    },
+    {
+      "id": "send.bank.savedAccount.td",
+      "featureRow": 40,
+      "featureName": "Stablecoin Remittance · Payee (bank)",
+      "label": "Saved account — TD",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".saved-method-card[onclick*=\"bank_1\"]",
+      "panel": {
+        "what": "Saved payee row — TD Canada Trust •••• 1234.",
+        "frontend": "selectBankMethod(bank_1, …) → appState.selectedWithdrawalId",
+        "backend": "GET /api/payees/bank-accounts",
+        "example": {
+          "id": "bank_1",
+          "institution": "TD Canada Trust",
+          "accountMask": "1234",
+          "currency": "CAD"
+        }
+      },
+      "presenterNote": "Bank branch — step 2 → Bank → Continue."
+    },
+    {
+      "id": "send.bank.savedAccount.rbc",
+      "featureRow": 40,
+      "featureName": "Stablecoin Remittance · Payee (bank)",
+      "label": "Saved account — RBC",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".saved-method-card[onclick*=\"bank_2\"]",
+      "panel": {
+        "what": "Second saved bank row — RBC •••• 5678.",
+        "frontend": "Same as TD card",
+        "backend": "GET /api/payees/bank-accounts",
+        "example": {
+          "id": "bank_2",
+          "institution": "RBC Royal Bank"
+        }
+      },
+      "presenterNote": "Bank branch — step 2 → Bank → Continue."
+    },
+    {
+      "id": "send.stepper.progress",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Stepper progress",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#stepperProgress, .stepper",
+      "panel": {
+        "what": "Multi-step progress indicator — brand deep blue active step.",
+        "frontend": "updateStepperAndMobile() from appState.currentStep",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.unera.search",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "UNERA user search",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#uneraSearch",
+      "panel": {
+        "what": "Search registered UNERA users by name or email.",
+        "frontend": "searchUneraUser(value) filters recent list",
+        "backend": "GET /api/users/search?q=",
+        "example": {
+          "query": "bob",
+          "results": 1
+        }
+      }
+    },
+    {
+      "id": "send.unera.recentContact.bob",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Recent contact — Bob",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".recent-item[onclick*=\"Bob Chen\"]",
+      "panel": {
+        "what": "Recent UNERA payee shortcut.",
+        "frontend": "selectUneraUser(Bob Chen, bob@example.com)",
+        "backend": "GET /api/transfers/recent",
+        "example": {
+          "name": "Bob Chen",
+          "email": "bob@example.com"
+        }
+      }
+    },
+    {
+      "id": "send.unera.recentContact.alice",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Recent contact — Alice",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".recent-item[onclick*=\"Alice Johnson\"]",
+      "panel": {
+        "what": "Recent UNERA payee shortcut.",
+        "frontend": "selectUneraUser(Alice Johnson, alice@example.com)",
+        "backend": "GET /api/transfers/recent",
+        "example": {
+          "name": "Alice Johnson",
+          "email": "alice@example.com"
+        }
+      }
+    },
+    {
+      "id": "send.unera.recentContact.maria",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Recent contact — Maria",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".recent-item[onclick*=\"Maria Garcia\"]",
+      "panel": {
+        "what": "Recent UNERA payee shortcut.",
+        "frontend": "selectUneraUser(Maria Garcia, maria@example.com)",
+        "backend": "GET /api/transfers/recent",
+        "example": {
+          "name": "Maria Garcia",
+          "email": "maria@example.com"
+        }
+      }
+    },
+    {
+      "id": "send.amount.presets",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Amount presets",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".presets .preset-btn:first-child",
+      "panel": {
+        "what": "Quick amount chips ($50, $100, $250, $500).",
+        "frontend": "setAmount(n) from preset buttons",
+        "backend": "N/A — client only",
+        "example": {
+          "amount": 50
+        }
+      }
+    },
+    {
+      "id": "send.amount.max",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Max amount button",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".presets .preset-btn[onclick*=\"setMaxAmount\"]",
+      "panel": {
+        "what": "Fills amount with available balance minus fee.",
+        "frontend": "setMaxAmount() uses balance - fee",
+        "backend": "Available from balances API",
+        "example": {
+          "max": 2497.5
+        }
+      }
+    },
+    {
+      "id": "send.review.irreversibilityWarn",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Irreversibility warning",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step5 .unera-icon-lead--tone-error",
+      "panel": {
+        "what": "Warns transfer cannot be undone before confirm.",
+        "frontend": "Static copy on review step with error-tone icon lead",
+        "backend": "N/A — compliance copy",
+        "example": "Once sent, this cannot be undone."
+      }
+    },
+    {
+      "id": "send.review.2faHint",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "2FA hint",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step5 .unera-icon-lead--tone-success",
+      "panel": {
+        "what": "Trust signal that 2FA is enabled for outbound transfers.",
+        "frontend": "Static 2FA enabled copy on review card",
+        "backend": "GET /api/users/me → mfaEnabled",
+        "example": {
+          "mfaEnabled": true
+        }
+      }
+    },
+    {
+      "id": "send.appState.balances",
+      "featureRow": 33,
+      "featureName": "Stablecoin Management · Balance display",
+      "label": "Mock balances object",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#availableBalance",
+      "panel": {
+        "what": "Client mock balances driving send flow (L1957–1961).",
+        "frontend": "appState.balances = { hCAD, hUSD, hEUR }",
+        "backend": "GET /api/wallet/balances replaces mock",
+        "example": {
+          "hCAD": 2500,
+          "hUSD": 2500,
+          "hEUR": 1500
+        }
+      }
+    },
+    {
+      "id": "send.external.network.bnb",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Network — BNB Chain",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .network-card[onclick*=\"BNB\"]",
+      "panel": {
+        "what": "BNB Smart Chain network selection.",
+        "frontend": "selectNetwork(BNB Chain)",
+        "backend": "GET /api/chains/supported",
+        "example": {
+          "network": "bnb",
+          "chainId": 56
+        }
+      },
+      "presenterNote": "Select External + Continue to step 3 first."
+    },
+    {
+      "id": "send.external.network.polygon",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Network — Polygon",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .network-card[onclick*=\"Polygon\"]",
+      "panel": {
+        "what": "Polygon network selection.",
+        "frontend": "selectNetwork(Polygon)",
+        "backend": "GET /api/chains/supported",
+        "example": {
+          "network": "polygon",
+          "chainId": 137
+        }
+      },
+      "presenterNote": "Select External + Continue to step 3 first."
+    },
+    {
+      "id": "send.external.network.arbitrum",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Network — Arbitrum",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .network-card[onclick*=\"Arbitrum\"]",
+      "panel": {
+        "what": "Arbitrum network selection.",
+        "frontend": "selectNetwork(Arbitrum)",
+        "backend": "GET /api/chains/supported",
+        "example": {
+          "network": "arbitrum",
+          "chainId": 42161
+        }
+      },
+      "presenterNote": "Select External + Continue to step 3 first."
+    },
+    {
+      "id": "send.mobile.stepper",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Mobile stepper",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": ".mobile-stepper-compact",
+      "panel": {
+        "what": "Compact step indicator on narrow viewports.",
+        "frontend": "updateStepperAndMobile() syncs with desktop stepper",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.step2.continue",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Step 2 continue",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step2 .btn-primary",
+      "panel": {
+        "what": "Advances from method selection to recipient step.",
+        "frontend": "goToStep(3) after sendOption set",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.step4.continue",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Step 4 continue",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step4 .btn-primary",
+      "panel": {
+        "what": "Validates amount and advances to review.",
+        "frontend": "validateAmount() then goToStep(5)",
+        "backend": "GET /api/remittance/quote (future)",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.confirm.button",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Confirm & Send",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step5 .btn-primary",
+      "panel": {
+        "what": "Submits transfer — triggers processing step.",
+        "frontend": "processSend() mock async",
+        "backend": "POST /api/remittance/send",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.success.viewWallet",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Back to Wallet CTA",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step7 .btn-secondary",
+      "panel": {
+        "what": "Post-success navigation to wallet history.",
+        "frontend": "window.location.href wallet-enhanced.html",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.success.sendAgain",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Send again",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step7 .btn-primary",
+      "panel": {
+        "what": "Resets flow for another transfer.",
+        "frontend": "resetFlow()",
+        "backend": "N/A",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.prereq.continue",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Prerequisites continue",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#stepPrereq .btn-primary",
+      "panel": {
+        "what": "Unlocks send flow when KYC + wallet gates pass.",
+        "frontend": "checkPrerequisites() sets prereqsMet",
+        "backend": "Gates from GET /api/users/me and wallet bind",
+        "example": "N/A"
+      }
+    },
+    {
+      "id": "send.amount.note",
+      "featureRow": 43,
+      "featureName": "Stablecoin Remittance · Transfer confirmation",
+      "label": "Transfer note field",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#noteInput",
+      "panel": {
+        "what": "Optional reference stored on transfer.",
+        "frontend": "Bound to appState.note",
+        "backend": "transfer.memo",
+        "example": {
+          "memo": "Family support May"
+        }
+      }
+    },
+    {
+      "id": "send.bank.addNew",
+      "featureRow": 40,
+      "featureName": "Stablecoin Remittance · Payee (bank)",
+      "label": "Add bank (mock)",
+      "status": "partial",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .withdrawal-methods-header button",
+      "panel": {
+        "what": "Add new bank account affordance — mock alert only.",
+        "frontend": "showAddBankMock() — no CRUD",
+        "backend": "POST /api/payees/bank-accounts (future)",
+        "example": "N/A"
+      },
+      "presenterNote": "Bank branch — step 2 → Bank → Continue."
+    },
+    {
+      "id": "send.step3.continue",
+      "featureRow": 39,
+      "featureName": "Stablecoin Remittance · Send to wallet",
+      "label": "Step 3 continue",
+      "status": "live",
+      "screen": "token-mgmt-remittance.send-enhanced",
+      "selector": "#step3Card .btn-primary",
+      "panel": {
+        "what": "Validates recipient and advances to amount.",
+        "frontend": "Enabled when address/network or bank selected",
+        "backend": "N/A",
+        "example": "N/A"
+      },
+      "presenterNote": "Complete step 3 fields first."
+    }
+  ]
+}
