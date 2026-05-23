@@ -18,13 +18,16 @@ Use these patterns for **multi-step wallet flows** (e.g. `get-unera-cad.html`, `
 
 ## Stepper
 
-- **Desktop**: `<nav class="stepper" id="dynamicStepper" role="progressbar" …>` with a single `.stepper-progress` child whose **width** reflects `(currentStep - 1) / (totalSteps - 1)`.
-- **Mobile**: `.mobile-stepper-compact` with `mobile-step-circle`, `mobile-step-info`, `mobile-step-counter` — **full add-money styling**. Hide desktop `.stepper` at `max-width: 768px`; show compact stepper.
-- **JS**: Build step circles from a `FLOW_KEYS` array; set **completed** steps with the **UNERA stroked checkmark SVG** in `.step-circle` (see `.cursor/rules/newunera-checkmark-icon.mdc`); keep `aria-valuenow` / `aria-valuemax` in sync.
+**Full spec:** [`.cursor/rules/newunera-flow-stepper.mdc`](newunera-flow-stepper.mdc) — layout (`main#main-content > div.stepper`, 700px rail), circle states, checkmark swap, renumbering, processing/success mapping, mobile compact, ARIA.
+
+- Stroked check in completed circles: [`.cursor/rules/newunera-checkmark-icon.mdc`](newunera-checkmark-icon.mdc).
+- **Single-select row check** (transfer type, saved bank/payment rows): [`.cursor/rules/newunera-selection-check.mdc`](newunera-selection-check.mdc) — `.method-check.send-option-check` + `syncSendOptionCheckmarks()`.
+- Canonical implementation: [`NewUnera/send-enhanced.html`](../NewUnera/send-enhanced.html).
 
 ## Completion step
 
 - **Full specification (check + lightning badge, structure, tokens, a11y):** [`.cursor/rules/newunera-success-screen-hero.mdc`](newunera-success-screen-hero.mdc) — use for all `NewUnera` flow success screens (add money, exchange, get/redeem CAD, send, stake, etc.).
+- **Summary receipt panel:** [`.cursor/rules/newunera-success-details.mdc`](newunera-success-details.mdc) — `.success-details` + `.success-detail-row` (label left, value right); always include Transaction ID, Date & time, Status.
 - **Centered follow-up** copy with lightbulb + tip: **`input-hint--success-followup`** (see `exchange.html` / `stake.html` / `send-enhanced.html` and [`.cursor/rules/newunera-success-screen-hero.mdc`](newunera-success-screen-hero.mdc) §2a) — not the default `input-hint` baseline nudge alone.
 - Final success state: **`.success-screen.flow-card-animated`** wrapping **`success-icon-animated`** (or **`success-icon-animated-lg`** where specified) **+ `.lightning-badge`** (or **`lightning-badge-lg`**).
 - Reuse **`@keyframes checkmark`** / **`slideInCard`** patterns from `add-money.html` where applicable.

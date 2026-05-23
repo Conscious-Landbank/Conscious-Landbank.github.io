@@ -1,0 +1,117 @@
+---
+description: Canonical single-select row check indicator for NewUnera option cards and saved-method rows (send-option-check pattern)
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# UNERA V2 — Selection check (single-select rows)
+
+**Scope:** Any **single-select row** under `NewUnera/` where the user picks one option from a list — transfer type, saved bank account, payment method, bank picker modal row, etc.
+
+**Canonical reference:** [`NewUnera/send-enhanced.html`](../NewUnera/send-enhanced.html) — Step 2 `.send-option` rows (~L2210–2251), CSS (~L775–789, ~L1468–1476), `syncSendOptionCheckmarks()` (~L2848+).
+
+**Related:** [`.cursor/rules/newunera-checkmark-icon.mdc`](newunera-checkmark-icon.mdc) (`UNERA_CHECKMARK_SVG`), [`.cursor/rules/newunera-color-system.mdc`](newunera-color-system.mdc) §7 (fin-up selection).
+
+---
+
+## Markup contract
+
+Trailing indicator on the **right** of the selectable row:
+
+```html
+<div class="method-check send-option-check" aria-hidden="true"></div>
+```
+
+| Rule | Detail |
+|------|--------|
+| Classes | **Both** `method-check` and `send-option-check` — do not use bare `.method-check` alone |
+| ARIA | `aria-hidden="true"` on the check div; selection state lives on the row (`aria-checked` / `aria-selected`) |
+| Parent row | `.send-option`, `.saved-method-card`, or equivalent selectable card with `.selected` when active |
+| SVG | **Empty in HTML** — inject via JS when selected (see below) |
+
+**Do not:**
+
+- ❌ CSS-only filled circle without the stroked `unera-checkmark` when selected
+- ❌ Inline legacy polyline SVG baked into static HTML
+- ❌ Unicode `✓` or filled Material check in the indicator well
+- ❌ Bare `.method-check` without `send-option-check`
+
+---
+
+## Required CSS
+
+```css
+.method-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--neutral-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.send-option-check {
+    flex-shrink: 0;
+    margin-top: 0.125rem; /* optional on vertically centered rows — harmless */
+}
+.send-option.selected .send-option-check,
+.saved-method-card.selected .send-option-check {
+    background: var(--fin-up);
+    border-color: var(--fin-up);
+    color: var(--brand-white);
+}
+.send-option.selected .send-option-check .unera-checkmark,
+.saved-method-card.selected .send-option-check .unera-checkmark {
+    width: 12px;
+    height: 12px;
+}
+```
+
+Extend the `.selected .send-option-check` selector list when adding new row types (e.g. `.bank-picker-card.selected .send-option-check`).
+
+---
+
+## JS behavior (required)
+
+Define once per page (or shared script):
+
+```js
+const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+
+function syncSendOptionCheckmarks(scope) {
+    var root = scope || document;
+    root.querySelectorAll('.send-option-check').forEach(function (checkEl) {
+        var item = checkEl.closest('.send-option, .saved-method-card');
+        if (!item) return;
+        checkEl.innerHTML = item.classList.contains('selected') ? UNERA_CHECKMARK_SVG : '';
+    });
+}
+```
+
+Call **`syncSendOptionCheckmarks()`** after every selection change and after dynamic row render. On reset, clear `.selected` from rows then sync.
+
+Add new row types to the `closest(...)` list when they use this indicator.
+
+---
+
+## Where this applies
+
+| Surface | Row class | Reference |
+|---------|-----------|-----------|
+| Send transfer type | `.send-option` | `send-enhanced.html` step 2 |
+| Send saved bank | `.saved-method-card` | `send-enhanced.html` step 3 (bank branch) |
+| Add Money payment methods | `.saved-method-card` | `add-money.html` — migrate from legacy inline SVG |
+| Get UNERA CAD fiat methods | `.saved-method-card` | `get-unera-cad.html` — migrate |
+| Redeem bank picker | `.saved-method-card` / `.bank-picker-card` | `redeem-unera-cad.html` — migrate |
+
+**Not this pattern:** stepper circles (`.step-circle`), processing chips (`.proc-icon.done`), success hero — use [newunera-checkmark-icon.mdc](newunera-checkmark-icon.mdc) sizing for those contexts.
+
+---
+
+## Verification
+
+- [ ] Unselected row: empty 20×20 circle, neutral border
+- [ ] Selected row: `--fin-up` fill + white stroked check (12×12 inside well)
+- [ ] Keyboard / SR: row exposes selection; check div is `aria-hidden="true"`
+- [ ] No hardcoded hex — tokens only

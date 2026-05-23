@@ -1,0 +1,135 @@
+---
+description: Canonical success-details receipt panel for important summary rows on NewUnera flow completion screens
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# UNERA V2 — Success details panel (flow completion)
+
+**Scope:** Important transaction summary on the **final success step** of any multi-step action under `NewUnera/` (Add Money, Exchange, Send, Get/Redeem CAD, Stake, etc.).
+
+**Canonical references:**
+- [`NewUnera/add-money.html`](../NewUnera/add-money.html) — `#step-complete` → `.success-details` (~L1250–1278, ~L2286–2302)
+- [`NewUnera/exchange.html`](../NewUnera/exchange.html) — `#step-complete` → `.success-details` (~L950–960, ~L1346–1358)
+- [`NewUnera/send-enhanced.html`](../NewUnera/send-enhanced.html) — `#step7` success panel
+
+**Related:** [`.cursor/rules/newunera-success-screen-hero.mdc`](newunera-success-screen-hero.mdc) (hero above the panel), [`.cursor/rules/wallet-action-pages.mdc`](wallet-action-pages.mdc).
+
+---
+
+## Placement
+
+Inside the success column, **after** `.success-title` + `.success-amount`, **before** optional `p.input-hint--success-followup`:
+
+```
+main#main-content
+  └── #step-complete | #step7 | .step-content (final)
+        └── .card | .success-screen
+              └── .success-icon-animated
+              └── h2.success-title
+              └── .success-amount
+              └── div.success-details          ← this rule
+              └── p.input-hint--success-followup (optional)
+```
+
+Use **`#step-complete`** for new flows when possible; existing pages may keep flow-specific ids (e.g. Send `#step7`).
+
+---
+
+## Markup contract
+
+```html
+<div class="success-details">
+  <div class="success-detail-row">
+    <span class="success-detail-label">Transaction ID</span>
+    <span class="success-detail-value" id="successTxId">—</span>
+  </div>
+  <div class="success-detail-row">
+    <span class="success-detail-label">Date &amp; time</span>
+    <span class="success-detail-value" id="successDateTime">—</span>
+  </div>
+  <div class="success-detail-row">
+    <span class="success-detail-label">Status</span>
+    <span class="success-detail-value" style="color: var(--success);">Completed</span>
+  </div>
+</div>
+```
+
+| Class | Role |
+|-------|------|
+| `.success-details` | Tinted left-aligned panel; full width of success column |
+| `.success-detail-row` | Flex row: label left, value right; bottom border between rows |
+| `.success-detail-label` | Secondary caption (`var(--text-secondary)`, 0.875rem) |
+| `.success-detail-value` | Semibold primary value (`var(--text-primary)`, 0.875rem) |
+
+Add **flow-specific rows** above the standard receipt rows (e.g. Destination, Send type, Recipient, Fee, Total for Send). Optional rows use `hidden` on the `.success-detail-row` wrapper.
+
+**Do not** use a single `<p class="success-text">` with `<br>`-separated labels for new or updated success screens — use this panel.
+
+---
+
+## Required CSS (copy from add-money / exchange)
+
+```css
+.success-details {
+  background: var(--neutral-100);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: left;
+}
+.success-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.success-detail-row:last-child { border-bottom: none; }
+.success-detail-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+.success-detail-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  text-align: right;
+  word-break: break-word;
+}
+```
+
+- **Status** value: `color: var(--success)` (maps to `--fin-up`).
+- Long addresses: allow `word-break: break-word` on values; monospace optional for wallet strings.
+- No CSS gradients on the panel.
+
+---
+
+## Minimum rows by flow
+
+| Flow | Required rows (in addition to Tx ID, Date & time, Status) |
+|------|-----------------------------------------------------------|
+| Add Money | Payment method |
+| Exchange | (amount in hero only) |
+| Send | Destination, Send type, Recipient, Fee, Total; Note if provided |
+| Get / Redeem CAD | Flow-specific (e.g. You deposited / You redeemed) — may use `.suc-row` alias on redeem tracker; align to same visual when refactoring |
+
+**Always include:** Transaction ID, Date & time, Status (`Completed`).
+
+---
+
+## JS
+
+- Populate `.success-detail-value` spans on transition to the success step.
+- Date format: `toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })` or equivalent locale-aware string.
+- Toggle optional rows with `row.hidden = true/false` on the `.success-detail-row` element.
+
+---
+
+## Do not
+
+- ❌ Replace panel with centered paragraph + `<br>` lines (`.success-text` pattern)
+- ❌ Omit Transaction ID or Status on completion screens
+- ❌ Use `--neutral-500` or `--brand-light-blue` for label text (WCAG — use `--text-secondary`)
+- ❌ Hardcode hex colors when tokens exist

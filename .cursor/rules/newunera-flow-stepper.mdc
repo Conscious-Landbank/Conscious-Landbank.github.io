@@ -1,0 +1,109 @@
+---
+description: Canonical desktop + mobile stepper layout, states, and JS for all NewUnera multi-step action flows
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# UNERA V2 — Flow stepper (action pages)
+
+**Scope:** Every multi-step **action flow** under `NewUnera/` (Send, Add Money, Exchange, Get/Redeem CAD, KYC, password reset, stake, MFA enroll, etc.).
+
+**Canonical reference:** [`NewUnera/send-enhanced.html`](../NewUnera/send-enhanced.html) — desktop stepper CSS (~L426–515), markup (~L1646–1685), `updateStepperAndMobile()` (~L2128+).
+
+**Related:** [`.cursor/rules/newunera-checkmark-icon.mdc`](newunera-checkmark-icon.mdc), [`.cursor/rules/newunera-color-system.mdc`](newunera-color-system.mdc) §7.3, [`.cursor/rules/wallet-action-pages.mdc`](wallet-action-pages.mdc).
+
+---
+
+## Placement & rail
+
+- **DOM path:** `main#main-content > div.stepper` (sibling of `.page-header`, above `.step-content` panels).
+- **Width:** `max-width: 700px`; `margin-left: auto; margin-right: auto`; `padding: 0 1rem`; `margin-bottom: 3rem`.
+- **Height:** ~82px total (48px circle + 0.75rem gap + label) — do not fix height; let content define it.
+
+Pair with **`.mobile-stepper-compact`** on the same rail (`max-width: 700px`). Hide desktop `.stepper` at **`max-width: 640px`** (or 768px where the page already uses that breakpoint); show compact stepper.
+
+---
+
+## Markup contract
+
+```html
+<div class="stepper" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+  <div class="stepper-progress" id="stepperProgress" style="width:0%"></div>
+  <div class="step active" data-step="1">
+    <div class="step-circle">1</div>
+    <div class="step-label">Choose Method</div>
+  </div>
+  <!-- repeat .step per visible flow step -->
+</div>
+```
+
+| Element | Rule |
+|--------|------|
+| `.stepper` | `role="progressbar"`; sync `aria-valuenow` / `aria-valuemax` to **visible** step count |
+| `.stepper-progress` | First child; width = `(stepperIndex / (totalVisible - 1)) * 100%`; **100%** when flow is fully complete |
+| `.step` | `data-step` = internal content step id; optional `.hidden` to omit prereqs |
+| `.step-circle` | 48×48px circle; number **or** stroked check (never both) |
+| `.step-label` | Short title under circle (e.g. Choose Method, Recipient, Amount, Confirm, Success) |
+
+Optional: `id="dynamicStepper"` when built in JS — class names and structure stay the same.
+
+---
+
+## Visual states
+
+| State | `.step-circle` | `.step-label` |
+|-------|----------------|---------------|
+| Pending | white bg, `border: 2px solid var(--neutral-300)`, step number | `var(--neutral-600)` |
+| **Active** | `background: var(--brand-deep-blue)`, white number, `transform: scale(1.1)` | `var(--brand-deep-blue)`, weight 600 |
+| **Completed** | `background: var(--brand-deep-blue)`, **stroked `unera-checkmark`** (22×22), no number | **`var(--fin-up)`**, weight 500 |
+
+- Track: `.stepper::before` → `var(--neutral-300)`; fill: `.stepper-progress` → **`var(--brand-deep-blue)`** (no CSS gradients).
+- Completed check: `UNERA_CHECKMARK_SVG` constant — see [newunera-checkmark-icon.mdc](newunera-checkmark-icon.mdc). `innerHTML` for completed; `textContent = String(n)` for active/pending.
+
+---
+
+## JS behavior (required)
+
+1. **Renumber visible steps** — when early steps are `.hidden`, display **1…N** in circles (not raw `data-step` ids).
+2. **Completed &lt; active &lt; pending** — prior steps get `.completed` + check; current gets `.active` + number; later stay pending + number.
+3. **Hidden steps** — use `.step.hidden { display: none }`; `aria-valuemax` = count of **visible** steps only.
+4. **Processing / success content steps** — when content steps outnumber stepper nodes (e.g. Send: stepper ends at “Success” but content has Processing + Success panels), map explicitly:
+   - **Processing** → last stepper node **active**
+   - **Final success** → all stepper nodes **completed** + checks, progress **100%**, `aria-valuenow = totalVisible`
+5. **Mobile compact** — keep `#mobileStepNumber`, `#mobileCurrentStep`, `#mobileTotalSteps`, `#mobileStepTitle`, `#mobileStepCounter` in sync with the same `stepperIndex` logic.
+
+---
+
+## Mobile compact stepper
+
+```html
+<div class="mobile-stepper-compact">
+  <div class="mobile-step-current">
+    <div class="mobile-step-circle" id="mobileStepNumber">1</div>
+    <div class="mobile-step-info">
+      <div class="mobile-step-label">Step <span id="mobileCurrentStep">1</span> of <span id="mobileTotalSteps">5</span></div>
+      <div class="mobile-step-title" id="mobileStepTitle">Choose Method</div>
+    </div>
+  </div>
+  <div class="mobile-step-counter" id="mobileStepCounter">1/5</div>
+</div>
+```
+
+Copy styles from `send-enhanced.html` / `add-money.html`. Mobile circle uses **`var(--brand-deep-blue)`** fill (not legacy gradient greens).
+
+---
+
+## Do not
+
+- ❌ Unicode `✓` or filled Material check inside `.step-circle`
+- ❌ Leave numbers on **completed** steps when a check is shown
+- ❌ Hardcode hex colors — use `--brand-deep-blue`, `--fin-up`, `--neutral-*` tokens
+- ❌ `linear-gradient` on stepper track, circles, or progress fill
+- ❌ Stepper wider than 700px or left-aligned without centering on the flow rail
+- ❌ Reset all circles to numbers on the final success step (broken `indexOf === -1` bug)
+
+---
+
+## When updating existing pages
+
+Align **`add-money.html`**, **`exchange.html`**, **`get-unera-cad.html`**, **`redeem-unera-cad.html`**, **`kyc-verify.html`**, and other flows to this contract when touching their stepper. Prefer **copying CSS + JS patterns from `send-enhanced.html`** over one-off variants.

@@ -87,6 +87,7 @@
             --surface-action-green-strong: color-mix(in srgb, var(--fin-up) 10%, color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white)));
             --surface-warning-soft:        color-mix(in srgb, var(--brand-yellow) 50%, white);
             --surface-error-soft:          color-mix(in srgb, var(--brand-red) 10%, white);
+            --surface-fee-green-soft:      color-mix(in srgb, var(--fin-up) 18%, var(--brand-white));
 
             --text-xs: 0.75rem;
             --text-sm: 0.875rem;
@@ -389,7 +390,6 @@
             .nav-links, .user-profile-nav { display: none; }
             .hamburger { display: flex; }
             .container { padding: 2rem 1.5rem; }
-            .send-options { grid-template-columns: repeat(2, 1fr); }
         }
 
         /* Container */
@@ -449,7 +449,7 @@
             top: 24px;
             left: 24px;
             height: 2px;
-            background: var(--gradient-primary);
+            background: var(--brand-deep-blue);
             transition: width 0.5s ease;
             z-index: 1;
             max-width: calc(100% - 48px);
@@ -482,15 +482,15 @@
             transition: all 0.3s;
         }
         .step.active .step-circle {
-            background: var(--gradient-primary);
+            background: var(--brand-deep-blue);
             border-color: transparent;
-            color: white;
+            color: var(--brand-white);
             transform: scale(1.1);
         }
         .step.completed .step-circle {
-            background: var(--gradient-primary);
+            background: var(--brand-deep-blue);
             border-color: transparent;
-            color: white;
+            color: var(--brand-white);
         }
         .unera-checkmark {
             display: block;
@@ -507,6 +507,10 @@
         .step.active .step-label {
             color: var(--brand-deep-blue);
             font-weight: 600;
+        }
+        .step.completed .step-label {
+            color: var(--fin-up);
+            font-weight: 500;
         }
 
         /* Mobile compact stepper */
@@ -684,37 +688,106 @@
         /* Step 2 card: more breathing room */
         #step2 .section-title { margin-bottom: 1.25rem; }
 
-        /* Option cards (three send types) */
+        /* Option cards (three send types) — horizontal radio rows */
         .send-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
             margin-bottom: 2rem;
         }
         .send-option {
-            background: white;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: var(--brand-white);
             border: 2px solid var(--border-subtle);
             border-radius: 1rem;
-            padding: 1.75rem 1.25rem;
-            text-align: center;
+            padding: 1.25rem;
+            min-height: 88px;
+            text-align: left;
             cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+        }
+        .send-option[data-option="unera"]:not(.selected) {
+            border-color: color-mix(in srgb, var(--fin-up) 35%, transparent);
         }
         .send-option:hover {
             border-color: var(--brand-deep-blue);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 16px rgba(23, 61, 71, 0.08);
         }
         .send-option.selected {
             border-color: var(--fin-up);
-            background: var(--surface-action-green);
+            background: var(--surface-action-green-strong);
+        }
+        .send-option-icon-well {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .send-option-icon-well svg {
+            width: 24px;
+            height: 24px;
+        }
+        .send-option[data-option="unera"] .send-option-icon-well {
+            background: color-mix(in srgb, var(--fin-up) 14%, var(--brand-white));
+            color: var(--fin-up);
+        }
+        .send-option[data-option="external"] .send-option-icon-well {
+            background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white));
+            color: var(--brand-deep-blue);
+        }
+        .send-option[data-option="bank"] .send-option-icon-well {
+            background: color-mix(in srgb, var(--brand-earth) 18%, var(--brand-white));
+            color: var(--brand-deep-blue);
+        }
+        .send-option-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .send-option-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.125rem;
+        }
+        .send-option-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .send-option-meta .method-reason {
+            margin-top: 0;
+            flex: 1;
+            min-width: 0;
+        }
+        .send-option-meta .fee-badge {
+            margin-top: 0;
+            flex-shrink: 0;
+        }
+        .send-option-check {
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+        .send-option.selected .send-option-check,
+        .saved-method-card.selected .send-option-check {
+            background: var(--fin-up);
+            border-color: var(--fin-up);
+            color: var(--brand-white);
+        }
+        .send-option.selected .send-option-check .unera-checkmark,
+        .saved-method-card.selected .send-option-check .unera-checkmark {
+            width: 12px;
+            height: 12px;
         }
         .recommended-badge {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
             background: var(--gradient-warm);
             color: var(--brand-deep-blue);
             border: 1px solid color-mix(in srgb, var(--brand-deep-blue) 18%, transparent);
@@ -723,12 +796,10 @@
             font-size: 0.688rem;
             font-weight: 700;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(23, 61, 71, 0.12);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.25rem;
-            z-index: 3;
             white-space: nowrap;
             line-height: 1;
         }
@@ -737,30 +808,25 @@
             width: 14px;
             height: 14px;
         }
-        .option-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-        }
-        .option-title {
+        .send-option .option-title {
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: var(--text-lg);
+            font-size: 1.0625rem;
             color: var(--text-primary);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0;
         }
-        .option-desc {
+        .send-option .option-desc {
             font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--neutral-800);
-            margin-top: 0.375rem;
+            font-size: 0.9375rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-top: 0.125rem;
             line-height: 1.35;
         }
-        .method-reason {
-            font-size: 0.813rem;
+        .send-option .method-reason {
+            font-size: 0.8125rem;
             color: var(--text-secondary);
             font-weight: 400;
-            margin-top: 0.5rem;
             line-height: 1.4;
             display: flex;
             flex-wrap: wrap;
@@ -778,18 +844,17 @@
             outline: 2px solid var(--brand-deep-blue);
             outline-offset: 2px;
         }
-        .fee-badge {
+        .send-option .fee-badge {
             display: inline-block;
             background: var(--neutral-200);
             padding: 0.25rem 0.75rem;
             border-radius: 1rem;
             font-size: 0.75rem;
             font-weight: 600;
-            margin-top: 0.75rem;
             color: var(--text-secondary);
         }
-        .fee-badge.free {
-            background: color-mix(in srgb, var(--fin-up) 18%, var(--brand-white));
+        .send-option .fee-badge.free {
+            background: var(--surface-fee-green-soft);
             color: var(--brand-deep-blue);
         }
 
@@ -874,9 +939,14 @@
         }
         .network-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 0.75rem;
         }
+        .network-grid--cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .network-grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .network-grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
+        .network-grid--compact .network-card { padding: 0.75rem 0.5rem; min-height: 72px; }
+        .network-grid--compact .network-icon { width: 40px; height: 40px; }
+        .network-grid--compact .network-icon svg { width: 24px; height: 24px; }
         .network-card {
             border: 2px solid var(--border-subtle);
             border-radius: 0.75rem;
@@ -884,6 +954,11 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
+            min-height: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .network-card:hover {
             border-color: var(--brand-deep-blue);
@@ -893,8 +968,508 @@
             border-color: var(--brand-deep-blue);
             background: rgba(23, 61, 71, 0.08);
         }
-        .network-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-        .network-name { font-weight: 600; font-size: 0.875rem; }
+        .network-card:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .network-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .network-icon svg { display: block; width: 32px; height: 32px; }
+        .network-name { font-weight: 600; font-size: 0.875rem; color: var(--text-primary); }
+        .network-card-sublabel {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .network-selected-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            background: var(--surface-scatter);
+        }
+        .network-selected-pill .network-icon { margin: 0; width: 40px; height: 40px; }
+        .network-selected-pill-note {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+        .network-picker-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            background: white;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-height: 52px;
+            text-align: left;
+        }
+        .network-picker-trigger:hover { border-color: var(--brand-deep-blue); }
+        .network-picker-trigger:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .network-picker-trigger-chevron { margin-left: auto; color: var(--text-secondary); }
+        .network-picker-list {
+            max-height: min(60vh, 420px);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .network-picker-list::-webkit-scrollbar { display: none; }
+        .network-picker-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-bottom: 1px solid var(--border-subtle);
+            background: white;
+            cursor: pointer;
+            font-family: var(--font-body);
+            text-align: left;
+            min-height: 52px;
+        }
+        .network-picker-row:last-child { border-bottom: none; }
+        .network-picker-row:hover { background: var(--neutral-100); }
+        .network-picker-row.selected { background: color-mix(in srgb, var(--fin-up) 8%, var(--brand-white)); }
+        .network-picker-row-meta { margin-left: auto; font-size: 0.75rem; color: var(--text-secondary); }
+        .network-unavailable-callout {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: var(--surface-error-soft);
+            color: var(--error);
+            font-size: 0.875rem;
+        }
+        .saved-address-panel {
+            background: var(--surface-scatter);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .saved-address-header,
+        .withdrawal-methods-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .saved-address-header h3,
+        .withdrawal-methods-header h3 {
+            margin: 0;
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .view-all-link {
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.938rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            min-height: 44px;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            transition: gap 0.2s;
+            font-family: var(--font-body);
+        }
+        .view-all-link:hover { gap: 0.625rem; }
+        .view-all-link:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .view-all-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .saved-address-list { list-style: none; margin: 0; padding: 0; }
+        .saved-address-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--brand-white);
+            border: 2px solid var(--border-subtle);
+            margin-bottom: 0.5rem;
+        }
+        .saved-address-item:last-child { margin-bottom: 0; }
+        .saved-address-item:hover {
+            background: var(--surface-action-green);
+            border-color: var(--brand-deep-blue);
+        }
+        .saved-address-item.selected {
+            background: var(--surface-action-green-strong);
+            border-color: var(--fin-up);
+        }
+        .saved-address-item:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .saved-address-logo {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .saved-address-logo svg { width: 24px; height: 24px; }
+        .saved-address-info { flex: 1; min-width: 0; }
+        .saved-address-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.938rem;
+            margin-bottom: 0.125rem;
+        }
+        .saved-address-addr {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-family: ui-monospace, 'Courier New', monospace;
+            word-break: break-all;
+        }
+        .saved-address-pill {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--brand-deep-blue) 10%, var(--brand-white));
+            color: var(--brand-deep-blue);
+            flex-shrink: 0;
+        }
+        .saved-address-empty {
+            text-align: center;
+            padding: 1.25rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .saved-address-empty svg { display: block; margin: 0 auto 0.5rem; color: var(--brand-deep-blue); }
+        .address-entry-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .wallet-quick-chip {
+            min-height: 44px;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            border: 2px solid var(--border-subtle);
+            background: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .wallet-quick-chip:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+        }
+        .wallet-quick-chip:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .wallet-address-input { font-family: ui-monospace, 'Courier New', monospace; }
+        .address-validation-row {
+            display: none;
+            align-items: flex-start;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        .address-validation-row.is-visible { display: flex; }
+        .address-validation-row--success { color: var(--fin-up); }
+        .address-validation-row--error { color: var(--error); }
+        .address-validation-row--warning { color: var(--warning); }
+        .address-validation-row svg { flex-shrink: 0; margin-top: 0.1em; }
+        .save-address-checkbox-row {
+            display: none;
+            align-items: center;
+            gap: 0.625rem;
+            margin-top: 1rem;
+            min-height: 46px;
+        }
+        .save-address-checkbox-row.is-visible { display: flex; }
+        .save-address-checkbox-row input[type="checkbox"] {
+            width: 1.125rem;
+            height: 1.125rem;
+            accent-color: var(--brand-deep-blue);
+        }
+        .save-address-checkbox-row label {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .qr-scan-modal {
+            max-width: 440px;
+            max-height: min(90vh, 640px);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .qr-scan-modal .modal-header { flex-shrink: 0; }
+        .qr-scan-modal #qrScanBody {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .qr-scan-modal #qrScanBody::-webkit-scrollbar { display: none; }
+        #qrScanBody.qr-scan-body--form {
+            text-align: left;
+            padding: 1.25rem 1.5rem;
+        }
+        .qr-scan-intro {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .qr-scan-intro-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+            background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white));
+            color: var(--brand-deep-blue);
+        }
+        .qr-scan-intro-icon svg { width: 24px; height: 24px; }
+        .qr-scan-intro-text {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            flex: 1;
+            min-width: 0;
+        }
+        .qr-scan-mobile-note {
+            margin: 0 0 1rem;
+            padding: 0.875rem 1rem;
+            font-size: 0.8125rem;
+        }
+        .qr-scan-mobile-note p { margin: 0; color: var(--text-secondary); line-height: 1.5; }
+        .qr-scan-panel {
+            background: var(--brand-white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 0;
+        }
+        .qr-scan-panel-title {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.625rem;
+        }
+        .qr-scan-format-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin: 0.5rem 0 0.75rem;
+            line-height: 1.45;
+        }
+        .qr-scan-preview {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--fin-up);
+            margin: 0 0 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--fin-up-bg);
+            border-radius: 0.5rem;
+            word-break: break-word;
+        }
+        .qr-scan-preview[hidden] { display: none; }
+        .qr-scan-actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: stretch;
+        }
+        .qr-scan-actions-row .btn {
+            min-height: 46px;
+            flex: 1 1 auto;
+        }
+        .qr-scan-actions-row .btn-primary { flex: 1 1 8rem; }
+        .qr-scan-or-rule {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 1rem 0;
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+        .qr-scan-or-rule::before,
+        .qr-scan-or-rule::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+        .qr-scan-dropzone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            min-height: 120px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            border: 2px dashed var(--neutral-300);
+            border-radius: 1rem;
+            background: var(--neutral-100);
+            transition: border-color 0.2s, background 0.2s;
+            color: var(--brand-deep-blue);
+        }
+        .qr-scan-dropzone:hover {
+            border-color: var(--brand-deep-blue);
+            background: var(--surface-action-green);
+        }
+        .qr-scan-dropzone:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .qr-scan-dropzone svg { width: 28px; height: 28px; flex-shrink: 0; }
+        .qr-scan-dropzone-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .qr-scan-dropzone-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .qr-scan-demo {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            background: var(--surface-scatter);
+            border: 1px solid var(--border-subtle);
+        }
+        .qr-scan-demo summary {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            list-style: none;
+        }
+        .qr-scan-demo summary::-webkit-details-marker { display: none; }
+        .qr-scan-demo summary:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+            border-radius: 0.375rem;
+        }
+        .qr-scan-demo-inner { padding-top: 0.75rem; }
+        .qr-scan-modal .modal-footer {
+            flex-shrink: 0;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: flex-end;
+        }
+        .qr-scan-modal .modal-footer .btn { flex: 0 1 auto; min-width: 7rem; }
+        .qr-paste-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-family: ui-monospace, 'Courier New', monospace;
+            font-size: 1rem;
+            margin-bottom: 0;
+            resize: vertical;
+            min-height: 4.5rem;
+            color: var(--text-primary);
+            background: var(--brand-white);
+        }
+        .qr-paste-field:focus {
+            outline: none;
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.08);
+        }
+        .qr-paste-field:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .qr-scan-status {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .qr-scan-status-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            border-radius: 50%;
+            background: var(--error-bg);
+            color: var(--error);
+            flex-shrink: 0;
+        }
+        .qr-scan-status-icon svg { width: 24px; height: 24px; }
+        .qr-scan-status-message {
+            margin: 0 0 1rem;
+            max-width: 18rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--error);
+        }
+        .qr-scan-status-message span { display: block; }
+        .qr-scan-status--error { color: var(--error); }
+        .qr-scan-status--error .btn-primary { margin-top: 0; }
+        .qr-scan-status--success { color: var(--fin-up); }
+        .qr-scan-status--success .unera-checkmark { display: block; margin: 0 auto 0.5rem; }
+        .qr-demo-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        @media (max-width: 640px) {
+            .network-grid--cols-3,
+            .network-grid--cols-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .network-name { font-size: 0.8125rem; }
+            .address-action-btn { flex: 1; min-width: calc(50% - 0.25rem); }
+            .qr-scan-actions-row { flex-direction: column; }
+            .qr-scan-actions-row .btn { width: 100%; flex: 1 1 auto; }
+            .qr-paste-field { font-size: 1rem; }
+        }
 
         /* Wallet address input */
         .wallet-address-input {
@@ -913,12 +1488,6 @@
         }
 
         /* Withdrawal methods */
-        .withdrawal-methods-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
         .btn-add-new {
             background: white;
             border: 1px solid var(--border-subtle);
@@ -1020,10 +1589,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .saved-method-card.selected .method-check {
-            background: var(--fin-up);
-            border-color: var(--fin-up);
+            flex-shrink: 0;
         }
 
         /* Amount section */
@@ -1214,30 +1780,66 @@
             margin-right: 0;
             vertical-align: unset;
         }
-        /* Address warning: high contrast (brand: functional error) */
-        .input-hint.input-hint-warning {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--error);
+        /* Send-flow hint callouts — step 3 model (warning, amount tip, review) */
+        .input-hint.input-hint-warning,
+        .input-hint.amount-tip,
+        .send-review-callout {
+            background: var(--surface-fee-green-soft);
+            color: var(--brand-deep-blue);
+            font-weight: 400;
+            border: none;
+            border-radius: 0.5rem;
             padding: 0.75rem 1rem;
-            background: rgba(239, 68, 68, 0.06);
-            border-left: 4px solid var(--error);
-            border-radius: 0 0.5rem 0.5rem 0;
-            margin-bottom: 1rem;
         }
-        /* Pro tip: insight-card style (brand: left border deep blue) */
+        .send-review-callout {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+        .send-review-callout .unera-icon-lead {
+            font-size: 0.875rem;
+            gap: 0.4rem;
+            line-height: 1.5;
+        }
+        .send-review-callout .unera-icon-lead--tone-error,
+        .send-review-callout .unera-icon-lead--tone-success {
+            color: var(--brand-deep-blue);
+        }
+        .send-review-callout .unera-icon-lead > span,
+        .send-review-callout__sub {
+            font-size: inherit;
+            font-weight: 400;
+            color: var(--brand-deep-blue);
+        }
+        .send-review-callout__divider {
+            border: 0;
+            border-top: 1px solid color-mix(in srgb, var(--brand-deep-blue) 12%, transparent);
+            margin: 0;
+        }
+        .input-hint.input-hint-warning,
         .input-hint.amount-tip {
-            font-size: 0.938rem;
-            color: var(--neutral-700);
-            padding: 1rem 1.25rem;
-            background: rgba(23, 61, 71, 0.06);
-            border-left: 4px solid var(--brand-deep-blue);
-            border-radius: 0 0.5rem 0.5rem 0;
-            margin-top: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
         }
-        .input-hint.amount-tip strong {
-            font-weight: 600;
-            color: var(--neutral-800);
+        .input-hint.input-hint-warning > svg:first-child,
+        .input-hint.amount-tip > svg:first-child,
+        .send-review-callout .unera-icon-lead > svg:first-child {
+            margin-right: 0;
+            margin-top: 0.1em;
+            vertical-align: unset;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+        }
+        .input-hint.input-hint-warning {
+            margin-bottom: 1.5rem;
+        }
+        .input-hint.amount-tip {
+            margin-top: 1rem;
         }
         /* Summary label: caption style for hierarchy */
         .summary-label {
@@ -1462,10 +2064,150 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 2rem;
         }
+        .success-details {
+            background: var(--neutral-100);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .success-detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .success-detail-row:last-child {
+            border-bottom: none;
+        }
+        .success-detail-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        .success-detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        /* Review step — path soft warnings & blocking banners */
+        .review-soft-warn { margin-top: 1.25rem; }
+        .review-soft-warn[hidden] { display: none !important; }
+        .rate-note {
+            display: flex; align-items: flex-start; gap: 0.5rem;
+            padding: 0.625rem 0.875rem; background: color-mix(in srgb, var(--brand-deep-blue) 5%, var(--brand-white));
+            border: 1px solid color-mix(in srgb, var(--brand-deep-blue) 15%, transparent); border-radius: 0.75rem;
+            font-size: 0.875rem; line-height: 1.5;
+        }
+        .rate-note svg { flex-shrink: 0; margin-top: 0.1em; color: var(--brand-deep-blue); }
+        .rate-note strong { color: var(--text-primary); font-weight: 700; }
+        .rate-note span { color: var(--text-secondary); }
+        .dest-review-banner {
+            display: flex; align-items: flex-start; gap: 0.875rem;
+            padding: 1rem 1.125rem; border-radius: 0.875rem;
+            border: 2px solid var(--border-subtle);
+        }
+        .dest-review-banner.cad {
+            background: color-mix(in srgb, var(--brand-red) 9%, var(--brand-white));
+            border-color: rgba(171, 87, 112, 0.22);
+        }
+        .dest-review-banner-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+        .dest-review-banner-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+        .dest-review-banner-sub { font-size: 0.813rem; color: var(--text-secondary); line-height: 1.45; }
+        .rate-expired-banner {
+            display: none; align-items: flex-start; gap: 0.625rem; flex-wrap: wrap;
+            padding: 0.75rem 0.875rem; background: var(--surface-warning-soft);
+            border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent); border-radius: 0.75rem;
+            margin-top: 1.25rem; font-size: 0.875rem; color: var(--text-primary);
+        }
+        .rate-expired-banner.active { display: flex; }
+        .rate-expired-banner-body { flex: 1 1 12rem; min-width: 0; }
+        .rate-expired-banner-title { font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+        .rate-expired-banner-text { font-size: 0.813rem; color: var(--text-secondary); line-height: 1.45; }
+        .rate-expired-banner .btn { min-height: 40px; font-size: 0.813rem; flex-shrink: 0; align-self: center; }
+
+        /* Demo outcome pills (KYC pattern) */
+        .demo-separator { border: none; border-top: 1.5px dashed var(--neutral-300); margin: 1.25rem 0 1rem; }
+        .demo-label { font-size: 0.688rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; text-align: left; }
+        .demo-btns { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+        .demo-btn {
+            padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600;
+            border: 1.5px solid var(--border-subtle); background: var(--brand-white);
+            cursor: pointer; transition: all 0.2s; font-family: var(--font-body);
+            color: var(--text-secondary); min-height: 34px;
+        }
+        .demo-btn:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .demo-btn:focus, .demo-btn:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .demo-btn.active { border-color: var(--brand-deep-blue); background: var(--brand-deep-blue); color: var(--brand-white); }
+
+        /* Outcome detail screen (non-success) */
+        .send-outcome-screen { text-align: center; padding: 0.5rem 0; }
+        .outcome-icon-wrap {
+            width: 100px; height: 100px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem; flex-shrink: 0;
+        }
+        .outcome-icon-wrap--error {
+            background: var(--surface-error-soft); color: var(--error);
+            border: 2px solid color-mix(in srgb, var(--brand-red) 28%, transparent);
+        }
+        .outcome-icon-wrap--review {
+            background: var(--surface-warning-soft); color: var(--brand-deep-blue);
+            border: 2px solid color-mix(in srgb, var(--warning) 35%, transparent);
+        }
+        .outcome-icon-wrap--pending {
+            background: color-mix(in srgb, var(--brand-light-blue) 18%, var(--brand-white)); color: var(--brand-deep-blue);
+            border: 2px solid color-mix(in srgb, var(--brand-deep-blue) 18%, transparent);
+        }
+        .send-outcome-title {
+            font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+            color: var(--brand-deep-blue); margin-bottom: 0.75rem;
+        }
+        .send-outcome-amount {
+            font-size: 2.5rem; font-weight: 700; margin-bottom: 0.75rem;
+        }
+        .send-outcome-amount--neutral { color: var(--text-primary); }
+        .send-outcome-amount--error { color: var(--error); }
+        .send-outcome-amount--pending { color: var(--brand-purple); }
+        .send-outcome-sub {
+            font-size: 0.938rem; color: var(--text-secondary); line-height: 1.55;
+            max-width: 420px; margin: 0 auto 1rem;
+        }
+        .outcome-badge {
+            display: inline-flex; align-items: center; gap: 0.375rem;
+            font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.875rem;
+            border-radius: 999px; margin-bottom: 0.875rem;
+        }
+        .outcome-badge--review { background: var(--surface-warning-soft); color: var(--warning); border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent); }
+        .outcome-badge--error { background: var(--surface-error-soft); color: var(--error); }
+        .outcome-badge--pending { background: color-mix(in srgb, var(--brand-purple) 12%, var(--brand-white)); color: var(--brand-purple); border: 1px solid color-mix(in srgb, var(--brand-purple) 25%, transparent); }
+        .error-ref-chip {
+            display: inline-block; font-family: ui-monospace, monospace; font-size: 0.75rem; font-weight: 700;
+            color: var(--error); background: rgba(171, 87, 112, 0.1);
+            border: 1px solid rgba(171, 87, 112, 0.25); border-radius: 0.375rem;
+            padding: 0.15rem 0.5rem; letter-spacing: 0.03em; margin-bottom: 1rem;
+        }
+        .outcome-tip {
+            display: flex; align-items: flex-start; gap: 0.625rem;
+            padding: 0.75rem 0.875rem; text-align: left;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white));
+            border: 1.5px solid var(--border-subtle); border-radius: 0.75rem;
+            margin: 1rem 0 0; font-size: 0.875rem; color: var(--text-secondary);
+        }
+        .outcome-tip-icon { color: var(--brand-deep-blue); flex-shrink: 0; margin-top: 1px; }
+        .outcome-tip strong { color: var(--text-primary); font-weight: 700; }
+        #sendOutcomeWrap[hidden], #sendSuccessWrap[hidden], #sendSuccessActions[hidden] { display: none !important; }
+
+        @media (max-width: 768px) {
+            .demo-btn { min-height: 44px; padding: 0.375rem 0.875rem; }
+        }
 
         /* Responsive adjustments */
         @media (max-width: 640px) {
-            .send-options { grid-template-columns: 1fr; }
             .stepper { display: none; }
             .mobile-stepper-compact { display: flex; }
             .btn-actions, .btn-actions { flex-direction: column-reverse; grid-template-columns: 1fr; }
@@ -1689,28 +2431,49 @@
         <div class="step-content" id="step2">
             <div class="card">
                 <h2 class="section-title">Select transfer type</h2>
-                <div class="send-options">
-                    <div class="send-option" data-option="unera" onclick="selectOption('unera', this)">
-                        <span class="recommended-badge"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m233-120 65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z"/></svg> RECOMMENDED</span>
-                        <div class="option-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg></div>
-                        <div class="option-title">UNERA User</div>
-                        <div class="option-desc">Send to someone on UNERA</div>
-                        <div class="method-reason">No fees · Instant · Recipient notified by email</div>
-                        <div class="fee-badge free">No fees</div>
+                <div class="send-options" role="radiogroup" aria-label="Select transfer type">
+                    <div class="send-option" role="radio" aria-checked="false" tabindex="0" data-option="unera" onclick="selectOption('unera', this)">
+                        <div class="send-option-icon-well" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg></div>
+                        <div class="send-option-body">
+                            <div class="send-option-head">
+                                <div class="option-title">UNERA User</div>
+                                <span class="recommended-badge"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m233-120 65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z"/></svg> RECOMMENDED</span>
+                            </div>
+                            <div class="option-desc">Send to someone on UNERA</div>
+                            <div class="send-option-meta">
+                                <div class="method-reason">No fees · Instant · Recipient notified by email</div>
+                                <div class="fee-badge free">No fees</div>
+                            </div>
+                        </div>
+                        <div class="method-check send-option-check" aria-hidden="true"></div>
                     </div>
-                    <div class="send-option" data-option="external" onclick="selectOption('external', this)">
-                        <div class="option-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg></div>
-                        <div class="option-title">External Wallet</div>
-                        <div class="option-desc">Send to crypto wallet</div>
-                        <div class="method-reason">Network fee applies · On-chain · Irreversible</div>
-                        <div class="fee-badge">Network fee applies</div>
+                    <div class="send-option" role="radio" aria-checked="false" tabindex="-1" data-option="external" onclick="selectOption('external', this)">
+                        <div class="send-option-icon-well" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg></div>
+                        <div class="send-option-body">
+                            <div class="send-option-head">
+                                <div class="option-title">External Wallet</div>
+                            </div>
+                            <div class="option-desc">Send to crypto wallet</div>
+                            <div class="send-option-meta">
+                                <div class="method-reason">Network fee applies · On-chain · Irreversible</div>
+                                <div class="fee-badge">Network fee applies</div>
+                            </div>
+                        </div>
+                        <div class="method-check send-option-check" aria-hidden="true"></div>
                     </div>
-                    <div class="send-option" data-option="bank" onclick="selectOption('bank', this)">
-                        <div class="option-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-280v-280h80v280h-80Zm240 0v-280h80v280h-80ZM80-120v-80h800v80H80Zm600-160v-280h80v280h-80ZM80-640v-80l400-200 400 200v80H80Z"/></svg></div>
-                        <div class="option-title">Bank Account</div>
-                        <div class="option-desc">Withdraw to your bank</div>
-                        <div class="method-reason">Withdrawal fee · 1–3 business days · Reversible within 24h</div>
-                        <div class="fee-badge">Withdrawal fee</div>
+                    <div class="send-option" role="radio" aria-checked="false" tabindex="-1" data-option="bank" onclick="selectOption('bank', this)">
+                        <div class="send-option-icon-well" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-280v-280h80v280h-80Zm240 0v-280h80v280h-80ZM80-120v-80h800v80H80Zm600-160v-280h80v280h-80ZM80-640v-80l400-200 400 200v80H80Z"/></svg></div>
+                        <div class="send-option-body">
+                            <div class="send-option-head">
+                                <div class="option-title">Bank Account</div>
+                            </div>
+                            <div class="option-desc">Withdraw to your bank</div>
+                            <div class="send-option-meta">
+                                <div class="method-reason">Withdrawal fee · 1–3 business days · Reversible within 24h</div>
+                                <div class="fee-badge">Withdrawal fee</div>
+                            </div>
+                        </div>
+                        <div class="method-check send-option-check" aria-hidden="true"></div>
                     </div>
                 </div>
             </div>
@@ -1771,7 +2534,7 @@
                     <span class="summary-label">Transaction Fee</span>
                     <span class="summary-value" id="feePreview">$0.00</span>
                 </div>
-                <p class="input-hint amount-tip"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg> <strong>UNERA-to-UNERA</strong> sends are free. External and bank transfers incur fees.</p>
+                <p class="input-hint amount-tip"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg> UNERA-to-UNERA sends are free. External and bank transfers incur fees.</p>
             </div>
             <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(3)">
@@ -1813,23 +2576,63 @@
                     <span class="summary-label">Note</span>
                     <span class="summary-value" id="reviewNote">-</span>
                 </div>
-                <div style="background: rgba(239,68,68,0.05); border-radius:0.75rem; padding:1rem; margin-top:1.5rem;">
-                    <p class="unera-icon-lead unera-icon-lead--text-base unera-icon-lead--tone-error">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>
-                        <span><strong>Once sent, this cannot be undone.</strong> <span style="font-size:var(--text-sm); color:var(--neutral-600);">Please review carefully.</span></span>
+
+                <!-- Path-specific soft warnings (always visible per send type) -->
+                <div id="reviewUneraSoftWarn" class="review-soft-warn send-review-callout" hidden role="note" aria-label="UNERA transfer details">
+                    <p class="unera-icon-lead unera-icon-lead--text-base unera-icon-lead--tone-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg>
+                        <span><strong>Instant transfer</strong> · Recipient notified by email · No fees</span>
                     </p>
-                    <p class="unera-icon-lead unera-icon-lead--sm unera-icon-lead--tone-success unera-icon-lead--mt-half">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                </div>
+                <div id="reviewExternalSoftWarn" class="review-soft-warn rate-note" hidden role="note" aria-label="External wallet transfer details">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80Zm-40-120h80v-360h-80v360Zm40-440q-83 0-156-31.5T197-763q-54-54-85.5-127T80-480q0-83 31.5-156T197-197q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                    <div><strong>Network fee applies</strong> · <span>On-chain delivery · Cannot be reversed once confirmed · Typical confirmation under 5 minutes</span></div>
+                </div>
+                <div id="reviewBankSoftWarn" class="review-soft-warn dest-review-banner cad" hidden role="note" aria-label="Bank withdrawal details">
+                    <div class="dest-review-banner-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                    </div>
+                    <div>
+                        <div class="dest-review-banner-title">Bank withdrawal</div>
+                        <div class="dest-review-banner-sub">Withdrawal to linked bank · 1–3 business days · Reversible within 24 hours</div>
+                    </div>
+                </div>
+
+                <!-- Blocking edge banner (demo / query flag only) -->
+                <div id="reviewEdgeBanner" class="rate-expired-banner" role="alert" hidden>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" style="flex-shrink:0;color:var(--warning);margin-top:0.1em;"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm0-160q17 0 28.5-11.5T520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                    <div class="rate-expired-banner-body">
+                        <div class="rate-expired-banner-title" id="reviewEdgeBannerTitle">—</div>
+                        <div class="rate-expired-banner-text" id="reviewEdgeBannerBody">—</div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="reviewEdgeBannerAction">—</button>
+                </div>
+
+                <div class="send-review-callout" role="note" aria-label="Review warnings">
+                    <p class="unera-icon-lead unera-icon-lead--text-base unera-icon-lead--tone-error">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm0-160q17 0 28.5-11.5T520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                        <span>Once sent, this cannot be undone. <span class="send-review-callout__sub">Please review carefully.</span></span>
+                    </p>
+                    <hr class="send-review-callout__divider" aria-hidden="true">
+                    <p class="unera-icon-lead unera-icon-lead--text-base unera-icon-lead--tone-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
                         <span>2FA enabled – extra security</span>
                     </p>
                 </div>
+
+                <!-- Demo outcome selector (prototype only) -->
+                <hr class="demo-separator" aria-hidden="true">
+                <p class="demo-label">Prototype — simulate send result:</p>
+                <div class="demo-btns" id="sendDemoBtns" role="group" aria-label="Demo outcome selector"></div>
+                <p class="demo-label" style="margin-top:0.875rem;">Simulate review blocker:</p>
+                <div class="demo-btns" id="sendReviewEdgeBtns" role="group" aria-label="Demo review blocker selector"></div>
             </div>
             <div class="btn-actions">
                 <button class="btn btn-secondary" onclick="goToStep(4)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240 120-480l240-240 56 56-184 184 184 184-56 56Zm-14-240Z"/></svg>
                     Back
                 </button>
-                <button class="btn btn-primary" onclick="processSend()">
+                <button class="btn btn-primary" onclick="processSend()" id="confirmSendBtn">
                     Confirm & Send
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg>
                 </button>
@@ -1842,31 +2645,84 @@
                 <div class="processing-state">
                     <div class="spinner"></div>
                     <h2 class="processing-title">Processing Transaction...</h2>
-                    <p class="processing-text">Please wait while we securely send your money</p>
+                    <p class="processing-text" id="processingSubtext">Please wait while we securely send your money</p>
                 </div>
             </div>
         </div>
 
-        <!-- STEP 7: Success (with tick coming out effect from kyc-verify.html) -->
+        <!-- STEP 7: Success / Outcome -->
         <div class="step-content" id="step7">
             <div class="card flow-card-animated">
-                <div class="success-state">
+                <div id="sendSuccessWrap" class="success-state">
                     <div class="success-icon-animated">
                         <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M5 13l4 4L19 7"></path>
                         </svg>
                         <div class="lightning-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/></svg></div>
                     </div>
-                    <h2 class="success-title">Money Sent Successfully!</h2>
+                    <h2 class="success-title" id="successScreenHeading" tabindex="-1">Money Sent Successfully!</h2>
                     <div class="success-amount" id="successAmount">$0.00</div>
-                    <p class="success-text">
-                        <strong id="successDestination"></strong>
-                        <br>Transaction ID: <span id="transactionId">TX-2026-XXXX</span>
-                    </p>
+                    <div class="success-details">
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Destination</span>
+                            <span class="success-detail-value" id="successDestination">—</span>
+                        </div>
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Send type</span>
+                            <span class="success-detail-value" id="successSendType">—</span>
+                        </div>
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Recipient</span>
+                            <span class="success-detail-value" id="successRecipient">—</span>
+                        </div>
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Fee</span>
+                            <span class="success-detail-value" id="successFee">—</span>
+                        </div>
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Total</span>
+                            <span class="success-detail-value" id="successTotal">—</span>
+                        </div>
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Transaction ID</span>
+                            <span class="success-detail-value" id="transactionId">—</span>
+                        </div>
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Date &amp; time</span>
+                            <span class="success-detail-value" id="successDateTime">—</span>
+                        </div>
+                        <div class="success-detail-row" id="successNoteRow" hidden>
+                            <span class="success-detail-label">Note</span>
+                            <span class="success-detail-value" id="successNote">—</span>
+                        </div>
+                        <div class="success-detail-row">
+                            <span class="success-detail-label">Status</span>
+                            <span class="success-detail-value" style="color: var(--success);">Completed</span>
+                        </div>
+                    </div>
                     <p class="input-hint input-hint--success-followup"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg><span>The recipient will see the transfer in their wallet. You can send again anytime.</span></p>
                 </div>
+
+                <div id="sendOutcomeWrap" class="send-outcome-screen" role="region" aria-live="polite" aria-atomic="true" hidden>
+                    <div class="outcome-icon-wrap outcome-icon-wrap--error" id="sendOutcomeIconWrap" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" id="sendOutcomeIcon"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                    </div>
+                    <div class="outcome-badge outcome-badge--error" id="sendOutcomeBadge" role="status" hidden>Failed</div>
+                    <h2 class="send-outcome-title" id="sendOutcomeTitle" tabindex="-1">—</h2>
+                    <div class="send-outcome-amount send-outcome-amount--neutral" id="sendOutcomeAmount">—</div>
+                    <p class="send-outcome-sub" id="sendOutcomeSub">—</p>
+                    <div class="error-ref-chip" id="sendOutcomeRef" hidden>—</div>
+                    <div class="success-details" id="sendOutcomeDetails"></div>
+                    <p class="outcome-tip" id="sendOutcomeTip" role="note" hidden>
+                        <span class="outcome-tip-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M423.5-103.5Q400-127 400-160h160q0 33-23.5 56.5T480-80q-33 0-56.5-23.5ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/></svg>
+                        </span>
+                        <span id="sendOutcomeTipText">—</span>
+                    </p>
+                    <div class="btn-actions" id="sendOutcomeActions" style="margin-top:1.5rem;"></div>
+                </div>
             </div>
-            <div class="btn-actions">
+            <div class="btn-actions" id="sendSuccessActions">
                 <button class="btn btn-secondary" onclick="window.location.href='wallet-enhanced.html'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240 120-480l240-240 56 56-184 184 184 184-56 56Zm-14-240Z"/></svg>
                     Back to Wallet
@@ -1934,36 +2790,214 @@
         </div>
     </div>
 
+    <!-- QR Scan Modal -->
+    <div class="modal-overlay" id="qrScanModal" role="dialog" aria-modal="true" aria-labelledby="qrScanTitle">
+        <div class="modal qr-scan-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="qrScanTitle" class="modal-title">Scan wallet address</h2>
+                <button type="button" class="modal-close" onclick="closeQrScanModal()" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="qrScanBody"></div>
+            <div class="modal-footer" id="qrScanFooter" hidden></div>
+        </div>
+    </div>
+
+    <!-- Save Address Modal -->
+    <div class="modal-overlay" id="saveAddressModal" role="dialog" aria-modal="true" aria-labelledby="saveAddressTitle" onclick="if(event.target===this)closeSaveAddressModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="saveAddressTitle" class="modal-title">Save address</h2>
+                <button type="button" class="modal-close" onclick="closeSaveAddressModal()" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="input-hint" style="margin-bottom: 1rem;" id="saveAddressSummary"></p>
+                <label for="saveAddressNickname" class="form-label">Nickname</label>
+                <input type="text" id="saveAddressNickname" class="wallet-address-input" placeholder="e.g. Ledger, Exchange wallet" maxlength="32" style="font-family: var(--font-body);">
+            </div>
+            <div class="modal-footer" style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                <button type="button" class="btn btn-secondary" onclick="skipSaveAddressAndContinue()" style="flex:1;">Continue without saving</button>
+                <button type="button" class="btn btn-primary" onclick="confirmSaveAddressAndContinue()" style="flex:1;">Save &amp; continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network Picker Modal (9+ networks) -->
+    <div class="modal-overlay" id="networkPickerModal" role="dialog" aria-modal="true" aria-labelledby="networkPickerTitle">
+        <div class="modal" onclick="event.stopPropagation()" style="max-width:420px; padding:0;">
+            <div class="modal-header">
+                <h2 id="networkPickerTitle" class="modal-title">Select network</h2>
+                <button type="button" class="modal-close" onclick="closeNetworkPickerModal()" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                </button>
+            </div>
+            <div id="networkPickerSearchWrap" class="modal-body" style="padding-bottom:0; display:none;">
+                <input type="search" id="networkPickerSearch" class="search-input" placeholder="Search networks" style="border-radius:0.75rem; margin-bottom:0;" oninput="filterNetworkPickerList(this.value)">
+            </div>
+            <div class="network-picker-list" id="networkPickerList" role="listbox"></div>
+        </div>
+    </div>
+
     <script>
         const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+        const VALIDATION_CHECK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+        const QR_CODE_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M120-120v-240h80v160h160v80H120Zm480 0v-80h160v-160h80v240H600ZM120-360v-80h240v80H120Zm480 0v-240h80v80h80v80h80v80h-240Zm-360-80v-80h80v80h-80Zm120 0v-80h80v80h-80Zm120 0v-80h80v80h-80ZM120-600v-80h240v80H120Zm0-160v-240h240v240H120Zm80-80h80v-80h-80v80Zm360 80v-240h240v240H560Zm80-80h80v-80h-80v80Z"/></svg>';
+
+        const NETWORK_LOGO_ETHEREUM = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 4v9l7.25 3.4L16 4z" fill="#627EEA" fill-opacity="0.602"/><path d="M16 4L8.75 16.4 16 13V4z" fill="#627EEA"/><path d="M16 21.8V28l7.25-10.1L16 21.8z" fill="#627EEA" fill-opacity="0.602"/><path d="M16 28v-6.2l-7.25-3.5L16 28z" fill="#627EEA"/><path d="M16 20.5l7.25-4.1L16 13v7.5z" fill="#627EEA" fill-opacity="0.2"/><path d="M8.75 16.4 16 20.5V13l-7.25 3.4z" fill="#627EEA" fill-opacity="0.602"/></svg>';
+        const NETWORK_LOGO_BNB = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 6.5 10.2 12.3 16 18.1l5.8-5.8L16 6.5z" fill="#F3BA2F"/><path d="M6.5 16 12.3 21.8 18.1 16 12.3 10.2 6.5 16z" fill="#F3BA2F"/><path d="M16 25.5 21.8 19.7 16 13.9l-5.8 5.8 5.8 5.8z" fill="#F3BA2F"/><path d="M25.5 16 19.7 10.2 13.9 16l5.8 5.8 5.8-5.8z" fill="#F3BA2F"/></svg>';
+        const NETWORK_LOGO_POLYGON = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M20.1 12.5c-.4-.2-.9-.2-1.3 0l-3.2 1.8-2.2 1.3-3.2 1.8c-.4.2-.9.2-1.3 0l-2.6-1.5c-.4-.2-.6-.7-.6-1.1v-3c0-.5.3-.9.6-1.1l2.5-1.4c.4-.2.9-.2 1.3 0l2.5 1.4 2.2 1.3 2.5 1.4c.4.2.9.2 1.3 0l2.6-1.5c.4-.2.6-.7.6-1.1V7.4c0-.5-.3-.9-.6-1.1l-2.6-1.5c-.4-.2-.9-.2-1.3 0l-2.6 1.5c-.4.2-.6.7-.6 1.1v3l-2.2-1.3V7.4c0-1.1.6-2.1 1.5-2.6l2.6-1.5c.9-.5 2.1-.5 3 0l2.6 1.5c.9.5 1.5 1.5 1.5 2.6v3c0 1.1-.6 2.1-1.5 2.6l-2.6 1.5c-.4.2-.9.2-1.3 0l-2.5-1.4-2.2-1.3-2.5-1.4c-.4-.2-.9-.2-1.3 0l-2.5 1.4v3.1l2.2 1.3 2.5-1.4c.4-.2.9-.2 1.3 0l3.2 1.8 2.2 1.3 3.2 1.8c.4.2.9.2 1.3 0l2.6-1.5c.9-.5 1.5-1.5 1.5-2.6v-3.1c0-1.1-.6-2.1-1.5-2.6l-2.6-1.5z" fill="#8247E5"/></svg>';
+        const NETWORK_LOGO_ARBITRUM = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16.5 4 6 26.5h4.2l2-5.2h7.6l2 5.2H26L16.5 4zm-1.2 14.5 3.1-8.5 3.1 8.5h-6.2z" fill="#12AAFF"/><path d="M16.5 4 26 26.5h-4.2l-2-5.2h-7.6l-2 5.2H6L16.5 4z" fill="#12AAFF" fill-opacity="0.4"/></svg>';
+        const NETWORK_LOGO_BASE = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="#0052FF"/><path d="M16 10c3.3 0 6 2.4 6 5.4S19.3 20.8 16 20.8c-2.2 0-4.1-1.1-5.2-2.8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>';
+
+        const SUPPORTED_SEND_NETWORKS = [
+            { id: 'ethereum', name: 'Ethereum', chainId: 1, logoSvg: NETWORK_LOGO_ETHEREUM, feeHint: '~$0.85', settleHint: '~30 sec', enabled: true, sortOrder: 1 },
+            { id: 'bnb', name: 'BNB Chain', chainId: 56, logoSvg: NETWORK_LOGO_BNB, feeHint: '~$0.12', settleHint: '~15 sec', enabled: true, sortOrder: 2 },
+            { id: 'polygon', name: 'Polygon', chainId: 137, logoSvg: NETWORK_LOGO_POLYGON, feeHint: '~$0.05', settleHint: '~20 sec', enabled: true, sortOrder: 3 },
+            { id: 'arbitrum', name: 'Arbitrum', chainId: 42161, logoSvg: NETWORK_LOGO_ARBITRUM, feeHint: '~$0.15', settleHint: '~20 sec', enabled: true, sortOrder: 4 },
+            { id: 'base', name: 'Base', chainId: 8453, logoSvg: NETWORK_LOGO_BASE, feeHint: '~$0.08', settleHint: '~15 sec', enabled: false, sortOrder: 5 }
+        ];
+
+        const QR_DEMO_PAYLOADS = [
+            { label: 'Ethereum mainnet address', payload: 'ethereum:0x742d351C6266fB6421D84f7b674faAb7f9B3a8f@1' },
+            { label: 'Polygon address', payload: 'ethereum:0x742d351C6266fB6421D84f7b674faAb7f9B3a8f@137' },
+            { label: 'Arbitrum address', payload: 'ethereum:0x742d351C6266fB6421D84f7b674faAb7f9B3a8f@42161' },
+            { label: 'Invalid payload (demo error)', payload: 'not-a-valid-qr-payload' }
+        ];
+
+        const SEND_ADDRESS_BOOK_KEY = 'unera_sendAddressBook';
+
+        function getEnabledNetworks() {
+            return SUPPORTED_SEND_NETWORKS.filter(n => n.enabled).sort((a, b) => a.sortOrder - b.sortOrder);
+        }
+        function getNetworkByChainId(chainId) {
+            return SUPPORTED_SEND_NETWORKS.find(n => n.enabled && n.chainId === Number(chainId)) || null;
+        }
+        function getNetworkById(id) {
+            return SUPPORTED_SEND_NETWORKS.find(n => n.id === id) || null;
+        }
+        function getNetworkByName(name) {
+            return SUPPORTED_SEND_NETWORKS.find(n => n.name === name) || null;
+        }
+        function truncateAddress(addr) {
+            if (!addr || addr.length < 14) return addr || '';
+            return `${addr.substring(0, 6)}…${addr.substring(addr.length - 4)}`;
+        }
+        function isValidEthAddress(s) {
+            return /^0x[a-fA-F0-9]{40}$/.test(String(s).trim());
+        }
+
+        function loadSendAddressBook() {
+            try {
+                return JSON.parse(localStorage.getItem(SEND_ADDRESS_BOOK_KEY) || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+        function saveSendAddressBook(list) {
+            localStorage.setItem(SEND_ADDRESS_BOOK_KEY, JSON.stringify(list));
+        }
+        function seedSendAddressBookIfEmpty() {
+            if (localStorage.getItem(SEND_ADDRESS_BOOK_KEY)) return;
+            const seed = [
+                { id: 'addr_1', label: 'Ledger — personal', address: '0x742d351C6266fB6421D84f7b674faAb7f9B3a8f', network: 'Ethereum', lastUsedAt: '2026-05-20T14:30:00.000Z', addedAt: '2026-01-15T10:00:00.000Z' },
+                { id: 'addr_2', label: 'Binance hot wallet', address: '0x8ba1f109551bD432803012645Ac136ddd64DBA72', network: 'BNB Chain', lastUsedAt: '2026-05-18T09:00:00.000Z', addedAt: '2026-02-01T10:00:00.000Z' },
+                { id: 'addr_3', label: 'DeFi vault', address: '0x71C7656EC7ab88b098deb1d33e2f4C4E5C5C5C5C', network: 'Polygon', lastUsedAt: '2026-05-10T11:00:00.000Z', addedAt: '2026-03-01T10:00:00.000Z' }
+            ];
+            saveSendAddressBook(seed);
+        }
+        function upsertSendAddress(entry) {
+            const list = loadSendAddressBook();
+            const idx = list.findIndex(e => e.address.toLowerCase() === entry.address.toLowerCase() && e.network === entry.network);
+            if (idx >= 0) {
+                list[idx] = { ...list[idx], ...entry, lastUsedAt: new Date().toISOString() };
+            } else {
+                list.push({ ...entry, id: entry.id || 'addr_' + Date.now(), addedAt: entry.addedAt || new Date().toISOString(), lastUsedAt: new Date().toISOString() });
+            }
+            saveSendAddressBook(list);
+        }
+        function findSavedAddressByAddress(addr) {
+            return loadSendAddressBook().find(e => e.address.toLowerCase() === String(addr).trim().toLowerCase()) || null;
+        }
+        function getSavedAddressesForNetwork(networkName) {
+            return loadSendAddressBook().filter(e => !networkName || e.network === networkName);
+        }
+
         // ========== GLOBAL STATE ==========
         const appState = {
             currentStep: 1,
-            sendOption: null,              // 'unera', 'external', 'bank'
-            // For Unera user
+            sendOption: null,
             selectedRecipient: null,
             selectedRecipientEmail: null,
-            // For external wallet
             selectedNetwork: null,
+            selectedNetworkId: null,
             walletAddress: '',
-            // For bank withdrawal
+            savedAddressId: null,
+            savedAddressLabel: null,
+            saveAddressOnContinue: false,
+            qrScanChainIdHint: null,
             selectedWithdrawalMethod: null,
             selectedWithdrawalId: null,
-            // Amount & note
             amount: 0,
             fee: 0,
             note: '',
-            // Balances (mock)
-            balances: {
-                hCAD: 2500.00,
-                hUSD: 2500.00,
-                hEUR: 1500.00
-            },
+            balances: { hCAD: 2500.00, hUSD: 2500.00, hEUR: 1500.00 },
             primaryCurrency: 'hUSD',
-            // Prerequisites
             kycVerified: false,
             walletConnected: false,
-            prereqsMet: false
+            prereqsMet: false,
+            sendSimulate: null,
+            reviewEdge: null,
+            reviewFeeLocked: null,
+            reviewFeeBumped: false,
+            lastOutcomeSuccess: true
+        };
+
+        const SEND_DEMO_PILLS = {
+            unera: [
+                { label: 'Happy path', mode: null },
+                { label: 'Recipient unavailable', mode: 'recipient_unavailable' },
+                { label: 'Compliance hold', mode: 'compliance_hold' },
+                { label: 'Daily limit hit', mode: 'daily_limit' }
+            ],
+            external: [
+                { label: 'Happy path', mode: null },
+                { label: 'Wallet rejected', mode: 'wallet_rejected' },
+                { label: 'On-chain failed', mode: 'onchain_failed' },
+                { label: 'Fee spike (pending)', mode: 'fee_spike_pending' }
+            ],
+            bank: [
+                { label: 'Happy path', mode: null },
+                { label: 'Pending settlement', mode: 'bank_pending' },
+                { label: 'Bank rejected', mode: 'bank_rejected' },
+                { label: 'Limit exceeded', mode: 'withdrawal_limit' }
+            ]
+        };
+
+        const REVIEW_EDGE_PILLS = {
+            unera: [
+                { label: 'None', edge: null },
+                { label: 'Recipient blocked', edge: 'recipientBlocked' },
+                { label: 'Daily limit', edge: 'dailyLimit' }
+            ],
+            external: [
+                { label: 'None', edge: null },
+                { label: 'Fee changed', edge: 'feeChanged' },
+                { label: 'Daily limit', edge: 'dailyLimit' }
+            ],
+            bank: [
+                { label: 'None', edge: null },
+                { label: 'Withdrawal limit', edge: 'bankLimitPreview' },
+                { label: 'Daily limit', edge: 'dailyLimit' }
+            ]
+        };
+
+        const OUTCOME_ICONS = {
+            error: '<path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>',
+            review: '<path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Zm28 168-108-108v-240h80v210l92 92-64 46Z"/>',
+            pending: '<path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/>'
         };
 
         const stepTitles = {
@@ -1978,7 +3012,7 @@
 
         // ========== INIT ==========
         document.addEventListener('DOMContentLoaded', () => {
-            // Simulate checking KYC and wallet status from localStorage
+            seedSendAddressBookIfEmpty();
             appState.kycVerified = localStorage.getItem('kycStatus') === 'verified';
             appState.walletConnected = !!localStorage.getItem('walletAddress');
             appState.prereqsMet = appState.kycVerified && appState.walletConnected;
@@ -1993,7 +3027,25 @@
                 document.getElementById('step1').classList.remove('active');
                 document.getElementById('step2').classList.add('active');
                 updateStepperAndMobile();
+                initStep2Selection();
             }
+
+            var edgeParam = new URLSearchParams(window.location.search).get('reviewEdge');
+            if (edgeParam) {
+                appState.reviewEdge = edgeParam;
+            }
+
+            var reviewEdgeAction = document.getElementById('reviewEdgeBannerAction');
+            if (reviewEdgeAction) {
+                reviewEdgeAction.addEventListener('click', handleReviewEdgeAction);
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key !== 'Escape') return;
+                if (document.getElementById('qrScanModal').classList.contains('active')) closeQrScanModal();
+                if (document.getElementById('saveAddressModal').classList.contains('active')) closeSaveAddressModal();
+                if (document.getElementById('networkPickerModal').classList.contains('active')) closeNetworkPickerModal();
+            });
         });
 
         function updatePrereqUI() {
@@ -2045,6 +3097,7 @@
             if (step === 3) renderStep3();
             if (step === 4) updateFeePreviewAndBalance();
             if (step === 5) updateReview();
+            if (step === 2) initStep2Selection();
         }
 
         function validateStepTransition(step) {
@@ -2052,7 +3105,7 @@
             if (step === 3) return appState.sendOption !== null;
             if (step === 4) {
                 if (appState.sendOption === 'unera' && !appState.selectedRecipient) return false;
-                if (appState.sendOption === 'external' && (!appState.selectedNetwork || !appState.walletAddress)) return false;
+                if (appState.sendOption === 'external' && (!appState.selectedNetwork || !isValidEthAddress(appState.walletAddress))) return false;
                 if (appState.sendOption === 'bank' && !appState.selectedWithdrawalId) return false;
                 return true;
             }
@@ -2072,19 +3125,34 @@
             });
 
             let visibleSteps = Array.from(steps).filter(s => !s.classList.contains('hidden'));
-            let visibleStepIndices = visibleSteps.map(s => parseInt(s.dataset.step));
-            let currentVisibleIndex = visibleStepIndices.indexOf(appState.currentStep);
+            let visibleStepIndices = visibleSteps.map(s => parseInt(s.dataset.step, 10));
+            const totalVisible = visibleSteps.length;
+
+            let stepperIndex;
+            var isTerminalSuccess = appState.currentStep >= 7 && appState.lastOutcomeSuccess;
+            var isTerminalOutcome = appState.currentStep >= 7 && !appState.lastOutcomeSuccess;
+            if (isTerminalSuccess) {
+                stepperIndex = totalVisible;
+            } else if (appState.currentStep === 6 || isTerminalOutcome) {
+                stepperIndex = totalVisible - 1;
+            } else {
+                stepperIndex = visibleStepIndices.indexOf(appState.currentStep);
+                if (stepperIndex < 0) stepperIndex = 0;
+            }
 
             visibleSteps.forEach((stepEl, idx) => {
-                // Renumber: when prereqs done, show 1-5 instead of 2-6
                 const displayNum = idx + 1;
                 const circleEl = stepEl.querySelector('.step-circle');
 
-                if (idx < currentVisibleIndex) {
+                if (isTerminalSuccess && idx < totalVisible) {
                     stepEl.classList.add('completed');
                     stepEl.classList.remove('active');
                     if (circleEl) circleEl.innerHTML = UNERA_CHECKMARK_SVG;
-                } else if (idx === currentVisibleIndex) {
+                } else if (idx < stepperIndex) {
+                    stepEl.classList.add('completed');
+                    stepEl.classList.remove('active');
+                    if (circleEl) circleEl.innerHTML = UNERA_CHECKMARK_SVG;
+                } else if (idx === stepperIndex) {
                     stepEl.classList.add('active');
                     stepEl.classList.remove('completed');
                     if (circleEl) circleEl.textContent = String(displayNum);
@@ -2094,15 +3162,15 @@
                 }
             });
 
-            const totalVisible = visibleSteps.length;
-            const progressPercent = totalVisible > 1 ? (currentVisibleIndex / (totalVisible - 1)) * 100 : 0;
+            let progressPercent = totalVisible > 1 ? (stepperIndex / (totalVisible - 1)) * 100 : 0;
+            if (isTerminalSuccess) progressPercent = 100;
             document.getElementById('stepperProgress').style.width = progressPercent + '%';
 
             // Update stepper aria attributes for accessibility
             const stepper = document.querySelector('.stepper');
             if (stepper) {
                 stepper.setAttribute('aria-valuemax', totalVisible);
-                stepper.setAttribute('aria-valuenow', currentVisibleIndex + 1);
+                stepper.setAttribute('aria-valuenow', appState.currentStep >= 7 ? totalVisible : Math.min(stepperIndex + 1, totalVisible));
             }
 
             // Mobile stepper
@@ -2112,19 +3180,83 @@
             const mobileStepCounter = document.getElementById('mobileStepCounter');
             const mobileTotalSteps = document.getElementById('mobileTotalSteps');
 
-            mobileStepNumber.textContent = currentVisibleIndex + 1;
-            mobileCurrentStep.textContent = currentVisibleIndex + 1;
+            const mobileDisplayStep = appState.currentStep >= 7
+                ? totalVisible
+                : appState.currentStep === 6
+                    ? totalVisible
+                    : Math.min(stepperIndex + 1, totalVisible);
+
+            mobileStepNumber.textContent = mobileDisplayStep;
+            mobileCurrentStep.textContent = mobileDisplayStep;
             mobileTotalSteps.textContent = totalVisible;
             mobileStepTitle.textContent = stepTitles[appState.currentStep] || '';
-            mobileStepCounter.textContent = `${currentVisibleIndex + 1}/${totalVisible}`;
+            mobileStepCounter.textContent = `${mobileDisplayStep}/${totalVisible}`;
         }
 
         // ---------- Option selection ----------
+        function syncSendOptionCheckmarks(scope) {
+            var root = scope || document;
+            root.querySelectorAll('.send-option-check').forEach(function (checkEl) {
+                var item = checkEl.closest('.send-option, .saved-method-card');
+                if (!item) return;
+                checkEl.innerHTML = item.classList.contains('selected') ? UNERA_CHECKMARK_SVG : '';
+            });
+        }
+
+        function updateSendOptionChecks() {
+            document.querySelectorAll('.send-option').forEach(function (opt) {
+                if (opt.classList.contains('selected')) {
+                    opt.setAttribute('aria-checked', 'true');
+                    opt.tabIndex = 0;
+                } else {
+                    opt.setAttribute('aria-checked', 'false');
+                    opt.tabIndex = -1;
+                }
+            });
+            syncSendOptionCheckmarks();
+        }
+
         function selectOption(option, el) {
-            document.querySelectorAll('.send-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.send-option').forEach(function (opt) { opt.classList.remove('selected'); });
             el.classList.add('selected');
             appState.sendOption = option;
+            updateSendOptionChecks();
             document.getElementById('continueFromStep2').disabled = false;
+        }
+
+        function initStep2Selection() {
+            initSendOptionKeyboard();
+            if (appState.sendOption) {
+                var existing = document.querySelector('.send-option[data-option="' + appState.sendOption + '"]');
+                if (existing) {
+                    selectOption(appState.sendOption, existing);
+                    return;
+                }
+            }
+            var defaultEl = document.querySelector('.send-option[data-option="unera"]');
+            if (defaultEl) selectOption('unera', defaultEl);
+        }
+
+        function initSendOptionKeyboard() {
+            var group = document.querySelector('.send-options');
+            if (!group || group.dataset.keyboardInit) return;
+            group.dataset.keyboardInit = 'true';
+            group.addEventListener('keydown', function (e) {
+                var options = Array.from(group.querySelectorAll('.send-option'));
+                var current = document.activeElement;
+                var idx = options.indexOf(current);
+                if (idx < 0) return;
+                if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    options[(idx + 1) % options.length].focus();
+                } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    options[(idx - 1 + options.length) % options.length].focus();
+                } else if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    selectOption(current.dataset.option, current);
+                }
+            });
         }
 
         // ---------- Step 3 rendering ----------
@@ -2158,46 +3290,59 @@
             } else if (appState.sendOption === 'external') {
                 html = `
                     <h2 class="section-title">Send to External Wallet</h2>
-                    <p class="input-hint input-hint-warning"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg> Double-check the address. Transfers to wrong addresses cannot be reversed.</p>
+                    <p class="input-hint input-hint-warning unera-icon-lead unera-icon-lead--sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm0-160q17 0 28.5-11.5T520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                        <span>Double-check the network and address. Transfers to wrong addresses cannot be reversed.</span>
+                    </p>
                     <div class="form-group network-select">
-                        <label class="form-label">Select Network</label>
-                        <div class="network-grid">
-                            <div class="network-card" onclick="selectNetwork('Ethereum', this)">
-                                <div class="network-icon">⟠</div>
-                                <div class="network-name">Ethereum</div>
-                            </div>
-                            <div class="network-card" onclick="selectNetwork('BNB Chain', this)">
-                                <div class="network-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>️</div>
-                                <div class="network-name">BNB Chain</div>
-                            </div>
-                            <div class="network-card" onclick="selectNetwork('Polygon', this)">
-                                <div class="network-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m480-280 20-20v-220l-20-20h-40l-20 20v220l20 20h40ZM480-640q17 0 28.5-11.5T520-680q0-17-11.5-28.5T480-720q-17 0-28.5 11.5T440-680q0 17 11.5 28.5T480-640Zm0 560q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg></div>
-                                <div class="network-name">Polygon</div>
-                            </div>
-                            <div class="network-card" onclick="selectNetwork('Arbitrum', this)">
-                                <div class="network-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg></div>
-                                <div class="network-name">Arbitrum</div>
+                        <label class="form-label" id="networkSelectLabel">Select Network</label>
+                        <div id="networkPickerMount">${renderNetworkPickerHTML()}</div>
+                    </div>
+                    <div class="saved-address-panel hidden" id="savedAddressPanel" hidden>
+                        <div class="saved-address-header">
+                            <h3>Saved addresses</h3>
+                            <a href="account-settings.html#saved-addresses" class="view-all-link saved-address-manage-link" aria-label="Manage saved addresses in Account Settings">
+                                Manage
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M504-480 348-636q-11-11-11-28t11-28q11-11 28-11t28 11l184 184q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L404-268q-11 11-28 11t-28-11q-11-11-11-28t11-28l156-156Z"/></svg>
+                            </a>
+                        </div>
+                        <div id="savedAddressSearchWrap" style="display:none; margin-bottom:1rem;">
+                            <div class="search-wrapper" style="margin-bottom:0;">
+                                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                                <input type="search" id="savedAddressSearch" class="search-input" placeholder="Search saved addresses" oninput="searchSavedAddresses(this.value)" aria-label="Search saved addresses">
                             </div>
                         </div>
+                        <ul class="saved-address-list" id="savedAddressList" role="list"></ul>
                     </div>
+                    <div class="divider hidden" id="savedAddressDivider" hidden>Or enter a new address</div>
                     <div class="form-group">
                         <label for="walletAddress" class="form-label">Wallet Address</label>
                         <div class="address-input-group">
                             <div class="input-wrapper" style="flex:1; min-width:0;">
-                                <input type="text" id="walletAddress" class="wallet-address-input" placeholder="0x..." oninput="updateWalletAddress(this.value)" onblur="checkAddressFormat()">
+                                <input type="text" id="walletAddress" class="wallet-address-input" placeholder="0x…" autocomplete="off" spellcheck="false" inputmode="text" aria-describedby="addressValidationRow saveAddressCheckboxLabel" aria-invalid="false" value="${escapeHtmlAttr(appState.walletAddress)}" oninput="updateWalletAddress(this.value)">
                             </div>
                             <button type="button" class="address-action-btn" onclick="pasteWalletAddress()" title="Paste from clipboard">Paste</button>
-                            <button type="button" class="address-action-btn" onclick="openQRScanner()" title="Scan QR code">QR</button>
+                            <button type="button" class="address-action-btn" id="qrScanBtn" onclick="openQRScanner()" aria-label="Scan QR code for wallet address">QR</button>
                         </div>
-                        <span class="verified-badge" id="addressVerifiedBadge" style="display:none;">✓ Address format valid</span>
+                        <div class="address-entry-actions">
+                            <button type="button" class="wallet-quick-chip" onclick="useConnectedWallet()">Use connected wallet</button>
+                        </div>
+                        <div class="address-validation-row" id="addressValidationRow" role="status" aria-live="polite"></div>
+                        <div class="save-address-checkbox-row" id="saveAddressCheckboxRow">
+                            <input type="checkbox" id="saveAddressCheckbox" onchange="appState.saveAddressOnContinue = this.checked">
+                            <label for="saveAddressCheckbox" id="saveAddressCheckboxLabel">Save to address book for next time</label>
+                        </div>
                     </div>
                 `;
             } else if (appState.sendOption === 'bank') {
                 html = `
                     <h2 class="section-title">Withdraw to Bank Account</h2>
                     <div class="withdrawal-methods-header">
-                        <span>Saved accounts</span>
-                        <button class="btn-add-new" onclick="showAddBankMock()">+ Add New</button>
+                        <h3>Saved accounts</h3>
+                        <a href="account-settings.html" class="view-all-link saved-bank-manage-link" aria-label="Manage saved bank accounts in Account Settings">
+                            Manage
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M504-480 348-636q-11-11-11-28t11-28q11-11 28-11t28 11l184 184q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L404-268q-11 11-28 11t-28-11q-11-11-11-28t11-28l156-156Z"/></svg>
+                        </a>
                     </div>
                     <div class="saved-methods-list">
                         <div class="saved-method-group">
@@ -2207,14 +3352,14 @@
                                     <div class="method-name">TD Canada Trust</div>
                                     <div class="method-info">Account •••• 1234</div>
                                 </div>
-                                <div class="method-check"></div>
+                                <div class="method-check send-option-check" aria-hidden="true"></div>
                             </div>
                             <div class="saved-method-card" onclick="selectBankMethod('bank_2', 'RBC Royal Bank', '•••• 5678', this)">
                                 <div class="method-details">
                                     <div class="method-name">RBC Royal Bank</div>
                                     <div class="method-info">Account •••• 5678</div>
                                 </div>
-                                <div class="method-check"></div>
+                                <div class="method-check send-option-check" aria-hidden="true"></div>
                             </div>
                         </div>
                     </div>
@@ -2222,6 +3367,143 @@
             }
             card.innerHTML = html;
             document.getElementById('continueFromStep3').disabled = true;
+            if (appState.sendOption === 'external') {
+                renderSavedAddressList();
+                updateSavedAddressSectionVisibility();
+                checkAddressFormat();
+                checkExternalWalletComplete();
+            }
+        }
+
+        function escapeHtmlAttr(s) {
+            return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+        }
+
+        function getNetworkPickerMode() {
+            const count = getEnabledNetworks().length;
+            if (count === 0) return 'none';
+            if (count === 1) return 'single';
+            if (count <= 4) return 'grid';
+            if (count <= 8) return 'grid-compact';
+            return 'modal';
+        }
+
+        function renderNetworkPickerHTML() {
+            const nets = getEnabledNetworks();
+            const mode = getNetworkPickerMode();
+            if (mode === 'none') {
+                return '<div class="network-unavailable-callout" role="alert">No networks available — contact support.</div>';
+            }
+            if (mode === 'single') {
+                const n = nets[0];
+                if (!appState.selectedNetwork) {
+                    appState.selectedNetwork = n.name;
+                    appState.selectedNetworkId = n.id;
+                }
+                return `<div class="network-selected-pill" role="status">
+                    <div class="network-icon">${n.logoSvg}</div>
+                    <div><div class="network-name">${n.name}</div><div class="network-selected-pill-note">Only supported network</div></div>
+                </div>`;
+            }
+            if (mode === 'modal') {
+                const sel = getNetworkByName(appState.selectedNetwork) || nets[0];
+                return `<button type="button" class="network-picker-trigger" onclick="openNetworkPickerModal()" aria-haspopup="dialog" aria-controls="networkPickerModal">
+                    <div class="network-icon">${sel.logoSvg}</div>
+                    <span>${appState.selectedNetwork || 'Select network'}</span>
+                    <span class="network-picker-trigger-chevron" aria-hidden="true">▾</span>
+                </button>`;
+            }
+            const cols = nets.length <= 2 ? 2 : nets.length === 3 ? 3 : 4;
+            const compact = mode === 'grid-compact' ? ' network-grid--compact' : '';
+            return `<div class="network-grid network-grid--cols-${cols}${compact}" role="group" aria-labelledby="networkSelectLabel">
+                ${nets.map(n => {
+                    const selected = appState.selectedNetwork === n.name;
+                    return `<div class="network-card${selected ? ' selected' : ''}" role="button" tabindex="0" aria-pressed="${selected}" data-network-id="${n.id}" onclick="selectNetworkById('${n.id}', this)" onkeydown="networkCardKeydown(event, '${n.id}')">
+                        <div class="network-icon">${n.logoSvg}</div>
+                        <div class="network-name">${n.name}</div>
+                        <div class="network-card-sublabel">${n.feeHint} · ${n.settleHint}</div>
+                    </div>`;
+                }).join('')}
+            </div>`;
+        }
+
+        function networkCardKeydown(e, id) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectNetworkById(id, e.currentTarget);
+            }
+        }
+
+        function refreshNetworkPickerUI() {
+            const mount = document.getElementById('networkPickerMount');
+            if (mount) mount.innerHTML = renderNetworkPickerHTML();
+        }
+
+        function shouldShowSavedAddressSection() {
+            const network = appState.selectedNetwork;
+            if (!network) return false;
+            return getSavedAddressesForNetwork(network).length > 0;
+        }
+
+        function updateSavedAddressSectionVisibility() {
+            const panel = document.getElementById('savedAddressPanel');
+            const divider = document.getElementById('savedAddressDivider');
+            const show = shouldShowSavedAddressSection();
+            if (panel) {
+                panel.hidden = !show;
+                panel.classList.toggle('hidden', !show);
+            }
+            if (divider) {
+                divider.hidden = !show;
+                divider.classList.toggle('hidden', !show);
+            }
+        }
+
+        function renderSavedAddressList() {
+            const listEl = document.getElementById('savedAddressList');
+            const searchWrap = document.getElementById('savedAddressSearchWrap');
+            if (!listEl) return;
+            if (!shouldShowSavedAddressSection()) {
+                listEl.innerHTML = '';
+                if (searchWrap) searchWrap.style.display = 'none';
+                updateSavedAddressSectionVisibility();
+                return;
+            }
+            const network = appState.selectedNetwork;
+            let entries = getSavedAddressesForNetwork(network);
+            const searchVal = (document.getElementById('savedAddressSearch') || {}).value || '';
+            if (searchVal.trim()) {
+                const term = searchVal.toLowerCase();
+                entries = entries.filter(e => e.label.toLowerCase().includes(term) || e.address.toLowerCase().includes(term));
+            }
+            if (searchWrap) {
+                searchWrap.style.display = getSavedAddressesForNetwork(network).length > 3 ? 'block' : 'none';
+            }
+            listEl.innerHTML = entries.map(e => {
+                const net = getNetworkByName(e.network);
+                const logo = net ? net.logoSvg : '';
+                const selected = appState.savedAddressId === e.id;
+                return `<li class="saved-address-item${selected ? ' selected' : ''}" role="button" tabindex="0" data-address-id="${e.id}" onclick="selectSavedAddress('${e.id}')" onkeydown="savedAddressKeydown(event, '${e.id}')">
+                    <div class="saved-address-logo">${logo}</div>
+                    <div class="saved-address-info">
+                        <div class="saved-address-label">${escapeHtmlAttr(e.label)}</div>
+                        <div class="saved-address-addr">${truncateAddress(e.address)}</div>
+                    </div>
+                    <span class="saved-address-pill">${e.network}</span>
+                </li>`;
+            }).join('');
+            updateSavedAddressSectionVisibility();
+        }
+
+        function savedAddressKeydown(e, id) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectSavedAddress(id);
+            }
+        }
+
+        function searchSavedAddresses(val) {
+            renderSavedAddressList();
         }
 
         // ---------- Handlers for step 3 selections ----------
@@ -2246,45 +3528,510 @@
             });
         }
 
+        function selectNetworkById(id, el) {
+            const net = getNetworkById(id);
+            if (!net || !net.enabled) return;
+            appState.selectedNetwork = net.name;
+            appState.selectedNetworkId = net.id;
+            document.querySelectorAll('.network-card').forEach(c => {
+                c.classList.remove('selected');
+                c.setAttribute('aria-pressed', 'false');
+            });
+            if (el) {
+                el.classList.add('selected');
+                el.setAttribute('aria-pressed', 'true');
+            }
+            renderSavedAddressList();
+            checkAddressFormat();
+            checkExternalWalletComplete();
+        }
+
         function selectNetwork(network, el) {
-            document.querySelectorAll('.network-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            appState.selectedNetwork = network;
+            const net = getNetworkByName(network);
+            if (net) selectNetworkById(net.id, el);
+        }
+
+        function openNetworkPickerModal() {
+            const modal = document.getElementById('networkPickerModal');
+            const list = document.getElementById('networkPickerList');
+            const searchWrap = document.getElementById('networkPickerSearchWrap');
+            const nets = getEnabledNetworks();
+            if (searchWrap) searchWrap.style.display = nets.length > 10 ? 'block' : 'none';
+            list.innerHTML = nets.map(n => {
+                const selected = appState.selectedNetwork === n.name;
+                return `<button type="button" class="network-picker-row${selected ? ' selected' : ''}" role="option" aria-selected="${selected}" data-network-id="${n.id}" onclick="pickNetworkFromModal('${n.id}')">
+                    <div class="network-icon" style="width:32px;height:32px;margin:0;">${n.logoSvg}</div>
+                    <span>${n.name}</span>
+                    <span class="network-picker-row-meta">${n.feeHint}</span>
+                </button>`;
+            }).join('');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            modal.onclick = function(e) { if (e.target === modal) closeNetworkPickerModal(); };
+        }
+
+        function closeNetworkPickerModal() {
+            const modal = document.getElementById('networkPickerModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function pickNetworkFromModal(id) {
+            selectNetworkById(id, null);
+            refreshNetworkPickerUI();
+            closeNetworkPickerModal();
+        }
+
+        function filterNetworkPickerList(term) {
+            const t = term.toLowerCase();
+            document.querySelectorAll('#networkPickerList .network-picker-row').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(t) ? '' : 'none';
+            });
+        }
+
+        function selectSavedAddress(id) {
+            const entry = loadSendAddressBook().find(e => e.id === id);
+            if (!entry) return;
+            document.querySelectorAll('.saved-address-item').forEach(el => el.classList.remove('selected'));
+            const row = document.querySelector(`.saved-address-item[data-address-id="${id}"]`);
+            if (row) row.classList.add('selected');
+            appState.savedAddressId = entry.id;
+            appState.savedAddressLabel = entry.label;
+            const net = getNetworkByName(entry.network);
+            if (net) {
+                appState.selectedNetwork = net.name;
+                appState.selectedNetworkId = net.id;
+                refreshNetworkPickerUI();
+            }
+            const input = document.getElementById('walletAddress');
+            if (input) {
+                input.value = entry.address;
+                appState.walletAddress = entry.address;
+            }
+            renderSavedAddressList();
+            checkAddressFormat();
             checkExternalWalletComplete();
         }
 
         function updateWalletAddress(addr) {
-            appState.walletAddress = addr.trim();
+            const trimmed = addr.trim();
+            appState.walletAddress = trimmed;
+            const saved = findSavedAddressByAddress(trimmed);
+            if (saved && saved.id === appState.savedAddressId) {
+                /* keep selection */
+            } else if (!saved || saved.id !== appState.savedAddressId) {
+                if (saved) {
+                    appState.savedAddressId = saved.id;
+                    appState.savedAddressLabel = saved.label;
+                } else {
+                    appState.savedAddressId = null;
+                    appState.savedAddressLabel = null;
+                }
+            }
+            document.querySelectorAll('.saved-address-item').forEach(el => el.classList.remove('selected'));
+            if (appState.savedAddressId) {
+                const row = document.querySelector(`.saved-address-item[data-address-id="${appState.savedAddressId}"]`);
+                if (row) row.classList.add('selected');
+            }
+            checkAddressFormat();
             checkExternalWalletComplete();
         }
 
         function checkExternalWalletComplete() {
-            const valid = appState.selectedNetwork && appState.walletAddress.length > 5;
-            document.getElementById('continueFromStep3').disabled = !valid;
+            const btn = document.getElementById('continueFromStep3');
+            if (!btn) return;
+            const valid = appState.selectedNetwork && isValidEthAddress(appState.walletAddress);
+            btn.disabled = !valid;
+        }
+
+        function useConnectedWallet() {
+            const addr = localStorage.getItem('walletAddress') || '';
+            const full = addr.includes('...') ? '0x742d351C6266fB6421D84f7b674faAb7f9B3a8f' : addr;
+            const input = document.getElementById('walletAddress');
+            if (input && full) {
+                input.value = full;
+                updateWalletAddress(full);
+            } else {
+                showNotification('Connect a wallet first to use this shortcut.', 'warning');
+            }
         }
 
         function pasteWalletAddress() {
             navigator.clipboard.readText().then(text => {
-                const input = document.getElementById('walletAddress');
-                if (input) { input.value = text; updateWalletAddress(text); checkAddressFormat(); }
-            }).catch(() => {});
+                const parsed = parseQrPayload(text);
+                if (parsed.address) {
+                    applyQrScanResult(parsed);
+                } else {
+                    const input = document.getElementById('walletAddress');
+                    if (input) { input.value = text.trim(); updateWalletAddress(text.trim()); }
+                }
+            }).catch(() => showNotification('Unable to read clipboard.', 'warning'));
+        }
+
+        function parseQrPayload(raw) {
+            const s = String(raw).trim();
+            let address = null;
+            let chainId = null;
+            let parseError = null;
+            if (/^0x[a-fA-F0-9]{40}$/.test(s)) {
+                return { address: s, chainId: null, parseError: null };
+            }
+            const eip681 = s.match(/^ethereum:(?:pay-)?(0x[a-fA-F0-9]{40})(?:@(\d+))?/i);
+            if (eip681) {
+                address = eip681[1];
+                chainId = eip681[2] ? parseInt(eip681[2], 10) : null;
+                return { address, chainId, parseError: null };
+            }
+            const transferMatch = s.match(/^ethereum:(0x[a-fA-F0-9]{40})\/transfer/i);
+            if (transferMatch) {
+                const addrParam = s.match(/[?&]address=(0x[a-fA-F0-9]{40})/i);
+                if (addrParam) address = addrParam[1];
+                const chainMatch = s.match(/@(\d+)/);
+                if (chainMatch) chainId = parseInt(chainMatch[1], 10);
+                if (address) return { address, chainId, parseError: null };
+            }
+            try {
+                const json = JSON.parse(s);
+                if (json.address && /^0x[a-fA-F0-9]{40}$/.test(json.address)) {
+                    return { address: json.address, chainId: json.chainId || null, parseError: null };
+                }
+            } catch (e) { /* not json */ }
+            if (s.length > 0) parseError = 'Couldn\'t read a wallet address from that QR. Check the code and try again.';
+            return { address: null, chainId: null, parseError };
+        }
+
+        function applyQrScanResult(result) {
+            if (!result.address) return;
+            const input = document.getElementById('walletAddress');
+            if (input) {
+                input.value = result.address;
+                appState.walletAddress = result.address;
+            }
+            appState.qrScanChainIdHint = null;
+            if (result.chainId != null) {
+                const net = getNetworkByChainId(result.chainId);
+                if (net) {
+                    selectNetworkById(net.id, null);
+                    refreshNetworkPickerUI();
+                } else {
+                    appState.qrScanChainIdHint = result.chainId;
+                }
+            }
+            appState.savedAddressId = null;
+            appState.savedAddressLabel = null;
+            const saved = findSavedAddressByAddress(result.address);
+            if (saved) {
+                appState.savedAddressId = saved.id;
+                appState.savedAddressLabel = saved.label;
+            }
+            renderSavedAddressList();
+            checkAddressFormat();
+            checkExternalWalletComplete();
+        }
+
+        let qrScanReturnFocus = null;
+        let qrScanFocusTrapHandler = null;
+
+        function getQrScanFocusableElements() {
+            const modal = document.getElementById('qrScanModal');
+            if (!modal) return [];
+            return Array.from(modal.querySelectorAll(
+                'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary[tabindex], [tabindex]:not([tabindex="-1"])'
+            )).filter(el => el.offsetParent !== null && !el.hidden);
+        }
+
+        function bindQrScanFocusTrap() {
+            const modal = document.getElementById('qrScanModal');
+            if (!modal) return;
+            if (qrScanFocusTrapHandler) {
+                modal.removeEventListener('keydown', qrScanFocusTrapHandler);
+            }
+            qrScanFocusTrapHandler = function(e) {
+                if (e.key !== 'Tab' || !modal.classList.contains('active')) return;
+                const focusable = getQrScanFocusableElements();
+                if (focusable.length === 0) return;
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            };
+            modal.addEventListener('keydown', qrScanFocusTrapHandler);
+        }
+
+        function unbindQrScanFocusTrap() {
+            const modal = document.getElementById('qrScanModal');
+            if (modal && qrScanFocusTrapHandler) {
+                modal.removeEventListener('keydown', qrScanFocusTrapHandler);
+                qrScanFocusTrapHandler = null;
+            }
+        }
+
+        function setQrScanFooterVisible(show, html) {
+            const footer = document.getElementById('qrScanFooter');
+            if (!footer) return;
+            if (show) {
+                footer.hidden = false;
+                footer.innerHTML = html || '<button type="button" class="btn btn-secondary" onclick="closeQrScanModal()">Cancel</button>';
+            } else {
+                footer.hidden = true;
+                footer.innerHTML = '';
+            }
+        }
+
+        function renderQrScanBody(state) {
+            const body = document.getElementById('qrScanBody');
+            if (!body) return;
+            const isMobile = window.innerWidth <= 768;
+            body.classList.remove('qr-scan-body--form');
+            setQrScanFooterVisible(false);
+
+            if (state === 'parsing') {
+                body.innerHTML = `<div class="qr-scan-status"><div class="spinner" style="width:40px;height:40px;border:3px solid color-mix(in srgb, var(--fin-up) 25%, transparent);border-top-color:var(--fin-up);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;"></div><p>Reading QR…</p></div>`;
+                return;
+            }
+            if (state === 'error') {
+                body.innerHTML = `<div class="qr-scan-status qr-scan-status--error">
+                    <div class="qr-scan-status-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm0-160q17 0 28.5-11.5T520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                    </div>
+                    <p class="qr-scan-status-message" id="qrScanErrorMsg"><span>Couldn't read a wallet address from that QR. Check the code and try again.</span></p>
+                    <button type="button" class="btn btn-primary" onclick="renderQrScanBody('ready')">Try again</button>
+                </div>`;
+                return;
+            }
+            if (state === 'success') {
+                body.innerHTML = `<div class="qr-scan-status qr-scan-status--success">${VALIDATION_CHECK_SVG}<p style="margin-top:0.5rem;">Address detected</p></div>`;
+                return;
+            }
+
+            body.classList.add('qr-scan-body--form');
+            const introText = isMobile
+                ? 'Paste a payment link or upload a QR image.'
+                : 'Paste a payment link from your wallet, or upload a QR code image.';
+            const mobileNoteHtml = isMobile
+                ? `<div class="qr-scan-mobile-note info-box" role="note">
+                    <p>Camera scanning is in the UNERA mobile app.</p>
+                   </div>`
+                : '';
+            const demoOptions = QR_DEMO_PAYLOADS.map((d, i) => `<option value="${i}">${d.label}</option>`).join('');
+            body.innerHTML = `
+                <div class="qr-scan-intro">
+                    <div class="qr-scan-intro-icon" aria-hidden="true">${QR_CODE_ICON_SVG}</div>
+                    <p class="qr-scan-intro-text">${introText}</p>
+                </div>
+                ${mobileNoteHtml}
+                <div class="qr-scan-panel">
+                    <span class="qr-scan-panel-title" id="qrPasteLabel">Paste payment link</span>
+                    <textarea class="qr-paste-field" id="qrPasteField" placeholder="ethereum:0x…@137 or 0x…" aria-labelledby="qrPasteLabel" aria-describedby="qrFormatHint qrPastePreview" rows="3"></textarea>
+                    <p class="qr-scan-format-hint" id="qrFormatHint">Supports 0x addresses and ethereum: payment links.</p>
+                    <div class="qr-scan-preview" id="qrPastePreview" hidden aria-live="polite"></div>
+                    <div class="qr-scan-actions-row">
+                        <button type="button" class="btn btn-secondary" onclick="pasteQrFromClipboard()">Paste from clipboard</button>
+                        <button type="button" class="btn btn-primary" onclick="submitQrPaste()">Continue</button>
+                    </div>
+                </div>
+                <div class="qr-scan-or-rule" aria-hidden="true">or</div>
+                <div class="qr-scan-panel">
+                    <span class="qr-scan-panel-title" id="qrUploadLabel">Upload QR image</span>
+                    <input type="file" id="qrImageInput" accept="image/png,image/jpeg,image/jpg" hidden onchange="handleQrImageUpload(event)">
+                    <label for="qrImageInput" class="qr-scan-dropzone" id="qrScanDropzone">
+                        ${QR_CODE_ICON_SVG}
+                        <span class="qr-scan-dropzone-title">Choose image or drag here</span>
+                        <span class="qr-scan-dropzone-sub">PNG or JPEG</span>
+                    </label>
+                </div>
+                <details class="qr-scan-demo">
+                    <summary>Demo tools</summary>
+                    <div class="qr-scan-demo-inner">
+                        <select class="qr-demo-select" id="qrDemoSelect" aria-label="Simulate scan demo">
+                            <option value="">Simulate scan (demo)</option>
+                            ${demoOptions}
+                        </select>
+                        <button type="button" class="btn btn-secondary" onclick="runQrSimulateScan()">Run simulated scan</button>
+                    </div>
+                </details>`;
+            setQrScanFooterVisible(true);
+            bindQrPastePreview();
+        }
+
+        function truncateQrAddress(addr) {
+            if (!addr || addr.length < 12) return addr || '';
+            return addr.slice(0, 6) + '…' + addr.slice(-4);
+        }
+
+        function updateQrPastePreview() {
+            const field = document.getElementById('qrPasteField');
+            const preview = document.getElementById('qrPastePreview');
+            if (!field || !preview) return;
+            const result = parseQrPayload(field.value);
+            if (!result.address) {
+                preview.hidden = true;
+                preview.textContent = '';
+                return;
+            }
+            let text = 'Detected: ' + truncateQrAddress(result.address);
+            if (result.chainId != null) {
+                const net = getNetworkByChainId(result.chainId);
+                text += net ? ' · ' + net.name : ' · Chain ID ' + result.chainId;
+            }
+            preview.hidden = false;
+            preview.textContent = text;
+        }
+
+        function bindQrPastePreview() {
+            const field = document.getElementById('qrPasteField');
+            if (!field) return;
+            if (field._qrPreviewHandler) {
+                field.removeEventListener('input', field._qrPreviewHandler);
+            }
+            field._qrPreviewHandler = function() { updateQrPastePreview(); };
+            field.addEventListener('input', field._qrPreviewHandler);
+            updateQrPastePreview();
+        }
+
+        function pasteQrFromClipboard() {
+            navigator.clipboard.readText().then(function(text) {
+                const field = document.getElementById('qrPasteField');
+                if (field) {
+                    field.value = text.trim();
+                    updateQrPastePreview();
+                    field.focus();
+                }
+            }).catch(function() { showNotification('Unable to read clipboard.', 'warning'); });
         }
 
         function openQRScanner() {
-            alert('QR scanner coming soon');
+            qrScanReturnFocus = document.getElementById('qrScanBtn') || document.activeElement;
+            const modal = document.getElementById('qrScanModal');
+            renderQrScanBody('ready');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            modal.onclick = function(e) { if (e.target === modal) closeQrScanModal(); };
+            bindQrScanFocusTrap();
+            const pasteField = document.getElementById('qrPasteField');
+            if (pasteField) setTimeout(function() { pasteField.focus(); }, 50);
+        }
+
+        function closeQrScanModal() {
+            const modal = document.getElementById('qrScanModal');
+            unbindQrScanFocusTrap();
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            setQrScanFooterVisible(false);
+            if (qrScanReturnFocus && typeof qrScanReturnFocus.focus === 'function') qrScanReturnFocus.focus();
+        }
+
+        function runQrSimulateScan() {
+            const sel = document.getElementById('qrDemoSelect');
+            if (!sel || sel.value === '') {
+                showNotification('Choose a demo payload to simulate.', 'warning');
+                return;
+            }
+            processQrPayload(QR_DEMO_PAYLOADS[parseInt(sel.value, 10)].payload);
+        }
+
+        function submitQrPaste() {
+            const field = document.getElementById('qrPasteField');
+            if (field) processQrPayload(field.value);
+        }
+
+        function handleQrImageUpload(ev) {
+            if (ev.target.files && ev.target.files.length) {
+                processQrPayload(QR_DEMO_PAYLOADS[0].payload);
+                showNotification('Image scanned (demo).', 'info');
+            }
+        }
+
+        function processQrPayload(payload) {
+            renderQrScanBody('parsing');
+            setTimeout(() => {
+                const result = parseQrPayload(payload);
+                if (!result.address) {
+                    renderQrScanBody('error');
+                    const errEl = document.getElementById('qrScanErrorMsg');
+                    if (errEl && result.parseError) {
+                        const errSpan = errEl.querySelector('span');
+                        if (errSpan) errSpan.textContent = result.parseError;
+                    }
+                    return;
+                }
+                renderQrScanBody('success');
+                setTimeout(() => {
+                    applyQrScanResult(result);
+                    closeQrScanModal();
+                    const input = document.getElementById('walletAddress');
+                    if (input) input.focus();
+                }, 400);
+            }, 350);
         }
 
         function checkAddressFormat() {
             const input = document.getElementById('walletAddress');
-            const badge = document.getElementById('addressVerifiedBadge');
-            if (!input || !badge) return;
+            const row = document.getElementById('addressValidationRow');
+            const saveRow = document.getElementById('saveAddressCheckboxRow');
+            const saveCb = document.getElementById('saveAddressCheckbox');
+            if (!input || !row) return;
             const addr = input.value.trim();
-            badge.style.display = (addr.length >= 20 && (addr.startsWith('0x') || addr.length >= 32)) ? 'flex' : 'none';
+            const network = appState.selectedNetwork || 'this network';
+            const connected = localStorage.getItem('walletAddress') || '';
+            const connectedFull = connected.includes('...') ? '0x742d351C6266fB6421D84f7b674faAb7f9B3a8f' : connected;
+
+            row.className = 'address-validation-row';
+            row.innerHTML = '';
+
+            if (!addr) {
+                row.classList.remove('is-visible');
+                if (saveRow) saveRow.classList.remove('is-visible');
+                input.setAttribute('aria-invalid', 'false');
+                return;
+            }
+
+            row.classList.add('is-visible');
+
+            if (appState.qrScanChainIdHint != null && !getNetworkByChainId(appState.qrScanChainIdHint)) {
+                row.classList.add('address-validation-row--warning');
+                row.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm0-160q17 0 28.5-11.5T520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg><span>This QR specifies chain ID ${appState.qrScanChainIdHint} — select a supported network or confirm with the recipient.</span>`;
+            } else if (!isValidEthAddress(addr)) {
+                row.classList.add('address-validation-row--error');
+                row.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm0-160q17 0 28.5-11.5T520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg><span>Enter a valid 0x address (42 characters).</span>`;
+                input.setAttribute('aria-invalid', 'true');
+                if (saveRow) saveRow.classList.remove('is-visible');
+                return;
+            }
+
+            input.setAttribute('aria-invalid', 'false');
+            if (connectedFull && addr.toLowerCase() === connectedFull.toLowerCase()) {
+                row.classList.add('address-validation-row--warning');
+                row.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm0-160q17 0 28.5-11.5T520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg><span>This matches your connected wallet. Confirm you intend to send to yourself.</span>`;
+            } else {
+                row.classList.add('address-validation-row--success');
+                row.innerHTML = `${VALIDATION_CHECK_SVG}<span>Address format valid for ${network}</span>`;
+            }
+
+            const existing = findSavedAddressByAddress(addr);
+            const showSave = isValidEthAddress(addr) && !existing;
+            if (saveRow) {
+                saveRow.classList.toggle('is-visible', showSave);
+            }
+            if (saveCb && !showSave) {
+                saveCb.checked = false;
+                appState.saveAddressOnContinue = false;
+            }
         }
 
         function selectBankMethod(id, name, info, el) {
             document.querySelectorAll('.saved-method-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
+            syncSendOptionCheckmarks();
             appState.selectedWithdrawalId = id;
             appState.selectedWithdrawalMethod = { name, info };
             document.getElementById('continueFromStep3').disabled = false;
@@ -2296,8 +4043,59 @@
 
         function validateStep3AndContinue() {
             if (appState.sendOption === 'unera' && !appState.selectedRecipient) return;
-            if (appState.sendOption === 'external' && (!appState.selectedNetwork || !appState.walletAddress)) return;
+            if (appState.sendOption === 'external') {
+                if (!appState.selectedNetwork || !isValidEthAddress(appState.walletAddress)) return;
+                const saveCb = document.getElementById('saveAddressCheckbox');
+                if (saveCb && saveCb.checked && !findSavedAddressByAddress(appState.walletAddress)) {
+                    openSaveAddressModal();
+                    return;
+                }
+            }
             if (appState.sendOption === 'bank' && !appState.selectedWithdrawalId) return;
+            goToStep(4);
+        }
+
+        function openSaveAddressModal() {
+            const summary = document.getElementById('saveAddressSummary');
+            const nick = document.getElementById('saveAddressNickname');
+            if (summary) {
+                summary.textContent = `${truncateAddress(appState.walletAddress)} on ${appState.selectedNetwork}`;
+            }
+            if (nick) nick.value = '';
+            const modal = document.getElementById('saveAddressModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (nick) setTimeout(() => nick.focus(), 100);
+        }
+
+        function closeSaveAddressModal() {
+            const modal = document.getElementById('saveAddressModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function confirmSaveAddressAndContinue() {
+            const nick = document.getElementById('saveAddressNickname');
+            const label = (nick && nick.value.trim()) || '';
+            if (!label) {
+                showNotification('Enter a nickname for this address.', 'warning');
+                if (nick) nick.focus();
+                return;
+            }
+            upsertSendAddress({
+                label,
+                address: appState.walletAddress,
+                network: appState.selectedNetwork
+            });
+            appState.savedAddressLabel = label;
+            closeSaveAddressModal();
+            goToStep(4);
+        }
+
+        function skipSaveAddressAndContinue() {
+            closeSaveAddressModal();
             goToStep(4);
         }
 
@@ -2361,15 +4159,466 @@
             }
         }
 
+        // ---------- Review step demo & edge helpers ----------
+        function setSendSimulate(mode) {
+            appState.sendSimulate = mode;
+            syncSendDemoPills();
+        }
+
+        function setReviewEdge(edge) {
+            appState.reviewEdge = edge;
+            if (edge !== 'feeChanged') {
+                appState.reviewFeeLocked = null;
+                appState.reviewFeeBumped = false;
+            } else {
+                appState.reviewFeeLocked = true;
+                appState.reviewFeeBumped = false;
+            }
+            syncReviewEdgePills();
+            updateReview();
+        }
+
+        function syncSendDemoPills() {
+            var container = document.getElementById('sendDemoBtns');
+            if (!container) return;
+            container.querySelectorAll('.demo-btn').forEach(function(btn) {
+                var mode = btn.dataset.mode;
+                var active = (mode === 'null' && appState.sendSimulate === null) ||
+                    (mode === String(appState.sendSimulate));
+                btn.classList.toggle('active', active);
+            });
+        }
+
+        function syncReviewEdgePills() {
+            var container = document.getElementById('sendReviewEdgeBtns');
+            if (!container) return;
+            container.querySelectorAll('.demo-btn').forEach(function(btn) {
+                var edge = btn.dataset.edge;
+                var active = (edge === 'null' && !appState.reviewEdge) ||
+                    (edge === String(appState.reviewEdge));
+                btn.classList.toggle('active', active);
+            });
+        }
+
+        function updateSendDemoPills() {
+            var sendOption = appState.sendOption || 'unera';
+            var outcomeContainer = document.getElementById('sendDemoBtns');
+            var edgeContainer = document.getElementById('sendReviewEdgeBtns');
+            if (!outcomeContainer || !edgeContainer) return;
+
+            var outcomePills = SEND_DEMO_PILLS[sendOption] || SEND_DEMO_PILLS.unera;
+            outcomeContainer.innerHTML = outcomePills.map(function(pill) {
+                var modeArg = pill.mode === null ? 'null' : "'" + pill.mode + "'";
+                return '<button type="button" class="demo-btn" data-mode="' + (pill.mode === null ? 'null' : pill.mode) + '" onclick="setSendSimulate(' + modeArg + ')">' + pill.label + '</button>';
+            }).join('');
+
+            var edgePills = REVIEW_EDGE_PILLS[sendOption] || REVIEW_EDGE_PILLS.unera;
+            edgeContainer.innerHTML = edgePills.map(function(pill) {
+                var edgeArg = pill.edge === null ? 'null' : "'" + pill.edge + "'";
+                return '<button type="button" class="demo-btn" data-edge="' + (pill.edge === null ? 'null' : pill.edge) + '" onclick="setReviewEdge(' + edgeArg + ')">' + pill.label + '</button>';
+            }).join('');
+
+            syncSendDemoPills();
+            syncReviewEdgePills();
+        }
+
+        function isReviewEdgeBlocking() {
+            if (!appState.reviewEdge) return false;
+            if (appState.reviewEdge === 'feeChanged') {
+                return appState.sendOption === 'external' && appState.reviewFeeLocked !== false;
+            }
+            if (appState.reviewEdge === 'recipientBlocked') {
+                return appState.sendOption === 'unera';
+            }
+            if (appState.reviewEdge === 'dailyLimit') return true;
+            if (appState.reviewEdge === 'bankLimitPreview') {
+                return appState.sendOption === 'bank';
+            }
+            return false;
+        }
+
+        function updateReviewEdgeBanner() {
+            var banner = document.getElementById('reviewEdgeBanner');
+            var titleEl = document.getElementById('reviewEdgeBannerTitle');
+            var bodyEl = document.getElementById('reviewEdgeBannerBody');
+            var actionBtn = document.getElementById('reviewEdgeBannerAction');
+            if (!banner || !titleEl || !bodyEl || !actionBtn) return;
+
+            var edge = appState.reviewEdge;
+            var blocking = isReviewEdgeBlocking();
+            var configs = {
+                feeChanged: {
+                    title: 'Network fee updated',
+                    body: 'Gas price moved since you entered the amount. Refresh to continue.',
+                    action: 'Refresh fee',
+                    show: appState.sendOption === 'external' && edge === 'feeChanged' && appState.reviewFeeLocked !== false
+                },
+                recipientBlocked: {
+                    title: 'Recipient cannot receive transfers',
+                    body: 'This UNERA account is inactive or restricted.',
+                    action: 'Change recipient',
+                    show: appState.sendOption === 'unera' && edge === 'recipientBlocked'
+                },
+                dailyLimit: {
+                    title: 'Daily send limit reached',
+                    body: "You've sent $450 today. This transfer would exceed your $500 daily limit.",
+                    action: 'Edit amount',
+                    show: edge === 'dailyLimit'
+                },
+                bankLimitPreview: {
+                    title: 'Withdrawal limit exceeded',
+                    body: 'This amount exceeds your daily bank withdrawal limit of $1,000.',
+                    action: 'Edit amount',
+                    show: appState.sendOption === 'bank' && edge === 'bankLimitPreview'
+                }
+            };
+
+            var cfg = edge ? configs[edge] : null;
+            if (cfg && cfg.show) {
+                banner.hidden = false;
+                banner.classList.add('active');
+                titleEl.textContent = cfg.title;
+                bodyEl.textContent = cfg.body;
+                actionBtn.textContent = cfg.action;
+                actionBtn.hidden = false;
+            } else {
+                banner.hidden = true;
+                banner.classList.remove('active');
+            }
+
+            var confirmBtn = document.getElementById('confirmSendBtn');
+            if (confirmBtn) {
+                confirmBtn.disabled = blocking;
+                confirmBtn.setAttribute('aria-disabled', blocking ? 'true' : 'false');
+            }
+        }
+
+        function handleReviewEdgeAction() {
+            var edge = appState.reviewEdge;
+            if (edge === 'feeChanged') {
+                calculateFee();
+                appState.fee = Math.round((appState.fee + 0.5) * 100) / 100;
+                appState.reviewFeeLocked = false;
+                appState.reviewFeeBumped = true;
+                updateReview();
+                return;
+            }
+            if (edge === 'recipientBlocked') {
+                goToStep(3);
+                return;
+            }
+            if (edge === 'dailyLimit' || edge === 'bankLimitPreview') {
+                goToStep(4);
+            }
+        }
+
+        function buildSendReceiptRows(txId) {
+            calculateFee();
+            var sendType = '';
+            var recipientText = '';
+            var destShort = '';
+
+            if (appState.sendOption === 'unera') {
+                sendType = 'UNERA User';
+                recipientText = appState.selectedRecipient + ' (' + appState.selectedRecipientEmail + ')';
+                destShort = appState.selectedRecipient;
+            } else if (appState.sendOption === 'external') {
+                sendType = 'External Wallet';
+                var addr = appState.walletAddress;
+                var truncated = truncateAddress(addr);
+                if (appState.savedAddressLabel) {
+                    recipientText = appState.savedAddressLabel + ' (' + truncated + ') · ' + appState.selectedNetwork;
+                } else {
+                    recipientText = appState.selectedNetwork + ': ' + truncated;
+                }
+                destShort = appState.selectedNetwork + ' wallet';
+            } else {
+                sendType = 'Bank Withdrawal';
+                recipientText = appState.selectedWithdrawalMethod.name + ' (' + appState.selectedWithdrawalMethod.info + ')';
+                destShort = 'bank account';
+            }
+
+            var total = appState.amount + appState.fee;
+            var dateStr = new Date().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+            });
+
+            return {
+                sendType: sendType,
+                recipientText: recipientText,
+                destShort: destShort,
+                amountStr: '$' + appState.amount.toFixed(2),
+                feeStr: '$' + appState.fee.toFixed(2),
+                totalStr: '$' + total.toFixed(2),
+                txId: txId,
+                dateStr: dateStr,
+                note: appState.note && appState.note.trim() ? appState.note.trim() : null
+            };
+        }
+
+        function renderOutcomeDetailsPanel(container, rows, statusLabel, statusColor) {
+            if (!container) return;
+            var html = '';
+            html += detailRow('Destination', rows.destShort);
+            html += detailRow('Send type', rows.sendType);
+            html += detailRow('Recipient', rows.recipientText);
+            html += detailRow('Amount', rows.amountStr);
+            html += detailRow('Fee', rows.feeStr);
+            html += detailRow('Total', rows.totalStr);
+            html += detailRow('Transaction ID', rows.txId);
+            html += detailRow('Date &amp; time', rows.dateStr);
+            if (rows.note) {
+                html += detailRow('Note', rows.note);
+            }
+            html += detailRow('Status', statusLabel, statusColor);
+            container.innerHTML = html;
+        }
+
+        function detailRow(label, value, color) {
+            var style = color ? ' style="color:' + color + ';"' : '';
+            return '<div class="success-detail-row"><span class="success-detail-label">' + label + '</span><span class="success-detail-value"' + style + '>' + value + '</span></div>';
+        }
+
+        function renderSendOutcome(mode, txId) {
+            var rows = buildSendReceiptRows(txId);
+            var successWrap = document.getElementById('sendSuccessWrap');
+            var outcomeWrap = document.getElementById('sendOutcomeWrap');
+            var successActions = document.getElementById('sendSuccessActions');
+            if (successWrap) successWrap.hidden = true;
+            if (outcomeWrap) outcomeWrap.hidden = false;
+            if (successActions) successActions.hidden = true;
+
+            var configs = {
+                recipient_unavailable: {
+                    iconType: 'error', badge: 'Failed', badgeClass: 'outcome-badge--error', title: 'Recipient unavailable',
+                    amountClass: 'send-outcome-amount--error', sub: 'This UNERA account cannot receive transfers right now.',
+                    ref: 'RCPT-UNAVAILABLE', status: 'Failed', statusColor: 'var(--error)',
+                    tip: null, actions: [
+                        { label: 'View Wallet', secondary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Change recipient', primary: true, fn: 'goToStep(3)' }
+                    ]
+                },
+                compliance_hold: {
+                    iconType: 'review', badge: 'Under review', badgeClass: 'outcome-badge--review', title: 'Under compliance review',
+                    amountClass: 'send-outcome-amount--neutral', sub: 'Your transfer is being reviewed. We will notify you by email within 1–2 business days.',
+                    ref: null, status: 'Under review', statusColor: 'var(--warning)',
+                    tip: 'Large or unusual transfers may require a brief compliance check before funds are released.',
+                    actions: [
+                        { label: 'View Wallet', primary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Send Again', secondary: true, fn: 'resetFlow()' }
+                    ]
+                },
+                daily_limit: {
+                    iconType: 'error', badge: 'Failed', badgeClass: 'outcome-badge--error', title: 'Daily send limit reached',
+                    amountClass: 'send-outcome-amount--error', sub: 'This transfer would exceed your $500 daily send limit.',
+                    ref: 'LIMIT-DAILY-SEND', status: 'Failed', statusColor: 'var(--error)',
+                    tip: 'Your daily limit resets at midnight UTC. Try a smaller amount or wait until tomorrow.',
+                    actions: [
+                        { label: 'View Wallet', secondary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Edit amount', primary: true, fn: 'goToStep(4)' }
+                    ]
+                },
+                wallet_rejected: {
+                    iconType: 'error', badge: 'Cancelled', badgeClass: 'outcome-badge--error', title: 'Signature cancelled',
+                    amountClass: 'send-outcome-amount--neutral', sub: 'You rejected the transaction in your wallet. No funds were moved.',
+                    ref: null, status: 'Cancelled', statusColor: 'var(--error)',
+                    tip: 'You can try again when ready. Your balance is unchanged.',
+                    actions: [
+                        { label: 'View Wallet', secondary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Try again', primary: true, fn: 'goToStep(5)' }
+                    ]
+                },
+                onchain_failed: {
+                    iconType: 'error', badge: 'Failed', badgeClass: 'outcome-badge--error', title: 'Transfer failed',
+                    amountClass: 'send-outcome-amount--error', sub: 'The network could not complete this transfer. Your funds are safe.',
+                    ref: 'TX-REVERT', status: 'Failed', statusColor: 'var(--error)',
+                    tip: 'If this persists, verify the destination address and network, then try again.',
+                    actions: [
+                        { label: 'View Wallet', secondary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Try again', primary: true, fn: 'goToStep(5)' }
+                    ]
+                },
+                fee_spike_pending: {
+                    iconType: 'pending', badge: 'Pending', badgeClass: 'outcome-badge--pending', title: 'Awaiting confirmation',
+                    amountClass: 'send-outcome-amount--pending', sub: 'Network fees increased. Your transfer is waiting for confirmation at the updated fee.',
+                    ref: null, status: 'Pending', statusColor: 'var(--brand-purple)',
+                    tip: 'You can track this transfer in your wallet activity once it confirms on-chain.',
+                    actions: [
+                        { label: 'View Wallet', primary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Send Again', secondary: true, fn: 'resetFlow()' }
+                    ],
+                    feeOverride: '$' + (appState.fee + 0.5).toFixed(2),
+                    totalOverride: '$' + (appState.amount + appState.fee + 0.5).toFixed(2)
+                },
+                bank_pending: {
+                    iconType: 'pending', badge: 'Pending settlement', badgeClass: 'outcome-badge--pending', title: 'Withdrawal submitted',
+                    amountClass: 'send-outcome-amount--pending', sub: 'Your withdrawal is being processed. Funds typically arrive in 1–3 business days.',
+                    ref: null, status: 'Pending settlement', statusColor: 'var(--brand-purple)',
+                    tip: 'Check your linked bank account. You can cancel within 24 hours from wallet activity.',
+                    actions: [
+                        { label: 'View Wallet', primary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Send Again', secondary: true, fn: 'resetFlow()' }
+                    ]
+                },
+                bank_rejected: {
+                    iconType: 'error', badge: 'Failed', badgeClass: 'outcome-badge--error', title: 'Bank transfer rejected',
+                    amountClass: 'send-outcome-amount--error', sub: 'Your bank could not accept this withdrawal. Funds have been returned to your wallet.',
+                    ref: 'BANK-REJECT', status: 'Failed', statusColor: 'var(--error)',
+                    tip: 'Verify your linked bank details or contact support if you believe this is an error.',
+                    actions: [
+                        { label: 'Contact support', secondary: true, href: 'mailto:support@unera.finance' },
+                        { label: 'Try again', primary: true, fn: 'goToStep(5)' }
+                    ]
+                },
+                withdrawal_limit: {
+                    iconType: 'error', badge: 'Failed', badgeClass: 'outcome-badge--error', title: 'Withdrawal limit exceeded',
+                    amountClass: 'send-outcome-amount--error', sub: 'This amount exceeds your daily bank withdrawal limit of $1,000.',
+                    ref: 'LIMIT-WITHDRAWAL', status: 'Failed', statusColor: 'var(--error)',
+                    tip: 'Try a smaller amount or wait until your limit resets at midnight UTC.',
+                    actions: [
+                        { label: 'View Wallet', secondary: true, href: 'wallet-enhanced.html' },
+                        { label: 'Edit amount', primary: true, fn: 'goToStep(4)' }
+                    ]
+                }
+            };
+
+            var cfg = configs[mode];
+            if (!cfg) return;
+
+            if (cfg.feeOverride) rows.feeStr = cfg.feeOverride;
+            if (cfg.totalOverride) rows.totalStr = cfg.totalOverride;
+
+            var iconWrap = document.getElementById('sendOutcomeIconWrap');
+            var iconEl = document.getElementById('sendOutcomeIcon');
+            if (iconWrap) {
+                iconWrap.className = 'outcome-icon-wrap outcome-icon-wrap--' + cfg.iconType;
+            }
+            if (iconEl && OUTCOME_ICONS[cfg.iconType]) {
+                iconEl.innerHTML = OUTCOME_ICONS[cfg.iconType];
+            }
+
+            var badge = document.getElementById('sendOutcomeBadge');
+            if (badge) {
+                badge.hidden = false;
+                badge.textContent = cfg.badge;
+                badge.className = 'outcome-badge ' + cfg.badgeClass;
+            }
+
+            var titleEl = document.getElementById('sendOutcomeTitle');
+            if (titleEl) titleEl.textContent = cfg.title;
+
+            var amountEl = document.getElementById('sendOutcomeAmount');
+            if (amountEl) {
+                amountEl.textContent = rows.amountStr;
+                amountEl.className = 'send-outcome-amount ' + cfg.amountClass;
+            }
+
+            var subEl = document.getElementById('sendOutcomeSub');
+            if (subEl) subEl.textContent = cfg.sub;
+
+            var refEl = document.getElementById('sendOutcomeRef');
+            if (refEl) {
+                if (cfg.ref) {
+                    refEl.hidden = false;
+                    refEl.textContent = cfg.ref;
+                } else {
+                    refEl.hidden = true;
+                }
+            }
+
+            renderOutcomeDetailsPanel(document.getElementById('sendOutcomeDetails'), rows, cfg.status, cfg.statusColor);
+
+            var tipEl = document.getElementById('sendOutcomeTip');
+            var tipText = document.getElementById('sendOutcomeTipText');
+            if (tipEl && tipText) {
+                if (cfg.tip) {
+                    tipEl.hidden = false;
+                    tipText.innerHTML = '<strong>Tip:&nbsp;</strong>' + cfg.tip;
+                } else {
+                    tipEl.hidden = true;
+                }
+            }
+
+            var actionsEl = document.getElementById('sendOutcomeActions');
+            if (actionsEl) {
+                actionsEl.innerHTML = cfg.actions.map(function(action) {
+                    var cls = action.primary ? 'btn btn-primary' : 'btn btn-secondary';
+                    if (action.href) {
+                        return '<a href="' + action.href + '" class="' + cls + '" style="text-decoration:none;">' + action.label + '</a>';
+                    }
+                    return '<button type="button" class="' + cls + '" onclick="' + action.fn + '">' + action.label + '</button>';
+                }).join('');
+            }
+
+            appState.lastOutcomeSuccess = false;
+            updateStepperAndMobile();
+
+            requestAnimationFrame(function() {
+                if (titleEl) titleEl.focus();
+            });
+        }
+
+        function showSendSuccess(txId) {
+            var successWrap = document.getElementById('sendSuccessWrap');
+            var outcomeWrap = document.getElementById('sendOutcomeWrap');
+            var successActions = document.getElementById('sendSuccessActions');
+            if (successWrap) successWrap.hidden = false;
+            if (outcomeWrap) outcomeWrap.hidden = true;
+            if (successActions) successActions.hidden = false;
+            appState.lastOutcomeSuccess = true;
+            updateSuccessSummary(txId);
+            requestAnimationFrame(function() {
+                var heading = document.getElementById('successScreenHeading');
+                if (heading) heading.focus();
+            });
+        }
+
+        function updateProcessingSubtext() {
+            var el = document.getElementById('processingSubtext');
+            if (!el) return;
+            if (appState.sendOption === 'external') {
+                el.textContent = 'Broadcasting to network — please wait…';
+            } else if (appState.sendOption === 'bank') {
+                el.textContent = 'Submitting withdrawal to your bank…';
+            } else {
+                el.textContent = 'Please wait while we securely send your money';
+            }
+        }
+
         // ---------- Review step ----------
         function updateReview() {
-            calculateFee();
+            if (appState.reviewFeeBumped && appState.sendOption === 'external') {
+                calculateFee();
+                appState.fee = Math.round((appState.fee + 0.5) * 100) / 100;
+            } else {
+                calculateFee();
+            }
+            if (appState.reviewEdge === 'feeChanged' && appState.reviewFeeLocked === null) {
+                appState.reviewFeeLocked = true;
+            }
+
+            var uneraWarn = document.getElementById('reviewUneraSoftWarn');
+            var externalWarn = document.getElementById('reviewExternalSoftWarn');
+            var bankWarn = document.getElementById('reviewBankSoftWarn');
+            if (uneraWarn) uneraWarn.hidden = appState.sendOption !== 'unera';
+            if (externalWarn) externalWarn.hidden = appState.sendOption !== 'external';
+            if (bankWarn) bankWarn.hidden = appState.sendOption !== 'bank';
+
+            updateSendDemoPills();
+            updateReviewEdgeBanner();
+
             let destinationText = '';
             if (appState.sendOption === 'unera') {
                 destinationText = `${appState.selectedRecipient} (${appState.selectedRecipientEmail})`;
                 document.getElementById('reviewType').textContent = 'UNERA User';
             } else if (appState.sendOption === 'external') {
-                destinationText = `${appState.selectedNetwork}: ${appState.walletAddress.substring(0,10)}...`;
+                const addr = appState.walletAddress;
+                const truncated = truncateAddress(addr);
+                if (appState.savedAddressLabel) {
+                    destinationText = `${appState.savedAddressLabel} (${truncated}) · ${appState.selectedNetwork}`;
+                } else {
+                    destinationText = `${appState.selectedNetwork}: ${truncated}`;
+                }
                 document.getElementById('reviewType').textContent = 'External Wallet';
             } else {
                 destinationText = `${appState.selectedWithdrawalMethod.name} (${appState.selectedWithdrawalMethod.info})`;
@@ -2383,18 +4632,40 @@
             document.getElementById('reviewNote').textContent = appState.note || 'No note added';
         }
 
+        function updateSuccessSummary(txId) {
+            var rows = buildSendReceiptRows(txId);
+            document.getElementById('successDestination').textContent = rows.destShort;
+            document.getElementById('successSendType').textContent = rows.sendType;
+            document.getElementById('successRecipient').textContent = rows.recipientText;
+            document.getElementById('successFee').textContent = rows.feeStr;
+            document.getElementById('successTotal').textContent = rows.totalStr;
+            document.getElementById('transactionId').textContent = rows.txId;
+            document.getElementById('successDateTime').textContent = rows.dateStr;
+
+            const noteRow = document.getElementById('successNoteRow');
+            const noteEl = document.getElementById('successNote');
+            if (rows.note) {
+                noteEl.textContent = rows.note;
+                noteRow.hidden = false;
+            } else {
+                noteEl.textContent = '—';
+                noteRow.hidden = true;
+            }
+        }
+
         // ---------- Process send ----------
         function processSend() {
+            if (isReviewEdgeBlocking()) return;
+            updateProcessingSubtext();
             goToStep(6);
-            setTimeout(() => {
-                document.getElementById('successAmount').textContent = `$${appState.amount.toFixed(2)}`;
-                let dest = '';
-                if (appState.sendOption === 'unera') dest = appState.selectedRecipient;
-                else if (appState.sendOption === 'external') dest = `${appState.selectedNetwork} wallet`;
-                else dest = 'bank account';
-                document.getElementById('successDestination').innerHTML = `to <strong>${dest}</strong>`;
-                const txId = 'TX-' + Math.random().toString(36).substring(2,10).toUpperCase();
-                document.getElementById('transactionId').textContent = txId;
+            setTimeout(function() {
+                document.getElementById('successAmount').textContent = '$' + appState.amount.toFixed(2);
+                var txId = 'TX-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                if (!appState.sendSimulate) {
+                    showSendSuccess(txId);
+                } else {
+                    renderSendOutcome(appState.sendSimulate, txId);
+                }
                 goToStep(7);
             }, 2000);
         }
@@ -2406,13 +4677,34 @@
             appState.selectedRecipient = null;
             appState.selectedRecipientEmail = null;
             appState.selectedNetwork = null;
+            appState.selectedNetworkId = null;
             appState.walletAddress = '';
+            appState.savedAddressId = null;
+            appState.savedAddressLabel = null;
+            appState.saveAddressOnContinue = false;
+            appState.qrScanChainIdHint = null;
             appState.selectedWithdrawalId = null;
             appState.selectedWithdrawalMethod = null;
             appState.amount = 0;
             appState.fee = 0;
             appState.note = '';
-            document.querySelectorAll('.send-option').forEach(opt => opt.classList.remove('selected'));
+            appState.sendSimulate = null;
+            appState.reviewEdge = null;
+            appState.reviewFeeLocked = null;
+            appState.reviewFeeBumped = false;
+            appState.lastOutcomeSuccess = true;
+            var successWrap = document.getElementById('sendSuccessWrap');
+            var outcomeWrap = document.getElementById('sendOutcomeWrap');
+            var successActions = document.getElementById('sendSuccessActions');
+            if (successWrap) successWrap.hidden = false;
+            if (outcomeWrap) outcomeWrap.hidden = true;
+            if (successActions) successActions.hidden = false;
+            document.querySelectorAll('.send-option').forEach(function (opt) {
+                opt.classList.remove('selected');
+                opt.setAttribute('aria-checked', 'false');
+                opt.tabIndex = opt.dataset.option === 'unera' ? 0 : -1;
+            });
+            syncSendOptionCheckmarks();
             document.getElementById('continueFromStep2').disabled = true;
             if (appState.prereqsMet) {
                 appState.currentStep = 2;
@@ -2437,10 +4729,30 @@
         window.selectUneraUser = selectUneraUser;
         window.searchUneraUser = searchUneraUser;
         window.selectNetwork = selectNetwork;
+        window.selectNetworkById = selectNetworkById;
+        window.selectSavedAddress = selectSavedAddress;
+        window.searchSavedAddresses = searchSavedAddresses;
+        window.useConnectedWallet = useConnectedWallet;
+        window.openNetworkPickerModal = openNetworkPickerModal;
+        window.closeNetworkPickerModal = closeNetworkPickerModal;
+        window.pickNetworkFromModal = pickNetworkFromModal;
+        window.filterNetworkPickerList = filterNetworkPickerList;
+        window.networkCardKeydown = networkCardKeydown;
+        window.savedAddressKeydown = savedAddressKeydown;
         window.updateWalletAddress = updateWalletAddress;
         window.pasteWalletAddress = pasteWalletAddress;
         window.openQRScanner = openQRScanner;
+        window.closeQrScanModal = closeQrScanModal;
+        window.runQrSimulateScan = runQrSimulateScan;
+        window.submitQrPaste = submitQrPaste;
+        window.pasteQrFromClipboard = pasteQrFromClipboard;
+        window.handleQrImageUpload = handleQrImageUpload;
+        window.renderQrScanBody = renderQrScanBody;
         window.checkAddressFormat = checkAddressFormat;
+        window.openSaveAddressModal = openSaveAddressModal;
+        window.closeSaveAddressModal = closeSaveAddressModal;
+        window.confirmSaveAddressAndContinue = confirmSaveAddressAndContinue;
+        window.skipSaveAddressAndContinue = skipSaveAddressAndContinue;
         window.selectBankMethod = selectBankMethod;
         window.showAddBankMock = showAddBankMock;
         window.validateAmount = validateAmount;
@@ -2448,6 +4760,8 @@
         window.setMaxAmount = setMaxAmount;
         window.processSend = processSend;
         window.resetFlow = resetFlow;
+        window.setSendSimulate = setSendSimulate;
+        window.setReviewEdge = setReviewEdge;
         window.closeNotification = closeNotification;
         window.startKYC = startKYC;
         window.connectWallet = connectWallet;
