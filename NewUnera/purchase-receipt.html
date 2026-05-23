@@ -72,6 +72,13 @@
             --text-3xl: 2rem;
             --font-stat-size: 1.5rem;
             --font-stat-size-compact: 1.25rem;
+            --surface-scatter: color-mix(in srgb, var(--neutral-200) 38%, var(--brand-white));
+            --surface-sky: color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+        }
+
+        @keyframes receiptPulse {
+            0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-deep-blue) 35%, transparent); }
+            50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand-deep-blue) 0%, transparent); }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -280,137 +287,374 @@
         }
         .btn-primary:hover { filter: brightness(0.92); box-shadow: 0 4px 12px rgba(23, 61, 71, 0.3); }
 
+        .copy-toast {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(120%);
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 10020;
+            box-shadow: 0 8px 24px rgba(23, 61, 71, 0.25);
+            transition: transform 0.25s ease;
+            pointer-events: none;
+        }
+        .copy-toast.show { transform: translateX(-50%) translateY(0); }
+
         .receipt-card {
             background: var(--brand-white);
             border-radius: 1.25rem;
-            padding: 3rem;
+            padding: 2rem 2rem 2.25rem;
             border: 1px solid var(--border-subtle);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow-card);
         }
 
-        .receipt-header {
-            text-align: center;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: 2rem;
+        .receipt-print-logo {
+            display: none;
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        .logo-section img { height: 32px; width: auto; max-width: 100%; }
-
-        .receipt-title {
+        .receipt-card-title {
             font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .receipt-number-row {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .receipt-number {
-            font-size: 0.875rem;
-            color: var(--neutral-600);
-            font-family: var(--font-body);
-        }
-        .btn-copy {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.375rem 0.75rem;
-            min-height: 36px;
-            background: var(--neutral-100);
-            border: 1px solid var(--border-subtle);
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-family: var(--font-body);
-            transition: all 0.2s;
-        }
-        .btn-copy:hover {
-            background: var(--neutral-200);
+            width: 100%;
+            font-size: var(--text-xl);
+            font-weight: 700;
             color: var(--brand-deep-blue);
-            border-color: var(--brand-deep-blue);
-        }
-        .btn-copy:focus {
-            outline: 3px solid rgba(23, 61, 71, 0.30);
-            outline-offset: 2px;
-        }
-
-        .status-tracker {
+            line-height: 1.2;
             margin-bottom: 2rem;
-        }
-
-        .tracker-title {
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
             text-align: center;
         }
-
-        .tracker-steps {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin-bottom: 3rem;
+        .receipt-title-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            color: var(--text-secondary);
         }
 
-        .tracker-line {
+        .receipt-duration {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1.125rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .receipt-duration:empty { display: none; }
+        .receipt-duration-check {
+            width: 14px;
+            height: 14px;
+            color: var(--fin-up);
+        }
+        .receipt-duration--done {
+            color: var(--fin-up);
+        }
+
+        .delivery-track {
+            display: none;
+            position: relative;
+            padding: 0 0 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .delivery-track-line {
             position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
+            top: 16px;
+            left: calc(100% / 8);
+            right: calc(100% / 8);
             height: 2px;
-            background: color-mix(in srgb, var(--brand-deep-blue) 10%, var(--neutral-100));
+            background: var(--neutral-200);
             z-index: 0;
         }
-
-        .tracker-progress {
+        .delivery-track-progress {
             position: absolute;
-            top: 20px;
-            left: 0;
+            top: 16px;
+            left: calc(100% / 8);
+            width: calc(75% * var(--track-ratio, 1));
             height: 2px;
             background: var(--fin-up);
             z-index: 1;
-            transition: width 0.3s;
+            transition: width 0.3s ease;
         }
-
-        .tracker-step {
+        .delivery-track-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
             position: relative;
             z-index: 2;
+        }
+        .delivery-track-step {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
-            flex: 1;
+            text-align: center;
+            min-width: 0;
         }
-
-        .step-icon {
-            width: 40px;
-            height: 40px;
+        .delivery-track-step-icon {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background: var(--brand-white);
-            border: 2px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            margin-bottom: 0.5rem;
+        }
+        .delivery-track-step--pending .delivery-track-step-icon {
+            background: var(--neutral-200);
+            border: 2px solid var(--neutral-300);
+            color: var(--text-secondary);
+        }
+        .delivery-track-step--current .delivery-track-step-icon {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            animation: receiptPulse 1.5s ease infinite;
+        }
+        .delivery-track-step--done .delivery-track-step-icon {
+            background: var(--fin-up);
+            color: var(--brand-white);
+        }
+        .delivery-track-step--failed .delivery-track-step-icon {
+            background: var(--fin-down);
+            color: var(--brand-white);
+        }
+        .delivery-track-step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            line-height: 1.25;
+        }
+        .delivery-track-step--done .delivery-track-step-label { color: var(--fin-up); }
+        .delivery-track-step--current .delivery-track-step-label { color: var(--text-primary); }
+        .delivery-track-step--failed .delivery-track-step-label { color: var(--fin-down); }
+        .delivery-track-step-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.125rem;
+            font-variant-numeric: tabular-nums;
         }
 
-        .step-icon.completed {
+        .receipt-section { margin-bottom: 2rem; }
+        .receipt-section:last-of-type { margin-bottom: 0; }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+        #delivery-title {
+            text-align: left;
+        }
+
+        .receipt-dl { margin: 0; }
+        .receipt-dl-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.625rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+        }
+        .receipt-dl-row:last-child { border-bottom: none; }
+        .receipt-section--details .receipt-dl-row {
+            padding: 0.75rem 0;
+        }
+        .receipt-dl dt {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            font-weight: 500;
+            flex-shrink: 0;
+            margin: 0;
+        }
+        .receipt-dl dd {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: right;
+            margin: 0;
+            max-width: 60%;
+            word-break: break-all;
+            font-variant-numeric: tabular-nums;
+        }
+        .receipt-dl dd.good { color: var(--fin-up); }
+        .receipt-dl dd.warn { color: var(--warning); }
+        .receipt-dl dd.danger { color: var(--fin-down); }
+        .receipt-dl-row--total {
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: none;
+        }
+        .receipt-dl-row--total + .receipt-dl-row--total {
+            margin-top: 0;
+            padding-top: 0.5rem;
+            border-top: none;
+        }
+        .receipt-dl-row--receive dd {
+            font-size: var(--text-lg);
+            font-weight: 700;
+        }
+        .receipt-dl-row--receive dt {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .details-accordion {
+            margin-top: 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.875rem;
+            overflow: hidden;
+        }
+        .details-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.875rem 1.125rem;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            transition: background 0.15s;
+            font-size: 0.938rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: var(--font-display);
+        }
+        .details-summary::-webkit-details-marker { display: none; }
+        .details-summary:hover { background: var(--neutral-100); }
+        .details-summary:focus, .details-summary:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: -2px;
+        }
+        .details-accordion[open] .details-summary {
+            background: var(--neutral-100);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .details-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .details-chevron {
+            width: 13px;
+            height: 13px;
+            fill: currentColor;
+            transition: transform 0.2s;
+        }
+        .details-accordion[open] .details-chevron { transform: rotate(180deg); }
+        .receipt-chain-accordion { margin-bottom: 1.75rem; }
+        .details-body { padding: 0.5rem 1.125rem 1rem; }
+
+        .receipt-action-strip {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.75rem;
+            padding-top: 1.75rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .receipt-action-strip .btn { width: 100%; min-height: 46px; }
+        .receipt-action-strip .btn-primary { grid-column: 1 / -1; }
+        .receipt-action-strip .btn[hidden] { display: none; }
+
+        .chain-verify-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .verify-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            min-height: 44px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid var(--border-subtle);
+            background: var(--brand-white);
+            color: var(--brand-deep-blue);
+        }
+        .verify-link:hover { border-color: var(--brand-deep-blue); }
+        .verify-link:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .verify-link--primary {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            border-color: var(--brand-deep-blue);
+        }
+        .verify-link--primary:hover { filter: brightness(0.92); }
+
+        .delivery-timeline {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .delivery-step {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 0 1rem;
+            position: relative;
+            padding-bottom: 1.25rem;
+        }
+        .delivery-step:last-child { padding-bottom: 0; }
+        .delivery-step:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: var(--neutral-200);
+        }
+        .delivery-step--done:not(:last-child)::before { background: var(--fin-up); }
+
+        .delivery-step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .delivery-step--pending .delivery-step-icon {
+            background: var(--neutral-200);
+            color: var(--text-secondary);
+            border: 2px solid var(--neutral-300);
+        }
+        .delivery-step--current .delivery-step-icon {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            animation: receiptPulse 1.5s ease infinite;
+        }
+        .delivery-step--done .delivery-step-icon {
             background: var(--fin-up);
-            border-color: var(--fin-up);
+            color: var(--brand-white);
+        }
+        .delivery-step--failed .delivery-step-icon {
+            background: var(--fin-down);
             color: var(--brand-white);
         }
         .unera-checkmark {
@@ -420,214 +664,159 @@
             width: 18px;
             height: 18px;
         }
-        .step-icon.completed .unera-checkmark { color: var(--brand-white); }
 
-        .step-label {
-            font-size: 0.75rem;
+        .delivery-step-body { padding-top: 0.375rem; min-width: 0; }
+        .delivery-step-label {
+            font-size: 0.938rem;
             font-weight: 500;
-            text-align: center;
-            max-width: 80px;
+            color: var(--text-secondary);
+        }
+        .delivery-step--done .delivery-step-label { color: var(--fin-up); font-weight: 600; }
+        .delivery-step--current .delivery-step-label { color: var(--text-primary); font-weight: 600; }
+        .delivery-step--failed .delivery-step-label { color: var(--fin-down); font-weight: 600; }
+        .delivery-step-time {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            margin-top: 0.125rem;
+            font-variant-numeric: tabular-nums;
         }
 
-        .step-time {
-            font-size: 0.688rem;
-            color: var(--neutral-600);
-        }
-
-        .details-section {
+        .receipt-section--scatter {
+            background: var(--surface-scatter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.875rem;
+            padding: 1.125rem 1.25rem;
             margin-bottom: 2rem;
         }
-
-        .section-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .detail-list {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-
-        .detail-list dt, .detail-list dd {
-            margin: 0;
-        }
-
-        .detail-row {
+        .confirm-detail {
             display: flex;
             justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--neutral-100);
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.625rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
         }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            color: var(--text-secondary);
-            font-size: 0.938rem;
-        }
-
-        .detail-value {
+        .confirm-detail:last-child { border-bottom: none; }
+        .cd-label { color: var(--text-secondary); font-weight: 500; flex-shrink: 0; }
+        .cd-value {
+            color: var(--text-primary);
             font-weight: 600;
             text-align: right;
+            word-break: break-all;
             font-variant-numeric: tabular-nums;
         }
-        .detail-value-hash {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 0.25rem;
-        }
-        .link-explorer {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--brand-deep-blue);
-            text-decoration: underline;
-            text-underline-offset: 2px;
-        }
-        .link-explorer:hover { color: var(--neutral-800); }
-        .link-explorer:focus {
-            outline: 3px solid rgba(23, 61, 71, 0.30);
-            outline-offset: 2px;
-            border-radius: 2px;
-        }
+        .cd-value.good { color: var(--fin-up); }
+        .cd-value.warn { color: var(--warning); }
+        .cd-value.danger { color: var(--fin-down); }
 
-        .detail-value.large {
-            font-family: var(--font-display);
-            font-size: var(--font-stat-size);
-            font-weight: 700;
-            line-height: 1.2;
-            color: var(--fin-up);
+        .tx-hash-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(11.5rem, max-content);
+            gap: 0.75rem;
+            align-items: start;
+            flex: 1;
+            min-width: 0;
         }
-
-        .status-completed { color: var(--fin-up); }
-        .tx-hash-clip {
-            font-family: var(--font-body);
+        .tx-hash-text { min-width: 0; text-align: left; }
+        .tx-hash-text code {
+            font-family: ui-monospace, monospace;
+            font-weight: 500;
             font-size: 0.813rem;
-            font-variant-numeric: tabular-nums;
+            word-break: break-all;
         }
-
-        .qr-section {
-            text-align: center;
-            padding: 2rem;
-            background: color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
-            border-radius: 0.75rem;
-            margin-bottom: 2rem;
-        }
-
-        .qr-code {
-            width: 150px;
-            height: 150px;
-            background: var(--brand-white);
-            margin: 0 auto 1rem;
-            border-radius: 0.5rem;
+        .tx-hash-actions {
             display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .tx-copy-icon-btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .qr-label {
-            font-size: 0.875rem;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--neutral-100);
+            border-radius: 0.5rem;
             color: var(--text-secondary);
+            cursor: pointer;
         }
+        .tx-copy-icon-btn:hover { color: var(--brand-deep-blue); background: var(--neutral-200); }
+        .tx-copy-icon-btn:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-ghost--explorer {
+            font-size: 0.813rem;
+            font-weight: 600;
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            padding: 0.25rem 0.35rem;
+        }
+        .btn-ghost--explorer:hover { text-decoration: underline; }
+        .btn-ghost--explorer:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 2px; }
 
         .receipt-foot {
             text-align: center;
             color: var(--text-secondary);
-            font-size: 0.875rem;
-            padding-top: 2rem;
+            font-size: var(--text-sm);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
             border-top: 1px solid var(--border-subtle);
         }
         .receipt-foot p + p { margin-top: 0.5rem; }
 
         @media print {
-            body {
-                background: white;
-                padding: 0;
-                color: var(--text-primary);
-            }
-            .skip-link,
-            .nav,
-            .actions-bar,
-            .mobile-menu-overlay,
-            .mobile-menu {
-                display: none !important;
-            }
-            .container {
-                padding: 0;
-                max-width: 100%;
-            }
-            .receipt-card {
-                box-shadow: none;
-                border: 1px solid var(--border-subtle);
-                padding: 2rem;
-            }
-            .btn-copy {
-                display: none;
-            }
-            .qr-section {
-                break-inside: avoid;
-            }
+            body { background: white; color: var(--text-primary); }
+            .skip-link, .nav, .actions-bar, .receipt-action-strip,
+            .mobile-menu-overlay, .mobile-menu, .copy-toast { display: none !important; }
+            .container { padding: 0; max-width: 100%; }
+            .receipt-card { box-shadow: none; border: 1px solid var(--border-subtle); padding: 1.5rem; }
+            .receipt-print-logo { display: flex; justify-content: center; margin-bottom: 1rem; }
+            .receipt-print-logo img { height: 28px; width: auto; }
+            .delivery-track { display: none !important; }
+            .delivery-timeline { display: block !important; }
+            .details-accordion { break-inside: avoid; }
+            .details-accordion[open] .details-body,
+            .receipt-chain-accordion .details-body { display: block !important; }
+            .receipt-chain-accordion { border: 1px solid var(--border-subtle); }
+            .receipt-chain-accordion .details-summary { display: none; }
+            .tx-copy-icon-btn { display: none; }
+        }
+
+        @media (min-width: 640px) {
+            .delivery-track { display: block; }
+            .delivery-timeline { display: none; }
         }
 
         @media (max-width: 768px) {
             .nav { padding: 0 1rem; }
             .nav-links,
-            .user-profile-nav {
-                display: none;
-            }
-            .hamburger {
-                display: flex;
-            }
-            .container {
-                padding: 1rem;
-            }
-            .receipt-card {
-                padding: 1.5rem;
-            }
-            .tracker-steps {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            .tracker-line, .tracker-progress {
-                display: none;
-            }
-            .tracker-step {
-                flex-direction: row;
-                justify-content: flex-start;
-            }
-            .step-label {
-                text-align: left;
-                max-width: none;
-            }
-            .actions-bar {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: stretch;
-            }
-            .actions {
-                justify-content: stretch;
-            }
-            .actions .btn {
-                flex: 1;
-            }
+            .user-profile-nav { display: none; }
+            .hamburger { display: flex; }
+            .container { padding: 1rem; }
+            .receipt-card { padding: 1.5rem; }
+            .actions-bar { flex-direction: column; gap: 1rem; align-items: stretch; }
+            .actions { justify-content: stretch; }
+            .actions .btn { flex: 1; }
+            .receipt-dl-row { flex-direction: column; align-items: stretch; gap: 0.375rem; }
+            .receipt-dl dd { text-align: left; max-width: 100%; }
+            .confirm-detail { flex-direction: column; align-items: stretch; gap: 0.375rem; }
+            .cd-value { text-align: left; }
+            .tx-hash-row { grid-template-columns: 1fr; }
+            .tx-hash-actions { justify-content: flex-start; flex-wrap: wrap; }
+            .receipt-action-strip { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 480px) {
-            .qr-code {
-                width: 120px;
-                height: 120px;
-            }
-            .qr-code svg {
-                width: 90px;
-                height: 90px;
-            }
+            .receipt-card-title { font-size: var(--text-xl); }
         }
+
+
     </style>
 </head>
 <body>
@@ -681,206 +870,278 @@
 
     <main id="main-content" class="container">
         <div class="actions-bar">
-            <a href="wallet-enhanced.html" class="back-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                Back to Wallet
+            <a href="wallet-enhanced.html" class="back-btn" id="backLink">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>
+                <span id="backLinkText">Back to Wallet</span>
             </a>
             <div class="actions">
                 <button class="btn btn-secondary" type="button" onclick="window.print()" aria-label="Print receipt">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                        <path d="M6 14h12v8H6z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-120q-33 0-56.5-23.5T160-200v-440q0-33 23.5-56.5T240-720h120v-120h240v120h120q33 0 56.5 23.5T800-640v440q0 33-23.5 56.5T720-120H240Zm0-80h480v-360H240v360Zm120-440h240v-40H360v40Z"/></svg>
                     Print
                 </button>
                 <button class="btn btn-secondary" type="button" onclick="shareReceipt()" aria-label="Share receipt">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <circle cx="18" cy="5" r="3"/>
-                        <circle cx="6" cy="12" r="3"/>
-                        <circle cx="18" cy="19" r="3"/>
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L276-423q-16 15-37 24t-43 9q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 9t37 24l382-315q-2-9-3-18.5t-1-19.5q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-9t-37-24L310-680q2 9 3 18.5t1 19.5q0 11-1 20t-3 19l382 314q16-15 37-24t45-9q50 0 85 35t35 85q0 50-35 85t-85 35Z"/></svg>
                     Share
                 </button>
                 <button class="btn btn-primary" type="button" onclick="downloadPDF()" aria-label="Download receipt as PDF">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
                     Download PDF
                 </button>
             </div>
         </div>
 
-        <div class="receipt-card" role="region" aria-label="Transaction receipt">
-            <div class="receipt-header">
-                <div class="logo-section">
-                    <img src="NewLogo/Unera Black Text.svg" alt="UNERA" width="200" height="32">
-                </div>
-                <div class="receipt-title">Transaction Receipt</div>
-                <div class="receipt-number-row">
-                    <span class="receipt-number">Receipt #: RCP-2026-02-11-7f2a9c4d</span>
-                    <button type="button" class="btn-copy" onclick="copyReceiptId()" aria-label="Copy receipt ID">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <rect x="9" y="9" width="13" height="13" rx="2"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                        </svg>
-                        Copy
-                    </button>
-                </div>
+        <div class="receipt-card" role="region" aria-labelledby="receipt-card-title">
+            <div class="receipt-print-logo" aria-hidden="true">
+                <img src="NewLogo/Unera Black Text.svg" alt="" width="200" height="32">
             </div>
 
-            <div class="status-tracker" aria-live="polite" aria-label="Transaction status">
-                <div class="tracker-title">Transaction Status</div>
-                <div class="tracker-steps">
-                    <div class="tracker-line"></div>
-                    <div class="tracker-progress" style="width: 100%;"></div>
+            <h1 class="receipt-card-title" id="receipt-card-title">
+                <svg class="receipt-title-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M320-120q-33 0-56.5-23.5T240-200v-560q0-33 23.5-56.5T320-840h480q33 0 56.5 23.5T880-760v560q0 33-23.5 56.5T800-120H320Zm0-80h480v-560H320v560Zm80-400h320v80H400v-80Zm0 160h320v80H400v-80Zm0 160h240v80H400v-80Z"/></svg>
+                Transaction receipt
+            </h1>
 
-                    <div class="tracker-step">
-                        <div class="step-icon completed" aria-hidden="true">
-                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+            <section class="receipt-section receipt-section--scatter" aria-labelledby="delivery-title">
+                <h2 class="section-title" id="delivery-title">Delivery status</h2>
+                <p class="receipt-duration receipt-duration--done" id="receiptDuration">
+                    <svg class="unera-checkmark receipt-duration-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                    Completed in 2 minutes
+                </p>
+
+                <div class="delivery-track" id="deliveryTrack">
+                    <div class="delivery-track-line" aria-hidden="true"></div>
+                    <div class="delivery-track-progress" id="deliveryTrackProgress" aria-hidden="true"></div>
+                    <div class="delivery-track-steps">
+                        <div class="delivery-track-step delivery-track-step--done" data-step="0">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Submitted</div>
+                            <div class="delivery-track-step-time">2:30 PM</div>
                         </div>
-                        <div class="step-label">Payment Received</div>
-                        <div class="step-time">14:30</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-icon completed" aria-hidden="true">
-                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                        <div class="delivery-track-step delivery-track-step--done" data-step="1">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Payment received</div>
+                            <div class="delivery-track-step-time">2:30 PM</div>
                         </div>
-                        <div class="step-label">Processing</div>
-                        <div class="step-time">14:31</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-icon completed" aria-hidden="true">
-                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                        <div class="delivery-track-step delivery-track-step--done" data-step="2">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Minting</div>
+                            <div class="delivery-track-step-time">2:31 PM</div>
                         </div>
-                        <div class="step-label">Tokens Minted</div>
-                        <div class="step-time">14:32</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-icon completed" aria-hidden="true">
-                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                        <div class="delivery-track-step delivery-track-step--done" data-step="3">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Delivered</div>
+                            <div class="delivery-track-step-time">2:32 PM</div>
                         </div>
-                        <div class="step-label">Delivered</div>
-                        <div class="step-time">14:32</div>
                     </div>
                 </div>
-            </div>
 
-            <section class="details-section" aria-labelledby="tx-details-title">
-                <h3 id="tx-details-title" class="section-title">Transaction Details</h3>
-                <dl class="detail-list">
-                    <div class="detail-row">
-                        <dt class="detail-label">Date & Time</dt>
-                        <dd class="detail-value">February 11, 2026 at 2:30 PM</dd>
+                <ol class="delivery-timeline" id="deliveryTimeline" aria-live="polite" aria-label="Delivery status">
+                    <li class="delivery-step delivery-step--done" data-step="0">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Submitted</div>
+                            <div class="delivery-step-time">2:30 PM</div>
+                        </div>
+                    </li>
+                    <li class="delivery-step delivery-step--done" data-step="1">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Payment received</div>
+                            <div class="delivery-step-time">2:30 PM</div>
+                        </div>
+                    </li>
+                    <li class="delivery-step delivery-step--done" data-step="2">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Minting</div>
+                            <div class="delivery-step-time">2:31 PM</div>
+                        </div>
+                    </li>
+                    <li class="delivery-step delivery-step--done" data-step="3">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Delivered</div>
+                            <div class="delivery-step-time">2:32 PM</div>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+
+            <section class="receipt-section receipt-section--details" aria-labelledby="tx-details-title">
+                <h2 class="section-title" id="tx-details-title">Transaction details</h2>
+                <dl class="receipt-dl">
+                    <div class="receipt-dl-row">
+                        <dt>Receipt ID</dt>
+                        <dd>RCP-2026-02-11-7f2a9c4d</dd>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Transaction Type</dt>
-                        <dd class="detail-value">Purchase Stablecoins</dd>
+                    <div class="receipt-dl-row">
+                        <dt>Date &amp; time</dt>
+                        <dd>February 11, 2026 · 2:30 PM</dd>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Amount (Fiat)</dt>
-                        <dd class="detail-value large">$250.00 CAD</dd>
+                    <div class="receipt-dl-row">
+                        <dt>Type</dt>
+                        <dd>Mint UNERA CAD</dd>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Amount (Stablecoin)</dt>
-                        <dd class="detail-value">250.00 hCAD</dd>
+                    <div class="receipt-dl-row">
+                        <dt>Payment method</dt>
+                        <dd>Bank transfer</dd>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Exchange Rate</dt>
-                        <dd class="detail-value">1.0000</dd>
+                    <div class="receipt-dl-row">
+                        <dt>Reference ID</dt>
+                        <dd>WIRE-2026-88421</dd>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Transaction Fee</dt>
-                        <dd class="detail-value">$0.00</dd>
+                    <div class="receipt-dl-row">
+                        <dt>Destination wallet</dt>
+                        <dd id="destWallet">0x742d…8F3a</dd>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Payment Method</dt>
-                        <dd class="detail-value">Bank Transfer</dd>
+                    <div class="receipt-dl-row">
+                        <dt>Exchange rate</dt>
+                        <dd>1.0000 (locked 2:30 PM)</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Transaction fee</dt>
+                        <dd>$0.00</dd>
+                    </div>
+                    <div class="receipt-dl-row receipt-dl-row--total">
+                        <dt>Total debited</dt>
+                        <dd>$250.00 CAD</dd>
+                    </div>
+                    <div class="receipt-dl-row receipt-dl-row--total receipt-dl-row--receive">
+                        <dt>Total received</dt>
+                        <dd class="good">250.00 UNERA CAD</dd>
                     </div>
                 </dl>
             </section>
 
-            <section class="details-section" aria-labelledby="chain-details-title">
-                <h3 id="chain-details-title" class="section-title">Blockchain Details</h3>
-                <dl class="detail-list">
-                    <div class="detail-row">
-                        <dt class="detail-label">Transaction Hash</dt>
-                        <dd class="detail-value detail-value-hash">
-                            <span class="tx-hash-clip">0x7f2a...9c4d</span>
-                            <a href="https://etherscan.io/tx/0x7f2a9c4d" target="_blank" rel="noopener noreferrer" class="link-explorer" aria-label="View transaction on Etherscan">View on Explorer</a>
-                        </dd>
+            <details class="details-accordion receipt-chain-accordion" id="chainAccordion">
+                <summary class="details-summary">
+                    <span id="chainAccordionSummary">On-chain proof</span>
+                    <span class="details-toggle-row">
+                        <span class="details-toggle-text">Details</span>
+                        <svg class="details-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </span>
+                </summary>
+                <div class="details-body">
+                    <div class="confirm-detail">
+                        <span class="cd-label">Transaction hash</span>
+                        <div class="cd-value tx-hash-row">
+                            <div class="tx-hash-text"><code id="txHash">0x7f2a9c4d8e1b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7</code></div>
+                            <div class="tx-hash-actions">
+                                <button type="button" class="tx-copy-icon-btn" id="txHashCopy" aria-label="Copy transaction hash">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Network</dt>
-                        <dd class="detail-value">Ethereum Mainnet</dd>
+                    <div class="confirm-detail"><span class="cd-label">Network</span><span class="cd-value">Ethereum Mainnet</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Block</span><span class="cd-value">19,842,103</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Confirmations</span><span class="cd-value">32</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Network fee</span><span class="cd-value">$0.00</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Status</span><span class="cd-value good" id="chainStatus">Completed</span></div>
+                    <div class="chain-verify-actions">
+                        <a class="verify-link verify-link--primary" id="verifyExplorerLink" href="https://etherscan.io/tx/0x7f2a9c4d8e1b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7" target="_blank" rel="noopener noreferrer">View on explorer ↗</a>
+                        <a class="verify-link" href="Stablecoin/proof-of-reserve-public.html">View Proof of Reserve</a>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Status</dt>
-                        <dd class="detail-value status-completed">✓ Completed</dd>
-                    </div>
-                </dl>
-            </section>
-
-            <div class="qr-section" role="img" aria-label="QR code to verify transaction on blockchain explorer">
-                <div class="qr-code">
-                    <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
-                        <rect width="100" height="100" fill="white"/>
-                        <g fill="black">
-                            <rect x="10" y="10" width="10" height="10"/>
-                            <rect x="30" y="10" width="10" height="10"/>
-                            <rect x="50" y="10" width="10" height="10"/>
-                            <rect x="70" y="10" width="10" height="10"/>
-                            <rect x="10" y="30" width="10" height="10"/>
-                            <rect x="70" y="30" width="10" height="10"/>
-                            <rect x="10" y="50" width="10" height="10"/>
-                            <rect x="30" y="50" width="10" height="10"/>
-                            <rect x="50" y="50" width="10" height="10"/>
-                            <rect x="70" y="50" width="10" height="10"/>
-                            <rect x="10" y="70" width="10" height="10"/>
-                            <rect x="30" y="70" width="10" height="10"/>
-                            <rect x="50" y="70" width="10" height="10"/>
-                            <rect x="70" y="70" width="10" height="10"/>
-                        </g>
-                    </svg>
                 </div>
-                <div class="qr-label">Scan to verify transaction</div>
+            </details>
+
+            <div class="receipt-action-strip" id="receiptActionStrip">
+                <a href="Stablecoin/get-unera-cad.html" class="btn btn-primary" id="actionMintAgain">Mint again</a>
+                <a href="wallet-enhanced.html" class="btn btn-secondary" id="actionViewWallet">View wallet</a>
+                <a href="Stablecoin/mint-history.html" class="btn btn-secondary" id="actionMintHistory">View mint history</a>
+                <a href="mailto:support@unera.io" class="btn btn-secondary" id="actionContactSupport" hidden>Contact support</a>
             </div>
 
             <div class="receipt-foot">
                 <p>Thank you for using UNERA</p>
-                <p>If you have any questions, contact support@unera.io</p>
+                <p>This receipt is for your records. UNERA CAD is backed 1:1 by CAD reserves.</p>
+                <p>Questions? <a href="mailto:support@unera.io" style="color: var(--brand-deep-blue); font-weight: 600;">support@unera.io</a></p>
             </div>
         </div>
     </main>
 
+    <div class="copy-toast" id="copyToast" role="status" aria-live="polite"></div>
     <script>
-        function downloadPDF() {
-            alert('PDF download functionality would be implemented here.\n\nIn production, this would generate and download a PDF version of this receipt.');
-        }
-        function copyReceiptId() {
-            const id = 'RCP-2026-02-11-7f2a9c4d';
-            navigator.clipboard.writeText(id).then(function() {
-                alert('Receipt ID copied to clipboard: ' + id);
-            }).catch(function() {
-                alert('Could not copy. Receipt ID: ' + id);
-            });
-        }
-        function shareReceipt() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'UNERA Transaction Receipt',
-                    text: 'Receipt #: RCP-2026-02-11-7f2a9c4d - $250.00 CAD → 250.00 hCAD',
-                    url: window.location.href
-                }).catch(function() {});
-            } else {
-                alert('Share receipt: ' + window.location.href);
+        (function() {
+            var TX_HASH = '0x7f2a9c4d8e1b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7';
+
+            var toastTimer;
+            function showToast(msg) {
+                var el = document.getElementById('copyToast');
+                if (!el) return;
+                el.textContent = msg;
+                el.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2800);
             }
-        }
+
+            function copyWithToast(text, label) {
+                var fallback = function() { showToast(label + ': ' + text); };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        showToast(label);
+                    }).catch(fallback);
+                } else {
+                    fallback();
+                }
+            }
+
+            window.shareReceipt = function() {
+                var shareData = {
+                    title: 'UNERA Transaction Receipt',
+                    text: 'Receipt RCP-2026-02-11-7f2a9c4d — $250.00 CAD → 250.00 UNERA CAD',
+                    url: window.location.href
+                };
+                if (navigator.share) {
+                    navigator.share(shareData).catch(function() {});
+                } else {
+                    copyWithToast(window.location.href, 'Link copied — share this receipt');
+                }
+            };
+
+            window.downloadPDF = function() {
+                showToast('Choose Save as PDF in the print dialog');
+                setTimeout(function() { window.print(); }, 400);
+            };
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var from = new URLSearchParams(window.location.search).get('from');
+                var back = document.getElementById('backLink');
+                var backText = document.getElementById('backLinkText');
+                if (back && backText && from === 'mint') {
+                    back.href = 'Stablecoin/mint-history.html';
+                    backText.textContent = 'Back to Mint history';
+                } else if (back && backText && from === 'swap') {
+                    back.href = 'Stablecoin/swap-history.html';
+                    backText.textContent = 'Back to Swap history';
+                }
+
+                var txHashCopy = document.getElementById('txHashCopy');
+                if (txHashCopy) {
+                    txHashCopy.addEventListener('click', function() {
+                        copyWithToast(TX_HASH, 'Transaction hash copied');
+                    });
+                }
+            });
+        })();
+    </script>
+
+    <script>
         (function() {
             var hamburger = document.querySelector('.hamburger');
             var mobileMenu = document.querySelector('.mobile-menu');
