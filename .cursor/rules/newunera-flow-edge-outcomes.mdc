@@ -1,0 +1,245 @@
+---
+description: Review-step edge UX, demo outcome pills, and non-success outcome detail screens for NewUnera multi-step action flows
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# NewUnera — Flow edge cases & outcome detail screens
+
+**Scope:** Multi-step **action flows** under `NewUnera/` (Send, Add Money, Exchange, Get/Redeem CAD, KYC handoff, account actions) where users confirm a transaction and may land on **success**, **failure**, **pending**, or **under-review** outcomes.
+
+**Canonical reference:** [`NewUnera/send-enhanced.html`](../NewUnera/send-enhanced.html) — `#step5` review edge UX + demo pills (~L2580–2628), `#step7` dual outcome wraps (~L2653–2730), CSS (~L2097–2207), JS (`updateReview`, `renderSendOutcome`, `buildSendReceiptRows`).
+
+**Related:**
+- Success hero (happy path only): [`.cursor/rules/newunera-success-screen-hero.mdc`](newunera-success-screen-hero.mdc)
+- Receipt panel rows: [`.cursor/rules/newunera-success-details.mdc`](newunera-success-details.mdc)
+- Review callout icons: [`.cursor/rules/newunera-review-callout-icons.mdc`](newunera-review-callout-icons.mdc)
+- Wallet flow context: [`.cursor/rules/wallet-action-pages.mdc`](wallet-action-pages.mdc)
+- KYC demo pill chrome (shared CSS origin): [`NewUnera/kyc-verify-new.html`](../NewUnera/kyc-verify-new.html) (~L346–358)
+
+---
+
+## Design intent
+
+1. **Review step** surfaces path context (soft warnings), optional **blocking** edges before submit, and **prototype demo controls** to walk stakeholders through outcomes without backend.
+2. **Final step** splits **success** (lightning hero) from **outcome detail** (error / pending / review) — same receipt density, different hero semantics.
+3. **Stepper** must not show false success checkmarks on failure or pending terminal states.
+
+---
+
+## 1. Review / confirm step — DOM order
+
+Inside the review `.card`, after summary rows and **before** primary `.btn-actions`:
+
+```
+.card
+  ├── .summary-item × N          (flow-specific review rows)
+  ├── .review-soft-warn          (path A — always visible, one active)
+  ├── #reviewEdgeBanner          (path B — blocking; hidden unless demo / ?query)
+  ├── .send-review-callout       (irreversibility + trust, e.g. 2FA)
+  ├── hr.demo-separator
+  ├── p.demo-label               “Prototype — simulate {flow} result:”
+  ├── .demo-btns#…DemoBtns       (outcome pills — injected per path)
+  ├── p.demo-label               “Simulate review blocker:”
+  └── .demo-btns#…ReviewEdgeBtns (blocker pills — injected per path)
+```
+
+Use flow-specific ids (e.g. `#sendDemoBtns`, `#sendReviewEdgeBtns`) — pattern is reusable; names are not global.
+
+### A. Soft warnings (always on, one visible per branch)
+
+| Purpose | Pattern | Tokens |
+|--------|---------|--------|
+| Positive / instant path | `.send-review-callout` + `.unera-icon-lead--tone-success` | `--surface-fee-green-soft` callout bg |
+| On-chain / rate context | `.rate-note` (flex + lead SVG) | deep-blue tint border/bg |
+| Fiat / bank rail caution | `.dest-review-banner.cad` + inline SVG icon well | mauve-tinted `--brand-red` mix |
+
+Toggle with `[hidden]` in `updateReview()` (or equivalent) from active flow branch — **do not** stack all paths at once.
+
+### B. Blocking edge banner (demo pill or `?reviewEdge=` only)
+
+Reuse **`.rate-expired-banner`** shell:
+
+```html
+<div id="reviewEdgeBanner" class="rate-expired-banner" role="alert" hidden>
+  <!-- warning SVG -->
+  <div class="rate-expired-banner-body">
+    <div class="rate-expired-banner-title" id="reviewEdgeBannerTitle">…</div>
+    <div class="rate-expired-banner-text" id="reviewEdgeBannerBody">…</div>
+  </div>
+  <button type="button" class="btn btn-secondary" id="reviewEdgeBannerAction">…</button>
+</div>
+```
+
+| Behavior | Requirement |
+|----------|-------------|
+| Blocks primary confirm | `#confirm…Btn` `disabled` + `aria-disabled="true"` while active |
+| Resolvable | Banner CTA refreshes quote, edits amount, or changes recipient — then clears block |
+| Copy | Title = short problem; body = one sentence + next action |
+
+Common blocker keys: `feeChanged`, `recipientBlocked`, `dailyLimit`, `bankLimitPreview` (extend per flow).
+
+### C. Demo outcome pills (prototype only)
+
+**CSS** — copy from Send / KYC; label ink **`var(--text-secondary)`** (not `--neutral-500`):
+
+```css
+.demo-separator { border-top: 1.5px dashed var(--neutral-300); margin: 1.25rem 0 1rem; }
+.demo-label { font-size: 0.688rem; font-weight: 600; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+.demo-btns { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.demo-btn { min-height: 34px; … border: 1.5px solid var(--border-subtle); … }
+.demo-btn.active { background: var(--brand-deep-blue); color: var(--brand-white); }
+@media (max-width: 768px) { .demo-btn { min-height: 44px; } }
+```
+
+**Markup:**
+
+```html
+<hr class="demo-separator" aria-hidden="true">
+<p class="demo-label">Prototype — simulate send result:</p>
+<div class="demo-btns" id="sendDemoBtns" role="group" aria-label="Demo outcome selector"></div>
+<p class="demo-label" style="margin-top:0.875rem;">Simulate review blocker:</p>
+<div class="demo-btns" id="sendReviewEdgeBtns" role="group" aria-label="Demo review blocker selector"></div>
+```
+
+**Two rows required:**
+1. **Post-submit outcomes** — sets in-memory `sendSimulate` / `txSimulate` / `demoMode` (flow-specific name); always include **Happy path** (`null`).
+2. **Review blockers** — sets `reviewEdge`; always include **None** (`null`).
+
+Pills are **injected per branch** (path-specific labels); do not show irrelevant outcomes (e.g. “Bank rejected” on UNERA-user path).
+
+**State:** in-memory only — **never** `localStorage` for demo outcomes (match KYC / Get UNERA CAD). Optional URL seed: `?reviewEdge=feeChanged`.
+
+---
+
+## 2. Final step — dual wrap (success vs outcome)
+
+Terminal step hosts **two siblings** inside `.card.flow-card-animated`; exactly one visible after processing:
+
+| Wrap | When | Hero |
+|------|------|------|
+| `#…SuccessWrap` | Happy path (`simulate === null`) | `.success-icon-animated` + `.lightning-badge` + stroked check — [success-screen-hero](newunera-success-screen-hero.mdc) |
+| `#…OutcomeWrap` | Any non-success simulate value | `.outcome-icon-wrap` — **no** lightning badge, **no** success check animation |
+
+Hide outer success CTAs when outcome wrap shows: `#…SuccessActions[hidden] { display: none !important; }`.
+
+### Outcome detail layout (required order)
+
+```
+.send-outcome-screen[role="region"][aria-live="polite"]
+  ├── .outcome-icon-wrap.outcome-icon-wrap--{error|review|pending}
+  ├── .outcome-badge.outcome-badge--{error|review|pending}   (optional pill)
+  ├── h2.send-outcome-title#…OutcomeTitle[tabindex="-1"]
+  ├── .send-outcome-amount.send-outcome-amount--{neutral|error|pending}
+  ├── p.send-outcome-sub
+  ├── .error-ref-chip                              (optional; monospace ref)
+  ├── .success-details#…OutcomeDetails             ← same panel as success — [success-details](newunera-success-details.mdc)
+  ├── p.outcome-tip[role="note"]                   (retry / compliance guidance)
+  └── .btn-actions#…OutcomeActions                 (contextual CTAs inside wrap)
+```
+
+### Icon & status semantics
+
+| State | Icon wrap | Badge | Amount color | Status row color |
+|-------|-----------|-------|--------------|------------------|
+| Failed / cancelled | `--error` tint | `--error` | `--error` or `--text-primary` | `var(--error)` |
+| Under review | `--review` / warning tint | `--review` | `--text-primary` | `var(--warning)` |
+| Pending settlement | `--pending` / light-blue tint | `--pending` | `var(--brand-purple)` | `var(--brand-purple)` or `var(--warning)` |
+| Completed (happy) | success hero | — | `var(--fin-up)` | `var(--success)` |
+
+Icons: inline Material SVG, `fill="currentColor"`, 40×40 inside 100×100 circle — see `OUTCOME_ICONS` in Send script.
+
+### Receipt panel
+
+Populate via shared helper (e.g. `buildSendReceiptRows(txId)`) used by **both** success and outcome paths. Minimum rows: flow-specific fields + **Transaction ID**, **Date & time**, **Status**. Do not duplicate row logic in separate renderers.
+
+### CTAs by outcome class
+
+| Class | Primary | Secondary |
+|-------|---------|-----------|
+| Safe retry (wallet rejected, burn reverted) | Try again → review or amount step | View Wallet |
+| User fix (limit, invalid recipient) | Edit amount / Change recipient | View Wallet |
+| Hard block / partial (support) | Contact support | View Wallet |
+| Pending / compliance | View Wallet | Send again / New {action} |
+
+Copy must distinguish **wallet rejected** (user cancelled) vs **on-chain failed** (network revert) vs **pending settlement** (funds in flight).
+
+### Follow-up copy
+
+- Retry-safe: `p.input-hint--success-followup` pattern optional under hero amount on success; on outcomes prefer **`.outcome-tip`** with lightbulb SVG + `<strong>Tip:</strong>`.
+- Pending: include settlement window (e.g. “1–3 business days”) in subcopy and/or a detail row.
+
+---
+
+## 3. Processing step
+
+Vary subcopy by branch when low effort (Send pattern):
+
+- Default: “Please wait while we securely…”
+- External / on-chain: “Broadcasting to network…”
+- Bank / fiat: “Submitting withdrawal to your bank…”
+
+Then branch after timeout: `simulate === null` → success wrap; else → `renderOutcome(mode, txId)`.
+
+---
+
+## 4. Stepper contract (terminal states)
+
+| Terminal result | Last stepper node | Progress |
+|-----------------|-------------------|----------|
+| Success | All nodes **completed** (checks) | 100% |
+| Failure / pending / review | Last node **active** (number, not check) | Not 100% |
+
+Track with e.g. `lastOutcomeSuccess` or `simulate === null` at step 7 — see [flow-stepper](newunera-flow-stepper.mdc) processing/success mapping.
+
+---
+
+## 5. Accessibility
+
+- Blocking banner: `role="alert"`.
+- Outcome wrap: `role="region"`, `aria-live="polite"`, `aria-atomic="true"`.
+- Focus: `tabindex="-1"` on outcome/success `h2`; move focus on step transition.
+- Demo pills: `role="group"` + descriptive `aria-label`; `.demo-btn:focus-visible` ring `--brand-deep-blue`.
+- Confirm disabled: `aria-disabled="true"` when review blocker active.
+
+---
+
+## 6. Adapting to new action flows
+
+When adding edge/outcome UX to **Get UNERA CAD**, **Redeem**, **Exchange**, etc.:
+
+1. Add soft warnings + blocking banner hooks to **review** step.
+2. Add demo pill rows (outcome + blocker) with path-specific pill tables.
+3. Split terminal step into success + outcome wraps (or extend existing `#failFlowWrap` toward this contract).
+4. Centralize receipt rows; map simulate keys to title, status, CTAs in one config object (Send `configs` pattern).
+5. Align stepper terminal behavior.
+
+**Existing partial implementations to converge:**
+- Get UNERA CAD: `#failFlowWrap` + review `setTxSimulate` pills — add dual-wrap receipt panel parity.
+- Redeem: `renderTxState('pending'|'failed')` — align icon/badge/tip tokens with this rule.
+- KYC: `demo-btns` + `renderOutcome()` — outcome screen is reference for **review/compliance** states, not wallet receipts.
+
+---
+
+## 7. Do not
+
+- ❌ Lightning badge or stroked success check on failure/pending/review screens
+- ❌ Persist demo outcome to `localStorage` or URL (except optional `?reviewEdge=` for blockers)
+- ❌ Hardcode hex — use `--surface-error-soft`, `--surface-warning-soft`, `--error`, `--warning`, `--brand-purple`
+- ❌ CSS gradient functions on product HTML ([`new-brand-output.mdc`](new-brand-output.mdc))
+- ❌ Mark stepper 100% complete on failed sends
+- ❌ Use `--neutral-500` for `.demo-label` or receipt labels (WCAG — use `--text-secondary`)
+- ❌ Show success footer CTAs alongside outcome CTAs (hide `#…SuccessActions`)
+
+---
+
+## 8. Verification checklist
+
+- [ ] Each flow branch shows exactly one soft warning on review
+- [ ] Blocker demo disables confirm until resolved
+- [ ] Each outcome pill lands on correct detail screen (not success hero)
+- [ ] Receipt rows match between success and outcome for same tx
+- [ ] Stepper checks only on happy path
+- [ ] `resetFlow()` clears simulate + review edge + restores success wrap
+- [ ] Demo pills wrap at 768px; tap targets ≥ 44px

@@ -33,8 +33,39 @@
         dashboard: 'dashboard.html',
         purchase: 'get-unera-cad.html',
         redeem: 'redeem-unera-cad.html',
-        por: 'proof-of-reserve-public.html'
+        por: 'proof-of-reserve-public.html',
+        history: 'mint-history.html'
     };
+
+    function closeNavDropdowns() {
+        document.querySelectorAll('.nav-dropdown-item').forEach(function (item) {
+            item.classList.remove('open');
+            var btn = item.querySelector('.nav-dropdown-trigger');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    function initNavDropdowns() {
+        document.querySelectorAll('.nav-dropdown-item').forEach(function (item) {
+            var btn = item.querySelector('.nav-dropdown-trigger');
+            if (!btn) return;
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var open = !item.classList.contains('open');
+                closeNavDropdowns();
+                if (open) {
+                    item.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.nav-dropdown-item')) closeNavDropdowns();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeNavDropdowns();
+        });
+    }
 
     var notifications = JSON.parse(localStorage.getItem('clb_notifications') || '[]');
     var existingIds = new Set(notifications.map(function (n) { return n.id; }));
@@ -245,6 +276,22 @@
                 link.removeAttribute('aria-current');
             }
         });
+        if (active === 'history') {
+            var historyBtn = document.getElementById('navDdHistoryBtn');
+            if (historyBtn) historyBtn.classList.add('is-active-route');
+            var page = location.pathname.split('/').pop();
+            var menu = document.getElementById('navDdHistoryMenu');
+            if (menu) {
+                var match = menu.querySelector('a[href="' + page + '"]');
+                if (match) match.setAttribute('aria-current', 'page');
+            }
+            document.querySelectorAll('.mobile-nav-links .nav-link[data-nav-key="mint-history"], .mobile-nav-links .nav-link[data-nav-key="swap-history"]').forEach(function (link) {
+                if (link.getAttribute('href') === page) {
+                    link.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                }
+            });
+        }
     }
 
     function initMobileMenu() {
@@ -329,6 +376,7 @@
     window.toggleMobileUserDropdown = toggleMobileUserDropdown;
 
     applyNavActiveState();
+    initNavDropdowns();
     initMobileMenu();
     renderNotificationPanel();
 })();

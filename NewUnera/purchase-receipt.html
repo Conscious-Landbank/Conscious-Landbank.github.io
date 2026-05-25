@@ -818,6 +818,7 @@
 
 
     </style>
+    <link rel="stylesheet" href="consumer-app-nav.css">
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -827,15 +828,55 @@
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
                 <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
             </a>
-            <ul class="nav-links">
-                <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
-                <li><a href="wallet-enhanced.html" class="nav-link active" aria-current="page">WALLET</a></li>
-                <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
-                <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+            <ul class="nav-links" role="list">
+                <li><a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DASHBOARD</a></li>
+                <li id="walletNavItem">
+                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
+                </li>
+                <li class="nav-dropdown-item" id="navDdTransact">
+                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
+                        TRANSACT
+                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu" aria-label="Transact options">
+                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Money</a></li>
+                        <li><a href="exchange.html" class="nav-dd-item" role="menuitem">Exchange</a></li>
+                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send</a></li>
+                    </ul>
+                </li>
+                <li><a href="stake.html" class="nav-link" id="navLinkStake">STAKE</a></li>
+                <li class="nav-dropdown-item" id="navDdImpact">
+                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdImpactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdImpactMenu">
+                        IMPACT
+                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDdImpactMenu" role="menu" aria-label="Impact options">
+                        <li><a href="explore-centres.html" class="nav-dd-item" role="menuitem">Centres</a></li>
+                        <li><a href="governance.html" class="nav-dd-item" role="menuitem">Governance</a></li>
+                    </ul>
+                </li>
+                <li id="navAuthLinks" style="display: none;">
+                    <a href="login_2.html" class="nav-link btn-nav-secondary">LOG IN</a>
+                    <a href="signup_2.html" class="nav-link btn-nav-primary">SIGN UP</a>
+                </li>
             </ul>
         </div>
         <div class="nav-right">
-            <div class="user-profile-nav">
+                        <div class="nav-wallet-display" id="navWalletDisplay" style="display: none;" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Wallet connected">
+                <div class="nav-wallet-icon-badge">
+                    <div class="nav-wallet-blockie"></div>
+                    <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+                </div>
+                <div class="nav-wallet-info">
+                    <span class="nav-wallet-address" id="navWalletAddress">0x742d...3a8f</span>
+                    <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
+                </div>
+                <div class="nav-wallet-network" id="navWalletNetwork">
+                    <span id="navNetworkLabel">Polygon</span>
+                </div>
+            </div>
+<div class="user-profile-nav">
                 <div class="user-avatar-nav">JS</div>
                 <span class="user-name-nav">Jane Smith</span>
             </div>
@@ -860,11 +901,33 @@
                 </svg>
             </button>
         </div>
-        <ul class="mobile-nav-links">
-            <li><a href="dashboard-enhanced.html" class="nav-link">DASHBOARD</a></li>
-            <li><a href="wallet-enhanced.html" class="nav-link active" aria-current="page">WALLET</a></li>
-            <li><a href="index.html#impact" class="nav-link">IMPACT</a></li>
-            <li><a href="explore-centres.html" class="nav-link">CENTRES</a></li>
+                <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
+            <a href="login_2.html" class="mobile-drawer-auth-login">LOG IN</a>
+            <a href="signup_2.html" class="mobile-drawer-auth-signup">SIGN UP</a>
+        </div>
+        <div id="drawerWalletRow" class="mobile-drawer-wallet-row" style="display: none;">
+            <span aria-hidden="true">🦊</span>
+            <div style="flex:1;min-width:0">
+                <div id="drawerWalletAddress" style="color:#fff;font-size:0.8rem;font-weight:600;">0x742d...3a8f</div>
+                <div id="drawerWalletMeta" style="color:rgba(255,255,255,0.55);font-size:0.7rem;">292.22559 CTC · Polygon</div>
+            </div>
+            <button type="button" onclick="disconnectWallet()" style="color:rgba(255,255,255,0.5);font-size:0.7rem;background:none;border:none;cursor:pointer;">Disconnect</button>
+        </div>
+        <div id="drawerConnectRow" style="display: none;">
+            <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">Connect Wallet</button>
+        </div>
+        <ul class="mobile-nav-links" role="list">
+            <li><a href="dashboard-enhanced.html" class="nav-link" id="drawerLinkDashboard">DASHBOARD</a></li>
+            <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
+            <li><a href="wallet-enhanced.html" class="nav-link" id="mobileWalletLink" style="display: none;">WALLET</a></li>
+            <li class="mobile-nav-section-label">TRANSACT</li>
+            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Money</a></li>
+            <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
+            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send</a></li>
+            <li><a href="stake.html" class="nav-link">STAKE</a></li>
+            <li class="mobile-nav-section-label">IMPACT</li>
+            <li><a href="explore-centres.html" class="nav-link mobile-nav-sub">Centres</a></li>
+            <li><a href="governance.html" class="nav-link mobile-nav-sub">Governance</a></li>
         </ul>
     </div>
 
@@ -1173,5 +1236,6 @@
             }
         })();
     </script>
+    <script src="consumer-app-nav.js"></script>
 </body>
 </html>
