@@ -32,7 +32,14 @@
 
         var address = localStorage.getItem('walletAddress') || '';
         var balance = localStorage.getItem('walletBalance') || '292.22559 CTC';
-        var network = localStorage.getItem('walletNetwork') || localStorage.getItem('selectedNetwork') || 'Polygon';
+        var _rawNetwork = localStorage.getItem('walletNetwork') || localStorage.getItem('selectedNetwork') || 'Polygon';
+        var network;
+        try {
+            var _parsedNet = JSON.parse(_rawNetwork);
+            network = (_parsedNet && _parsedNet.label) ? _parsedNet.label : _rawNetwork;
+        } catch (e) {
+            network = _rawNetwork;
+        }
         var userName = localStorage.getItem('unera_user_name') || localStorage.getItem('userName') || 'Jane Smith';
         var initials = userName.split(' ').map(function (n) { return n[0]; }).join('').slice(0, 2).toUpperCase();
 
@@ -137,9 +144,6 @@
         } else if (active === 'wallet') {
             var wl = document.getElementById('walletNavLink');
             if (wl) { wl.classList.add('active'); wl.setAttribute('aria-current', 'page'); }
-        } else if (active === 'stake') {
-            var st = document.getElementById('navLinkStake') || document.querySelector('.nav-links a[href*="stake.html"]');
-            if (st) { st.classList.add('active'); st.setAttribute('aria-current', 'page'); }
         } else if (active === 'transact') {
             var tb = document.getElementById('navDdTransactBtn');
             if (tb) tb.classList.add('is-active-route');
@@ -149,15 +153,10 @@
                     menu.querySelector('a[href*="' + page + '"]');
                 if (match) match.setAttribute('aria-current', 'page');
             }
-        } else if (active === 'impact') {
-            var ib = document.getElementById('navDdImpactBtn');
-            if (ib) ib.classList.add('is-active-route');
-            var imenu = document.getElementById('navDdImpactMenu');
-            if (imenu) {
-                var imatch = imenu.querySelector('a[href="' + page + '"]') ||
-                    imenu.querySelector('a[href*="' + page + '"]');
-                if (imatch) imatch.setAttribute('aria-current', 'page');
-            }
+        } else if (active === 'centres') {
+            var ct = document.getElementById('navLinkCentres') ||
+                document.querySelector('.nav-links a[href*="explore-centres"]');
+            if (ct) { ct.classList.add('active'); ct.setAttribute('aria-current', 'page'); }
         }
     };
 
@@ -227,10 +226,99 @@
         if (e.key === 'Escape') closeNavDropdowns();
     });
 
+    /* ─── Mobile drawer accordions (user profile + notifications) ─ */
+    function measureMobileAccordionHeight(dropdown) {
+        var prevMax = dropdown.style.maxHeight;
+        dropdown.style.maxHeight = 'none';
+        var height = dropdown.scrollHeight;
+        dropdown.style.maxHeight = prevMax;
+        return height;
+    }
+
+    function setMobileAccordionOpen(dropdown, chevron, open, immediate) {
+        if (!dropdown) return;
+        if (open) {
+            dropdown.classList.add('open');
+            dropdown.style.maxHeight = measureMobileAccordionHeight(dropdown) + 'px';
+            if (chevron) chevron.classList.add('open');
+        } else if (immediate) {
+            dropdown.classList.remove('open');
+            dropdown.style.maxHeight = '';
+            if (chevron) chevron.classList.remove('open');
+        } else {
+            if (!dropdown.classList.contains('open')) {
+                dropdown.style.maxHeight = '';
+                if (chevron) chevron.classList.remove('open');
+                return;
+            }
+            dropdown.style.maxHeight = measureMobileAccordionHeight(dropdown) + 'px';
+            requestAnimationFrame(function () {
+                dropdown.style.maxHeight = '0';
+                dropdown.classList.remove('open');
+                if (chevron) chevron.classList.remove('open');
+            });
+        }
+    }
+
+    function closeMobileUserDropdown(immediate) {
+        setMobileAccordionOpen(
+            document.getElementById('mobileUserDropdown'),
+            document.getElementById('mobileUserChevron'),
+            false,
+            immediate
+        );
+    }
+
+    function closeMobileNotificationDropdown(immediate) {
+        setMobileAccordionOpen(
+            document.getElementById('mobileNotificationDropdown'),
+            document.getElementById('mobileNotifChevron'),
+            false,
+            immediate
+        );
+    }
+
+    window.closeMobileDrawerAccordions = function closeMobileDrawerAccordions() {
+        closeMobileUserDropdown(true);
+        closeMobileNotificationDropdown(true);
+    };
+
+    window.toggleMobileUserDropdown = function toggleMobileUserDropdown() {
+        var dropdown = document.getElementById('mobileUserDropdown');
+        var chevron = document.getElementById('mobileUserChevron');
+        if (!dropdown) return;
+        var opening = !dropdown.classList.contains('open');
+        if (opening) closeMobileNotificationDropdown(true);
+        setMobileAccordionOpen(dropdown, chevron, opening);
+    };
+
+    window.toggleMobileNotificationPanel = function toggleMobileNotificationPanel() {
+        var dropdown = document.getElementById('mobileNotificationDropdown');
+        var chevron = document.getElementById('mobileNotifChevron');
+        if (!dropdown) return;
+        var opening = !dropdown.classList.contains('open');
+        if (opening) closeMobileUserDropdown(true);
+        setMobileAccordionOpen(dropdown, chevron, opening);
+    };
+
+    function initMobileDrawerAccordionReset() {
+        var menu = document.querySelector('.mobile-menu');
+        if (!menu) return;
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+                if (m.attributeName === 'class' && !menu.classList.contains('active')) {
+                    closeMobileDrawerAccordions();
+                }
+            });
+        });
+        observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         syncNavAuthState();
         setNavActive();
         initNavDropdowns();
+        initMobileDrawerAccordionReset();
     });
 
     window.addEventListener('storage', syncNavAuthState);

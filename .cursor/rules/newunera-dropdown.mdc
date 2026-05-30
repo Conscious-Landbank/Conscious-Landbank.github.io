@@ -1,0 +1,111 @@
+---
+description: Canonical custom dropdown for NewUnera HTML (no native select for option pickers)
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# NewUnera — Custom dropdown (no native `<select>`)
+
+For user-facing option pickers in modals, filters, steppers, and forms under `NewUnera/`, **do not** use `<select class="form-select">`. Use the **add-money currency dropdown** pattern instead.
+
+## Forbidden
+
+- `<select class="form-select">` (or any native `<select>`) for visible option lists
+- Storing the chosen value only on the toggle button (must use a hidden input)
+- CSS gradient functions on dropdown chrome (see `new-brand-output.mdc`)
+
+## Required DOM structure
+
+```html
+<div class="dropdown"><!-- optional: payee-dropdown, currency-selector -->
+  <button type="button" class="dropdown-toggle" id="…Toggle"
+          aria-haspopup="listbox" aria-expanded="false" aria-labelledby="…Label">
+    <span class="selected-currency" id="…Display">
+      <span class="currency-flag" aria-hidden="true">🇨🇦</span>
+      <span>
+        <div class="currency-code">CAD</div>
+        <div class="currency-name">Canadian Dollar</div>
+      </span>
+    </span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960"
+         fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+  </button>
+  <div class="dropdown-menu" id="…Menu" role="listbox" aria-label="…">
+    <div class="dropdown-list" id="…List">
+      <div class="dropdown-item" role="option" tabindex="0" data-value="CAD">…</div>
+    </div>
+  </div>
+  <input type="hidden" id="…" name="…" value="CAD" required>
+</div>
+```
+
+## Sizing and tokens
+
+| Element | Spec |
+|--------|------|
+| `.dropdown-toggle` | `height: 52px`, full width in modals, `border: 2px solid var(--border-subtle)` |
+| Focus | `outline: 2px solid var(--brand-deep-blue); outline-offset: 2px` on toggle and `.dropdown-item` |
+| Chevron | Rotates when `aria-expanded="true"`; `fill="currentColor"` Material path (see canonical) |
+| Value storage | `<input type="hidden">` with stable `id` / `name` for submit handlers |
+
+Use **flag + code + name** in toggle and items (`.currency-flag`, `.currency-code`, `.currency-name`). Fiat lists use **CAD / USD / EUR / GBP** codes (not `hCAD`) unless the screen is explicitly HUMA-token scoped.
+
+## Search row
+
+Include `.dropdown-search` only when option count is **greater than ~5**. For ≤5 options (network, card type, short fiat lists), omit search.
+
+## Canonical copy-from
+
+| Pattern | File | Anchor |
+|--------|------|--------|
+| Fiat / currency picker | [`NewUnera/add-money.html`](NewUnera/add-money.html) | `#currencyDropdown` — CSS ~894–1054, markup ~2537–2557, JS ~3049–3108 |
+| Asset / token rows (no search) | [`NewUnera/exchange.html`](NewUnera/exchange.html) | `.dropdown` / `.dropdown-toggle` ~1673–1708 |
+| Modal wiring example | [`NewUnera/payee-management.html`](NewUnera/payee-management.html) | `initPayeeDropdown` / `bindPayeeDropdowns` |
+
+## Accessibility
+
+- `aria-haspopup="listbox"`, `aria-expanded` on toggle, `role="listbox"` on menu, `role="option"` + `aria-selected` on items
+- Label: `<label for="…Toggle">` or `aria-labelledby` pointing at label id
+- Keyboard: Enter/Space on options; **Escape closes the open menu before closing a parent modal**
+- Outside click: close menu when click is outside `.dropdown` (`dropdown.contains(e.target)`)
+
+## Modals
+
+Modal sheets use a scrollable `.modal-body` and a sibling `.modal-footer`. Absolute menus inside the body are clipped by `overflow-y: auto` and can sit under the footer. **Do not rely on z-index or always-upward CSS alone.**
+
+### CSS
+
+```css
+.modal-body .dropdown { position: relative; width: 100%; max-width: none; }
+.modal-body .dropdown.is-open { z-index: 40; }
+.dropdown-menu.is-floating {
+  position: fixed; right: auto; z-index: 10015;
+  max-height: min(280px, calc(100dvh - 120px));
+}
+.modal-box.modal-sheet .modal-body { padding-bottom: 2rem; }
+```
+
+At `max-width: 768px`, body padding: `calc(2.5rem + env(safe-area-inset-bottom, 0px))`.
+
+### JavaScript (required in modal dropdowns)
+
+On open, call **`positionPayeeDropdownMenu(hiddenId)`** (see [`NewUnera/payee-management.html`](NewUnera/payee-management.html)):
+
+1. Detect toggle inside `.modal-body`; if not in a modal, use default absolute `top: calc(100% + 0.5rem)`.
+2. Add `.is-floating` to `.dropdown-menu`; set `left` / `width` from toggle `getBoundingClientRect()`.
+3. **Smart flip:** open downward when `spaceBelow >= menuHeight` or `spaceBelow >= spaceAbove`; otherwise open upward.
+4. **Clamp** using the modal **footer top** (`modal-footer.getBoundingClientRect().top`), not raw viewport height — the footer occupies space below the toggle but must not count as usable dropdown space.
+5. Clamp `top` using `window.visualViewport` (or `window.innerHeight`) so the menu stays above the home indicator.
+6. On close, remove `.is-floating`, `.is-drop-up`, `.is-drop-down`, and inline position styles.
+7. Reposition on `window.resize` and `.modal-body` `scroll` while open; remove listeners on close.
+8. **Escape:** close open menu before closing the parent modal.
+
+### Single-option fields
+
+When only one value exists (e.g. Interac CAD), use a read-only `.form-static` row + hidden input — not a fake dropdown toggle.
+
+## JavaScript contract
+
+- Toggle sets `.dropdown-menu.active` and `aria-expanded`
+- `select*` updates hidden input, display HTML, and `.dropdown-item.selected`
+- Submit handlers read `document.getElementById('hiddenId').value` — unchanged from native select

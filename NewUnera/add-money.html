@@ -93,6 +93,8 @@
             --text-xl: 1.25rem;
             --text-2xl: 1.5rem;
             --text-3xl: 2rem;
+            --primary: var(--brand-deep-blue);
+            --surface-error-tint: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -132,6 +134,7 @@
             outline: 3px solid var(--brand-yellow);
         }
 
+        /* ── Nav Shell ───────────────────────────────────── */
         .nav {
             background: var(--gradient-ink);
             padding: 0 2.75rem;
@@ -142,54 +145,21 @@
             position: sticky;
             top: 0;
             z-index: 10001;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
+        .nav-left  { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-right { display: flex; align-items: center; gap: 0.75rem; }
 
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 2.75rem;
-        }
+        /* ── Logo ────────────────────────────────────────── */
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .nav-brand:focus { outline: 3px solid var(--brand-yellow); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-img { height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block; }
 
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .nav-brand:focus {
-            outline: 3px solid var(--brand-yellow);
-            outline-offset: 2px;
-            border-radius: 4px;
-        }
-
-        .nav-logo-img {
-            height: 24px;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            object-position: left center;
-            display: block;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1.375rem;
-            list-style: none;
-            align-items: center;
-        }
+        /* ── Nav Links ───────────────────────────────────── */
+        .nav-links { display: flex; gap: 1.375rem; list-style: none; align-items: center; margin: 0; padding: 0; }
         .nav-links li { display: flex; align-items: center; }
         .nav-link {
-            display: inline-flex;
-            align-items: center;
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
             font-size: 0.75rem;
             font-weight: 500;
@@ -197,191 +167,324 @@
             transition: color 0.2s;
             padding: 0.5rem;
             border-radius: 4px;
-            line-height: 1;
-        }
-
-        .nav-link:hover {
-            color: var(--brand-yellow);
-        }
-
-        .nav-link:focus {
-            outline: 2px solid var(--brand-yellow);
-            outline-offset: 2px;
-        }
-
-        .nav-link.active {
-            color: var(--brand-yellow);
-            font-weight: 600;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            min-height: 44px;
+            text-transform: uppercase;
             background: none;
             border: none;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
+            font-family: var(--font-body);
         }
+        .nav-link:hover  { color: var(--brand-yellow); }
+        .nav-link:focus  { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .nav-link.active { color: var(--brand-yellow); font-weight: 600; }
+        .nav-link.is-active-route { color: var(--brand-yellow); }
 
-        .hamburger:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .hamburger:focus {
-            outline: 2px solid var(--brand-yellow);
-            outline-offset: 2px;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--brand-white);
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
-
-        .mobile-menu-overlay {
+        /* ── TRANSACT Dropdown ───────────────────────────── */
+        .nav-dropdown-chevron { transition: transform 0.2s; }
+        .nav-dropdown-item.open .nav-dropdown-chevron { transform: rotate(180deg); }
+        .nav-dropdown-menu {
             display: none;
-            position: fixed;
-            top: 0;
+            position: absolute;
+            top: calc(100% + 4px);
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 10002;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .mobile-menu-overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 80%;
-            max-width: 320px;
-            height: 100%;
+            min-width: 182px;
             background: var(--brand-white);
-            z-index: 10003;
-            padding: 1.5rem;
-            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .mobile-menu.active {
-            display: block;
-            right: 0;
-        }
-
-        .mobile-menu-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .mobile-menu-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
-            color: var(--text-primary);
-        }
-
-        .mobile-menu-close:hover {
-            background: var(--neutral-200);
-        }
-
-        .mobile-menu-close:focus {
-            outline: 2px solid var(--brand-deep-blue);
-            outline-offset: 2px;
-        }
-
-        .mobile-nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 10002;
+            padding: 0.375rem 0;
             list-style: none;
+            margin: 0;
         }
-
-        .mobile-nav-links .nav-link {
-            display: block;
-            padding: 1rem;
-            font-size: 1rem;
-            border-radius: 8px;
-            transition: all 0.2s;
-            color: var(--text-primary);
-        }
-
-        .mobile-nav-links .nav-link:hover {
-            background: rgba(23, 61, 71, 0.06);
-            color: var(--brand-deep-blue);
-        }
-
-        .mobile-nav-links .nav-link.active {
-            background: rgba(23, 61, 71, 0.08);
-            color: var(--brand-deep-blue);
-            font-weight: 600;
-        }
-
-        .user-profile-nav {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            position: relative;
-            padding: 0.375rem 0.75rem;
-            border-radius: 0.5rem;
-            transition: background 0.2s;
-        }
-
-        .user-profile-nav:hover {
-            background: rgba(255,255,255,0.08);
-        }
-
-        .user-avatar-nav {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--brand-deep-blue);
-            font-weight: 600;
-            font-size: 0.813rem;
-        }
-
-        .user-name-nav {
+        .nav-dropdown-item { position: relative; }
+        .nav-dropdown-item.open .nav-dropdown-menu { display: block; }
+        .nav-dd-item {
+            padding: 0.625rem 1rem;
+            min-height: 41px;
+            color: var(--neutral-800);
+            text-decoration: none;
             font-size: 0.875rem;
             font-weight: 500;
-            color: rgba(255,255,255,0.9);
+            transition: background 0.15s, color 0.15s;
+            display: flex;
+            align-items: center;
+        }
+        .nav-dd-item:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
+        .nav-dd-item:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
+        .nav-dd-item[aria-current="page"] { color: var(--brand-deep-blue); font-weight: 600; }
+
+        /* ── Notification Bell ───────────────────────────── */
+        .notification-bell-wrapper { position: relative; }
+        .notification-bell-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%; border: none; background: transparent;
+            cursor: pointer; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .notification-bell-btn:hover { background: rgba(255,255,255,0.1); }
+        .notification-bell-btn:hover .notif-bell-icon { color: var(--brand-yellow); }
+        .notification-bell-btn:focus { outline: none; }
+        .notification-bell-btn:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .notification-bell-btn .notif-bell-icon { width: 20px; height: 20px; color: rgba(255,255,255,0.85); transition: color 0.2s; }
+        @keyframes notifRing {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-13deg); }
+            60% { transform: rotate(10deg); }
+            80% { transform: rotate(-8deg); }
+        }
+        .notification-bell-btn.ring .notif-bell-icon { animation: notifRing 0.5s ease-in-out; }
+        .notif-badge {
+            min-width: 18px; height: 18px; padding: 0 3px;
+            border-radius: 9px;
+            position: absolute; top: 0; right: 0;
+            background: var(--brand-yellow);
+            color: var(--brand-deep-blue);
+            font-size: 0.625rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--brand-deep-blue);
+        }
+        .notif-badge[data-count="0"] { display: none; }
+
+        /* ── Notification Panel ──────────────────────────── */
+        .user-dropdown-nav.notification-panel {
+            width: 360px;
+            max-height: min(520px, 85vh);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .notif-panel-header { padding: 1.25rem; flex-shrink: 0; }
+        .notif-panel-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .notif-panel-title { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
+        .notif-unread-label { font-size: 0.75rem; color: var(--brand-deep-blue); font-weight: 600; }
+        .notif-panel-actions { display: flex; align-items: center; gap: 0.5rem; }
+        .notif-action-link { background: none; border: none; cursor: pointer; font-size: 0.75rem; color: var(--text-secondary); text-decoration: none; font-weight: 500; padding: 0; font-family: var(--font-body); }
+        .notif-action-link:hover { text-decoration: underline; }
+        .notif-action-link.view-all-link { color: var(--brand-deep-blue); font-weight: 600; }
+        .notif-close-btn { width: 24px; height: 24px; border-radius: 50%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--neutral-600); transition: background 0.2s; }
+        .notif-close-btn:hover { background: rgba(0,0,0,0.06); }
+        .notif-list-wrapper { padding: 0.5rem; flex: 1; min-height: 0; overflow-y: auto; }
+        .notif-list { list-style: none; padding: 0; margin: 0; }
+        .notif-panel-footer { padding: 0.5rem; flex-shrink: 0; }
+        .notif-panel-footer .notif-footer-btn { width: 100%; padding: 0.875rem 1.5rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.938rem; display: flex; align-items: center; justify-content: center; }
+        .notif-panel-footer .notif-footer-btn[hidden],
+        .notif-panel-footer[hidden],
+        .notif-panel-divider[hidden] { display: none !important; }
+        .notification-panel .dropdown-divider-nav { flex-shrink: 0; }
+
+        /* ── Notification Items ── */
+        .notif-item {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            padding: 0.5rem; border-radius: 0.5rem;
+            transition: background 0.15s; cursor: pointer; position: relative;
+        }
+        .notif-item:hover { background: rgba(23,61,71,0.04); }
+        .notif-item.read { opacity: 0.65; }
+        .notif-item-icon {
+            width: 24px; height: 24px;
+            border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .notif-item-icon svg { width: 14px; height: 14px; fill: currentColor; stroke: none; }
+        .notif-type-transaction  { background: rgba(23, 61, 71, 0.1); color: var(--brand-deep-blue); }
+        .notif-type-pending      { background: color-mix(in srgb, #b8a030 15%, var(--brand-white)); color: #b8a030; }
+        .notif-type-error        { background: var(--surface-error-tint); color: var(--brand-red); }
+        .notif-type-system       { background: color-mix(in srgb, var(--brand-light-blue) 20%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .notif-type-listing      { background: color-mix(in srgb, #6a5770 12%, var(--brand-white)); color: #6a5770; }
+        .notif-type-donation     { background: color-mix(in srgb, #6a5770 12%, var(--brand-white)); color: #6a5770; }
+        .notif-type-remittance   { background: rgba(23, 61, 71, 0.1); color: var(--brand-deep-blue); }
+        .notif-type-verification { background: color-mix(in srgb, var(--brand-light-blue) 20%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .notif-item-body { flex: 1; min-width: 0; cursor: pointer; }
+        .notif-item-title { font-size: 0.813rem; font-weight: 600; color: var(--text-primary); margin: 0 0 0.125rem; line-height: 1.3; }
+        .notif-item-msg { font-size: 0.75rem; color: var(--text-secondary); margin: 0 0 0.25rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .notif-item-time { font-size: 0.688rem; color: var(--neutral-600); display: block; margin-bottom: 0.25rem; }
+        .notif-item-cta { font-size: 0.75rem; font-weight: 600; color: var(--brand-deep-blue); text-decoration: none; margin-top: 0.25rem; display: inline-block; }
+        .notif-item-cta:hover { text-decoration: underline; }
+        .notif-item-cta:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .notif-unread-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand-deep-blue); flex-shrink: 0; margin-top: 4px; }
+        .notif-item-dismiss { width: 20px; height: 20px; border-radius: 4px; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--neutral-600); opacity: 0; flex-shrink: 0; transition: opacity 0.15s, background 0.15s; }
+        .notif-item:hover .notif-item-dismiss { opacity: 1; }
+        .notif-item-dismiss:hover { background: rgba(0,0,0,0.06); color: var(--text-primary); }
+        .notif-empty { padding: 1.5rem; text-align: center; color: var(--text-secondary); font-size: 0.875rem; }
+
+        /* ── User Dropdown + Shared Dropdown Base ────────── */
+        .user-dropdown-nav {
+            position: absolute;
+            top: calc(100% + 0.75rem); right: 0;
+            width: 280px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002; overflow: hidden;
+        }
+        .user-dropdown-nav.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-header-nav {
+            padding: 1.25rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white));
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .dropdown-user-info-nav { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .dropdown-avatar-nav { width: 48px; height: 48px; border-radius: 50%; background: var(--brand-deep-blue); display: flex; align-items: center; justify-content: center; color: var(--brand-white); font-weight: 700; font-size: 1.125rem; flex-shrink: 0; }
+        .dropdown-user-details-nav { flex: 1; min-width: 0; }
+        .dropdown-user-name-nav { font-weight: 600; font-size: 1rem; color: var(--neutral-900); margin-bottom: 0.125rem; }
+        .dropdown-user-email-nav { font-size: 0.813rem; color: var(--neutral-600); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dropdown-wallet-badge-nav { display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(23,61,71,0.1); border-radius: 0.375rem; font-size: 0.75rem; color: var(--brand-deep-blue); font-weight: 600; }
+        .dropdown-menu-nav { padding: 0.5rem; }
+        .dropdown-section-nav { margin-bottom: 0.5rem; }
+        .dropdown-section-title-nav { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; padding: 0.75rem 0.75rem 0.5rem; text-transform: uppercase; }
+        .dropdown-item-nav { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; color: var(--neutral-800); text-decoration: none; transition: all 0.15s; cursor: pointer; font-size: 0.875rem; }
+        .dropdown-item-nav:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
+        .dropdown-item-nav.active { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); font-weight: 600; }
+        .dropdown-divider-nav { height: 1px; background: rgba(0,0,0,0.06); margin: 0.5rem 0; }
+
+        /* ── Wallet Display Pill ─────────────────────────── */
+        .nav-wallet-display {
+            display: flex; align-items: center; gap: 0.3125rem;
+            padding: 0.125rem 0.5rem 0.125rem 0.25rem;
+            max-height: 36px; margin-top: 2px; align-self: center;
+            background: var(--neutral-100);
+            border: 1px solid var(--border-subtle);
+            border-radius: 980px;
+            color: var(--text-primary);
+        }
+        .nav-wallet-avatar { position: relative; width: 28px; height: 28px; flex-shrink: 0; }
+        .user-avatar-nav {
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-white);
+            font-weight: 600;
+            font-size: 0.813rem;
+            cursor: pointer;
+        }
+        .nav-wallet-display .user-avatar-nav { width: 28px; height: 28px; font-size: 0.75rem; }
+        .nav-wallet-metamask-badge {
+            position: absolute; bottom: -1px; right: -1px;
+            width: 12px; height: 12px; font-size: 7px;
+            display: flex; align-items: center; justify-content: center;
+            background: #F6851B; border-radius: 50%;
+            border: 2px solid var(--neutral-100);
+        }
+        .nav-wallet-info { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+        .nav-wallet-address { font-size: 0.75rem; font-weight: 600; line-height: 1.2; }
+        .nav-wallet-balance { font-size: 0.6875rem; line-height: 1.2; color: var(--text-secondary); }
+        .nav-wallet-address-row { display: inline-flex; align-items: center; gap: 0.125rem; }
+        .nav-wallet-chevron { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.55; transition: transform 0.18s cubic-bezier(0.28,0.11,0.32,1), opacity 0.18s; }
+        .nav-wallet-trigger { cursor: pointer; border-radius: 0.375rem; padding: 0.0625rem 0.125rem; transition: background 0.15s; outline: none; }
+        .nav-wallet-trigger:hover { background: var(--neutral-100); }
+        .nav-wallet-trigger:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .nav-wallet-trigger:hover .nav-wallet-chevron,
+        .nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron { opacity: 1; }
+        .nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron { transform: rotate(180deg); }
+
+        /* Wallet options dropdown */
+        .wallet-nav-dropdown {
+            position: absolute; top: calc(100% + 0.75rem); left: 0; width: 220px;
+            background: var(--brand-white); border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.12s cubic-bezier(0.28,0.11,0.32,1);
+            z-index: 10002; overflow: hidden; padding: 0.375rem 0;
+        }
+        .wallet-nav-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .wallet-nav-item { display: flex; align-items: center; gap: 0.625rem; width: 100%; min-height: 44px; padding: 0 1rem; background: none; border: none; cursor: pointer; font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; color: var(--text-primary); text-align: left; transition: background 0.1s; }
+        .wallet-nav-item:hover { background: var(--neutral-100); }
+        .wallet-nav-item:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
+        .wallet-nav-item--destructive { color: var(--text-primary); }
+        .wallet-nav-item--destructive:hover { background: var(--surface-error-tint); color: var(--error); }
+        .wallet-nav-divider { height: 1px; background: var(--border-subtle); margin: 0.25rem 0; }
+
+        /* Network badge */
+        .nav-network-badge {
+            display: flex; align-items: center; gap: 0.1875rem;
+            padding: 0.125rem 0.25rem; border-left: 1px solid var(--neutral-300);
+            cursor: pointer; border-radius: 0.375rem; transition: background 0.15s;
+        }
+        .nav-network-badge:hover { background: rgba(0,0,0,0.06); }
+        .nav-network-badge:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .nav-network-badge.open { background: rgba(0,0,0,0.06); }
+        .nav-network-icon { width: 14px; height: 14px; color: #627EEA; }
+        .nav-network-badge span { font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary); }
+        .nav-network-chevron { width: 12px; height: 12px; color: var(--text-secondary); flex-shrink: 0; transition: transform 0.2s ease; }
+        .nav-network-badge.open .nav-network-chevron { transform: rotate(180deg); }
+
+        /* Network switcher dropdown */
+        .network-dropdown-nav {
+            position: absolute; top: calc(100% + 0.75rem); right: 0; width: 220px;
+            background: var(--brand-white); border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1);
+            z-index: 10002; overflow: hidden;
+        }
+        .network-dropdown-nav.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .network-dropdown-header-nav { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; padding: 0.75rem 0.75rem 0.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.06); margin-bottom: 0.25rem; }
+        .network-options-list-nav { padding: 0.375rem 0.5rem 0.5rem; }
+        .network-option-nav { display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; color: var(--neutral-800); cursor: pointer; font-size: 0.875rem; transition: all 0.15s; user-select: none; }
+        .network-option-nav:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
+        .network-option-nav:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
+        .network-option-nav.active { color: var(--brand-deep-blue); font-weight: 600; background: rgba(23,61,71,0.06); }
+        .network-option-icon { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; }
+        .network-option-name { flex: 1; }
+        .network-option-check { width: 14px; height: 14px; color: var(--brand-deep-blue); flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
+        .network-option-nav.active .network-option-check { opacity: 1; }
+
+        /* ── Hamburger ───────────────────────────────────── */
+        .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .hamburger:hover { background: rgba(255,255,255,0.1); }
+        .hamburger:focus { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--brand-white); transition: all 0.3s ease; border-radius: 2px; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ── Mobile Menu ─────────────────────────────────── */
+        .mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10002; opacity: 0; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu { display: none; position: fixed; top: 0; right: -100%; width: 80%; max-width: 320px; height: 100%; background: var(--brand-white); z-index: 10003; padding: 1.5rem; box-shadow: -4px 0 12px rgba(0,0,0,0.1); transition: right 0.3s ease; overflow-y: auto; }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); }
+        .mobile-menu-close { background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; padding: 0; margin: 0; }
+        .mobile-nav-links .nav-link { display: block; padding: 1rem; font-size: 1rem; border-radius: 8px; transition: all 0.2s; color: var(--text-primary); text-decoration: none; font-weight: 500; min-height: 44px; }
+        .mobile-nav-links .nav-link:hover { background: var(--neutral-200); }
+        .mobile-nav-links .nav-link.active { background: rgba(23,61,71,0.1); color: var(--brand-deep-blue); }
+        .mobile-nav-section-label { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; text-transform: uppercase; padding: 0.75rem 1rem 0.25rem; }
+        .mobile-nav-sub { padding-left: 1.5rem !important; font-size: 0.938rem !important; }
+
+        /* ── Reduced Motion ──────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            .nav-wallet-chevron,
+            .wallet-nav-dropdown, .nav-wallet-trigger,
+            .network-dropdown-nav, .user-dropdown-nav, .notification-panel,
+            .hamburger span, .mobile-menu, .nav-dropdown-chevron { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+        }
+
+        /* ── Responsive ≤768px ───────────────────────────── */
+        @media (max-width: 768px) {
+            .nav { padding: 0 1rem; }
+            .nav-wallet-balance, .nav-network-badge { display: none; }
+            .user-dropdown-nav.notification-panel { width: 320px; }
+        }
+
+        /* ── Responsive ≤480px ───────────────────────────── */
+        @media (max-width: 480px) {
+            .nav-wallet-address { display: none; }
+            .nav-wallet-info { display: none; }
+            .nav-wallet-display { padding: 0.25rem; border-radius: 50%; width: 36px; height: 36px; justify-content: center; }
+            .hamburger { display: flex; }
+            .nav-links { display: none; }
+            .user-dropdown-nav { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
+            #notificationPanel.show { position: fixed; top: 44px; left: 0; right: 0; width: 100%; max-height: 70vh; border-radius: 0 0 0.75rem 0.75rem; }
+            .network-dropdown-nav { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
+            .wallet-nav-dropdown { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
         }
 
         /* Main Container */
@@ -592,6 +695,25 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+        }
+
+        .view-all-link {
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.938rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            min-height: 44px;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-family: var(--font-body);
+        }
+        .view-all-link:hover { text-decoration: underline; }
+        .view-all-link:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
         }
 
         .btn-add-new {
@@ -1452,18 +1574,6 @@
             background: var(--warning);
         }
 
-        /* Connect button in nav */
-        #walletNavItem { position: relative; display: inline-block; }
-        .nav-connect-btn {
-            display: inline-flex; align-items: center; gap: 0.25rem;
-            background: transparent; border: none; cursor: pointer;
-            font-family: var(--font-body);
-            color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; font-weight: 500;
-            letter-spacing: 0.02em; padding: 0.5rem; border-radius: 4px; line-height: 1;
-        }
-        .nav-connect-btn:hover { color: var(--brand-yellow); }
-        .nav-connect-btn:focus, .nav-connect-btn:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
-        .nav-connect-btn .connect-chevron { width: 12px; height: 12px; }
         .hidden { display: none !important; }
 
         /* Connect modal wallet grid */
@@ -1548,19 +1658,6 @@
 
         /* Responsive Breakpoints */
         @media (max-width: 768px) {
-            .nav {
-                padding: 0 1.5rem;
-            }
-
-            .nav-links,
-            .user-profile-nav {
-                display: none;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
             .container {
                 padding: 2rem 1.5rem;
             }
@@ -1659,10 +1756,6 @@
         }
 
         @media (max-width: 480px) {
-            .nav {
-                padding: 0 1rem;
-            }
-
             .container {
                 padding: 1.5rem 1rem;
             }
@@ -1856,45 +1949,56 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
-    <link rel="stylesheet" href="consumer-app-nav.css">
 </head>
 <body data-nav-active="transact">
     <!-- Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Navigation (reused) -->
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-left">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
-                <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <img src="NewLogo/Unera White Text Nav.svg"
+                     alt="UNERA"
+                     class="nav-logo-img"
+                     height="24">
             </a>
             <ul class="nav-links" role="list">
-                <li><a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DASHBOARD</a></li>
+                <li>
+                    <a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DASHBOARD</a>
+                </li>
                 <li id="walletNavItem">
-                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
+                    <button type="button" class="nav-link nav-connect-btn"
+                            id="navConnectBtn"
+                            onclick="openConnectModal()"
+                            aria-label="Connect wallet">CONNECT</button>
                     <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
                 </li>
                 <li class="nav-dropdown-item" id="navDdTransact">
-                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
+                    <button type="button"
+                            class="nav-link nav-dropdown-trigger"
+                            id="navDdTransactBtn"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-controls="navDdTransactMenu">
                         TRANSACT
-                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                        <svg class="nav-dropdown-chevron"
+                             xmlns="http://www.w3.org/2000/svg"
+                             width="16" height="16"
+                             viewBox="0 -960 960 960"
+                             fill="currentColor"
+                             aria-hidden="true">
+                            <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>
+                        </svg>
                     </button>
                     <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu" aria-label="Transact options">
-                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Money</a></li>
+                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Tokens</a></li>
+                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send Tokens</a></li>
+                        <li><a href="stake.html" class="nav-dd-item" role="menuitem">Stake</a></li>
                         <li><a href="exchange.html" class="nav-dd-item" role="menuitem">Exchange</a></li>
-                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send</a></li>
                     </ul>
                 </li>
-                <li><a href="stake.html" class="nav-link" id="navLinkStake">STAKE</a></li>
-                <li class="nav-dropdown-item" id="navDdImpact">
-                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdImpactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdImpactMenu">
-                        IMPACT
-                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
-                    </button>
-                    <ul class="nav-dropdown-menu" id="navDdImpactMenu" role="menu" aria-label="Impact options">
-                        <li><a href="explore-centres.html" class="nav-dd-item" role="menuitem">Centres</a></li>
-                        <li><a href="governance.html" class="nav-dd-item" role="menuitem">Governance</a></li>
-                    </ul>
+                <li>
+                    <a href="explore-centres.html" class="nav-link" id="navLinkCentres">CENTRES</a>
                 </li>
                 <li id="navAuthLinks" style="display: none;">
                     <a href="login_2.html" class="nav-link btn-nav-secondary">LOG IN</a>
@@ -1902,43 +2006,290 @@
                 </li>
             </ul>
         </div>
+
         <div class="nav-right">
-                        <div class="nav-wallet-display" id="navWalletDisplay" style="display: none;" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Wallet connected">
-                <div class="nav-wallet-icon-badge">
-                    <div class="nav-wallet-blockie"></div>
-                    <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+
+            <!-- Notification Bell -->
+            <div class="notification-bell-wrapper" id="notificationBellWrapper">
+                <button type="button"
+                        id="notificationBell"
+                        class="notification-bell-btn"
+                        aria-label="Notifications, 3 unread"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        onclick="toggleNotificationPanel()">
+                    <svg class="notif-bell-icon"
+                         xmlns="http://www.w3.org/2000/svg"
+                         width="20" height="20"
+                         viewBox="0 -960 960 960"
+                         fill="currentColor"
+                         aria-hidden="true">
+                        <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/>
+                    </svg>
+                    <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
+                </button>
+
+                <!-- Notification Panel -->
+                <div class="user-dropdown-nav notification-panel" id="notificationPanel"
+                     role="dialog" aria-label="Notifications" aria-modal="false"
+                     onclick="event.stopPropagation()">
+
+                    <div class="dropdown-header-nav notif-panel-header">
+                        <div class="notif-panel-title-row">
+                            <span class="notif-panel-title">Notifications</span>
+                            <span class="notif-unread-label" id="notifUnreadLabel">3 unread</span>
+                        </div>
+                        <div class="notif-panel-actions">
+                            <a href="notifications.html" class="notif-action-link view-all-link">View all</a>
+                            <button type="button" class="notif-action-link"
+                                    onclick="markAllNotificationsRead()">Mark all read</button>
+                            <button type="button" class="notif-close-btn"
+                                    onclick="closeNotificationPanel()" aria-label="Close notifications">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-menu-nav notif-list-wrapper">
+                        <div class="dropdown-section-title-nav">NEW</div>
+                        <ul class="notif-list" id="notificationList" role="list" aria-live="polite"></ul>
+                    </div>
+
+                    <div class="dropdown-divider-nav notif-panel-divider" id="notifPanelDivider"></div>
+                    <div class="dropdown-menu-nav notif-panel-footer" id="notifPanelFooter">
+                        <button type="button" class="btn btn-secondary notif-footer-btn"
+                                id="clearAllNotificationsBtn"
+                                onclick="clearAllNotifications()">Clear all notifications</button>
+                    </div>
                 </div>
-                <div class="nav-wallet-info">
-                    <span class="nav-wallet-address" id="navWalletAddress">0x742d...3a8f</span>
+            </div>
+            <!-- /Notification Bell -->
+
+            <!-- Wallet Display Pill -->
+            <div class="nav-wallet-display" id="navWalletDisplay"
+                 style="display: none; position: relative;"
+                 aria-label="Wallet connected">
+
+                <!-- Part 1: User Avatar + User Dropdown -->
+                <div class="nav-wallet-avatar">
+                    <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                    <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+
+                    <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                        <div class="dropdown-header-nav">
+                            <div class="dropdown-user-info-nav">
+                                <div class="dropdown-avatar-nav">JS</div>
+                                <div class="dropdown-user-details-nav">
+                                    <div class="dropdown-user-name-nav">Jane Smith</div>
+                                    <div class="dropdown-user-email-nav">jane@example.com</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-wallet-badge-nav">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
+                                </svg>
+                                <span id="dropdownWalletAddress">0x742d...3a8f</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-menu-nav" id="desktopMenuContainer">
+                            <div class="dropdown-section-nav">
+                                <div class="dropdown-section-title-nav">ACCOUNT</div>
+                                <a href="account-settings.html" class="dropdown-item-nav">My Profile</a>
+                                <a href="account-settings.html" class="dropdown-item-nav">Account Settings</a>
+                            </div>
+                            <div class="dropdown-divider-nav"></div>
+                            <a href="wallet-enhanced.html" class="dropdown-item-nav">My Wallet</a>
+                            <a href="dashboard-enhanced.html" class="dropdown-item-nav">Dashboard</a>
+                            <div class="dropdown-divider-nav"></div>
+                            <a href="#" class="dropdown-item-nav" id="disconnectWalletItem"
+                               onclick="disconnectWallet(); return false;" style="display: none;">
+                                Disconnect Wallet
+                            </a>
+                            <a href="#" class="dropdown-item-nav"
+                               onclick="logout(); return false;">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 2: Wallet Address Trigger + Wallet Options Dropdown -->
+                <div class="nav-wallet-info nav-wallet-trigger"
+                     role="button" tabindex="0"
+                     aria-haspopup="menu" aria-expanded="false"
+                     aria-label="Wallet options"
+                     onclick="toggleWalletDropdown(event)"
+                     onkeydown="handleWalletTriggerKey(event)">
+                    <span class="nav-wallet-address-row">
+                        <span class="nav-wallet-address" id="navWalletAddress">0x742d...3a8f</span>
+                        <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </span>
                     <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
                 </div>
-                <div class="nav-wallet-network" id="navWalletNetwork">
-                    <span id="navNetworkLabel">Polygon</span>
+
+                <div class="wallet-nav-dropdown" id="walletNavDropdown"
+                     role="menu" aria-label="Wallet options"
+                     onclick="event.stopPropagation()">
+                    <button class="wallet-nav-item" role="menuitem" onclick="switchWalletFromNav()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17 1l4 4-4 4"/>
+                            <path d="M3 11V9a4 4 0 014-4h14"/>
+                            <path d="M7 23l-4-4 4-4"/>
+                            <path d="M21 13v2a4 4 0 01-4 4H3"/>
+                        </svg>
+                        Switch wallet
+                    </button>
+                    <div class="wallet-nav-divider" role="separator"></div>
+                    <button class="wallet-nav-item wallet-nav-item--destructive"
+                            role="menuitem" onclick="disconnectWalletFromNav()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Disconnect
+                    </button>
+                </div>
+
+                <!-- Part 3: Network Badge + Network Switcher Dropdown -->
+                <div class="nav-network-badge"
+                     role="button" tabindex="0"
+                     aria-haspopup="listbox" aria-expanded="false"
+                     aria-label="Switch network, currently Ethereum"
+                     onclick="toggleNetworkDropdown(event)"
+                     onkeydown="handleNetworkBadgeKey(event)">
+                    <svg class="nav-network-icon" id="navNetworkIcon"
+                         viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+                    </svg>
+                    <span id="navNetworkLabel">Ethereum</span>
+                    <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </div>
+
+                <div class="network-dropdown-nav" id="networkDropdown"
+                     role="listbox" aria-label="Select blockchain network"
+                     onclick="event.stopPropagation()">
+                    <div class="network-dropdown-header-nav">Switch Network</div>
+                    <div class="network-options-list-nav">
+                        <div class="network-option-nav active"
+                             role="option" aria-selected="true" tabindex="0"
+                             data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                             onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                            </svg>
+                            <span class="network-option-name">Ethereum</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="polygon" data-chain-label="Polygon" data-chain-color="#8247E5"
+                             onclick="switchNetwork('polygon','Polygon','#8247E5',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#8247E5"/>
+                                <path d="M13.5 7.5L10 5.5 6.5 7.5v4l3.5 2 3.5-2v-4z" fill="white" opacity="0.9"/>
+                                <path d="M10 9.5L8 8.5v2l2 1 2-1v-2L10 9.5z" fill="#8247E5"/>
+                            </svg>
+                            <span class="network-option-name">Polygon</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="arbitrum" data-chain-label="Arbitrum" data-chain-color="#28A0F0"
+                             onclick="switchNetwork('arbitrum','Arbitrum','#28A0F0',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#2D374B"/>
+                                <path d="M10 4L7 9l3 1.5L13 9 10 4z" fill="#28A0F0"/>
+                                <path d="M7 9l-1 5 4-2 4 2-1-5-3 1.5L7 9z" fill="#28A0F0" opacity="0.7"/>
+                            </svg>
+                            <span class="network-option-name">Arbitrum</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="optimism" data-chain-label="Optimism" data-chain-color="#FF0420"
+                             onclick="switchNetwork('optimism','Optimism','#FF0420',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#FF0420"/>
+                                <circle cx="10" cy="10" r="5" fill="white" opacity="0.9"/>
+                                <circle cx="10" cy="10" r="2.5" fill="#FF0420"/>
+                            </svg>
+                            <span class="network-option-name">Optimism</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                             onclick="switchNetwork('base','Base','#0052FF',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                            </svg>
+                            <span class="network-option-name">Base</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="bnb" data-chain-label="BNB Chain" data-chain-color="#F3BA2F"
+                             onclick="switchNetwork('bnb','BNB Chain','#F3BA2F',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#F3BA2F"/>
+                                <path d="M10 5l1.5 1.5L10 8 8.5 6.5 10 5zM6.5 8.5L8 7l1.5 1.5L8 10l-1.5-1.5zM10 12l1.5-1.5L13 12l-1.5 1.5L10 12zM12 10l1.5-1.5L15 10l-1.5 1.5L12 10zM10 9l1 1-1 1-1-1 1-1z" fill="white"/>
+                            </svg>
+                            <span class="network-option-name">BNB Chain</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
                 </div>
             </div>
-<div class="user-profile-nav">
-                <div class="user-avatar-nav">JS</div>
-                <div class="user-name-nav">Jane Smith</div>
-            </div>
+            <!-- /Wallet Display Pill -->
+
+            <!-- Hamburger (visible ≤480px only) -->
             <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
+
         </div>
     </nav>
 
+    <!-- Mobile Menu Overlay -->
     <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Drawer -->
     <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
         <div class="mobile-menu-header">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
-                <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <img src="NewLogo/Unera Black Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
             </a>
             <button class="mobile-menu-close" aria-label="Close menu">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
             </button>
         </div>
-                <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
+        <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
             <a href="login_2.html" class="mobile-drawer-auth-login">LOG IN</a>
             <a href="signup_2.html" class="mobile-drawer-auth-signup">SIGN UP</a>
         </div>
@@ -1948,26 +2299,28 @@
                 <div id="drawerWalletAddress" style="color:#fff;font-size:0.8rem;font-weight:600;">0x742d...3a8f</div>
                 <div id="drawerWalletMeta" style="color:rgba(255,255,255,0.55);font-size:0.7rem;">292.22559 CTC · Polygon</div>
             </div>
-            <button type="button" onclick="disconnectWallet()" style="color:rgba(255,255,255,0.5);font-size:0.7rem;background:none;border:none;cursor:pointer;">Disconnect</button>
+            <button type="button" onclick="disconnectWallet()"
+                    style="color:rgba(255,255,255,0.5);font-size:0.7rem;background:none;border:none;cursor:pointer;">Disconnect</button>
         </div>
         <div id="drawerConnectRow" style="display: none;">
             <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">Connect Wallet</button>
         </div>
         <ul class="mobile-nav-links" role="list">
             <li><a href="dashboard-enhanced.html" class="nav-link" id="drawerLinkDashboard">DASHBOARD</a></li>
-            <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
+            <li id="mobileConnectNavItem" style="display: none;">
+                <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button>
+            </li>
             <li><a href="wallet-enhanced.html" class="nav-link" id="mobileWalletLink" style="display: none;">WALLET</a></li>
             <li class="mobile-nav-section-label">TRANSACT</li>
-            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Money</a></li>
+            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Tokens</a></li>
+            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send Tokens</a></li>
+            <li><a href="stake.html" class="nav-link mobile-nav-sub">Stake</a></li>
             <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
-            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send</a></li>
-            <li><a href="stake.html" class="nav-link">STAKE</a></li>
-            <li class="mobile-nav-section-label">IMPACT</li>
-            <li><a href="explore-centres.html" class="nav-link mobile-nav-sub">Centres</a></li>
-            <li><a href="governance.html" class="nav-link mobile-nav-sub">Governance</a></li>
+            <li><a href="explore-centres.html" class="nav-link" id="drawerLinkCentres">CENTRES</a></li>
         </ul>
+        <div id="mobileUserMenu"></div>
+        <div id="mobileNotificationsSection"></div>
     </div>
-
 
     <!-- Main Content -->
     <main id="main-content" class="container">
@@ -2042,10 +2395,13 @@
         <div id="step-payment" class="step-content">
             <div class="payment-methods-header">
                 <h2 class="section-title">Choose Payment Method</h2>
+                <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                <a href="payee-management.html#cards" class="view-all-link manage-methods-link" aria-label="Manage your saved payment methods">Manage</a>
                 <button class="btn-add-new" onclick="showAddNewPayment()" aria-label="Add new payment method">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                     Add New
                 </button>
+                </div>
             </div>
 
             <!-- Saved Payment Methods Grid with enhanced micro‑copy -->
@@ -2654,22 +3010,6 @@
         // (All original functions from add-money.html are preserved below.
         //  Only minor adaptations are made to integrate with the new stepper.)
 
-        // Mobile Menu
-        function toggleMobileMenu() {
-            const hamburger = document.querySelector('.hamburger');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const overlay = document.querySelector('.mobile-menu-overlay');
-            
-            hamburger.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            overlay.classList.toggle('active');
-            
-            const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-            hamburger.setAttribute('aria-expanded', !isExpanded);
-            
-            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
-        }
-
         // Currency Data
         const currencies = [
             { code: 'hCAD', name: 'Canadian Dollar', flag: '🇨🇦', rate: 0.74 },
@@ -3265,6 +3605,286 @@
                 walletLink.style.display = 'inline-block';
             }
         });
+    </script>
+    <script>
+    /* ── Notification Panel ──────────────────────────── */
+    function toggleNotificationPanel() {
+        var userDropdown = document.getElementById('userDropdown');
+        if (userDropdown && userDropdown.classList.contains('show')) userDropdown.classList.remove('show');
+        var panel = document.getElementById('notificationPanel');
+        var bell  = document.getElementById('notificationBell');
+        if (!panel || !bell) return;
+        var isOpen = panel.classList.contains('show');
+        if (isOpen) {
+            panel.classList.remove('show');
+            bell.setAttribute('aria-expanded', 'false');
+            bell.focus();
+        } else {
+            panel.classList.add('show');
+            bell.setAttribute('aria-expanded', 'true');
+            var closeBtn = panel.querySelector('.notif-close-btn');
+            if (closeBtn) setTimeout(function() { closeBtn.focus(); }, 50);
+        }
+    }
+    function closeNotificationPanel() {
+        var panel = document.getElementById('notificationPanel');
+        var bell  = document.getElementById('notificationBell');
+        if (panel) panel.classList.remove('show');
+        if (bell)  { bell.setAttribute('aria-expanded', 'false'); bell.focus(); }
+    }
+    function markAllNotificationsRead() {
+        var label = document.getElementById('notifUnreadLabel');
+        var badge = document.getElementById('notifBadge');
+        if (label) label.textContent = '0 unread';
+        if (badge) badge.setAttribute('data-count', '0');
+    }
+    function clearAllNotifications() {
+        var list    = document.getElementById('notificationList');
+        var badge   = document.getElementById('notifBadge');
+        var footer  = document.getElementById('notifPanelFooter');
+        var divider = document.getElementById('notifPanelDivider');
+        if (list)    list.innerHTML = '';
+        if (badge)   badge.setAttribute('data-count', '0');
+        if (footer)  footer.hidden = true;
+        if (divider) divider.hidden = true;
+    }
+
+    /* ── User Dropdown ───────────────────────────────── */
+    function toggleUserDropdown() {
+        closeNotificationPanel();
+        closeNetworkDropdown();
+        var dropdown = document.getElementById('userDropdown');
+        if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    /* ── Wallet Nav Dropdown ─────────────────────────── */
+    function closeWalletNavDropdown() {
+        var dropdown = document.getElementById('walletNavDropdown');
+        var trigger  = document.querySelector('.nav-wallet-trigger');
+        if (dropdown) dropdown.classList.remove('show');
+        if (trigger)  trigger.setAttribute('aria-expanded', 'false');
+    }
+    function toggleWalletDropdown(event) {
+        event.stopPropagation();
+        closeNetworkDropdown();
+        var userDropdown = document.getElementById('userDropdown');
+        if (userDropdown) userDropdown.classList.remove('show');
+        closeNotificationPanel();
+        var dropdown = document.getElementById('walletNavDropdown');
+        var trigger  = document.querySelector('.nav-wallet-trigger');
+        if (!dropdown || !trigger) return;
+        var isOpen = dropdown.classList.toggle('show');
+        trigger.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) {
+            var firstItem = dropdown.querySelector('[role="menuitem"]');
+            if (firstItem) firstItem.focus();
+        }
+    }
+    function handleWalletTriggerKey(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault(); toggleWalletDropdown(event);
+        } else if (event.key === 'Escape') {
+            closeWalletNavDropdown();
+            var t = document.querySelector('.nav-wallet-trigger'); if (t) t.focus();
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            var dd = document.getElementById('walletNavDropdown');
+            if (!dd) return;
+            if (!dd.classList.contains('show')) toggleWalletDropdown(event);
+            var fi = dd.querySelector('[role="menuitem"]'); if (fi) fi.focus();
+        }
+    }
+    function switchWalletFromNav() {
+        closeWalletNavDropdown();
+        openConnectModal();
+    }
+    function disconnectWalletFromNav() {
+        closeWalletNavDropdown();
+        doDisconnectWallet();
+    }
+
+    /* ── Network Switcher ────────────────────────────── */
+    var CHAIN_NAV_ICON_PATHS = {
+        ethereum: { path: 'M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z', viewBox: '0 0 24 24' },
+        polygon:  { path: 'M14.12 6.78L10 4.5 5.88 6.78v4.44L10 13.5l4.12-2.28V6.78zm-4.12 4.5L8 10V8l2-1.1L12 8v2l-2 1.28z', viewBox: '0 0 20 20' },
+        arbitrum: { path: 'M12 2L4 14l8 4 8-4L12 2zm0 3l5 8.5-5 2.5-5-2.5L12 5z', viewBox: '0 0 24 24' },
+        optimism: { path: 'M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 4a6 6 0 1 1 0 12A6 6 0 0 1 12 6z', viewBox: '0 0 24 24' },
+        base:     { path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.18 0 9.44-3.93 9.95-9H12v-2h11.95c-.5-5.5-5.1-9.99-11.95-9.99V2z', viewBox: '0 0 24 24' },
+        bnb:      { path: 'M12 2l2.5 2.5-2.5 2.5-2.5-2.5L12 2zM6.5 7.5L9 5l2.5 2.5L9 10 6.5 7.5zM14.5 7.5L17 5l2.5 2.5L17 10l-2.5-2.5zM12 9.5l2.5 2.5-2.5 2.5L9.5 12l2.5-2.5zM6.5 14.5L9 12l2.5 2.5L9 17l-2.5-2.5zM14.5 14.5L17 12l2.5 2.5L17 17l-2.5-2.5zM12 17l2.5 2.5L12 22l-2.5-2.5L12 17z', viewBox: '0 0 24 24' }
+    };
+    function closeNetworkDropdown() {
+        var dropdown = document.getElementById('networkDropdown');
+        var badge    = document.querySelector('.nav-network-badge');
+        if (dropdown) dropdown.classList.remove('show');
+        if (badge) { badge.classList.remove('open'); badge.setAttribute('aria-expanded', 'false'); }
+    }
+    function toggleNetworkDropdown(event) {
+        event.stopPropagation();
+        closeNotificationPanel();
+        var userDropdown = document.getElementById('userDropdown');
+        if (userDropdown) userDropdown.classList.remove('show');
+        var badge    = event.currentTarget;
+        var dropdown = document.getElementById('networkDropdown');
+        if (!dropdown) return;
+        var isOpen = dropdown.classList.toggle('show');
+        badge.classList.toggle('open', isOpen);
+        badge.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) { var fo = dropdown.querySelector('.network-option-nav'); if (fo) fo.focus(); }
+    }
+    function switchNetwork(chainId, label, chainColor, optionEl) {
+        document.querySelectorAll('.network-option-nav').forEach(function(el) {
+            el.classList.remove('active'); el.setAttribute('aria-selected', 'false');
+        });
+        var match = document.querySelector('.network-option-nav[data-chain-id="' + chainId + '"]');
+        if (match) { match.classList.add('active'); match.setAttribute('aria-selected', 'true'); }
+        var navLabel = document.getElementById('navNetworkLabel');
+        var navIcon  = document.getElementById('navNetworkIcon');
+        var badge    = document.querySelector('.nav-network-badge');
+        if (navLabel) navLabel.textContent = label;
+        if (navIcon)  navIcon.style.color = chainColor;
+        if (badge)    badge.setAttribute('aria-label', 'Switch network, currently ' + label);
+        closeNetworkDropdown();
+        try { localStorage.setItem('selectedNetwork', JSON.stringify({ id: chainId, label: label, color: chainColor })); } catch(e) {}
+    }
+    function handleNetworkBadgeKey(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault(); toggleNetworkDropdown(event);
+        } else if (event.key === 'Escape') {
+            closeNetworkDropdown(); event.currentTarget.focus();
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            var dd = document.getElementById('networkDropdown');
+            if (!dd) return;
+            if (!dd.classList.contains('show')) {
+                var b = event.currentTarget; b.classList.add('open'); b.setAttribute('aria-expanded', 'true'); dd.classList.add('show');
+            }
+            var fo = dd.querySelector('.network-option-nav'); if (fo) fo.focus();
+        }
+    }
+    function handleNetworkOptionKey(event) {
+        var options = Array.from(document.querySelectorAll('#networkDropdown .network-option-nav'));
+        var idx = options.indexOf(event.currentTarget);
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); }
+        else if (event.key === 'Escape') { event.preventDefault(); closeNetworkDropdown(); var b2 = document.querySelector('.nav-network-badge'); if (b2) b2.focus(); }
+        else if (event.key === 'ArrowDown') { event.preventDefault(); var nx = options[idx + 1]; if (nx) nx.focus(); }
+        else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (idx === 0) { var b3 = document.querySelector('.nav-network-badge'); if (b3) b3.focus(); }
+            else { var pv = options[idx - 1]; if (pv) pv.focus(); }
+        }
+    }
+
+    /* ── Notification Item Rendering ────────────────── */
+    const NOTIFICATION_ICONS = {
+        transaction: '<path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>',
+        pending:     '<path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-80 0q17 0 28.5-11.5T440-320q0-17-11.5-28.5T400-360q-17 0-28.5 11.5T360-320q0 17 11.5 28.5T400-280Zm160 0q17 0 28.5-11.5T600-320q0-17-11.5-28.5T560-360q-17 0-28.5 11.5T520-320q0 17 11.5 28.5T560-280ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>',
+        error:       '<path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>',
+        system:      '<path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280Z"/>',
+        listing:     '<path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/>',
+        donation:    '<path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>',
+        remittance:  '<path d="M120-160q-33 0-56.5-23.5T40-240v-440h80v440h680v80H120Zm160-160q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80q0-33-23.5-56.5T280-480v80h80Zm400 0h80v-80q-33 0-56.5 23.5T760-400Zm-200-40q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM280-640q33 0 56.5-23.5T360-720h-80v80Zm560 0v-80h-80q0 33 23.5 56.5T840-640Z"/>',
+        verification:'<path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"/>'
+    };
+    function renderNotificationItem(n) {
+        const type = n.type || 'system';
+        const iconSvg = NOTIFICATION_ICONS[type] || NOTIFICATION_ICONS.system;
+        const readClass = n.read ? ' read' : '';
+        const dot = n.read ? '' : '<span class="notif-unread-dot" aria-hidden="true"></span>';
+        const ctaHtml = (n.ctaUrl && n.ctaLabel)
+            ? `<a href="${n.ctaUrl}" class="notif-item-cta" aria-label="${n.ctaLabel}" onclick="event.stopPropagation(); markNotificationRead('${n.id}')">${n.ctaLabel}</a>`
+            : '';
+        return `<li class="notif-item${readClass}" role="listitem" data-id="${n.id}">
+            <span class="notif-item-icon notif-type-${type}" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor">${iconSvg}</svg></span>
+            <div class="notif-item-body" role="button" tabindex="0"
+                 onclick="handleNotificationItemClick(event,'${n.id}')"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleNotificationItemClick(event,'${n.id}');}">
+                <p class="notif-item-title">${n.title}</p>
+                <p class="notif-item-msg">${n.message}</p>
+                <time class="notif-item-time" datetime="${n.timestamp}">${formatRelativeTime(n.timestamp)}</time>
+                ${ctaHtml}
+            </div>
+            ${dot}
+            <button type="button" class="notif-item-dismiss" aria-label="Dismiss: ${n.title}"
+                    onclick="event.stopPropagation(); clearNotification('${n.id}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor">
+                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                </svg>
+            </button>
+        </li>`;
+    }
+
+    /* ── Auth helpers (page-level fallbacks) ─────────── */
+    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+    function disconnectWallet() {
+        if (typeof doDisconnectWallet === 'function') { doDisconnectWallet(); return; }
+        localStorage.removeItem('walletConnected');
+        localStorage.removeItem('walletAddress');
+        if (typeof syncNavAuthState === 'function') syncNavAuthState();
+    }
+    function openConnectModal() {
+        if (typeof showWalletSelectionModal === 'function') { showWalletSelectionModal(); return; }
+    }
+
+    /* ── Outside-click close ─────────────────────────── */
+    document.addEventListener('click', function(event) {
+        var navWalletDisplay  = document.getElementById('navWalletDisplay');
+        var notifBellWrapper  = document.getElementById('notificationBellWrapper');
+        var userDropdown      = document.getElementById('userDropdown');
+        var notifPanel        = document.getElementById('notificationPanel');
+        var networkDropdown   = document.getElementById('networkDropdown');
+        var walletNavDropdown = document.getElementById('walletNavDropdown');
+
+        if (userDropdown && userDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
+            userDropdown.classList.remove('show');
+        if (notifPanel && notifPanel.classList.contains('show') && notifBellWrapper && !notifBellWrapper.contains(event.target)) {
+            notifPanel.classList.remove('show');
+            var bell = document.getElementById('notificationBell');
+            if (bell) bell.setAttribute('aria-expanded', 'false');
+        }
+        if (networkDropdown && networkDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
+            closeNetworkDropdown();
+        if (walletNavDropdown && walletNavDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
+            closeWalletNavDropdown();
+    });
+    </script>
+    <script>
+    (function() {
+        var hamburger       = document.querySelector('.hamburger');
+        var mobileMenu      = document.querySelector('.mobile-menu');
+        var mobileOverlay   = document.querySelector('.mobile-menu-overlay');
+        var mobileMenuClose = document.querySelector('.mobile-menu-close');
+        var body            = document.body;
+
+        function openMenu() {
+            if (hamburger)     { hamburger.classList.add('active'); hamburger.setAttribute('aria-expanded', 'true'); }
+            if (mobileMenu)    mobileMenu.classList.add('active');
+            if (mobileOverlay) { mobileOverlay.classList.add('active'); mobileOverlay.setAttribute('aria-hidden', 'false'); }
+            body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            if (hamburger)     { hamburger.classList.remove('active'); hamburger.setAttribute('aria-expanded', 'false'); }
+            if (mobileMenu)    mobileMenu.classList.remove('active');
+            if (mobileOverlay) { mobileOverlay.classList.remove('active'); mobileOverlay.setAttribute('aria-hidden', 'true'); }
+            body.style.overflow = '';
+        }
+
+        if (hamburger)       hamburger.addEventListener('click', function() { mobileMenu && mobileMenu.classList.contains('active') ? closeMenu() : openMenu(); });
+        if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeMenu);
+        if (mobileOverlay)   mobileOverlay.addEventListener('click', closeMenu);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                var wdd = document.getElementById('walletNavDropdown');
+                if (wdd && wdd.classList.contains('show')) { closeWalletNavDropdown(); var wt = document.querySelector('.nav-wallet-trigger'); if (wt) wt.focus(); return; }
+                var ndd = document.getElementById('networkDropdown');
+                if (ndd && ndd.classList.contains('show')) { closeNetworkDropdown(); var nb = document.querySelector('.nav-network-badge'); if (nb) nb.focus(); return; }
+                var np = document.getElementById('notificationPanel');
+                if (np && np.classList.contains('show')) { closeNotificationPanel(); return; }
+                if (mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+            }
+        });
+        document.querySelectorAll('.mobile-nav-links .nav-link').forEach(function(link) { link.addEventListener('click', closeMenu); });
+    })();
     </script>
     <script src="consumer-app-nav.js"></script>
 </body>

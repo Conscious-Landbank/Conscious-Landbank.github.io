@@ -1,0 +1,64 @@
+---
+description: Canonical checkbox row for NewUnera HTML (wallet-enhanced filter pattern)
+globs: NewUnera/**/*.html
+alwaysApply: false
+---
+
+# NewUnera — Checkbox row (`.checkbox-label`)
+
+For visible checkboxes in `NewUnera/` forms and modals, **do not** use a bare `<input type="checkbox">` with a sibling `.form-label` outside a wrapper (legacy `.form-check-row`).
+
+## Forbidden
+
+```html
+<!-- ❌ -->
+<div class="form-check-row">
+  <input type="checkbox" id="x">
+  <label class="form-label" for="x">Label</label>
+</div>
+```
+
+Exception: screen-reader-only checkboxes documented in the implementing page (rare); still prefer `.checkbox-label` when the control is user-visible.
+
+## Required structure
+
+```html
+<div class="checkbox-group" role="group" aria-labelledby="groupLabelId">
+  <span class="form-label" id="groupLabelId">Section title</span>
+  <label class="checkbox-label" for="fieldId">
+    <input type="checkbox" id="fieldId" aria-describedby="optionalHintId">
+    <span>Visible label text</span>
+  </label>
+</div>
+<p class="form-hint" id="optionalHintId">Optional hint below the group.</p>
+```
+
+## Sizing and tokens
+
+| Element | Spec |
+|--------|------|
+| `input[type="checkbox"]` | `20×20px`, `accent-color: var(--brand-deep-blue)` |
+| `.checkbox-label` | `min-height: 48px`, `padding: 0.875rem 1rem`, `border: 2px solid var(--border-subtle)`, `border-radius: 0.75rem` |
+| Hover | `border-color: var(--brand-deep-blue)`; light tint via `color-mix` with brand tokens |
+| Checked label text | `font-weight: 700; color: var(--brand-deep-blue)` on `input:checked + span` |
+| Focus | `outline: 3px solid var(--brand-deep-blue); outline-offset: 2px` on `:focus-visible` |
+
+## Canonical copy-from
+
+| Pattern | File | Anchor |
+|--------|------|--------|
+| Markup | [`NewUnera/wallet-enhanced.html`](NewUnera/wallet-enhanced.html) | `#filterModal` ~5752–5764 |
+| CSS | [`NewUnera/wallet-enhanced.html`](NewUnera/wallet-enhanced.html) | ~2274–2323 |
+| Modal example | [`NewUnera/payee-management.html`](NewUnera/payee-management.html) | `#bankVerified` in `#modalBankEdit` |
+
+## Accessibility
+
+- Group: `role="group"` + `aria-labelledby` on section title
+- Checkbox: `for` / `id` pairing; use `aria-describedby` for hints
+- Touch target: entire `.checkbox-label` row is clickable (≥48px height)
+- Do not remove focus ring for keyboard users
+
+## Related
+
+- Custom selects: `.cursor/rules/newunera-dropdown.mdc`
+- WCAG baseline: `.cursor/rules/newunera-accessibility-wcag.mdc`
