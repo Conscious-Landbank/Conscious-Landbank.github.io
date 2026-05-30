@@ -3257,6 +3257,7 @@
         </div>
     </div>
 
+    <script src="shared/notification-catalog.js"></script>
     <script>
         // ==================== HELPER FUNCTIONS ====================
         const defaultCheckSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>';
@@ -4105,22 +4106,9 @@
             }
         });
 
-        // Initialize notifications (shared with account-settings via localStorage)
-        if (notifications.length === 0) {
-            const twoMinAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
-            const oneHrAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-            const fiveHrAgo = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString();
-            const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-            const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
-            notifications = [
-                { id: 'n1', type: 'transaction', title: 'Transaction Confirmed', message: 'Sent 12.5 CTC — confirmed on Ethereum', timestamp: twoMinAgo, read: false, ctaUrl: 'wallet-enhanced.html', ctaLabel: 'View transaction' },
-                { id: 'n2', type: 'listing', title: 'New Listing Available', message: 'Lot 7B at Conscious Landbank is now open', timestamp: oneHrAgo, read: false },
-                { id: 'n3', type: 'system', title: 'Security Notice', message: 'New device login detected for your account', timestamp: yesterday, read: false, ctaUrl: 'account-settings.html', ctaLabel: 'View activity' },
-                { id: 'n4', type: 'donation', title: 'Donation Receipt Ready', message: 'Your $100 donation to Nairobi Hope Centre has been processed', timestamp: fiveHrAgo, read: false, ctaUrl: 'donation-history.html', ctaLabel: 'View receipt' },
-                { id: 'n5', type: 'remittance', title: 'Remittance Sent', message: 'You sent $50 hCAD to 0x742d...4a23 — confirmed', timestamp: twoDaysAgo, read: false, ctaUrl: 'wallet-enhanced.html', ctaLabel: 'View transaction' },
-                { id: 'n6', type: 'verification', title: 'KYC Verified', message: 'Your identity verification has been completed successfully', timestamp: twoDaysAgo, read: false, ctaUrl: 'kyc-verify.html', ctaLabel: 'View status' },
-            ];
-            saveNotifications();
+        // Initialize notifications (shared catalog)
+        if (window.UNERA_NOTIFICATION_CATALOG) {
+            notifications = UNERA_NOTIFICATION_CATALOG.mergeIntoStorage();
         }
         const mobileNotificationsSection = document.getElementById('mobileNotificationsSection');
         if (mobileNotificationsSection) mobileNotificationsSection.innerHTML = renderNotificationPanel('mobile');

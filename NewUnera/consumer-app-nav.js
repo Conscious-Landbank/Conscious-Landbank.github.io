@@ -322,4 +322,12 @@
     });
 
     window.addEventListener('storage', syncNavAuthState);
+
+    /** Prefer shared wallet-auth modal when script is loaded on the page */
+    window.openConnectModal = function openConnectModalFromNav() {
+        if (typeof window.openWalletAuthModal === 'function') {
+            window.openWalletAuthModal({ intent: 'connect' });
+            return;
+        }
+    };
 })();

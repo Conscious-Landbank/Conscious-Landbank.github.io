@@ -62,6 +62,7 @@
             --warning:           #b8a030;
             --error:             var(--brand-red);
             --error-bg:          rgba(171, 87, 112, 0.10);
+            --surface-error-tint: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
 
             /* ── Accessibility & UI */
             --text-primary:      #173d47;
@@ -103,7 +104,7 @@
             top: -40px;
             left: 0;
             background: var(--brand-deep-blue);
-            color: white;
+            color: var(--brand-white);
             padding: 8px 16px;
             text-decoration: none;
             z-index: 10000;
@@ -115,7 +116,7 @@
             outline: 3px solid var(--brand-yellow);
         }
 
-        /* ── Navigation */
+        /* ── Nav Shell ───────────────────────────────────── */
         .nav {
             background: var(--gradient-ink);
             padding: 0 2.75rem;
@@ -126,262 +127,83 @@
             position: sticky;
             top: 0;
             z-index: 10001;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .nav-left { display: flex; align-items: center; gap: 2.75rem; }
-        .nav-right { display: flex; align-items: center; gap: 1rem; }
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-        .nav-brand:focus {
-            outline: 3px solid var(--brand-yellow);
-            outline-offset: 2px;
-            border-radius: 4px;
-        }
-        .nav-logo-img {
-            height: 24px;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            object-position: left center;
-            display: block;
-        }
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 1.375rem;
-            align-items: center;
-        }
+        .nav-left  { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+
+        /* ── Logo ────────────────────────────────────────── */
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .nav-brand:focus { outline: 3px solid var(--brand-yellow); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-img { height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block; }
+
+        /* ── Nav Links ───────────────────────────────────── */
+        .nav-links { display: flex; gap: 1.375rem; list-style: none; align-items: center; margin: 0; padding: 0; }
         .nav-links li { display: flex; align-items: center; }
         .nav-link {
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
             font-size: 0.75rem;
             font-weight: 500;
             letter-spacing: 0.02em;
+            transition: color 0.2s;
             padding: 0.5rem;
             border-radius: 4px;
             display: inline-flex;
             align-items: center;
-            transition: color 0.2s;
-            line-height: 1;
+            gap: 0.25rem;
+            min-height: 44px;
+            text-transform: uppercase;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
         }
-        .nav-link:hover { color: var(--brand-yellow); }
-        .nav-link:focus { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .nav-link:hover  { color: var(--brand-yellow); }
+        .nav-link:focus  { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
         .nav-link.active { color: var(--brand-yellow); font-weight: 600; }
+        .nav-link.is-active-route { color: var(--brand-yellow); }
 
-        /* ── Hamburger */
-        .hamburger {
+        /* ── TRANSACT Dropdown ───────────────────────────── */
+        .nav-dropdown-chevron { transition: transform 0.2s; }
+        .nav-dropdown-item.open .nav-dropdown-chevron { transform: rotate(180deg); }
+        .nav-dropdown-menu {
             display: none;
-            flex-direction: column;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        .hamburger:hover { background: rgba(255,255,255,0.1); }
-        .hamburger:focus { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--brand-white);
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
-
-        /* ── Mobile Menu Overlay */
-        .mobile-menu-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 10002;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .mobile-menu-overlay.active { display: block; opacity: 1; }
-
-        /* ── Mobile Menu */
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 80%;
-            max-width: 320px;
-            height: 100%;
-            background: var(--brand-white);
-            z-index: 10003;
-            padding: 1.5rem;
-            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s ease;
-            overflow-y: auto;
-        }
-        .mobile-menu.active { display: block; right: 0; }
-        .mobile-menu-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        .mobile-menu-logo {
-            height: 22px;
-            width: auto;
-        }
-        .mobile-menu-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
-            color: var(--text-primary);
-        }
-        .mobile-menu-close:hover { background: var(--neutral-200); }
-        .mobile-menu-close:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; }
-        .mobile-nav-links .nav-link {
-            display: block;
-            padding: 1rem;
-            font-size: 1rem;
-            border-radius: 8px;
-            color: var(--text-primary);
-            transition: all 0.2s;
-        }
-        .mobile-nav-links .nav-link:hover {
-            background: rgba(23, 61, 71, 0.06);
-            color: var(--brand-deep-blue);
-        }
-        .mobile-nav-links .nav-link.active {
-            background: rgba(23, 61, 71, 0.08);
-            color: var(--brand-deep-blue);
-            font-weight: 600;
-        }
-
-        /* ── User Profile in Nav */
-        .user-profile-nav {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            position: relative;
-            padding: 0.375rem 0.75rem;
-            border-radius: 0.5rem;
-            transition: background 0.2s;
-        }
-        .user-profile-nav:hover { background: rgba(255,255,255,0.08); }
-        .user-avatar-nav {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--brand-deep-blue);
-            font-weight: 600;
-            font-size: 0.813rem;
-        }
-        .user-name-nav { font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.9); }
-
-        /* ── User Dropdown */
-        .user-dropdown-nav {
             position: absolute;
-            top: calc(100% + 0.75rem);
-            right: 0;
-            width: 280px;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 182px;
             background: var(--brand-white);
             border-radius: 0.75rem;
             box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
-            z-index: 1000;
-            overflow: hidden;
+            z-index: 10002;
+            padding: 0.375rem 0;
+            list-style: none;
+            margin: 0;
         }
-        .user-dropdown-nav.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        .dropdown-header-nav {
-            padding: 1.25rem;
-            background: color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
-        .dropdown-user-info-nav { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-        .dropdown-avatar-nav {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--brand-deep-blue);
-            font-weight: 700;
-            font-size: 1.125rem;
-            flex-shrink: 0;
-        }
-        .dropdown-user-details-nav { flex: 1; min-width: 0; }
-        .dropdown-user-name-nav { font-weight: 600; font-size: 1rem; color: var(--neutral-900); margin-bottom: 0.125rem; }
-        .dropdown-user-email-nav { font-size: 0.813rem; color: var(--neutral-600); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .dropdown-wallet-badge-nav {
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.375rem 0.75rem;
-            background: rgba(23, 61, 71, 0.08);
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-family: var(--font-body);
-            color: var(--brand-deep-blue);
-            font-weight: 600;
-        }
-        .dropdown-menu-nav { padding: 0.5rem; }
-        .dropdown-section-nav { margin-bottom: 0.5rem; }
-        .dropdown-section-title-nav {
-            font-size: 0.688rem;
-            font-weight: 700;
-            color: var(--neutral-600);
-            letter-spacing: 0.05em;
-            padding: 0.75rem 0.75rem 0.5rem 0.75rem;
-            text-transform: uppercase;
-        }
-        .dropdown-item-nav {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
+        .nav-dropdown-item { position: relative; }
+        .nav-dropdown-item.open .nav-dropdown-menu { display: block; }
+        .nav-dd-item {
+            padding: 0.625rem 1rem;
+            min-height: 41px;
             color: var(--neutral-800);
             text-decoration: none;
-            transition: all 0.15s;
-            cursor: pointer;
             font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.15s, color 0.15s;
+            display: flex;
+            align-items: center;
         }
-        .dropdown-item-nav:hover { background: rgba(23, 61, 71, 0.08); color: var(--brand-deep-blue); }
-        .dropdown-item-nav svg { fill: currentColor; flex-shrink: 0; }
-        .dropdown-divider-nav { height: 1px; background: rgba(0,0,0,0.06); margin: 0.5rem 0; }
+        .nav-dd-item:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
+        .nav-dd-item:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
+        .nav-dd-item[aria-current="page"] { color: var(--brand-deep-blue); font-weight: 600; }
 
-        /* ── Notification Bell */
+        /* ── Notification Bell ───────────────────────────── */
         .notification-bell-wrapper { position: relative; }
         .notification-bell-btn {
-            width: 36px; height: 36px; border-radius: 50%; border: none;
-            background: transparent; cursor: pointer; position: relative;
+            width: 36px; height: 36px;
+            border-radius: 50%; border: none; background: transparent;
+            cursor: pointer; position: relative;
             display: flex; align-items: center; justify-content: center;
             transition: background 0.2s;
         }
@@ -389,18 +211,237 @@
         .notification-bell-btn:hover .notif-bell-icon { color: var(--brand-yellow); }
         .notification-bell-btn:focus { outline: none; }
         .notification-bell-btn:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
-        .notif-bell-icon { width: 20px; height: 20px; color: rgba(255,255,255,0.75); transition: color 0.2s; }
+        .notification-bell-btn .notif-bell-icon { width: 20px; height: 20px; color: rgba(255,255,255,0.85); transition: color 0.2s; }
+        @keyframes notifRing {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-13deg); }
+            60% { transform: rotate(10deg); }
+            80% { transform: rotate(-8deg); }
+        }
+        .notification-bell-btn.ring .notif-bell-icon { animation: notifRing 0.5s ease-in-out; }
         .notif-badge {
-            min-width: 18px; height: 18px; padding: 0 3px; border-radius: 9px;
+            min-width: 18px; height: 18px; padding: 0 3px;
+            border-radius: 9px;
             position: absolute; top: 0; right: 0;
-            background: var(--brand-yellow); color: var(--brand-deep-blue);
+            background: var(--brand-yellow);
+            color: var(--brand-deep-blue);
             font-size: 0.625rem; font-weight: 700;
             display: flex; align-items: center; justify-content: center;
             border: 2px solid var(--brand-deep-blue);
         }
         .notif-badge[data-count="0"] { display: none; }
 
-        /* Notification UI — Material Symbols FILL=1 glyphs only: filled paths + currentColor; no stroke. */
+        /* ── Notification Panel ──────────────────────────── */
+        .user-dropdown-nav.notification-panel {
+            width: 360px;
+            max-height: min(520px, 85vh);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .notif-panel-header { padding: 1.25rem; flex-shrink: 0; }
+        .notif-panel-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .notif-panel-title { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
+        .notif-unread-label { font-size: 0.75rem; color: var(--brand-deep-blue); font-weight: 600; }
+        .notif-panel-actions { display: flex; align-items: center; gap: 0.5rem; }
+        .notif-action-link { background: none; border: none; cursor: pointer; font-size: 0.75rem; color: var(--text-secondary); text-decoration: none; font-weight: 500; padding: 0; font-family: var(--font-body); }
+        .notif-action-link:hover { text-decoration: underline; }
+        .notif-action-link.view-all-link { color: var(--brand-deep-blue); font-weight: 600; }
+        .notif-close-btn { width: 24px; height: 24px; border-radius: 50%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--neutral-600); transition: background 0.2s; }
+        .notif-close-btn:hover { background: rgba(0,0,0,0.06); }
+        .notif-list-wrapper { padding: 0.5rem; flex: 1; min-height: 0; overflow-y: auto; }
+        .notif-list { list-style: none; padding: 0; margin: 0; }
+        .notif-item { display: flex; align-items: flex-start; gap: 0.625rem; padding: 0.75rem; border-radius: 0.5rem; transition: all 0.15s; cursor: default; font-size: 0.875rem; }
+        .notif-item:hover { background: rgba(23, 61, 71, 0.08); }
+        .notif-item:hover .notif-item-dismiss { opacity: 1; }
+        .notif-item-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .notif-item-icon svg { width: 14px; height: 14px; }
+        .notif-type-transaction { background: rgba(23, 61, 71, 0.10); color: var(--brand-deep-blue); }
+        .notif-type-pending     { background: rgba(184, 160, 48, 0.10); color: var(--warning); }
+        .notif-type-error       { background: var(--error-bg); color: var(--error); }
+        .notif-type-system      { background: var(--fin-neutral-bg); color: var(--text-secondary); }
+        .notif-type-listing     { background: rgba(23, 61, 71, 0.10); color: var(--brand-deep-blue); }
+        .notif-type-donation    { background: var(--fin-up-bg); color: var(--fin-up); }
+        .notif-type-remittance  { background: rgba(23, 61, 71, 0.10); color: var(--brand-deep-blue); }
+        .notif-type-verification { background: var(--fin-neutral-bg); color: var(--text-secondary); }
+        .notif-item-body { flex: 1; min-width: 0; cursor: pointer; }
+        .notif-item-cta { font-size: 0.75rem; font-weight: 600; color: var(--brand-deep-blue); text-decoration: none; margin-top: 0.25rem; display: inline-block; }
+        .notif-item-cta:hover { text-decoration: underline; }
+        .notif-item-cta:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .notif-item-title { font-size: 0.8125rem; font-weight: 500; color: var(--text-primary); margin: 0; }
+        .notif-item.read .notif-item-title { font-weight: 400; color: var(--neutral-600); }
+        .notif-item-msg { font-size: 0.75rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0.125rem 0 0; }
+        .notif-item-time { font-size: 0.6875rem; color: var(--text-secondary); display: block; margin-top: 0.125rem; }
+        .notif-unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-deep-blue); flex-shrink: 0; margin-top: 6px; }
+        .notif-item.read .notif-unread-dot { display: none; }
+        .notif-item-dismiss { opacity: 0; width: 20px; height: 20px; min-width: 20px; border: none; background: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: opacity 0.2s; }
+        .notif-item-dismiss:hover { color: var(--error); }
+        .notif-panel-footer { padding: 0.5rem; flex-shrink: 0; }
+        .notif-panel-footer .notif-footer-btn { width: 100%; padding: 0.875rem 1.5rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.938rem; display: flex; align-items: center; justify-content: center; }
+        .notif-panel-footer .notif-footer-btn[hidden],
+        .notif-panel-footer[hidden],
+        .notif-panel-divider[hidden] { display: none !important; }
+        .notification-panel .dropdown-divider-nav { flex-shrink: 0; }
+
+        /* ── User Dropdown + Shared Dropdown Base ────────── */
+        .user-dropdown-nav {
+            position: absolute;
+            top: calc(100% + 0.75rem); right: 0;
+            width: 280px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002; overflow: hidden;
+        }
+        .user-dropdown-nav.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-header-nav {
+            padding: 1.25rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white));
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .dropdown-user-info-nav { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .dropdown-avatar-nav { width: 48px; height: 48px; border-radius: 50%; background: var(--brand-deep-blue); display: flex; align-items: center; justify-content: center; color: var(--brand-white); font-weight: 700; font-size: 1.125rem; flex-shrink: 0; }
+        .dropdown-user-details-nav { flex: 1; min-width: 0; }
+        .dropdown-user-name-nav { font-weight: 600; font-size: 1rem; color: var(--neutral-900); margin-bottom: 0.125rem; }
+        .dropdown-user-email-nav { font-size: 0.813rem; color: var(--neutral-600); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dropdown-wallet-badge-nav { display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(23,61,71,0.1); border-radius: 0.375rem; font-size: 0.75rem; color: var(--brand-deep-blue); font-weight: 600; }
+        .dropdown-menu-nav { padding: 0.5rem; }
+        .dropdown-section-nav { margin-bottom: 0.5rem; }
+        .dropdown-section-title-nav { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; padding: 0.75rem 0.75rem 0.5rem; text-transform: uppercase; }
+        .dropdown-item-nav { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; color: var(--neutral-800); text-decoration: none; transition: all 0.15s; cursor: pointer; font-size: 0.875rem; }
+        .dropdown-item-nav:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
+        .dropdown-item-nav.active { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); font-weight: 600; }
+        .dropdown-divider-nav { height: 1px; background: rgba(0,0,0,0.06); margin: 0.5rem 0; }
+
+        /* ── Wallet Display Pill ─────────────────────────── */
+        .nav-wallet-display {
+            display: flex; align-items: center; gap: 0.3125rem;
+            padding: 0.125rem 0.5rem 0.125rem 0.25rem;
+            max-height: 36px; margin-top: 2px; align-self: center;
+            background: var(--neutral-100);
+            border: 1px solid var(--border-subtle);
+            border-radius: 980px;
+            color: var(--text-primary);
+        }
+        .nav-wallet-avatar { position: relative; width: 28px; height: 28px; flex-shrink: 0; }
+        .user-avatar-nav {
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-white);
+            font-weight: 600;
+            font-size: 0.813rem;
+            cursor: pointer;
+        }
+        .nav-wallet-display .user-avatar-nav {
+            width: 28px; height: 28px; font-size: 0.75rem;
+        }
+        .nav-wallet-metamask-badge {
+            position: absolute; bottom: -1px; right: -1px;
+            width: 12px; height: 12px; font-size: 7px;
+            display: flex; align-items: center; justify-content: center;
+            background: #F6851B; border-radius: 50%;
+            border: 2px solid var(--neutral-100);
+        }
+        .nav-wallet-info { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+        .nav-wallet-address { font-size: 0.75rem; font-weight: 600; line-height: 1.2; }
+        .nav-wallet-balance { font-size: 0.6875rem; line-height: 1.2; color: var(--text-secondary); }
+        .nav-wallet-address-row { display: inline-flex; align-items: center; gap: 0.125rem; }
+        .nav-wallet-chevron { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.55; transition: transform 0.18s cubic-bezier(0.28,0.11,0.32,1), opacity 0.18s; }
+        .nav-wallet-trigger { cursor: pointer; border-radius: 0.375rem; padding: 0.0625rem 0.125rem; transition: background 0.15s; outline: none; }
+        .nav-wallet-trigger:hover { background: var(--neutral-100); }
+        .nav-wallet-trigger:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .nav-wallet-trigger:hover .nav-wallet-chevron,
+        .nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron { opacity: 1; }
+        .nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron { transform: rotate(180deg); }
+
+        /* Wallet options dropdown */
+        .wallet-nav-dropdown {
+            position: absolute; top: calc(100% + 0.75rem); left: 0; width: 220px;
+            background: var(--brand-white); border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.12s cubic-bezier(0.28,0.11,0.32,1);
+            z-index: 10002; overflow: hidden; padding: 0.375rem 0;
+        }
+        .wallet-nav-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .wallet-nav-item { display: flex; align-items: center; gap: 0.625rem; width: 100%; min-height: 44px; padding: 0 1rem; background: none; border: none; cursor: pointer; font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; color: var(--text-primary); text-align: left; transition: background 0.1s; }
+        .wallet-nav-item:hover { background: var(--neutral-100); }
+        .wallet-nav-item:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
+        .wallet-nav-item--destructive { color: var(--text-primary); }
+        .wallet-nav-item--destructive:hover { background: var(--surface-error-tint); color: var(--error); }
+        .wallet-nav-divider { height: 1px; background: var(--border-subtle); margin: 0.25rem 0; }
+
+        /* Network badge */
+        .nav-network-badge {
+            display: flex; align-items: center; gap: 0.1875rem;
+            padding: 0.125rem 0.25rem; border-left: 1px solid var(--neutral-300);
+            cursor: pointer; border-radius: 0.375rem; transition: background 0.15s;
+        }
+        .nav-network-badge:hover { background: rgba(0,0,0,0.06); }
+        .nav-network-badge:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .nav-network-badge.open { background: rgba(0,0,0,0.06); }
+        .nav-network-icon { width: 14px; height: 14px; color: #627EEA; }
+        .nav-network-badge span { font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary); }
+        .nav-network-chevron { width: 12px; height: 12px; color: var(--text-secondary); flex-shrink: 0; transition: transform 0.2s ease; }
+        .nav-network-badge.open .nav-network-chevron { transform: rotate(180deg); }
+
+        /* Network switcher dropdown */
+        .network-dropdown-nav {
+            position: absolute; top: calc(100% + 0.75rem); right: 0; width: 220px;
+            background: var(--brand-white); border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1);
+            z-index: 10002; overflow: hidden;
+        }
+        .network-dropdown-nav.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .network-dropdown-header-nav { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; padding: 0.75rem 0.75rem 0.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.06); margin-bottom: 0.25rem; }
+        .network-options-list-nav { padding: 0.375rem 0.5rem 0.5rem; }
+        .network-option-nav { display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; color: var(--neutral-800); cursor: pointer; font-size: 0.875rem; transition: all 0.15s; user-select: none; }
+        .network-option-nav:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
+        .network-option-nav:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
+        .network-option-nav.active { color: var(--brand-deep-blue); font-weight: 600; background: rgba(23,61,71,0.06); }
+        .network-option-icon { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; }
+        .network-option-name { flex: 1; }
+        .network-option-check { width: 14px; height: 14px; color: var(--brand-deep-blue); flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
+        .network-option-nav.active .network-option-check { opacity: 1; }
+
+        /* ── Hamburger ───────────────────────────────────── */
+        .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .hamburger:hover { background: rgba(255,255,255,0.1); }
+        .hamburger:focus { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--brand-white); transition: all 0.3s ease; border-radius: 2px; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ── Mobile Menu ─────────────────────────────────── */
+        .mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10002; opacity: 0; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu { display: none; position: fixed; top: 0; right: -100%; width: 80%; max-width: 320px; height: 100%; background: var(--brand-white); z-index: 10003; padding: 1.5rem; box-shadow: -4px 0 12px rgba(0,0,0,0.1); transition: right 0.3s ease; overflow-y: auto; }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); }
+        .mobile-menu-close { background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; padding: 0; margin: 0; }
+        .mobile-nav-links .nav-link { display: block; padding: 1rem; font-size: 1rem; border-radius: 8px; transition: all 0.2s; color: var(--text-primary); text-decoration: none; font-weight: 500; min-height: 44px; }
+        .mobile-nav-links .nav-link:hover { background: var(--neutral-200); }
+        .mobile-nav-links .nav-link.active { background: rgba(23,61,71,0.1); color: var(--brand-deep-blue); }
+        .mobile-nav-section-label { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; text-transform: uppercase; padding: 0.75rem 1rem 0.25rem; }
+        .mobile-nav-sub { padding-left: 1.5rem !important; font-size: 0.938rem !important; }
+
+        /* ── Reduced Motion ──────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            .nav-wallet-chevron,
+            .wallet-nav-dropdown, .nav-wallet-trigger,
+            .network-dropdown-nav, .user-dropdown-nav, .notification-panel,
+            .hamburger span, .mobile-menu, .nav-dropdown-chevron { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+        }
+
+
         #notificationPanel svg,
         .notification-bell-btn .notif-bell-icon,
         #notification-list .notification-card-icon svg {
@@ -408,84 +449,6 @@
             stroke: none;
         }
         .notification-bell-btn .notif-bell-icon { display: block; }
-
-        /* ── Notification Panel (dropdown) */
-        .user-dropdown-nav.notification-panel {
-            width: 360px;
-            max-height: min(520px, 85vh);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .notif-panel-header { padding: 1.25rem; flex-shrink: 0; }
-        .notif-panel-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-        .notif-panel-title { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
-        .notif-unread-label { font-size: 0.75rem; color: var(--brand-deep-blue); font-weight: 600; }
-        .notif-panel-actions { display: flex; align-items: center; gap: 0.5rem; }
-        .notif-action-link { background: none; border: none; cursor: pointer; font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; padding: 0; text-decoration: none; }
-        .notif-action-link:hover { text-decoration: underline; }
-        .notif-action-link.view-all-link { color: var(--brand-deep-blue); font-weight: 600; }
-        .notif-action-link:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-        .notif-close-btn {
-            width: 24px; height: 24px; border-radius: 50%; background: none; border: none;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            padding: 0; color: var(--neutral-600); transition: background 0.2s;
-        }
-        .notif-close-btn:hover { background: rgba(0,0,0,0.06); }
-        .notif-close-btn:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-        .notif-list-wrapper { padding: 0.5rem; flex: 1; min-height: 0; overflow-y: auto; }
-        .notif-list { list-style: none; padding: 0; margin: 0; }
-        .notif-item {
-            display: flex; align-items: flex-start; gap: 0.625rem;
-            padding: 0.75rem; border-radius: 0.5rem; transition: all 0.15s;
-            cursor: default; font-size: 0.875rem;
-        }
-        .notif-item:hover { background: rgba(23, 61, 71, 0.08); }
-        .notif-item:hover .notif-item-dismiss { opacity: 1; }
-        .notif-item-icon {
-            width: 24px; height: 24px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .notif-item-icon svg { width: 14px; height: 14px; fill: currentColor; }
-        /* Type colors — notification panel icons */
-        .notif-type-transaction  { background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white)); color: var(--brand-deep-blue); }
-        .notif-type-system       { background: var(--fin-up-bg); color: var(--fin-up); }
-        .notif-type-listing      { background: color-mix(in srgb, var(--brand-earth) 30%, var(--brand-white)); color: var(--brand-deep-blue); }
-        .notif-type-donation     { background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); color: var(--brand-red); }
-        .notif-type-remittance   { background: color-mix(in srgb, var(--brand-cloud-blue) 45%, var(--brand-white)); color: var(--fin-up); }
-        .notif-type-verification { background: var(--fin-up-bg); color: var(--fin-up); }
-        .notif-item-body { flex: 1; min-width: 0; cursor: pointer; }
-        .notif-item-cta { font-size: 0.75rem; font-weight: 600; color: var(--brand-deep-blue); text-decoration: none; margin-top: 0.25rem; display: inline-block; }
-        .notif-item-cta:hover { text-decoration: underline; }
-        .notif-item-cta:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-        .notif-item-title { font-size: 0.8125rem; font-weight: 500; color: var(--text-primary); margin: 0; }
-        .notif-item.read .notif-item-title { font-weight: 400; color: var(--neutral-600); }
-        .notif-item-msg { font-size: 0.75rem; color: var(--text-secondary); margin: 0.125rem 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .notif-item-time { font-size: 0.6875rem; color: var(--text-secondary); display: block; margin-top: 0.125rem; }
-        .notif-unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-deep-blue); flex-shrink: 0; margin-top: 6px; }
-        .notif-item.read .notif-unread-dot { display: none; }
-        .notif-item-dismiss {
-            opacity: 0; width: 20px; height: 20px; min-width: 20px;
-            border: none; background: none; cursor: pointer; padding: 0;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-secondary); transition: opacity 0.2s;
-        }
-        .notif-item-dismiss:hover { color: var(--error); }
-        .notif-item-dismiss:focus { opacity: 1; outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-        .notif-panel-footer { padding: 0.5rem; flex-shrink: 0; }
-        .notif-panel-footer .notif-footer-btn {
-            width: 100%;
-            padding: 0.875rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            font-size: 0.938rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .notif-panel-footer .notif-footer-btn[hidden],
-        .notif-panel-footer[hidden] { display: none !important; }
-        #notifPanelDivider[hidden] { display: none !important; }
 
         /* ── Page layout */
         .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
@@ -724,10 +687,10 @@
 
         /* ── Responsive */
         @media (max-width: 768px) {
+            .user-dropdown-nav.notification-panel { width: 320px; }
             .nav { padding: 0 1rem; }
             .nav-links { display: none; }
             .hamburger { display: flex; }
-            .user-profile-nav { display: none; }
             .notification-bell-btn { display: flex; }
             .container { padding: 1rem; }
             .page-title { font-size: 2rem; }
@@ -744,6 +707,16 @@
         }
 
         @media (max-width: 480px) {
+            .nav-wallet-address { display: none; }
+            .nav-wallet-info { display: none; }
+            .nav-wallet-display { padding: 0.25rem; border-radius: 50%; width: 36px; height: 36px; justify-content: center; }
+            .nav-network-badge { display: none; }
+            .hamburger { display: flex; }
+            .nav-links { display: none; }
+            .user-dropdown-nav { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
+            #notificationPanel.show { position: fixed; top: 44px; left: 0; right: 0; width: 100%; max-height: 70vh; border-radius: 0 0 0.75rem 0.75rem; }
+            .network-dropdown-nav { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
+            .wallet-nav-dropdown { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
             .page-title { font-size: 1.75rem; }
             .notification-card { padding: 0.875rem; gap: 0.875rem; }
             .notification-card-icon { width: 40px; height: 40px; }
@@ -756,162 +729,352 @@
         @media (prefers-contrast: high) {
             .notification-card { border-width: 2px; }
         }
+    
     </style>
     <link rel="stylesheet" href="consumer-app-nav.css">
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
+    <!-- Navigation -->
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-left">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
-                <img src="NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <img src="NewLogo/Unera White Text Nav.svg"
+                     alt="UNERA"
+                     class="nav-logo-img"
+                     height="24">
             </a>
             <ul class="nav-links" role="list">
-                <li><a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DASHBOARD</a></li>
+                <li>
+                    <a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DASHBOARD</a>
+                </li>
                 <li id="walletNavItem">
-                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
+                    <button type="button" class="nav-link nav-connect-btn"
+                            id="navConnectBtn"
+                            onclick="openConnectModal()"
+                            aria-label="Connect wallet">CONNECT</button>
                     <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
                 </li>
                 <li class="nav-dropdown-item" id="navDdTransact">
-                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
+                    <button type="button"
+                            class="nav-link nav-dropdown-trigger"
+                            id="navDdTransactBtn"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-controls="navDdTransactMenu">
                         TRANSACT
-                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                        <svg class="nav-dropdown-chevron"
+                             xmlns="http://www.w3.org/2000/svg"
+                             width="16" height="16"
+                             viewBox="0 -960 960 960"
+                             fill="currentColor"
+                             aria-hidden="true">
+                            <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>
+                        </svg>
                     </button>
                     <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu" aria-label="Transact options">
-                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Money</a></li>
-                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send Tokens</a></li>
+                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Tokens</a></li>
+                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send</a></li>
                         <li><a href="stake.html" class="nav-dd-item" role="menuitem">Stake</a></li>
                         <li><a href="exchange.html" class="nav-dd-item" role="menuitem">Exchange</a></li>
                     </ul>
                 </li>
-                <li><a href="governance.html" class="nav-dd-item" role="menuitem">Governance</a></li>
-                    </ul>
+                <li>
+                    <a href="explore-centres.html" class="nav-link" id="navLinkCentres">CENTRES</a>
                 </li>
-                <li><a href="explore-centres.html" class="nav-link" id="navLinkCentres">CENTRES</a></li>
                 <li id="navAuthLinks" style="display: none;">
                     <a href="login_2.html" class="nav-link btn-nav-secondary">LOG IN</a>
                     <a href="signup_2.html" class="nav-link btn-nav-primary">SIGN UP</a>
                 </li>
             </ul>
-            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
-                <span></span><span></span><span></span>
-            </button>
         </div>
+
         <div class="nav-right">
+
             <!-- Notification Bell -->
             <div class="notification-bell-wrapper" id="notificationBellWrapper">
-                <button type="button" id="notificationBell" class="notification-bell-btn"
-                    aria-label="Notifications" aria-haspopup="true" aria-expanded="false"
-                    onclick="toggleNotificationPanel()">
-                    <svg class="notif-bell-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
-                    <span class="notif-badge" id="notifBadge" aria-hidden="true">0</span>
+                <button type="button"
+                        id="notificationBell"
+                        class="notification-bell-btn"
+                        aria-label="Notifications, 3 unread"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        onclick="toggleNotificationPanel()">
+                    <!-- Material Symbols notifications FILL=0 -->
+                    <svg class="notif-bell-icon"
+                         xmlns="http://www.w3.org/2000/svg"
+                         width="20" height="20"
+                         viewBox="0 -960 960 960"
+                         fill="currentColor"
+                         aria-hidden="true">
+                        <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/>
+                    </svg>
+                    <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
                 </button>
+
+                <!-- Notification Panel -->
                 <div class="user-dropdown-nav notification-panel" id="notificationPanel"
                      role="dialog" aria-label="Notifications" aria-modal="false"
                      onclick="event.stopPropagation()">
+
                     <div class="dropdown-header-nav notif-panel-header">
                         <div class="notif-panel-title-row">
                             <span class="notif-panel-title">Notifications</span>
-                            <span class="notif-unread-label" id="notifUnreadLabel"></span>
+                            <span class="notif-unread-label" id="notifUnreadLabel">3 unread</span>
                         </div>
                         <div class="notif-panel-actions">
                             <a href="notifications.html" class="notif-action-link view-all-link">View all</a>
-                            <button type="button" class="notif-action-link" onclick="markAllNotificationsRead()">Mark all read</button>
-                            <button type="button" class="notif-close-btn" onclick="closeNotificationPanel()" aria-label="Close notifications">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                            <button type="button" class="notif-action-link"
+                                    onclick="markAllNotificationsRead()">Mark all read</button>
+                            <button type="button" class="notif-close-btn"
+                                    onclick="closeNotificationPanel()" aria-label="Close notifications">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                                </svg>
                             </button>
                         </div>
                     </div>
+
                     <div class="dropdown-menu-nav notif-list-wrapper">
                         <div class="dropdown-section-title-nav">NEW</div>
                         <ul class="notif-list" id="notificationList" role="list" aria-live="polite"></ul>
                     </div>
-                    <div class="dropdown-divider-nav" id="notifPanelDivider"></div>
+
+                    <div class="dropdown-divider-nav notif-panel-divider" id="notifPanelDivider"></div>
                     <div class="dropdown-menu-nav notif-panel-footer" id="notifPanelFooter">
-                        <button type="button" class="btn btn-secondary notif-footer-btn" id="clearAllNotificationsBtn"
+                        <button type="button" class="btn btn-secondary notif-footer-btn"
+                                id="clearAllNotificationsBtn"
                                 onclick="clearAllNotifications()">Clear all notifications</button>
                     </div>
                 </div>
             </div>
+            <!-- /Notification Bell -->
 
-            <!-- User Profile -->
-                        <div class="nav-wallet-display" id="navWalletDisplay" style="display: none;" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Wallet connected">
-                <div class="nav-wallet-icon-badge">
-                    <div class="nav-wallet-blockie"></div>
+            <!-- Wallet Display Pill -->
+            <div class="nav-wallet-display" id="navWalletDisplay"
+                 style="display: none; position: relative;"
+                 aria-label="Wallet connected">
+
+                <!-- Part 1: User Avatar + User Dropdown -->
+                <div class="nav-wallet-avatar">
+                    <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
                     <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
-                </div>
-                <div class="nav-wallet-info">
-                    <span class="nav-wallet-address" id="navWalletAddress">0x742d...3a8f</span>
-                    <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
-                </div>
-                <div class="nav-wallet-network" id="navWalletNetwork">
-                    <span id="navNetworkLabel">Polygon</span>
-                </div>
-            </div>
-<div class="user-profile-nav" onclick="toggleUserDropdown()" id="userProfile">
-                <div class="user-avatar-nav">JS</div>
-                <div class="user-name-nav">Jane Smith</div>
-                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
-                    <div class="dropdown-header-nav">
-                        <div class="dropdown-user-info-nav">
-                            <div class="dropdown-avatar-nav">JS</div>
-                            <div class="dropdown-user-details-nav">
-                                <div class="dropdown-user-name-nav">Jane Smith</div>
-                                <div class="dropdown-user-email-nav">jane@example.com</div>
+
+                    <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                        <div class="dropdown-header-nav">
+                            <div class="dropdown-user-info-nav">
+                                <div class="dropdown-avatar-nav">JS</div>
+                                <div class="dropdown-user-details-nav">
+                                    <div class="dropdown-user-name-nav">Jane Smith</div>
+                                    <div class="dropdown-user-email-nav">jane@example.com</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-wallet-badge-nav">
+                                <!-- account_balance_wallet FILL=0 -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                    <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
+                                </svg>
+                                <span id="dropdownWalletAddress">0x742d...3a8f</span>
                             </div>
                         </div>
-                        <div class="dropdown-wallet-badge-nav">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg>
-                            <span id="dropdownWalletAddress">0x742d...3a8f</span>
+                        <div class="dropdown-menu-nav" id="desktopMenuContainer">
+                            <div class="dropdown-section-nav">
+                                <div class="dropdown-section-title-nav">ACCOUNT</div>
+                                <a href="account-settings.html" class="dropdown-item-nav">My Profile</a>
+                                <a href="account-settings.html" class="dropdown-item-nav">Account Settings</a>
+                            </div>
+                            <div class="dropdown-divider-nav"></div>
+                            <a href="wallet-enhanced.html" class="dropdown-item-nav">My Wallet</a>
+                            <a href="dashboard-enhanced.html" class="dropdown-item-nav">Dashboard</a>
+                            <div class="dropdown-divider-nav"></div>
+                            <a href="#" class="dropdown-item-nav" id="disconnectWalletItem"
+                               onclick="disconnectWallet(); return false;" style="display: none;">
+                                Disconnect Wallet
+                            </a>
+                            <a href="#" class="dropdown-item-nav"
+                               onclick="logout(); return false;">Log Out</a>
                         </div>
                     </div>
-                    <div class="dropdown-menu-nav">
-                        <div class="dropdown-section-nav">
-                            <div class="dropdown-section-title-nav">ACCOUNT</div>
-                            <a href="account-settings.html" class="dropdown-item-nav">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M367-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/></svg>
-                                My Profile
-                            </a>
-                            <a href="account-settings.html" class="dropdown-item-nav">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M370-80q-16 0-28-10.5T326-118l-14-93q-13-5-24.5-12T265-239l-88 36q-14 6-28 1t-22-19L71-321q-8-14-5-28.5t15-23.5l75-57q-1-7-1-13.5v-27q0-6.5 1-13.5l-75-57q-12-9-15-23.5t5-28.5l56-100q8-14 22-19t28 1l88 36q11-8 23-15t24-12l14-93q4-17 16-27.5T370-800h120q16 0 28 10.5t16 27.5l14 93q13 5 24.5 12t22.5 15l88-36q14-6 28-1t22 19l56 100q8 14 5 28.5T778-528l-75 57q1 7 1 13.5v27q0 6.5-2 13.5l75 57q12 9 15 23.5t-5 28.5l-56 100q-8 14-22 19t-28-1l-88-36q-11 8-23 15t-24 12l-14 93q-4 17-16 27.5T490-80H370Zm12-80h96l14-106q30-8 53.5-23.5T590-325l101 41 47-82-86-65q5-14 7-29.5t2-29.5q0-14-2-29.5t-7-29.5l86-65-47-82-101 42q-19-17-42.5-32.5T494-694l-14-106h-96l-14 106q-30 8-53.5 23.5T272-635l-101-41-47 82 86 65q-5 14-7 29.5t-2 29.5q0 14 2 29.5t7 29.5l-86 65 47 82 101-41q19 17 42.5 32.5T368-254l14 106Zm48-200q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0-120Z"/></svg>
-                                Account Settings
-                            </a>
+                </div>
+
+                <!-- Part 2: Wallet Address Trigger + Wallet Options Dropdown -->
+                <div class="nav-wallet-info nav-wallet-trigger"
+                     role="button" tabindex="0"
+                     aria-haspopup="menu" aria-expanded="false"
+                     aria-label="Wallet options"
+                     onclick="toggleWalletDropdown(event)"
+                     onkeydown="handleWalletTriggerKey(event)">
+                    <span class="nav-wallet-address-row">
+                        <span class="nav-wallet-address" id="navWalletAddress">0x742d...3a8f</span>
+                        <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </span>
+                    <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
+                </div>
+
+                <div class="wallet-nav-dropdown" id="walletNavDropdown"
+                     role="menu" aria-label="Wallet options"
+                     onclick="event.stopPropagation()">
+                    <button class="wallet-nav-item" role="menuitem" onclick="switchWalletFromNav()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17 1l4 4-4 4"/>
+                            <path d="M3 11V9a4 4 0 014-4h14"/>
+                            <path d="M7 23l-4-4 4-4"/>
+                            <path d="M21 13v2a4 4 0 01-4 4H3"/>
+                        </svg>
+                        Switch wallet
+                    </button>
+                    <div class="wallet-nav-divider" role="separator"></div>
+                    <button class="wallet-nav-item wallet-nav-item--destructive"
+                            role="menuitem" onclick="disconnectWalletFromNav()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Disconnect
+                    </button>
+                </div>
+
+                <!-- Part 3: Network Badge + Network Switcher Dropdown -->
+                <div class="nav-network-badge"
+                     role="button" tabindex="0"
+                     aria-haspopup="listbox" aria-expanded="false"
+                     aria-label="Switch network, currently Ethereum"
+                     onclick="toggleNetworkDropdown(event)"
+                     onkeydown="handleNetworkBadgeKey(event)">
+                    <svg class="nav-network-icon" id="navNetworkIcon"
+                         viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+                    </svg>
+                    <span id="navNetworkLabel">Ethereum</span>
+                    <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </div>
+
+                <div class="network-dropdown-nav" id="networkDropdown"
+                     role="listbox" aria-label="Select blockchain network"
+                     onclick="event.stopPropagation()">
+                    <div class="network-dropdown-header-nav">Switch Network</div>
+                    <div class="network-options-list-nav">
+                        <div class="network-option-nav active"
+                             role="option" aria-selected="true" tabindex="0"
+                             data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                             onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                            </svg>
+                            <span class="network-option-name">Ethereum</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
-                        <div class="dropdown-divider-nav"></div>
-                        <a href="wallet-enhanced.html" class="dropdown-item-nav">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/></svg>
-                            My Wallet
-                        </a>
-                        <a href="dashboard-enhanced.html" class="dropdown-item-nav">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
-                            Dashboard
-                        </a>
-                        <div class="dropdown-divider-nav"></div>
-                        <a href="#" class="dropdown-item-nav" onclick="logout(); return false;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
-                            Log Out
-                        </a>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="polygon" data-chain-label="Polygon" data-chain-color="#8247E5"
+                             onclick="switchNetwork('polygon','Polygon','#8247E5',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#8247E5"/>
+                                <path d="M13.5 7.5L10 5.5 6.5 7.5v4l3.5 2 3.5-2v-4z" fill="white" opacity="0.9"/>
+                                <path d="M10 9.5L8 8.5v2l2 1 2-1v-2L10 9.5z" fill="#8247E5"/>
+                            </svg>
+                            <span class="network-option-name">Polygon</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="arbitrum" data-chain-label="Arbitrum" data-chain-color="#28A0F0"
+                             onclick="switchNetwork('arbitrum','Arbitrum','#28A0F0',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#2D374B"/>
+                                <path d="M10 4L7 9l3 1.5L13 9 10 4z" fill="#28A0F0"/>
+                                <path d="M7 9l-1 5 4-2 4 2-1-5-3 1.5L7 9z" fill="#28A0F0" opacity="0.7"/>
+                            </svg>
+                            <span class="network-option-name">Arbitrum</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="optimism" data-chain-label="Optimism" data-chain-color="#FF0420"
+                             onclick="switchNetwork('optimism','Optimism','#FF0420',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#FF0420"/>
+                                <circle cx="10" cy="10" r="5" fill="white" opacity="0.9"/>
+                                <circle cx="10" cy="10" r="2.5" fill="#FF0420"/>
+                            </svg>
+                            <span class="network-option-name">Optimism</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                             onclick="switchNetwork('base','Base','#0052FF',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                            </svg>
+                            <span class="network-option-name">Base</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="network-option-nav"
+                             role="option" aria-selected="false" tabindex="0"
+                             data-chain-id="bnb" data-chain-label="BNB Chain" data-chain-color="#F3BA2F"
+                             onclick="switchNetwork('bnb','BNB Chain','#F3BA2F',this)"
+                             onkeydown="handleNetworkOptionKey(event)">
+                            <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <circle cx="10" cy="10" r="10" fill="#F3BA2F"/>
+                                <path d="M10 5l1.5 1.5L10 8 8.5 6.5 10 5zM6.5 8.5L8 7l1.5 1.5L8 10l-1.5-1.5zM10 12l1.5-1.5L13 12l-1.5 1.5L10 12zM12 10l1.5-1.5L15 10l-1.5 1.5L12 10zM10 9l1 1-1 1-1-1 1-1z" fill="white"/>
+                            </svg>
+                            <span class="network-option-name">BNB Chain</span>
+                            <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- /Wallet Display Pill -->
+
+            <!-- Hamburger (visible ≤480px only) -->
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+
         </div>
     </nav>
 
     <!-- Mobile Menu Overlay -->
     <div class="mobile-menu-overlay" aria-hidden="true"></div>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Drawer -->
     <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
         <div class="mobile-menu-header">
-            <a href="index.html" aria-label="UNERA Home">
-                <img src="NewLogo/Unera Black Text Nav.svg" alt="UNERA" class="mobile-menu-logo" height="22">
+            <a href="index.html" class="nav-brand" aria-label="UNERA Home">
+                <img src="NewLogo/Unera Black Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
             </a>
             <button class="mobile-menu-close" aria-label="Close menu">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
             </button>
         </div>
-                <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
+        <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
             <a href="login_2.html" class="mobile-drawer-auth-login">LOG IN</a>
             <a href="signup_2.html" class="mobile-drawer-auth-signup">SIGN UP</a>
         </div>
@@ -921,29 +1084,34 @@
                 <div id="drawerWalletAddress" style="color:#fff;font-size:0.8rem;font-weight:600;">0x742d...3a8f</div>
                 <div id="drawerWalletMeta" style="color:rgba(255,255,255,0.55);font-size:0.7rem;">292.22559 CTC · Polygon</div>
             </div>
-            <button type="button" onclick="disconnectWallet()" style="color:rgba(255,255,255,0.5);font-size:0.7rem;background:none;border:none;cursor:pointer;">Disconnect</button>
+            <button type="button" onclick="disconnectWallet()"
+                    style="color:rgba(255,255,255,0.5);font-size:0.7rem;background:none;border:none;cursor:pointer;">Disconnect</button>
         </div>
         <div id="drawerConnectRow" style="display: none;">
             <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">Connect Wallet</button>
         </div>
         <ul class="mobile-nav-links" role="list">
             <li><a href="dashboard-enhanced.html" class="nav-link" id="drawerLinkDashboard">DASHBOARD</a></li>
-            <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
+            <li id="mobileConnectNavItem" style="display: none;">
+                <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button>
+            </li>
             <li><a href="wallet-enhanced.html" class="nav-link" id="mobileWalletLink" style="display: none;">WALLET</a></li>
             <li class="mobile-nav-section-label">TRANSACT</li>
-            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Money</a></li>
-            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send Tokens</a></li>
+            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Tokens</a></li>
+            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send</a></li>
             <li><a href="stake.html" class="nav-link mobile-nav-sub">Stake</a></li>
             <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
             <li><a href="explore-centres.html" class="nav-link" id="drawerLinkCentres">CENTRES</a></li>
-            </ul>
+        </ul>
+        <div id="mobileUserMenu"></div>
+        <div id="mobileNotificationsSection"></div>
     </div>
 
     <!-- Main Content -->
     <main id="main-content" class="container">
         <div class="page-header">
             <h1 class="page-title">Notifications</h1>
-            <p class="page-subtitle">Stay updated on your transactions, donations, and account activity</p>
+            <p class="page-subtitle">Stay updated on your transactions, stablecoin activity, donations, and account updates.</p>
         </div>
 
         <div class="section-header">
@@ -957,6 +1125,7 @@
             <button type="button" class="tab active" role="tab" aria-selected="true" onclick="filterNotifications('all', this)">All</button>
             <button type="button" class="tab" role="tab" aria-selected="false" onclick="filterNotifications('unread', this)">Unread</button>
             <button type="button" class="tab" role="tab" aria-selected="false" onclick="filterNotifications('transaction', this)">Transactions</button>
+            <button type="button" class="tab" role="tab" aria-selected="false" onclick="filterNotifications('stablecoin_layer', this)">Stablecoin</button>
             <button type="button" class="tab" role="tab" aria-selected="false" onclick="filterNotifications('donation', this)">Donations</button>
             <button type="button" class="tab" role="tab" aria-selected="false" onclick="filterNotifications('remittance', this)">Remittances</button>
             <button type="button" class="tab" role="tab" aria-selected="false" onclick="filterNotifications('verification', this)">Verification</button>
@@ -974,7 +1143,375 @@
         </div>
     </main>
 
+    <script src="shared/notification-catalog.js"></script>
     <script>
+        /* ── Notification Panel ──────────────────────────── */
+        function toggleNotificationPanel() {
+            var userDropdown = document.getElementById('userDropdown');
+            if (userDropdown && userDropdown.classList.contains('show')) userDropdown.classList.remove('show');
+            var panel = document.getElementById('notificationPanel');
+            var bell  = document.getElementById('notificationBell');
+            if (!panel || !bell) return;
+            var isOpen = panel.classList.contains('show');
+            if (isOpen) {
+                panel.classList.remove('show');
+                bell.setAttribute('aria-expanded', 'false');
+                bell.focus();
+            } else {
+                panel.classList.add('show');
+                bell.setAttribute('aria-expanded', 'true');
+                var closeBtn = panel.querySelector('.notif-close-btn');
+                if (closeBtn) setTimeout(function() { closeBtn.focus(); }, 50);
+            }
+        }
+        function closeNotificationPanel() {
+            var panel = document.getElementById('notificationPanel');
+            var bell  = document.getElementById('notificationBell');
+            if (panel) panel.classList.remove('show');
+            if (bell)  { bell.setAttribute('aria-expanded', 'false'); bell.focus(); }
+        }
+        function toggleMobileNotificationPanel() {
+            const dropdown = document.getElementById('mobileNotificationDropdown'), chevron = document.getElementById('mobileNotifChevron');
+            if (dropdown) dropdown.classList.toggle('open');
+            if (chevron) chevron.classList.toggle('open');
+        }
+        function markAllNotificationsRead() {
+            notifications.forEach(n => { n.read = true; });
+            renderNotificationPanel('desktop');
+            const mobileSection = document.getElementById('mobileNotificationsSection');
+            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
+            saveNotifications();
+        }
+        function clearNotification(id) {
+            notifications = notifications.filter(n => n.id !== id);
+            renderNotificationPanel('desktop');
+            const mobileSection = document.getElementById('mobileNotificationsSection');
+            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
+            saveNotifications();
+        }
+        function clearAllNotifications() {
+            notifications = [];
+            renderNotificationPanel('desktop');
+            const mobileSection = document.getElementById('mobileNotificationsSection');
+            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
+            saveNotifications();
+        }
+        function addNotification(data) {
+            const id = 'n' + Date.now();
+            notifications.unshift({ id, type: data.type || 'system', title: data.title || 'Notification', message: data.message || '', timestamp: new Date().toISOString(), read: false });
+            renderNotificationPanel('desktop');
+            const mobileSection = document.getElementById('mobileNotificationsSection');
+            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
+            saveNotifications();
+            const bell = document.getElementById('notificationBell');
+            if (bell) { bell.classList.add('ring'); setTimeout(() => bell.classList.remove('ring'), 500); }
+        }
+
+
+        /* ── User Dropdown ───────────────────────────────── */
+        function toggleUserDropdown() {
+            closeNotificationPanel();
+            closeNetworkDropdown();
+            var dropdown = document.getElementById('userDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
+        }
+
+        /* ── Wallet Nav Dropdown ─────────────────────────── */
+        function closeWalletNavDropdown() {
+            var dropdown = document.getElementById('walletNavDropdown');
+            var trigger  = document.querySelector('.nav-wallet-trigger');
+            if (dropdown) dropdown.classList.remove('show');
+            if (trigger)  trigger.setAttribute('aria-expanded', 'false');
+        }
+        function toggleWalletDropdown(event) {
+            event.stopPropagation();
+            closeNetworkDropdown();
+            var userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) userDropdown.classList.remove('show');
+            closeNotificationPanel();
+            var dropdown = document.getElementById('walletNavDropdown');
+            var trigger  = document.querySelector('.nav-wallet-trigger');
+            if (!dropdown || !trigger) return;
+            var isOpen = dropdown.classList.toggle('show');
+            trigger.setAttribute('aria-expanded', String(isOpen));
+            if (isOpen) {
+                var firstItem = dropdown.querySelector('[role="menuitem"]');
+                if (firstItem) firstItem.focus();
+            }
+        }
+        function handleWalletTriggerKey(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault(); toggleWalletDropdown(event);
+            } else if (event.key === 'Escape') {
+                closeWalletNavDropdown();
+                var t = document.querySelector('.nav-wallet-trigger'); if (t) t.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                var dd = document.getElementById('walletNavDropdown');
+                if (!dd) return;
+                if (!dd.classList.contains('show')) toggleWalletDropdown(event);
+                var fi = dd.querySelector('[role="menuitem"]'); if (fi) fi.focus();
+            }
+        }
+        function switchWalletFromNav() {
+            closeWalletNavDropdown();
+            openConnectModal();
+        }
+        function disconnectWalletFromNav() {
+            closeWalletNavDropdown();
+            doDisconnectWallet();
+        }
+
+        /* ── Network Switcher ────────────────────────────── */
+        var CHAIN_NAV_ICON_PATHS = {
+            ethereum: { path: 'M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z', viewBox: '0 0 24 24' },
+            polygon:  { path: 'M14.12 6.78L10 4.5 5.88 6.78v4.44L10 13.5l4.12-2.28V6.78zm-4.12 4.5L8 10V8l2-1.1L12 8v2l-2 1.28z', viewBox: '0 0 20 20' },
+            arbitrum: { path: 'M12 2L4 14l8 4 8-4L12 2zm0 3l5 8.5-5 2.5-5-2.5L12 5z', viewBox: '0 0 24 24' },
+            optimism: { path: 'M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 4a6 6 0 1 1 0 12A6 6 0 0 1 12 6z', viewBox: '0 0 24 24' },
+            base:     { path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.18 0 9.44-3.93 9.95-9H12v-2h11.95c-.5-5.5-5.1-9.99-11.95-9.99V2z', viewBox: '0 0 24 24' },
+            bnb:      { path: 'M12 2l2.5 2.5-2.5 2.5-2.5-2.5L12 2zM6.5 7.5L9 5l2.5 2.5L9 10 6.5 7.5zM14.5 7.5L17 5l2.5 2.5L17 10l-2.5-2.5zM12 9.5l2.5 2.5-2.5 2.5L9.5 12l2.5-2.5zM6.5 14.5L9 12l2.5 2.5L9 17l-2.5-2.5zM14.5 14.5L17 12l2.5 2.5L17 17l-2.5-2.5zM12 17l2.5 2.5L12 22l-2.5-2.5L12 17z', viewBox: '0 0 24 24' }
+        };
+        function closeNetworkDropdown() {
+            var dropdown = document.getElementById('networkDropdown');
+            var badge    = document.querySelector('.nav-network-badge');
+            if (dropdown) dropdown.classList.remove('show');
+            if (badge) { badge.classList.remove('open'); badge.setAttribute('aria-expanded', 'false'); }
+        }
+        function toggleNetworkDropdown(event) {
+            event.stopPropagation();
+            closeNotificationPanel();
+            var userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) userDropdown.classList.remove('show');
+            var badge    = event.currentTarget;
+            var dropdown = document.getElementById('networkDropdown');
+            if (!dropdown) return;
+            var isOpen = dropdown.classList.toggle('show');
+            badge.classList.toggle('open', isOpen);
+            badge.setAttribute('aria-expanded', String(isOpen));
+            if (isOpen) { var fo = dropdown.querySelector('.network-option-nav'); if (fo) fo.focus(); }
+        }
+        function switchNetwork(chainId, label, chainColor, optionEl) {
+            document.querySelectorAll('.network-option-nav').forEach(function(el) {
+                el.classList.remove('active'); el.setAttribute('aria-selected', 'false');
+            });
+            var match = document.querySelector('.network-option-nav[data-chain-id="' + chainId + '"]');
+            if (match) { match.classList.add('active'); match.setAttribute('aria-selected', 'true'); }
+            var navLabel = document.getElementById('navNetworkLabel');
+            var navIcon  = document.getElementById('navNetworkIcon');
+            var badge    = document.querySelector('.nav-network-badge');
+            if (navLabel) navLabel.textContent = label;
+            if (navIcon)  navIcon.style.color = chainColor;
+            if (badge)    badge.setAttribute('aria-label', 'Switch network, currently ' + label);
+            closeNetworkDropdown();
+            try { localStorage.setItem('selectedNetwork', JSON.stringify({ id: chainId, label: label, color: chainColor })); } catch(e) {}
+        }
+        function handleNetworkBadgeKey(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault(); toggleNetworkDropdown(event);
+            } else if (event.key === 'Escape') {
+                closeNetworkDropdown(); event.currentTarget.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                var dd = document.getElementById('networkDropdown');
+                if (!dd) return;
+                if (!dd.classList.contains('show')) {
+                    var b = event.currentTarget; b.classList.add('open'); b.setAttribute('aria-expanded', 'true'); dd.classList.add('show');
+                }
+                var fo = dd.querySelector('.network-option-nav'); if (fo) fo.focus();
+            }
+        }
+        function handleNetworkOptionKey(event) {
+            var options = Array.from(document.querySelectorAll('#networkDropdown .network-option-nav'));
+            var idx = options.indexOf(event.currentTarget);
+            if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); }
+            else if (event.key === 'Escape') { event.preventDefault(); closeNetworkDropdown(); var b2 = document.querySelector('.nav-network-badge'); if (b2) b2.focus(); }
+            else if (event.key === 'ArrowDown') { event.preventDefault(); var nx = options[idx + 1]; if (nx) nx.focus(); }
+            else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (idx === 0) { var b3 = document.querySelector('.nav-network-badge'); if (b3) b3.focus(); }
+                else { var pv = options[idx - 1]; if (pv) pv.focus(); }
+            }
+        }
+
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        function disconnectWallet() {
+            localStorage.removeItem('walletConnected');
+            localStorage.removeItem('walletAddress');
+            localStorage.removeItem('walletBalance');
+            if (typeof syncNavAuthState === 'function') syncNavAuthState();
+        }
+
+        /* ── Outside-click close ─────────────────────────── */
+        document.addEventListener('click', function(event) {
+            var navWalletDisplay  = document.getElementById('navWalletDisplay');
+            var notifBellWrapper  = document.getElementById('notificationBellWrapper');
+            var userDropdown      = document.getElementById('userDropdown');
+            var notifPanel        = document.getElementById('notificationPanel');
+            var networkDropdown   = document.getElementById('networkDropdown');
+            var walletNavDropdown = document.getElementById('walletNavDropdown');
+
+            if (userDropdown && userDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
+                userDropdown.classList.remove('show');
+            if (notifPanel && notifPanel.classList.contains('show') && notifBellWrapper && !notifBellWrapper.contains(event.target)) {
+                notifPanel.classList.remove('show');
+                var bell = document.getElementById('notificationBell');
+                if (bell) bell.setAttribute('aria-expanded', 'false');
+            }
+            if (networkDropdown && networkDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
+                closeNetworkDropdown();
+            if (walletNavDropdown && walletNavDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
+                closeWalletNavDropdown();
+        });
+
+
+    </script>
+    <script>
+        const USER_MENU_ITEMS = [
+            { section: 'ACCOUNT', items: [
+                { label: 'My Profile', href: 'account-settings.html', icon: 'profile' },
+                { label: 'Account Settings', href: 'account-settings.html', icon: 'settings' },
+            ]},
+            { divider: true },
+            { label: 'My Wallet', href: 'wallet-enhanced.html', icon: 'wallet' },
+            { label: 'Dashboard', href: 'dashboard-enhanced.html', icon: 'dashboard' },
+            { divider: true },
+            { label: 'Disconnect Wallet', action: 'disconnectWallet', id: 'disconnectWalletItem', icon: 'disconnect', hideByDefault: true },
+            { label: 'Log Out', action: 'logout', icon: 'logout' },
+        ];
+
+        const MENU_ICONS = {
+            profile: '<path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>',
+            settings: '<path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>',
+            wallet: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+            dashboard: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+            disconnect: '<path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/>',
+            logout: '<path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>',
+        };
+
+        function renderUserMenu(variant, options) {
+            const opts = options || {};
+            const activePage = opts.activePage || '';
+            const walletConnected = localStorage.getItem('walletConnected') === 'true';
+
+            function isActive(item) {
+                return activePage === 'account-settings' && item.label === 'Account Settings';
+            }
+
+            function renderItem(item, itemId, itemClass) {
+                const iconSvg = item.icon ? `<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">${MENU_ICONS[item.icon] || ''}</svg>` : '';
+                const hideStyle = item.hideByDefault && !walletConnected ? ' style="display: none;"' : '';
+                const idAttr = item.id ? ` id="${item.id}"` : '';
+                const activeClass = isActive(item) ? ' active' : '';
+                if (item.action) {
+                    const actionId = item.id === 'disconnectWalletItem' ? 'disconnectWalletItem' : (item.id === 'disconnectWalletItemMobile' ? 'disconnectWalletItemMobile' : '');
+                    const idStr = actionId ? ` id="${actionId}"` : '';
+                    return `<a href="#" class="${itemClass}${activeClass}"${idStr}${hideStyle} onclick="${item.action}(); return false;">${iconSvg} ${item.label}</a>`;
+                }
+                return `<a href="${item.href}" class="${itemClass}${activeClass}"${idAttr}${hideStyle}>${iconSvg} ${item.label}</a>`;
+            }
+
+            if (variant === 'desktop') {
+                let html = '';
+                for (const entry of USER_MENU_ITEMS) {
+                    if (entry.divider) {
+                        html += '<div class="dropdown-divider-nav"></div>';
+                    } else if (entry.section) {
+                        html += '<div class="dropdown-section-nav"><div class="dropdown-section-title-nav">' + entry.section + '</div>';
+                        for (const item of entry.items) {
+                            html += renderItem(item, item.id, 'dropdown-item-nav');
+                        }
+                        html += '</div>';
+                    } else {
+                        const id = entry.id === 'disconnectWalletItem' ? 'disconnectWalletItem' : undefined;
+                        html += renderItem({ ...entry, id }, id, 'dropdown-item-nav');
+                    }
+                }
+                return html;
+            }
+
+            if (variant === 'mobile') {
+                let menuHtml = '';
+                for (const entry of USER_MENU_ITEMS) {
+                    if (entry.divider) {
+                        menuHtml += '<div class="mobile-dropdown-divider"></div>';
+                    } else if (entry.section) {
+                        menuHtml += '<div class="mobile-dropdown-section"><div class="mobile-dropdown-section-title">' + entry.section + '</div>';
+                        for (const item of entry.items) {
+                            const mobileItem = { ...item, id: item.label === 'Disconnect Wallet' ? 'disconnectWalletItemMobile' : undefined };
+                            menuHtml += renderItem(mobileItem, mobileItem.id, 'mobile-dropdown-item');
+                        }
+                        menuHtml += '</div>';
+                    } else {
+                        const mobileId = entry.label === 'Disconnect Wallet' ? 'disconnectWalletItemMobile' : undefined;
+                        menuHtml += renderItem({ ...entry, id: mobileId }, mobileId, 'mobile-dropdown-item');
+                    }
+                }
+                return `
+                    <div class="mobile-user-profile">
+                        <div class="mobile-user-profile-header" onclick="toggleMobileUserDropdown()">
+                            <div class="mobile-user-info">
+                                <div class="mobile-user-avatar">JS</div>
+                                <div class="mobile-user-details">
+                                    <div class="mobile-user-name">Jane Smith</div>
+                                    <div class="mobile-user-email">jane@example.com</div>
+                                </div>
+                            </div>
+                            <svg class="mobile-user-chevron" id="mobileUserChevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div class="mobile-user-dropdown" id="mobileUserDropdown">
+                            <div class="mobile-user-dropdown-content">
+                                <div class="mobile-wallet-badge">
+                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                        <path d="M2 10h20"/>
+                                    </svg>
+                                    <span id="mobileDropdownWalletAddress">0x742d...3a8f</span>
+                                </div>
+                                <div class="mobile-dropdown-section">
+                                    <div class="mobile-dropdown-section-title">Network</div>
+                                    <div class="mobile-network-option mobile-dropdown-item active" data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA" onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#627EEA"/><path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/><path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/></svg>
+                                        Ethereum
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="polygon" data-chain-label="Polygon" data-chain-color="#8247E5" onclick="switchNetwork('polygon','Polygon','#8247E5',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#8247E5"/><path d="M13.5 7.5L10 5.5 6.5 7.5v4l3.5 2 3.5-2v-4z" fill="white" opacity="0.9"/><path d="M10 9.5L8 8.5v2l2 1 2-1v-2L10 9.5z" fill="#8247E5"/></svg>
+                                        Polygon
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="arbitrum" data-chain-label="Arbitrum" data-chain-color="#28A0F0" onclick="switchNetwork('arbitrum','Arbitrum','#28A0F0',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#2D374B"/><path d="M10 4L7 9l3 1.5L13 9 10 4z" fill="#28A0F0"/><path d="M7 9l-1 5 4-2 4 2-1-5-3 1.5L7 9z" fill="#28A0F0" opacity="0.7"/></svg>
+                                        Arbitrum
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="optimism" data-chain-label="Optimism" data-chain-color="#FF0420" onclick="switchNetwork('optimism','Optimism','#FF0420',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#FF0420"/><circle cx="10" cy="10" r="5" fill="white" opacity="0.9"/><circle cx="10" cy="10" r="2.5" fill="#FF0420"/></svg>
+                                        Optimism
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF" onclick="switchNetwork('base','Base','#0052FF',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#0052FF"/><path d="M10 3C6.13 3 3 6.13 3 10s3.13 7 7 7c3.63 0 6.64-2.76 6.97-6.3H10V9h7.97c-.36-3.88-3.61-7-7.97-7V3z" fill="white"/></svg>
+                                        Base
+                                    </div>
+                                    <div class="mobile-network-option mobile-dropdown-item" data-chain-id="bnb" data-chain-label="BNB Chain" data-chain-color="#F3BA2F" onclick="switchNetwork('bnb','BNB Chain','#F3BA2F',this)">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#F3BA2F"/><path d="M10 4.5l1.8 1.8L10 8.1 8.2 6.3 10 4.5zM5.7 8.2L7.5 6.4l1.8 1.8-1.8 1.8-1.8-1.8zM12.7 8.2l1.8-1.8 1.8 1.8-1.8 1.8-1.8-1.8zM10 9.7l1.8 1.8L10 13.3l-1.8-1.8L10 9.7zM5.7 11.8l1.8-1.8 1.8 1.8-1.8 1.8-1.8-1.8zM12.7 11.8l1.8-1.8 1.8 1.8-1.8 1.8-1.8-1.8z" fill="white"/></svg>
+                                        BNB Chain
+                                    </div>
+                                    <div class="mobile-dropdown-divider"></div>
+                                </div>
+                                ${menuHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            return '';
+        }
+        
+
+
         const DEFAULT_NOTIFICATIONS = [
             { id: 'nkyc_retry', type: 'verification', title: 'Verification needs another try', message: 'Additional information is needed to complete your identity check. Please resume the verification flow to resubmit.', timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString(), read: false, ctaUrl: 'kyc-verify.html', ctaLabel: 'Resume verification' },
             { id: 'nkyc_blocked', type: 'system', title: 'Identity verification unavailable', message: 'You\'re not able to complete identity verification on this account while we review it. Please contact support for next steps.', timestamp: new Date(Date.now() - 28 * 60 * 1000).toISOString(), read: false, ctaUrl: 'mailto:support@unera.ca', ctaLabel: 'Contact support' },
@@ -989,7 +1526,11 @@
             { id: 'n9', type: 'system', title: 'Password Updated', message: 'Your account password was successfully changed', timestamp: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), read: false },
             { id: 'n10', type: 'donation', title: 'Monthly Recurring', message: 'Recurring donation of 10 CTC to Lagos Centre processed', timestamp: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), read: false }
         ];
-        let notifications = JSON.parse(localStorage.getItem('clb_notifications') || '[]');
+        let notifications = [];
+        if (window.UNERA_NOTIFICATION_CATALOG) {
+            notifications = UNERA_NOTIFICATION_CATALOG.mergeIntoStorage();
+        } else {
+            notifications = JSON.parse(localStorage.getItem('clb_notifications') || '[]');
         const existingIds = new Set(notifications.map(n => n.id));
         const toAdd = DEFAULT_NOTIFICATIONS.filter(n => !existingIds.has(n.id));
         if (toAdd.length > 0) {
@@ -1037,6 +1578,7 @@
                 localStorage.setItem('clb_notifications', JSON.stringify(notifications));
             }
         })();
+        }
         let currentFilter = 'all';
 
         /* Material Symbols Outlined — FILL=1 paths: `notifications.html` list + `#notificationPanel` (see .cursor/rules/newunera-notifications-icons.mdc) */
@@ -1087,7 +1629,7 @@
 
         function markNotificationRead(id) {
             const n = notifications.find(x => x.id === id);
-            if (n) { n.read = true; saveNotifications(); updateNotificationBadges(notifications.filter(x => !x.read).length); }
+            if (n) { n.read = true; saveNotifications(); renderNotificationPanel('desktop'); const ms = document.getElementById('mobileNotificationsSection'); if (ms) ms.innerHTML = renderNotificationPanel('mobile'); renderPageList(); }
         }
 
         function handleNotificationClick(e, id) {
@@ -1095,34 +1637,49 @@
             const n = notifications.find(x => x.id === id);
             if (!n) return;
             markNotificationRead(id);
-            if (n.ctaUrl) window.location.href = n.ctaUrl;
+            if (n.ctaUrl) window.location.href = resolveCtaUrl(n.ctaUrl);
             else { renderPageList(); renderNotificationPanel(); }
         }
 
         function markAllNotificationsRead() {
             notifications.forEach(n => { n.read = true; });
             saveNotifications();
-            updateNotificationBadges(0);
+            renderNotificationPanel('desktop');
+            const ms = document.getElementById('mobileNotificationsSection');
+            if (ms) ms.innerHTML = renderNotificationPanel('mobile');
+            renderPageList();
         }
 
         function clearAllNotifications() {
             notifications = [];
             saveNotifications();
-            updateNotificationBadges(0);
+            renderNotificationPanel('desktop');
+            const ms = document.getElementById('mobileNotificationsSection');
+            if (ms) ms.innerHTML = renderNotificationPanel('mobile');
+            renderPageList();
         }
 
         function clearNotification(id) {
             notifications = notifications.filter(n => n.id !== id);
             saveNotifications();
-            updateNotificationBadges(notifications.filter(x => !x.read).length);
+            renderNotificationPanel('desktop');
+            const ms = document.getElementById('mobileNotificationsSection');
+            if (ms) ms.innerHTML = renderNotificationPanel('mobile');
+            renderPageList();
+        }
+
+        function resolveCtaUrl(url) {
+            return (window.UNERA_NOTIFICATION_CATALOG && UNERA_NOTIFICATION_CATALOG.resolveCtaUrl)
+                ? UNERA_NOTIFICATION_CATALOG.resolveCtaUrl(url) : url;
         }
 
         function getFilteredNotifications() {
-            return notifications.filter(n => {
-                if (currentFilter === 'all') return true;
-                if (currentFilter === 'unread') return !n.read;
-                return n.type === currentFilter;
-            });
+            if (window.UNERA_NOTIFICATION_CATALOG) {
+                return notifications.filter(n => UNERA_NOTIFICATION_CATALOG.matchesFilter(n, currentFilter));
+            }
+            if (currentFilter === 'all') return notifications;
+            if (currentFilter === 'unread') return notifications.filter(n => !n.read);
+            return notifications.filter(n => n.type === currentFilter);
         }
 
         function renderPageList() {
@@ -1161,39 +1718,72 @@
             }).join('');
         }
 
-        function renderNotificationPanel() {
+
+        function handleNotificationItemClick(e, id) {
+            if (e.target.closest('a.notif-item-cta') || e.target.closest('button.notif-item-dismiss')) return;
+            handleNotificationClick(e, id);
+        }
+
+        function renderNotificationItem(n) {
+            const type = n.type || 'system';
+            const iconPath = PANEL_ICON_PATHS[type] || PANEL_ICON_PATHS.system;
+            const readClass = n.read ? ' read' : '';
+            const dot = n.read ? '' : '<span class="notif-unread-dot" aria-hidden="true"></span>';
+            const ctaHref = n.ctaUrl ? (typeof resolveCtaUrl === 'function' ? resolveCtaUrl(n.ctaUrl) : n.ctaUrl) : '';
+            const ctaHtml = (ctaHref && n.ctaLabel) ? `<a href="${ctaHref}" class="notif-item-cta" onclick="event.stopPropagation(); markNotificationRead('${n.id}')">${n.ctaLabel}</a>` : '';
+            return `<li class="notif-item${readClass}" role="listitem" data-id="${n.id}">
+                <span class="notif-item-icon notif-type-${type}" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor"><path d="${iconPath}"/></svg></span>
+                <div class="notif-item-body" role="button" tabindex="0" onclick="handleNotificationItemClick(event, '${n.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleNotificationItemClick(event,'${n.id}');}">
+                    <p class="notif-item-title">${n.title}</p>
+                    <p class="notif-item-msg">${n.message}</p>
+                    <time class="notif-item-time" datetime="${n.timestamp}">${formatRelativeTime(n.timestamp)}</time>${ctaHtml}
+                </div>
+                ${dot}<button type="button" class="notif-item-dismiss" aria-label="Dismiss: ${n.title}" onclick="event.stopPropagation(); clearNotification('${n.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
+            </li>`;
+        }
+
+        function renderNotificationPanel(variant) {
             const unreadCount = notifications.filter(n => !n.read).length;
             updateNotificationBadges(unreadCount);
             const itemsHtml = notifications.length === 0
-                ? '<li style="padding: 1.5rem; text-align: center; color: var(--text-secondary); font-size: 0.875rem;">No notifications</li>'
-                : notifications.map(n => {
-                    const type = n.type || 'system';
-                    const iconPath = PANEL_ICON_PATHS[type] || PANEL_ICON_PATHS.system;
-                    const readClass = n.read ? ' read' : '';
-                    const dot = n.read ? '' : '<span class="notif-unread-dot" aria-hidden="true"></span>';
-                    const ctaHtml = (n.ctaUrl && n.ctaLabel) ? `<a href="${n.ctaUrl}" class="notif-item-cta" onclick="event.stopPropagation(); markNotificationRead('${n.id}')">${n.ctaLabel}</a>` : '';
-                    return `<li class="notif-item${readClass}" data-id="${n.id}">
-                        <span class="notif-item-icon notif-type-${type}"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="${iconPath}"/></svg></span>
-                        <div class="notif-item-body" onclick="handleNotificationClick(event, '${n.id}')">
-                            <p class="notif-item-title">${n.title}</p>
-                            <p class="notif-item-msg">${n.message}</p>
-                            <time class="notif-item-time" datetime="${n.timestamp}">${formatRelativeTime(n.timestamp)}</time>${ctaHtml}
+                ? '<li class="notif-empty" style="padding: 1.5rem; text-align: center; color: var(--text-secondary); font-size: 0.875rem;">No notifications</li>'
+                : notifications.map(renderNotificationItem).join('');
+            if (variant === 'desktop') {
+                const list = document.getElementById('notificationList');
+                if (list) list.innerHTML = itemsHtml;
+                const clearBtn = document.getElementById('clearAllNotificationsBtn');
+                const footer = document.getElementById('notifPanelFooter');
+                const divider = document.getElementById('notifPanelDivider');
+                const isEmpty = notifications.length === 0;
+                if (clearBtn) clearBtn.hidden = isEmpty;
+                if (footer) footer.hidden = isEmpty;
+                if (divider) divider.hidden = isEmpty;
+                return;
+            }
+            if (variant === 'mobile') {
+                const bellSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>';
+                const badgeDisplay = unreadCount > 0 ? `<span class="notif-badge notif-badge-mobile" id="notifBadgeMobile" data-count="${unreadCount}" aria-hidden="true">${unreadCount > 9 ? '9+' : unreadCount}</span>` : '';
+                return `<div class="mobile-notif-profile mobile-user-profile">
+                    <div class="mobile-user-profile-header" onclick="toggleMobileNotificationPanel()">
+                        <div class="notif-mobile-header-left">
+                            <span style="width:40px;height:40px;border-radius:50%;background:var(--brand-deep-blue);display:flex;align-items:center;justify-content:center;color:var(--brand-white);">${bellSvg}</span>
+                            <span style="font-weight:600;font-size:0.938rem;color:var(--neutral-900);">Notifications</span>
+                            ${badgeDisplay}
                         </div>
-                        ${dot}<button type="button" class="notif-item-dismiss" aria-label="Dismiss: ${n.title}" onclick="event.stopPropagation(); clearNotification('${n.id}'); renderNotificationPanel(); renderPageList();"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
-                    </li>`;
-                }).join('');
-
-            const list = document.getElementById('notificationList');
-            if (list) list.innerHTML = itemsHtml;
-
-            const clearBtn = document.getElementById('clearAllNotificationsBtn');
-            const footer = document.getElementById('notifPanelFooter');
-            const divider = document.getElementById('notifPanelDivider');
-            const isEmpty = notifications.length === 0;
-            if (clearBtn) clearBtn.hidden = isEmpty;
-            if (footer) footer.hidden = isEmpty;
-            if (divider) divider.hidden = isEmpty;
+                        <svg class="mobile-user-chevron" id="mobileNotifChevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </div>
+                    <div class="mobile-user-dropdown" id="mobileNotificationDropdown">
+                        <div class="mobile-user-dropdown-content">
+                            ${notifications.length > 0 ? `<a href="notifications.html" class="dropdown-item-nav view-all-link" style="display:flex;align-items:center;gap:0.75rem;width:100%;margin-bottom:0.5rem;">View all</a>` : ''}
+                            <ul class="notif-list" id="mobileNotificationList" role="list" aria-live="polite">${itemsHtml}</ul>
+                            ${notifications.length > 0 ? `<div class="dropdown-divider-nav"></div><button type="button" class="btn btn-secondary" onclick="clearAllNotifications()" style="width:100%;margin-bottom:0.5rem;">Clear all</button><button type="button" class="dropdown-item-nav" onclick="markAllNotificationsRead()" style="display:flex;align-items:center;gap:0.75rem;width:100%;">Mark all read</button>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }
+            return '';
         }
+
 
         function filterNotifications(filter, tabEl) {
             currentFilter = filter;
@@ -1205,85 +1795,75 @@
             renderPageList();
         }
 
-        function toggleNotificationPanel() {
-            const userDropdown = document.getElementById('userDropdown');
-            if (userDropdown && userDropdown.classList.contains('show')) userDropdown.classList.remove('show');
-            const panel = document.getElementById('notificationPanel');
-            const bell = document.getElementById('notificationBell');
-            if (!panel || !bell) return;
-            const isOpen = panel.classList.contains('show');
-            if (isOpen) { panel.classList.remove('show'); bell.setAttribute('aria-expanded', 'false'); }
-            else { panel.classList.add('show'); bell.setAttribute('aria-expanded', 'true'); renderNotificationPanel(); }
+
+
+
+
+
+
+        const desktopMenuContainer = document.getElementById('desktopMenuContainer');
+        if (desktopMenuContainer) {
+            desktopMenuContainer.innerHTML = renderUserMenu('desktop', { activePage: 'notifications' });
         }
-
-        function toggleUserDropdown() {
-            closeNotificationPanel();
-            const dropdown = document.getElementById('userDropdown');
-            if (dropdown) dropdown.classList.toggle('show');
+        const mobileUserMenu = document.getElementById('mobileUserMenu');
+        if (mobileUserMenu) {
+            mobileUserMenu.innerHTML = renderUserMenu('mobile', { activePage: 'notifications' });
         }
-
-        function closeNotificationPanel() {
-            const panel = document.getElementById('notificationPanel');
-            const bell = document.getElementById('notificationBell');
-            if (panel) panel.classList.remove('show');
-            if (bell) bell.setAttribute('aria-expanded', 'false');
+        const mobileNotificationsSection = document.getElementById('mobileNotificationsSection');
+        if (mobileNotificationsSection) {
+            mobileNotificationsSection.innerHTML = renderNotificationPanel('mobile');
         }
+        renderNotificationPanel('desktop');
+        renderPageList();
 
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'index.html';
+        if (!localStorage.getItem('isLoggedIn')) {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('walletConnected', 'true');
+            localStorage.setItem('walletAddress', '0x742d35Cc6634C0532925a3b844Bc9e7595f3a8f');
+            localStorage.setItem('walletBalance', '292.22559 CTC');
+            localStorage.setItem('selectedNetwork', JSON.stringify({ id: 'polygon', label: 'Polygon', color: '#8247E5' }));
         }
-
-        document.addEventListener('click', function(e) {
-            const wrapper = document.getElementById('notificationBellWrapper');
-            const panel = document.getElementById('notificationPanel');
-            const userProfile = document.getElementById('userProfile');
-            if (panel && panel.classList.contains('show') && wrapper && !wrapper.contains(e.target) && !(userProfile && userProfile.contains(e.target))) {
-                closeNotificationPanel();
-            }
-            if (userProfile && !userProfile.contains(e.target)) {
-                const dropdown = document.getElementById('userDropdown');
-                if (dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
-            }
-        });
-
-        (function initMobileMenu() {
-            const hamburger = document.querySelector('.hamburger');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
-            const mobileMenuClose = document.querySelector('.mobile-menu-close');
-            const body = document.body;
-            if (!hamburger || !mobileMenu || !mobileMenuOverlay) return;
+        if (typeof syncNavAuthState === 'function') syncNavAuthState();
+    </script>
+    <!-- Hamburger Menu Script -->
+    <script>
+        (function() {
+            var hamburger       = document.querySelector('.hamburger');
+            var mobileMenu      = document.querySelector('.mobile-menu');
+            var mobileOverlay   = document.querySelector('.mobile-menu-overlay');
+            var mobileMenuClose = document.querySelector('.mobile-menu-close');
+            var body            = document.body;
 
             function openMenu() {
-                hamburger.classList.add('active');
-                mobileMenu.classList.add('active');
-                mobileMenuOverlay.classList.add('active');
-                hamburger.setAttribute('aria-expanded', 'true');
-                mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                if (hamburger)     { hamburger.classList.add('active'); hamburger.setAttribute('aria-expanded', 'true'); }
+                if (mobileMenu)    mobileMenu.classList.add('active');
+                if (mobileOverlay) { mobileOverlay.classList.add('active'); mobileOverlay.setAttribute('aria-hidden', 'false'); }
                 body.style.overflow = 'hidden';
             }
-
             function closeMenu() {
-                hamburger.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                mobileMenuOverlay.classList.remove('active');
-                hamburger.setAttribute('aria-expanded', 'false');
-                mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                if (hamburger)     { hamburger.classList.remove('active'); hamburger.setAttribute('aria-expanded', 'false'); }
+                if (mobileMenu)    mobileMenu.classList.remove('active');
+                if (mobileOverlay) { mobileOverlay.classList.remove('active'); mobileOverlay.setAttribute('aria-hidden', 'true'); }
                 body.style.overflow = '';
             }
 
-            hamburger.addEventListener('click', function() {
-                if (mobileMenu.classList.contains('active')) closeMenu();
-                else openMenu();
-            });
+            if (hamburger)       hamburger.addEventListener('click', function() { mobileMenu && mobileMenu.classList.contains('active') ? closeMenu() : openMenu(); });
             if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeMenu);
-            mobileMenuOverlay.addEventListener('click', closeMenu);
-            document.querySelectorAll('.mobile-nav-links .nav-link').forEach(link => link.addEventListener('click', closeMenu));
-        })();
+            if (mobileOverlay)   mobileOverlay.addEventListener('click', closeMenu);
 
-        renderNotificationPanel();
-        renderPageList();
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    var wdd = document.getElementById('walletNavDropdown');
+                    if (wdd && wdd.classList.contains('show')) { closeWalletNavDropdown(); var wt = document.querySelector('.nav-wallet-trigger'); if (wt) wt.focus(); return; }
+                    var ndd = document.getElementById('networkDropdown');
+                    if (ndd && ndd.classList.contains('show')) { closeNetworkDropdown(); var nb = document.querySelector('.nav-network-badge'); if (nb) nb.focus(); return; }
+                    var np = document.getElementById('notificationPanel');
+                    if (np && np.classList.contains('show')) { closeNotificationPanel(); return; }
+                    if (mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+                }
+            });
+            document.querySelectorAll('.mobile-nav-links .nav-link').forEach(function(link) { link.addEventListener('click', closeMenu); });
+        })();
     </script>
     <script src="consumer-app-nav.js"></script>
 </body>

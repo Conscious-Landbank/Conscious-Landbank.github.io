@@ -5,23 +5,10 @@
 (function () {
     'use strict';
 
-    var DEFAULT_NOTIFICATIONS = [
-        { id: 'nkyc_retry', type: 'verification', title: 'Verification needs another try', message: 'Additional information is needed to complete your identity check. Please resume the verification flow to resubmit.', timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString(), read: false, ctaUrl: 'kyc-verify.html', ctaLabel: 'Resume verification' },
-        { id: 'nkyc_blocked', type: 'system', title: 'Identity verification unavailable', message: 'You\'re not able to complete identity verification on this account while we review it. Please contact support for next steps.', timestamp: new Date(Date.now() - 28 * 60 * 1000).toISOString(), read: false, ctaUrl: 'mailto:support@unera.ca', ctaLabel: 'Contact support' },
-        { id: 'n1', type: 'transaction', title: 'Transaction Confirmed', message: 'Sent 12.5 CTC — confirmed on Ethereum', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), read: false },
-        { id: 'n2', type: 'listing', title: 'New Listing Available', message: 'Lot 7B at Conscious Landbank is now open', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), read: false },
-        { id: 'n3', type: 'system', title: 'Security Notice', message: 'New device login detected for your account', timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(), read: false },
-        { id: 'n4', type: 'donation', title: 'Donation Received', message: 'Your 50 CTC donation to Nairobi Centre has been processed', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), read: false, ctaUrl: '../dashboard-enhanced.html', ctaLabel: 'View impact' },
-        { id: 'n5', type: 'remittance', title: 'Remittance Sent', message: '25 CTC sent to family wallet — delivered on Polygon', timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), read: false, ctaUrl: '../wallet-enhanced.html', ctaLabel: 'View transaction' },
-        { id: 'n6', type: 'verification', title: 'Identity Verified', message: 'Your KYC verification has been approved', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(), read: false },
-        { id: 'n7', type: 'transaction', title: 'Stake Rewards', message: 'Earned 2.3 CTC from staking — added to wallet', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), read: false },
-        { id: 'n8', type: 'listing', title: 'Lot Pre-sale Opens', message: 'Lot 12A at Kampala Centre opens for pre-sale tomorrow', timestamp: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(), read: false },
-        { id: 'n9', type: 'system', title: 'Password Updated', message: 'Your account password was successfully changed', timestamp: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), read: false },
-        { id: 'n10', type: 'donation', title: 'Monthly Recurring', message: 'Recurring donation of 10 CTC to Lagos Centre processed', timestamp: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), read: false }
-    ];
-
     var PANEL_ICON_PATHS = {
         transaction: 'M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z',
+        pending: 'M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-80 0q17 0 28.5-11.5T440-320q0-17-11.5-28.5T400-360q-17 0-28.5 11.5T360-320q0 17 11.5 28.5T400-280Zm160 0q17 0 28.5-11.5T600-320q0-17-11.5-28.5T560-360q-17 0-28.5 11.5T520-320q0 17 11.5 28.5T560-280ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z',
+        error: 'M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z',
         system: 'M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280Z',
         listing: 'M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z',
         donation: 'm480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z',
@@ -67,48 +54,27 @@
         });
     }
 
-    var notifications = JSON.parse(localStorage.getItem('clb_notifications') || '[]');
-    var existingIds = new Set(notifications.map(function (n) { return n.id; }));
-    var toAdd = DEFAULT_NOTIFICATIONS.filter(function (n) { return !existingIds.has(n.id); });
-    if (toAdd.length > 0) {
-        var PRIORITY_DEFAULT_IDS = ['nkyc_retry', 'nkyc_blocked'];
-        var priorityIdSet = new Set(PRIORITY_DEFAULT_IDS);
-        var priority = PRIORITY_DEFAULT_IDS.map(function (id) {
-            return toAdd.find(function (n) { return n.id === id; });
-        }).filter(Boolean).map(function (n) { return JSON.parse(JSON.stringify(n)); });
-        var rest = toAdd.filter(function (n) { return !priorityIdSet.has(n.id); }).map(function (n) {
-            return JSON.parse(JSON.stringify(n));
-        });
-        notifications = priority.concat(notifications, rest);
-        localStorage.setItem('clb_notifications', JSON.stringify(notifications));
+    var notifications = [];
+    if (window.UNERA_NOTIFICATION_CATALOG && typeof window.UNERA_NOTIFICATION_CATALOG.mergeIntoStorage === 'function') {
+        notifications = window.UNERA_NOTIFICATION_CATALOG.mergeIntoStorage();
+    } else {
+        notifications = JSON.parse(localStorage.getItem('clb_notifications') || '[]');
     }
 
-    function syncNkycCopy(id, payload) {
-        var i = notifications.findIndex(function (n) { return n.id === id; });
-        if (i === -1) return;
-        var n = notifications[i];
-        var changed = Object.keys(payload).some(function (k) { return n[k] !== payload[k]; });
-        if (changed) {
-            notifications[i] = Object.assign({}, n, payload);
-            localStorage.setItem('clb_notifications', JSON.stringify(notifications));
+    function getStablecoinNotifications() {
+        return notifications.filter(function (n) { return n.layer === 'stablecoin'; });
+    }
+
+    function getStablecoinUnreadCount() {
+        return getStablecoinNotifications().filter(function (n) { return !n.read; }).length;
+    }
+
+    function resolveCtaUrl(url) {
+        if (window.UNERA_NOTIFICATION_CATALOG && typeof window.UNERA_NOTIFICATION_CATALOG.resolveCtaUrl === 'function') {
+            return window.UNERA_NOTIFICATION_CATALOG.resolveCtaUrl(url);
         }
+        return url;
     }
-
-    syncNkycCopy('nkyc_blocked', {
-        type: 'system',
-        title: 'Identity verification unavailable',
-        message: 'You\'re not able to complete identity verification on this account while we review it. Please contact support for next steps.',
-        ctaUrl: 'mailto:support@unera.ca',
-        ctaLabel: 'Contact support'
-    });
-
-    syncNkycCopy('nkyc_retry', {
-        type: 'verification',
-        title: 'Verification needs another try',
-        message: 'Additional information is needed to complete your identity check. Please resume the verification flow to resubmit.',
-        ctaUrl: 'kyc-verify.html',
-        ctaLabel: 'Resume verification'
-    });
 
     function formatRelativeTime(isoStr) {
         var d = new Date(isoStr);
@@ -128,6 +94,7 @@
 
     function saveNotifications() {
         localStorage.setItem('clb_notifications', JSON.stringify(notifications));
+        window.notifications = notifications;
     }
 
     function updateNotificationBadges(count) {
@@ -152,7 +119,7 @@
         if (n) {
             n.read = true;
             saveNotifications();
-            updateNotificationBadges(notifications.filter(function (x) { return !x.read; }).length);
+            updateNotificationBadges(getStablecoinUnreadCount());
         }
     }
 
@@ -161,7 +128,7 @@
         var n = notifications.find(function (x) { return x.id === id; });
         if (!n) return;
         markNotificationRead(id);
-        if (n.ctaUrl) window.location.href = n.ctaUrl;
+        if (n.ctaUrl) window.location.href = resolveCtaUrl(n.ctaUrl);
         else {
             renderNotificationPanel();
             if (typeof window.renderPageList === 'function') window.renderPageList();
@@ -169,37 +136,41 @@
     }
 
     function markAllNotificationsRead() {
-        notifications.forEach(function (n) { n.read = true; });
+        notifications.forEach(function (n) {
+            if (n.layer === 'stablecoin') n.read = true;
+        });
         saveNotifications();
-        updateNotificationBadges(0);
+        updateNotificationBadges(getStablecoinUnreadCount());
         if (typeof window.renderPageList === 'function') window.renderPageList();
     }
 
     function clearAllNotifications() {
-        notifications = [];
+        notifications = notifications.filter(function (n) { return n.layer !== 'stablecoin'; });
         saveNotifications();
-        updateNotificationBadges(0);
+        updateNotificationBadges(getStablecoinUnreadCount());
         if (typeof window.renderPageList === 'function') window.renderPageList();
     }
 
     function clearNotification(id) {
         notifications = notifications.filter(function (n) { return n.id !== id; });
         saveNotifications();
-        updateNotificationBadges(notifications.filter(function (x) { return !x.read; }).length);
+        updateNotificationBadges(getStablecoinUnreadCount());
     }
 
     function renderNotificationPanel() {
-        var unreadCount = notifications.filter(function (n) { return !n.read; }).length;
+        var stablecoinItems = getStablecoinNotifications();
+        var unreadCount = getStablecoinUnreadCount();
         updateNotificationBadges(unreadCount);
-        var itemsHtml = notifications.length === 0
+        var itemsHtml = stablecoinItems.length === 0
             ? '<li style="padding: 1.5rem; text-align: center; color: var(--text-secondary); font-size: 0.875rem;">No notifications</li>'
-            : notifications.map(function (n) {
+            : stablecoinItems.map(function (n) {
                 var type = n.type || 'system';
                 var iconPath = PANEL_ICON_PATHS[type] || PANEL_ICON_PATHS.system;
                 var readClass = n.read ? ' read' : '';
                 var dot = n.read ? '' : '<span class="notif-unread-dot" aria-hidden="true"></span>';
-                var ctaHtml = (n.ctaUrl && n.ctaLabel)
-                    ? '<a href="' + n.ctaUrl + '" class="notif-item-cta" onclick="event.stopPropagation(); markNotificationRead(\'' + n.id + '\')">' + n.ctaLabel + '</a>'
+                var ctaHref = n.ctaUrl ? resolveCtaUrl(n.ctaUrl) : '';
+                var ctaHtml = (ctaHref && n.ctaLabel)
+                    ? '<a href="' + ctaHref + '" class="notif-item-cta" onclick="event.stopPropagation(); markNotificationRead(\'' + n.id + '\')">' + n.ctaLabel + '</a>'
                     : '';
                 return '<li class="notif-item' + readClass + '" data-id="' + n.id + '">' +
                     '<span class="notif-item-icon notif-type-' + type + '"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="' + iconPath + '"/></svg></span>' +
@@ -218,7 +189,7 @@
         var clearBtn = document.getElementById('clearAllNotificationsBtn');
         var footer = document.getElementById('notifPanelFooter');
         var divider = document.getElementById('notifPanelDivider');
-        var isEmpty = notifications.length === 0;
+        var isEmpty = stablecoinItems.length === 0;
         if (clearBtn) clearBtn.hidden = isEmpty;
         if (footer) footer.hidden = isEmpty;
         if (divider) divider.hidden = isEmpty;
@@ -360,6 +331,8 @@
     }
 
     window.notifications = notifications;
+    window.getStablecoinNotifications = getStablecoinNotifications;
+    window.resolveNotificationCtaUrl = resolveCtaUrl;
     window.formatRelativeTime = formatRelativeTime;
     window.saveNotifications = saveNotifications;
     window.updateNotificationBadges = updateNotificationBadges;
