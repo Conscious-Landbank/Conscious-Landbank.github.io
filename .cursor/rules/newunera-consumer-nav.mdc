@@ -14,7 +14,7 @@ All `NewUnera/*.html` consumer pages MUST contain the exact `nav.nav` structure 
 - Deep-blue sticky bar (`#173d47`), 44px tall, full-width, `z-index: 10001`
 - Left: UNERA logo → DASHBOARD · WALLET · TRANSACT ▾ · CENTRES
 - Right: notification bell (yellow badge) → pill-shaped wallet display: `[JS 🦊] [0x742d...3a8f ▾] [Polygon ▾]`
-- Three independent interactive triggers: user avatar (user dropdown), wallet address (wallet options), network badge (network switcher)
+- Three interactive triggers: user avatar (user dropdown), wallet address (also opens user dropdown), network badge (network switcher)
 - Mobile ≤480px: avatar-only circle + hamburger; all dropdowns become full-width fixed sheets
 
 ---
@@ -235,56 +235,19 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
              style="display: none; position: relative;"
              aria-label="Wallet connected">
 
-            <!-- Part 1: User Avatar + User Dropdown -->
+            <!-- Part 1: User Avatar -->
             <div class="nav-wallet-avatar">
                 <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
                 <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
-
-                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
-                    <div class="dropdown-header-nav">
-                        <div class="dropdown-user-info-nav">
-                            <div class="dropdown-avatar-nav">JS</div>
-                            <div class="dropdown-user-details-nav">
-                                <div class="dropdown-user-name-nav">Jane Smith</div>
-                                <div class="dropdown-user-email-nav">jane@example.com</div>
-                            </div>
-                        </div>
-                        <div class="dropdown-wallet-badge-nav">
-                            <!-- account_balance_wallet FILL=0 -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                 viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
-                                <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
-                            </svg>
-                            <span id="dropdownWalletAddress">0x742d...3a8f</span>
-                        </div>
-                    </div>
-                    <div class="dropdown-menu-nav" id="desktopMenuContainer">
-                        <div class="dropdown-section-nav">
-                            <div class="dropdown-section-title-nav">ACCOUNT</div>
-                            <a href="account-settings.html" class="dropdown-item-nav">My Profile</a>
-                            <a href="account-settings.html" class="dropdown-item-nav">Account Settings</a>
-                        </div>
-                        <div class="dropdown-divider-nav"></div>
-                        <a href="wallet-enhanced.html" class="dropdown-item-nav">My Wallet</a>
-                        <a href="dashboard-enhanced.html" class="dropdown-item-nav">Dashboard</a>
-                        <div class="dropdown-divider-nav"></div>
-                        <a href="#" class="dropdown-item-nav" id="disconnectWalletItem"
-                           onclick="disconnectWallet(); return false;" style="display: none;">
-                            Disconnect Wallet
-                        </a>
-                        <a href="#" class="dropdown-item-nav"
-                           onclick="logout(); return false;">Log Out</a>
-                    </div>
-                </div>
             </div>
 
-            <!-- Part 2: Wallet Address Trigger + Wallet Options Dropdown -->
+            <!-- Part 2: Wallet Address — opens user dropdown -->
             <div class="nav-wallet-info nav-wallet-trigger"
                  role="button" tabindex="0"
-                 aria-haspopup="menu" aria-expanded="false"
-                 aria-label="Wallet options"
-                 onclick="toggleWalletDropdown(event)"
-                 onkeydown="handleWalletTriggerKey(event)">
+                 aria-haspopup="true" aria-expanded="false"
+                 aria-label="Open account menu"
+                 onclick="toggleUserDropdown(event)"
+                 onkeydown="handleUserMenuTriggerKey(event)">
                 <span class="nav-wallet-address-row">
                     <span class="nav-wallet-address" id="navWalletAddress">0x742d...3a8f</span>
                     <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none"
@@ -294,34 +257,6 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
                     </svg>
                 </span>
                 <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
-            </div>
-
-            <div class="wallet-nav-dropdown" id="walletNavDropdown"
-                 role="menu" aria-label="Wallet options"
-                 onclick="event.stopPropagation()">
-                <button class="wallet-nav-item" role="menuitem" onclick="switchWalletFromNav()">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2"
-                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M17 1l4 4-4 4"/>
-                        <path d="M3 11V9a4 4 0 014-4h14"/>
-                        <path d="M7 23l-4-4 4-4"/>
-                        <path d="M21 13v2a4 4 0 01-4 4H3"/>
-                    </svg>
-                    Switch wallet
-                </button>
-                <div class="wallet-nav-divider" role="separator"></div>
-                <button class="wallet-nav-item wallet-nav-item--destructive"
-                        role="menuitem" onclick="disconnectWalletFromNav()">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2"
-                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Disconnect
-                </button>
             </div>
 
             <!-- Part 3: Network Badge + Network Switcher Dropdown -->
@@ -346,7 +281,7 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
             <div class="network-dropdown-nav" id="networkDropdown"
                  role="listbox" aria-label="Select blockchain network"
                  onclick="event.stopPropagation()">
-                <div class="network-dropdown-header-nav">Switch Network</div>
+                <div class="network-dropdown-header-nav">Mainnet</div>
                 <div class="network-options-list-nav">
                     <div class="network-option-nav active"
                          role="option" aria-selected="true" tabindex="0"
@@ -363,45 +298,6 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
                     </div>
                     <div class="network-option-nav"
                          role="option" aria-selected="false" tabindex="0"
-                         data-chain-id="polygon" data-chain-label="Polygon" data-chain-color="#8247E5"
-                         onclick="switchNetwork('polygon','Polygon','#8247E5',this)"
-                         onkeydown="handleNetworkOptionKey(event)">
-                        <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                            <circle cx="10" cy="10" r="10" fill="#8247E5"/>
-                            <path d="M13.5 7.5L10 5.5 6.5 7.5v4l3.5 2 3.5-2v-4z" fill="white" opacity="0.9"/>
-                            <path d="M10 9.5L8 8.5v2l2 1 2-1v-2L10 9.5z" fill="#8247E5"/>
-                        </svg>
-                        <span class="network-option-name">Polygon</span>
-                        <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <div class="network-option-nav"
-                         role="option" aria-selected="false" tabindex="0"
-                         data-chain-id="arbitrum" data-chain-label="Arbitrum" data-chain-color="#28A0F0"
-                         onclick="switchNetwork('arbitrum','Arbitrum','#28A0F0',this)"
-                         onkeydown="handleNetworkOptionKey(event)">
-                        <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                            <circle cx="10" cy="10" r="10" fill="#2D374B"/>
-                            <path d="M10 4L7 9l3 1.5L13 9 10 4z" fill="#28A0F0"/>
-                            <path d="M7 9l-1 5 4-2 4 2-1-5-3 1.5L7 9z" fill="#28A0F0" opacity="0.7"/>
-                        </svg>
-                        <span class="network-option-name">Arbitrum</span>
-                        <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <div class="network-option-nav"
-                         role="option" aria-selected="false" tabindex="0"
-                         data-chain-id="optimism" data-chain-label="Optimism" data-chain-color="#FF0420"
-                         onclick="switchNetwork('optimism','Optimism','#FF0420',this)"
-                         onkeydown="handleNetworkOptionKey(event)">
-                        <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                            <circle cx="10" cy="10" r="10" fill="#FF0420"/>
-                            <circle cx="10" cy="10" r="5" fill="white" opacity="0.9"/>
-                            <circle cx="10" cy="10" r="2.5" fill="#FF0420"/>
-                        </svg>
-                        <span class="network-option-name">Optimism</span>
-                        <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <div class="network-option-nav"
-                         role="option" aria-selected="false" tabindex="0"
                          data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
                          onclick="switchNetwork('base','Base','#0052FF',this)"
                          onkeydown="handleNetworkOptionKey(event)">
@@ -412,19 +308,59 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
                         <span class="network-option-name">Base</span>
                         <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
+                </div>
+                <div class="network-dropdown-header-nav" style="margin-top:0.25rem;">Testnet</div>
+                <div class="network-options-list-nav">
                     <div class="network-option-nav"
                          role="option" aria-selected="false" tabindex="0"
-                         data-chain-id="bnb" data-chain-label="BNB Chain" data-chain-color="#F3BA2F"
-                         onclick="switchNetwork('bnb','BNB Chain','#F3BA2F',this)"
+                         data-chain-id="sepolia" data-chain-label="Sepolia" data-chain-color="#627EEA"
+                         onclick="switchNetwork('sepolia','Sepolia','#627EEA',this)"
                          onkeydown="handleNetworkOptionKey(event)">
                         <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                            <circle cx="10" cy="10" r="10" fill="#F3BA2F"/>
-                            <path d="M10 5l1.5 1.5L10 8 8.5 6.5 10 5zM6.5 8.5L8 7l1.5 1.5L8 10l-1.5-1.5zM10 12l1.5-1.5L13 12l-1.5 1.5L10 12zM12 10l1.5-1.5L15 10l-1.5 1.5L12 10zM10 9l1 1-1 1-1-1 1-1z" fill="white"/>
+                            <circle cx="10" cy="10" r="10" fill="#627EEA" opacity="0.5"/>
+                            <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                            <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
                         </svg>
-                        <span class="network-option-name">BNB Chain</span>
+                        <span class="network-option-name">Sepolia</span>
+                        <span class="network-testnet-badge">Testnet</span>
+                        <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="network-option-nav"
+                         role="option" aria-selected="false" tabindex="0"
+                         data-chain-id="base-sepolia" data-chain-label="Base Sepolia" data-chain-color="#0052FF"
+                         onclick="switchNetwork('base-sepolia','Base Sepolia','#0052FF',this)"
+                         onkeydown="handleNetworkOptionKey(event)">
+                        <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <circle cx="10" cy="10" r="10" fill="#0052FF" opacity="0.5"/>
+                            <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                        </svg>
+                        <span class="network-option-name">Base Sepolia</span>
+                        <span class="network-testnet-badge">Testnet</span>
                         <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
                 </div>
+            </div>
+
+            <!-- User Dropdown — direct child of #navWalletDisplay (right-aligned under full pill) -->
+            <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                <div class="dropdown-header-nav">
+                    <div class="dropdown-user-info-nav">
+                        <div class="dropdown-avatar-nav">JS</div>
+                        <div class="dropdown-user-details-nav">
+                            <div class="dropdown-user-name-nav">Jane Smith</div>
+                            <div class="dropdown-user-email-nav">jane@example.com</div>
+                        </div>
+                    </div>
+                    <div class="dropdown-wallet-badge-nav">
+                        <!-- account_balance_wallet FILL=0 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                            <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
+                        </svg>
+                        <span id="dropdownWalletAddress">0x742d...3a8f</span>
+                    </div>
+                </div>
+                <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
             </div>
         </div>
         <!-- /Wallet Display Pill -->
@@ -458,12 +394,13 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
     </div>
     <div id="drawerWalletRow" class="mobile-drawer-wallet-row" style="display: none;">
         <span aria-hidden="true">🦊</span>
-        <div style="flex:1;min-width:0">
-            <div id="drawerWalletAddress" style="color:#fff;font-size:0.8rem;font-weight:600;">0x742d...3a8f</div>
-            <div id="drawerWalletMeta" style="color:rgba(255,255,255,0.55);font-size:0.7rem;">292.22559 CTC · Polygon</div>
+        <div class="drawer-wallet-info">
+            <div id="drawerWalletAddress">0x742d...3a8f</div>
+            <div class="drawer-wallet-meta-row">
+                <span id="drawerWalletBalance">292.22559 CTC</span>
+                <span id="drawerWalletNetwork">Polygon</span>
+            </div>
         </div>
-        <button type="button" onclick="disconnectWallet()"
-                style="color:rgba(255,255,255,0.5);font-size:0.7rem;background:none;border:none;cursor:pointer;">Disconnect</button>
     </div>
     <div id="drawerConnectRow" style="display: none;">
         <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">Connect Wallet</button>
@@ -474,12 +411,27 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
             <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button>
         </li>
         <li><a href="wallet-enhanced.html" class="nav-link" id="mobileWalletLink" style="display: none;">WALLET</a></li>
-        <li class="mobile-nav-section-label">TRANSACT</li>
-        <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Tokens</a></li>
-        <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send</a></li>
-        <li><a href="stake.html" class="nav-link mobile-nav-sub">Stake</a></li>
-        <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
-        <li><a href="explore-centres.html" class="nav-link" id="drawerLinkCentres">CENTRES</a></li>
+        <li class="mobile-nav-accordion-item" id="mobileTransactAccordion">
+            <button type="button"
+                    class="mobile-nav-section-label mobile-nav-accordion-trigger"
+                    id="mobileTransactAccordionBtn"
+                    aria-expanded="true"
+                    aria-controls="mobileTransactSubmenu"
+                    onclick="toggleMobileTransactAccordion()">
+                <span>TRANSACT</span>
+                <svg class="mobile-nav-accordion-chevron" id="mobileTransactChevron"
+                     width="20" height="20" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </button>
+            <ul class="mobile-nav-accordion-panel open" id="mobileTransactSubmenu" role="list">
+                <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Tokens</a></li>
+                <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send</a></li>
+                <li><a href="stake.html" class="nav-link mobile-nav-sub">Stake</a></li>
+                <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
+            </ul>
+        </li>
     </ul>
     <div id="mobileUserMenu"></div>
     <div id="mobileNotificationsSection"></div>
@@ -703,97 +655,9 @@ Paste inside every page's `<style>` block. All values are exact from `NewUnera/a
 .dropdown-item-nav.active { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); font-weight: 600; }
 .dropdown-divider-nav { height: 1px; background: rgba(0,0,0,0.06); margin: 0.5rem 0; }
 
-/* ── Wallet Display Pill ─────────────────────────── */
-.nav-wallet-display {
-    display: flex; align-items: center; gap: 0.3125rem;
-    padding: 0.125rem 0.5rem 0.125rem 0.25rem;
-    max-height: 36px; margin-top: 2px; align-self: center;
-    background: var(--neutral-100);
-    border: 1px solid var(--border-subtle);
-    border-radius: 980px;
-    color: var(--text-primary);
-}
-.nav-wallet-avatar { position: relative; width: 28px; height: 28px; flex-shrink: 0; }
-.user-avatar-nav {
-    border-radius: 50%;
-    background: var(--brand-deep-blue);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--brand-white);
-    font-weight: 600;
-    font-size: 0.813rem;
-    cursor: pointer;
-}
-.nav-wallet-display .user-avatar-nav { width: 28px; height: 28px; font-size: 0.75rem; }
-.nav-wallet-metamask-badge {
-    position: absolute; bottom: -1px; right: -1px;
-    width: 12px; height: 12px; font-size: 7px;
-    display: flex; align-items: center; justify-content: center;
-    background: #F6851B; border-radius: 50%;
-    border: 2px solid var(--neutral-100);
-}
-.nav-wallet-info { display: flex; flex-direction: column; gap: 0; min-width: 0; }
-.nav-wallet-address { font-size: 0.75rem; font-weight: 600; line-height: 1.2; }
-.nav-wallet-balance { font-size: 0.6875rem; line-height: 1.2; color: var(--text-secondary); }
-.nav-wallet-address-row { display: inline-flex; align-items: center; gap: 0.125rem; }
-.nav-wallet-chevron { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.55; transition: transform 0.18s cubic-bezier(0.28,0.11,0.32,1), opacity 0.18s; }
-.nav-wallet-trigger { cursor: pointer; border-radius: 0.375rem; padding: 0.0625rem 0.125rem; transition: background 0.15s; outline: none; }
-.nav-wallet-trigger:hover { background: var(--neutral-100); }
-.nav-wallet-trigger:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-.nav-wallet-trigger:hover .nav-wallet-chevron,
-.nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron { opacity: 1; }
-.nav-wallet-trigger[aria-expanded="true"] .nav-wallet-chevron { transform: rotate(180deg); }
-
-/* Wallet options dropdown */
-.wallet-nav-dropdown {
-    position: absolute; top: calc(100% + 0.75rem); left: 0; width: 220px;
-    background: var(--brand-white); border-radius: 0.75rem;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-    opacity: 0; visibility: hidden; transform: translateY(-10px);
-    transition: all 0.12s cubic-bezier(0.28,0.11,0.32,1);
-    z-index: 10002; overflow: hidden; padding: 0.375rem 0;
-}
-.wallet-nav-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
-.wallet-nav-item { display: flex; align-items: center; gap: 0.625rem; width: 100%; min-height: 44px; padding: 0 1rem; background: none; border: none; cursor: pointer; font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; color: var(--text-primary); text-align: left; transition: background 0.1s; }
-.wallet-nav-item:hover { background: var(--neutral-100); }
-.wallet-nav-item:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
-.wallet-nav-item--destructive { color: var(--text-primary); }
-.wallet-nav-item--destructive:hover { background: var(--surface-error-tint); color: var(--error); }
-.wallet-nav-divider { height: 1px; background: var(--border-subtle); margin: 0.25rem 0; }
-
-/* Network badge */
-.nav-network-badge {
-    display: flex; align-items: center; gap: 0.1875rem;
-    padding: 0.125rem 0.25rem; border-left: 1px solid var(--neutral-300);
-    cursor: pointer; border-radius: 0.375rem; transition: background 0.15s;
-}
-.nav-network-badge:hover { background: rgba(0,0,0,0.06); }
-.nav-network-badge:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
-.nav-network-badge.open { background: rgba(0,0,0,0.06); }
-.nav-network-icon { width: 14px; height: 14px; color: #627EEA; }
-.nav-network-badge span { font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary); }
-.nav-network-chevron { width: 12px; height: 12px; color: var(--text-secondary); flex-shrink: 0; transition: transform 0.2s ease; }
-.nav-network-badge.open .nav-network-chevron { transform: rotate(180deg); }
-
-/* Network switcher dropdown */
-.network-dropdown-nav {
-    position: absolute; top: calc(100% + 0.75rem); right: 0; width: 220px;
-    background: var(--brand-white); border-radius: 0.75rem;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-    opacity: 0; visibility: hidden; transform: translateY(-10px);
-    transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1);
-    z-index: 10002; overflow: hidden;
-}
-.network-dropdown-nav.show { opacity: 1; visibility: visible; transform: translateY(0); }
-.network-dropdown-header-nav { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; padding: 0.75rem 0.75rem 0.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.06); margin-bottom: 0.25rem; }
-.network-options-list-nav { padding: 0.375rem 0.5rem 0.5rem; }
-.network-option-nav { display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; color: var(--neutral-800); cursor: pointer; font-size: 0.875rem; transition: all 0.15s; user-select: none; }
-.network-option-nav:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
-.network-option-nav:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: -2px; }
-.network-option-nav.active { color: var(--brand-deep-blue); font-weight: 600; background: rgba(23,61,71,0.06); }
-.network-option-icon { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; }
-.network-option-name { flex: 1; }
-.network-option-check { width: 14px; height: 14px; color: var(--brand-deep-blue); flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
-.network-option-nav.active .network-option-check { opacity: 1; }
+/* ── Wallet Display Pill (canonical: consumer-app-nav.css) ── */
+/* Pages linking consumer-app-nav.css MUST NOT duplicate wallet-pill CSS inline.
+   Keep only page-level @media (max-width: 480px) avatar-collapse overrides below. */
 
 /* ── Hamburger ───────────────────────────────────── */
 .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
@@ -819,6 +683,14 @@ Paste inside every page's `<style>` block. All values are exact from `NewUnera/a
 .mobile-nav-links .nav-link.active { background: rgba(23,61,71,0.1); color: var(--brand-deep-blue); }
 .mobile-nav-section-label { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; text-transform: uppercase; padding: 0.75rem 1rem 0.25rem; }
 .mobile-nav-sub { padding-left: 1.5rem !important; font-size: 0.938rem !important; }
+.mobile-nav-accordion-item { list-style: none; }
+.mobile-nav-accordion-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; border: none; background: none; cursor: pointer; font-family: var(--font-body); text-align: left; min-height: 44px; border-radius: 8px; transition: background 0.2s; }
+.mobile-nav-accordion-trigger:hover { background: var(--neutral-200); }
+.mobile-nav-accordion-trigger:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+.mobile-nav-accordion-chevron { flex-shrink: 0; color: var(--neutral-600); transition: transform 0.3s ease; }
+.mobile-nav-accordion-chevron.open { transform: rotate(180deg); }
+.mobile-nav-accordion-panel { list-style: none; margin: 0; padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.mobile-nav-accordion-panel.open { max-height: 16rem; }
 
 /* ── Mobile user profile accordion (also in consumer-app-nav.css) ── */
 .mobile-user-profile,
@@ -845,17 +717,18 @@ Paste inside every page's `<style>` block. All values are exact from `NewUnera/a
 .mobile-dropdown-section-title { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; padding: 0.75rem 0.75rem 0.5rem; text-transform: uppercase; }
 .mobile-dropdown-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 0.75rem; border-radius: 0.5rem; color: var(--neutral-800); text-decoration: none; transition: all 0.15s; cursor: pointer; font-size: 0.938rem; }
 .mobile-dropdown-item:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
-.mobile-dropdown-item.active { background: rgba(23,61,71,0.1); color: var(--brand-deep-blue); }
+.mobile-dropdown-item.active { background: var(--brand-white); color: var(--brand-deep-blue); font-weight: 600; }
 .mobile-dropdown-item svg { stroke: currentColor; flex-shrink: 0; }
 .mobile-dropdown-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 0.5rem 0; }
 
 /* ── Reduced Motion ──────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     .nav-wallet-chevron,
-    .wallet-nav-dropdown, .nav-wallet-trigger,
+    .nav-wallet-trigger,
     .network-dropdown-nav, .user-dropdown-nav, .notification-panel,
     .hamburger span, .mobile-menu, .nav-dropdown-chevron,
-    .mobile-user-dropdown, .mobile-user-chevron { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    .mobile-user-dropdown, .mobile-user-chevron,
+    .mobile-nav-accordion-panel, .mobile-nav-accordion-chevron { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
 
 /* ── Responsive ≤768px ───────────────────────────── */
@@ -875,7 +748,6 @@ Paste inside every page's `<style>` block. All values are exact from `NewUnera/a
     .user-dropdown-nav { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
     #notificationPanel.show { position: fixed; top: 44px; left: 0; right: 0; width: 100%; max-height: 70vh; border-radius: 0 0 0.75rem 0.75rem; }
     .network-dropdown-nav { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
-    .wallet-nav-dropdown { position: fixed; top: 44px; left: 0; right: 0; width: 100%; border-radius: 0 0 0.75rem 0.75rem; }
 }
 ```
 
@@ -885,14 +757,16 @@ Every consumer page with a hamburger drawer MUST:
 
 1. Link [`NewUnera/consumer-app-nav.css`](NewUnera/consumer-app-nav.css) — accordion CSS lives there; do not rely on page-inline duplicates.
 2. Keep `#mobileUserMenu` and `#mobileNotificationsSection` placeholders in the drawer HTML (Section 4).
-3. Populate on load:
-   - `document.getElementById('mobileUserMenu').innerHTML = renderUserMenu('mobile')`
-   - `document.getElementById('mobileNotificationsSection').innerHTML = renderNotificationPanel('mobile')`
+3. Populate on load (automatic via [`consumer-app-nav.js`](NewUnera/consumer-app-nav.js) `hydrateUserMenus()` on `DOMContentLoaded`):
+   - `#desktopMenuContainer` ← `renderUserMenu('desktop')` (includes My Profile, Account Settings, My Wallet, Dashboard, **Centres**)
+   - `#mobileUserMenu` ← `renderUserMenu('mobile')` (same items in mobile accordion; **Centres** is below Dashboard — not in `ul.mobile-nav-links`)
+   - `#mobileNotificationsSection` ← `renderNotificationPanel('mobile')` (page script, when notifications are implemented)
 4. Collapse user accordion by default: `#mobileUserDropdown` has `max-height: 0` until `.open` is toggled via `toggleMobileUserDropdown()` (defined in [`consumer-app-nav.js`](NewUnera/consumer-app-nav.js)).
 5. Notifications block uses the same accordion shell (`.mobile-notif-profile` + `#mobileNotificationDropdown`) toggled via `toggleMobileNotificationPanel()` (also in `consumer-app-nav.js`).
 6. **Height caps (never 500px):** `#mobileUserMenu .mobile-user-dropdown.open` → `min(75dvh, 56rem)` (~896px) so NETWORK + ACCOUNT links are not clipped. `#mobileNotificationsSection .mobile-user-dropdown.open` → `min(45dvh, 24rem)` with internal scroll (hidden scrollbar).
 7. **Mutual exclusion:** opening the user accordion closes the notifications accordion and vice versa.
-8. **Drawer close:** `closeMobileDrawerAccordions()` in `consumer-app-nav.js` resets both panels when `.mobile-menu` loses `.active` (MutationObserver).
+8. **Drawer close:** `closeMobileDrawerAccordions()` in `consumer-app-nav.js` resets user, notifications, and TRANSACT accordions when `.mobile-menu` loses `.active` (MutationObserver).
+9. **TRANSACT accordion:** Section label is a button with right chevron; sub-links live in `#mobileTransactSubmenu`. Toggle via `toggleMobileTransactAccordion()`; **expanded by default** whenever the drawer opens (`aria-expanded="true"`). Legacy flat markup (`li.mobile-nav-section-label` + sibling `mobile-nav-sub` rows) is upgraded on `DOMContentLoaded` by `initMobileTransactAccordion()` in `consumer-app-nav.js`.
 
 **Failure modes:**
 - Omitting `.mobile-user-dropdown { max-height: 0; overflow: hidden; }` causes wallet/network/account links to render fully expanded as a floating panel outside the drawer flow.
@@ -949,59 +823,7 @@ function clearAllNotifications() {
     if (divider) divider.hidden = true;
 }
 
-/* ── User Dropdown ───────────────────────────────── */
-function toggleUserDropdown() {
-    closeNotificationPanel();
-    closeNetworkDropdown();
-    var dropdown = document.getElementById('userDropdown');
-    if (dropdown) dropdown.classList.toggle('show');
-}
-
-/* ── Wallet Nav Dropdown ─────────────────────────── */
-function closeWalletNavDropdown() {
-    var dropdown = document.getElementById('walletNavDropdown');
-    var trigger  = document.querySelector('.nav-wallet-trigger');
-    if (dropdown) dropdown.classList.remove('show');
-    if (trigger)  trigger.setAttribute('aria-expanded', 'false');
-}
-function toggleWalletDropdown(event) {
-    event.stopPropagation();
-    closeNetworkDropdown();
-    var userDropdown = document.getElementById('userDropdown');
-    if (userDropdown) userDropdown.classList.remove('show');
-    closeNotificationPanel();
-    var dropdown = document.getElementById('walletNavDropdown');
-    var trigger  = document.querySelector('.nav-wallet-trigger');
-    if (!dropdown || !trigger) return;
-    var isOpen = dropdown.classList.toggle('show');
-    trigger.setAttribute('aria-expanded', String(isOpen));
-    if (isOpen) {
-        var firstItem = dropdown.querySelector('[role="menuitem"]');
-        if (firstItem) firstItem.focus();
-    }
-}
-function handleWalletTriggerKey(event) {
-    if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault(); toggleWalletDropdown(event);
-    } else if (event.key === 'Escape') {
-        closeWalletNavDropdown();
-        var t = document.querySelector('.nav-wallet-trigger'); if (t) t.focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        var dd = document.getElementById('walletNavDropdown');
-        if (!dd) return;
-        if (!dd.classList.contains('show')) toggleWalletDropdown(event);
-        var fi = dd.querySelector('[role="menuitem"]'); if (fi) fi.focus();
-    }
-}
-function switchWalletFromNav() {
-    closeWalletNavDropdown();
-    openConnectModal();
-}
-function disconnectWalletFromNav() {
-    closeWalletNavDropdown();
-    doDisconnectWallet();
-}
+/* ── User dropdown + Switch wallet: see consumer-app-nav.js (toggleUserDropdown, switchWalletFromNav, handleUserMenuTriggerKey, openConnectModal) ── */
 
 /* ── Network Switcher ────────────────────────────── */
 var CHAIN_NAV_ICON_PATHS = {
@@ -1127,21 +949,15 @@ function disconnectWallet() {
     localStorage.removeItem('walletAddress');
     if (typeof syncNavAuthState === 'function') syncNavAuthState();
 }
-function openConnectModal() {
-    if (typeof showWalletSelectionModal === 'function') { showWalletSelectionModal(); return; }
-}
+/* openConnectModal + switchWalletFromNav: defined in consumer-app-nav.js (loads last). Do not duplicate in page Block 1. */
 
-/* ── Outside-click close ─────────────────────────── */
+/* ── Outside-click close (user dropdown handled by consumer-app-nav.js) ── */
 document.addEventListener('click', function(event) {
     var navWalletDisplay  = document.getElementById('navWalletDisplay');
     var notifBellWrapper  = document.getElementById('notificationBellWrapper');
-    var userDropdown      = document.getElementById('userDropdown');
     var notifPanel        = document.getElementById('notificationPanel');
     var networkDropdown   = document.getElementById('networkDropdown');
-    var walletNavDropdown = document.getElementById('walletNavDropdown');
 
-    if (userDropdown && userDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
-        userDropdown.classList.remove('show');
     if (notifPanel && notifPanel.classList.contains('show') && notifBellWrapper && !notifBellWrapper.contains(event.target)) {
         notifPanel.classList.remove('show');
         var bell = document.getElementById('notificationBell');
@@ -1149,8 +965,6 @@ document.addEventListener('click', function(event) {
     }
     if (networkDropdown && networkDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
         closeNetworkDropdown();
-    if (walletNavDropdown && walletNavDropdown.classList.contains('show') && navWalletDisplay && !navWalletDisplay.contains(event.target))
-        closeWalletNavDropdown();
 });
 ```
 
@@ -1183,8 +997,6 @@ document.addEventListener('click', function(event) {
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-            var wdd = document.getElementById('walletNavDropdown');
-            if (wdd && wdd.classList.contains('show')) { closeWalletNavDropdown(); var wt = document.querySelector('.nav-wallet-trigger'); if (wt) wt.focus(); return; }
             var ndd = document.getElementById('networkDropdown');
             if (ndd && ndd.classList.contains('show')) { closeNetworkDropdown(); var nb = document.querySelector('.nav-network-badge'); if (nb) nb.focus(); return; }
             var np = document.getElementById('notificationPanel');
@@ -1228,7 +1040,21 @@ Then immediately after both blocks:
 
 localStorage keys: `unera_user`, `isLoggedIn`, `loggedIn`, `walletConnected`, `walletAddress`, `walletBalance`, `selectedNetwork` (JSON `{id, label, color}`).
 
-IDs updated by `syncNavAuthState`: `navUserInitials` / `.user-avatar-nav` (initials), `.user-name-nav` (name), `navWalletAddress`, `navWalletBalance`, `navNetworkLabel`, `drawerWalletAddress`, `drawerWalletMeta`.
+IDs updated by `syncNavAuthState`: `navUserInitials` / `.user-avatar-nav` (initials), `.user-name-nav` (name), `navWalletAddress`, `navWalletBalance`, `navNetworkLabel`, `drawerWalletAddress`, `drawerWalletBalance`, `drawerWalletNetwork`.
+
+### Switch wallet / Connect modal (`openConnectModal`)
+
+`consumer-app-nav.js` defines `window.switchWalletFromNav()` (closes user dropdown, calls `openConnectModal`) and `window.openConnectModal()` with this **fallback chain** (first match wins):
+
+| Priority | Function / target | Pages |
+|----------|-------------------|-------|
+| 1 | `window.openWalletAuthModal({ intent: 'connect' })` | `index.html`, `login_2.html`, `signup_2.html` (when `shared/wallet-auth.js` loaded) |
+| 2 | `window.showWalletSelectionModal()` | `account-settings.html` (dynamic provider grid modal) |
+| 3 | `#connectModal` — add `.active`, reset DEV scenario to happy, lock body scroll | `dashboard-enhanced.html`, `wallet-enhanced.html`, etc. |
+
+**Account Settings pin:** after `<script src="consumer-app-nav.js">`, assign `window.openConnectModal` to call `showWalletSelectionModal()` so Switch wallet always opens the *Connect. Contribute. Change lives.* modal (see `NewUnera/account-settings.html`).
+
+**Do not** leave a page-level `openConnectModal` before `consumer-app-nav.js` without a post-nav override — the shared script loads last and owns the global.
 
 ---
 
@@ -1237,6 +1063,7 @@ IDs updated by `syncNavAuthState`: `navUserInitials` / `.user-avatar-nav` (initi
 - ❌ Never use `background: #FFFFFF` or `background: var(--primary-green)` on `.nav`
 - ❌ Never omit `#notificationBellWrapper`, `#navWalletDisplay`, or `#userDropdown`
 - ❌ Never omit `<script src="consumer-app-nav.js"></script>`
+- ❌ Never ship `openConnectModal` as `openWalletAuthModal`-only — Switch wallet and CONNECT become no-ops on pages with `showWalletSelectionModal` or `#connectModal` only
 - ❌ Never hardcode `#10B981`, `#0EA5E9`, or `#EC4899` in nav styles
 - ❌ Never use `linear-gradient` on nav chrome
 - ❌ Never use `../Brand Guide/Unera-Horizontal.png` — use `NewLogo/Unera White Text Nav.svg`
@@ -1245,6 +1072,8 @@ IDs updated by `syncNavAuthState`: `navUserInitials` / `.user-avatar-nav` (initi
 - ❌ Never set dropdown `z-index` lower than 10002
 - ❌ Never leave `#navWalletDisplay` without `position: relative`
 - ❌ Never leave a `<nav class="stablecoin-nav">` or any other non-canonical nav on a consumer page
+- ❌ Never use `.nav-wallet-network-trigger` or runtime-merge address+network into one button — use separate `.nav-wallet-trigger` + `.nav-network-badge`
+- ❌ Never put Wallet copy/switch/disconnect actions inside `#networkDropdown` — those belong in `#userDropdown` only
 - ❌ Never use `.notification-panel { width: 360px }` as a single-class selector — the `.user-dropdown-nav` base rule (also single-class, declared later) overrides it to 280px. Always use the compound selector `.user-dropdown-nav.notification-panel { width: 360px }` so specificity (0,2,0) beats `.user-dropdown-nav` (0,1,0). Apply the same compound selector in `@media (max-width: 768px)` for the 320px override.
 - ❌ Never omit `<link rel="stylesheet" href="consumer-app-nav.css">` on pages that populate `#mobileUserMenu` — mobile accordion CSS is delivered via that file.
 - ❌ Never ship a mobile drawer without `.mobile-user-dropdown { max-height: 0; overflow: hidden; }` — dropdown content leaks outside the drawer as a detached panel.
@@ -1282,9 +1111,9 @@ IDs updated by `syncNavAuthState`: `navUserInitials` / `.user-avatar-nav` (initi
 - [ ] Bell shows yellow badge; click opens panel — verify `#notificationPanel` renders at **360px wide × max 520px tall** (inspect computed style; must NOT be 280px — see compound selector rule in Section 9); panel contains: header (Notifications · N unread · View all · Mark all read · ×), scrollable notification list, divider, and "Clear all notifications" footer button
 - [ ] View all → `notifications.html`
 - [ ] Wallet pill: avatar circle + 🦊 badge + truncated address + network label
-- [ ] Avatar click → `#userDropdown` (280px) with: Jane Smith, email, wallet address chip
-- [ ] User dropdown items: My Profile → `account-settings.html`, Account Settings → `account-settings.html`, My Wallet → `wallet-enhanced.html`, Dashboard → `dashboard-enhanced.html`, Disconnect Wallet (hidden until connected), Log Out
-- [ ] Address trigger → `#walletNavDropdown`: Switch wallet, Disconnect
+- [ ] Avatar click → `#userDropdown` (280px) with: Jane Smith, email, wallet address chip; dropdown right edge aligns with `#navWalletDisplay` pill (not avatar-only offset)
+- [ ] User dropdown items: My Profile → `account-settings.html`, Account Settings → `account-settings.html`, My Wallet → `wallet-enhanced.html`, Dashboard → `dashboard-enhanced.html`, Centres → `explore-centres.html`, Switch wallet + Disconnect Wallet (hidden until connected), Log Out
+- [ ] Address trigger → opens `#userDropdown` (same as avatar); chevron rotates with `aria-expanded`
 - [ ] Network badge → `#networkDropdown`: 6 networks; active has checkmark; selection persists to localStorage
 - [ ] `switchNetwork()` updates nav badge label + icon color
 - [ ] All dropdowns close on outside click; only one open at a time
@@ -1355,9 +1184,9 @@ List exact click sequences:
 1. Open page → confirm nav is `#173d47`, 44px tall
 2. Click bell → confirm `#notificationPanel` is **360px wide** (open DevTools → Computed → width; must NOT be 280px)
 3. Confirm notification icons are **filled glyphs**, not blank grey circles
-4. Click avatar → confirm `#userDropdown` is 280px wide with header (name, email, wallet chip) and menu items
-5. Click wallet address trigger → confirm `#walletNavDropdown` opens (Switch wallet, Disconnect)
-6. Click network badge → confirm 6 networks in `#networkDropdown`, active has checkmark
+4. Click avatar → confirm `#userDropdown` is 280px wide, right-aligned under `#navWalletDisplay` (not offset left under avatar), with header (name, email, wallet chip) and menu items
+5. Click wallet address trigger → confirm `#userDropdown` opens; Switch wallet appears above Disconnect Wallet when connected
+6. Click network badge → confirm `#networkDropdown` has MAINNET (Ethereum, Base) + TESTNET (Sepolia, Base Sepolia with badges); active has checkmark; pill is 3-part (not merged `address · network` button)
 7. Resize to ≤480px → confirm hamburger appears, nav links hidden, wallet collapses to 36×36 circle
 8. Open hamburger → confirm user profile accordion collapsed; tap header → network + account links expand inline
 

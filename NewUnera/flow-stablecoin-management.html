@@ -298,7 +298,6 @@ flowchart TD
     KycStatus -->|"Verified"| DashView["Dashboard View"]:::happy
     DashView --> ImpactCards["Impact Cards: balance · yield · donations · lives"]:::happy
     DashView --> QuickActions["Quick Actions: Buy · Send · Exchange · Donate"]:::happy
-    DashView --> CadHub["UNERA CAD Hub: Get · Redeem"]:::happy
     DashView --> Activity["Recent Activity Table"]:::happy
     DashView --> NotifBell["Notification Bell + Badge Count"]:::happy
 
@@ -317,15 +316,10 @@ flowchart TD
     KycQ -->|"No"| KycModal["Confirmation Modal → redirect to KYC"]:::edge
     KycModal --> KycVerify
     KycQ -->|"Yes"| ActionTarget{"Action Selected"}
-    ActionTarget -->|"Buy Stablecoins"| GetCad["get-unera-cad.html"]:::screen
+    ActionTarget -->|"Buy Stablecoins"| BuyPage["add-money.html?intent=buy"]:::screen
     ActionTarget -->|"Send"| SendPage["send-enhanced.html"]:::screen
     ActionTarget -->|"Exchange"| ExchPage["exchange.html"]:::screen
     ActionTarget -->|"Donate"| ExpPage["explore-centres.html"]:::screen
-
-    %% ── UNERA CAD HUB ──────────────────────────────────────
-    CadHub --> CadAction{"Hub Action"}
-    CadAction -->|"Get UNERA CAD"| GetCad
-    CadAction -->|"Redeem UNERA CAD"| RedeemPage["redeem-unera-cad.html"]:::screen
 
     %% ── RECENT ACTIVITY ────────────────────────────────────
     Activity --> ActivityA{"Row Interaction"}
@@ -343,7 +337,7 @@ flowchart TD
     NotifPanel --> AllNotif["View All → notifications.html"]:::screen
 
     %% ── WALLET PAGE ────────────────────────────────────────
-    WalletPage --> Balances["Portfolio: hCAD · hUSD · hEUR · HUMA"]:::happy
+    WalletPage --> Balances["Portfolio: hUSD · USDC · USDT"]:::happy
     WalletPage --> TxHistory["Transaction History Section"]:::happy
 
     Balances --> Privacy{"Privacy Toggle"}
@@ -353,11 +347,15 @@ flowchart TD
     Balances --> ScopeBadge["⚠ Wallet Scope: badge shown — list filtering not wired"]:::missing
 
     Balances --> AssetAction{"Per-Asset Quick Action"}
-    AssetAction -->|"Issue / Get"| GetCad
-    AssetAction -->|"Redeem"| RedeemPage
+    AssetAction -->|"Issue / Get"| BuyPage
+    AssetAction -->|"Redeem"| MintRedeem["Stablecoin/redeem-unera-cad.html"]:::edge
     AssetAction -->|"Send"| SendPage
     AssetAction -->|"Exchange"| ExchPage
-    AssetAction -->|"Governance (HUMA)"| GovPage["governance.html"]:::screen
+    AssetAction -->|"Governance"| GovPage["governance.html"]:::screen
+
+    %% ── MINT PORTAL (out of wallet platform) ─────────────
+    MintPortal["Stablecoin/ mint & redeem portal"]:::edge
+    MintRedeem --> MintPortal
 
     TxHistory --> Search{"Search or Filter"}
     Search -->|"Results Found"| TxList["Paginated List: completed · pending badges"]:::happy
@@ -368,7 +366,7 @@ flowchart TD
     TxHistory --> Tabs["History Tabs: All · Donations · Remittance"]:::happy
       </pre>
 
-      <p class="footnote">Source: <code>NewUnera/dashboard-enhanced.html</code> · <code>NewUnera/wallet-enhanced.html</code> · <code>NewUnera/notifications.html</code> &nbsp;|&nbsp; Prototype state: May 2026</p>
+      <p class="footnote">Source: <code>NewUnera/dashboard-enhanced.html</code> · <code>NewUnera/wallet-enhanced.html</code> · <code>NewUnera/notifications.html</code> &nbsp;|&nbsp; Buy Stablecoins → <code>add-money.html?intent=buy</code> &nbsp;|&nbsp; UNERA CAD mint/redeem under <code>Stablecoin/</code> portal (separate subgraph) &nbsp;|&nbsp; Prototype state: May 2026</p>
     </div>
 
   </div>

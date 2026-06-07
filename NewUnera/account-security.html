@@ -846,27 +846,130 @@
             </ul>
         </div>
         <div class="nav-right">
-                        <div class="nav-wallet-display" id="navWalletDisplay" style="display: none;" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Wallet connected">
-                <div class="nav-wallet-icon-badge">
-                    <div class="nav-wallet-blockie"></div>
-                    <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
-                </div>
-                <div class="nav-wallet-info">
-                    <span class="nav-wallet-address" id="navWalletAddress">0x742d...3a8f</span>
-                    <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
-                </div>
-                <div class="nav-wallet-network" id="navWalletNetwork">
-                    <span id="navNetworkLabel">Polygon</span>
-                </div>
+                        <div class="nav-wallet-display" id="navWalletDisplay" style="display: none; position: relative;">
+                    <div class="nav-wallet-avatar">
+                        <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+                        
+                    </div>
+                    <div class="nav-wallet-info nav-wallet-trigger"
+                         role="button" tabindex="0"
+                         aria-haspopup="true" aria-expanded="false"
+                         aria-label="Open account menu"
+                         onclick="toggleUserDropdown(event)"
+                         onkeydown="handleUserMenuTriggerKey(event)">
+                        <span class="nav-wallet-address-row">
+                            <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
+                            <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-wallet-balance" id="navWalletBalance">2,500.00 hUSD</span>
+                    </div>
+                    <div class="nav-network-badge"
+                         role="button"
+                         tabindex="0"
+                         aria-haspopup="listbox"
+                         aria-expanded="false"
+                         aria-label="Switch network, currently Ethereum"
+                         onclick="toggleNetworkDropdown(event)"
+                         onkeydown="handleNetworkBadgeKey(event)">
+                        <svg class="nav-network-icon" id="navNetworkIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+                        </svg>
+                        <span id="navNetworkLabel">Ethereum</span>
+                        <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- Network Switcher Dropdown -->
+                    <div class="network-dropdown-nav" id="networkDropdown"
+                         role="listbox"
+                         aria-label="Select blockchain network"
+                         onclick="event.stopPropagation()">
+                        <div class="network-dropdown-header-nav">Mainnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav active"
+                                 role="option" aria-selected="true" tabindex="0"
+                                 data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Ethereum</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base','Base','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                        <div class="network-dropdown-header-nav" style="margin-top:0.25rem;">Testnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="sepolia" data-chain-label="Sepolia" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('sepolia','Sepolia','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA" opacity="0.5"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base-sepolia" data-chain-label="Base Sepolia" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base-sepolia','Base Sepolia','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF" opacity="0.5"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Network Switcher Dropdown -->
+            
+                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                            <div class="dropdown-header-nav">
+                                <div class="dropdown-user-info-nav">
+                                    <div class="dropdown-avatar-nav">JS</div>
+                                    <div class="dropdown-user-details-nav">
+                                        <div class="dropdown-user-name-nav">Jane Smith</div>
+                                        <div class="dropdown-user-email-nav">jane@example.com</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-wallet-badge-nav">
+                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                        <path d="M2 10h20"/>
+                                    </svg>
+                                    <span id="dropdownWalletAddress">0x742d...3a8f</span>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
+                        </div>
+</div>
             </div>
-<div class="user-profile-nav">
-                <div class="user-avatar-nav">JS</div>
-                <div class="user-name-nav">Jane Smith</div>
-            </div>
-            <button type="button" class="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
     </nav>
 
     <main id="main-content" class="container">
