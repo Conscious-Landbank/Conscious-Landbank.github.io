@@ -1986,6 +1986,8 @@
 <body data-nav-active="transact">
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Navigation -->
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-left">
             <a href="index.html" class="nav-brand" aria-label="UNERA Home">
@@ -2079,11 +2081,15 @@
                 </div>
             </div>
 
-            <div class="nav-wallet-display" id="navWalletDisplay" style="display: none; position: relative;">
+            <div class="nav-wallet-display" id="navWalletDisplay"
+                 style="display: none; position: relative;"
+                 data-wallet-session="disconnected"
+                 aria-label="Account menu — wallet not connected">
+
+                    <div class="nav-wallet-session-connected" hidden>
                     <div class="nav-wallet-avatar">
                         <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
                         <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
-                        
                     </div>
                     <div class="nav-wallet-info nav-wallet-trigger"
                          role="button" tabindex="0"
@@ -2181,7 +2187,14 @@
                         </div>
                     </div>
                     <!-- /Network Switcher Dropdown -->
-            
+                    </div>
+
+                    <div class="nav-wallet-session-disconnected" hidden>
+                        <div class="nav-wallet-avatar">
+                            <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        </div>
+                    </div>
+
                 <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
                             <div class="dropdown-header-nav">
                                 <div class="dropdown-user-info-nav">
@@ -2191,13 +2204,18 @@
                                         <div class="dropdown-user-email-nav">jane@example.com</div>
                                     </div>
                                 </div>
-                                <div class="dropdown-wallet-badge-nav">
-                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="5" width="20" height="14" rx="2"/>
-                                        <path d="M2 10h20"/>
+                                <div class="dropdown-wallet-badge-nav dropdown-wallet-status-nav"
+                                     id="dropdownWalletStatusChip"
+                                     data-state="disconnected"
+                                     role="status"
+                                     aria-live="polite">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                         viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                        <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
                                     </svg>
-                                    <span id="dropdownWalletAddress">0x742d...3a8f</span>
+                                    <span id="dropdownWalletStatusText">No wallet connected</span>
                                 </div>
+                                <span id="dropdownWalletAddress" class="visually-hidden" aria-hidden="true"></span>
                             </div>
                             <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
                         </div>
@@ -2233,15 +2251,15 @@
         </div>
         <div id="drawerWalletRow" class="mobile-drawer-wallet-row" style="display: none;">
             <span aria-hidden="true">🦊</span>
-            <div style="flex:1;min-width:0">
-                <div id="drawerWalletAddress" style="color:#fff;font-size:0.8rem;font-weight:600;">0x742d...3a8f</div>
-                <div id="drawerWalletMeta" style="color:rgba(255,255,255,0.55);font-size:0.7rem;">2,500.00 hUSD · Base</div>
+            <div class="drawer-wallet-info">
+                <div id="drawerWalletAddress">0x742d...3a8f</div>
+                <div class="drawer-wallet-meta-row">
+                    <span id="drawerWalletBalance">2,500.00 hUSD</span>
+                    <span id="drawerWalletNetwork">Base</span>
+                </div>
             </div>
-            <button type="button" onclick="disconnectWallet()" style="color:rgba(255,255,255,0.5);font-size:0.7rem;background:none;border:none;cursor:pointer;">Disconnect</button>
         </div>
-        <div id="drawerConnectRow" style="display: none;">
-            <button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">Connect Wallet</button>
-        </div>
+        <div id="drawerConnectRow" hidden aria-hidden="true"></div>
         <ul class="mobile-nav-links" role="list">
             <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
             <li class="mobile-nav-section-label">TRANSACT</li>
@@ -2251,6 +2269,7 @@
             <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
             </ul>
         <div id="mobileUserMenu"></div>
+                <div id="mobileNotificationsSection"></div>
     </div>
 
     <main id="main-content" class="container">

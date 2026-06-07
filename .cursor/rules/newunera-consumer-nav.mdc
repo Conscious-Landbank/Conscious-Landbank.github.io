@@ -230,11 +230,13 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
         </div>
         <!-- /Notification Bell -->
 
-        <!-- Wallet Display Pill -->
+        <!-- Wallet Display Pill (dual-session: connected 3-part pill | disconnected avatar-only) -->
         <div class="nav-wallet-display" id="navWalletDisplay"
              style="display: none; position: relative;"
-             aria-label="Wallet connected">
+             data-wallet-session="disconnected"
+             aria-label="Account menu — wallet not connected">
 
+            <div class="nav-wallet-session-connected" hidden>
             <!-- Part 1: User Avatar -->
             <div class="nav-wallet-avatar">
                 <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
@@ -256,7 +258,7 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
                         <path d="M6 9l6 6 6-6"/>
                     </svg>
                 </span>
-                <span class="nav-wallet-balance" id="navWalletBalance">292.22559 CTC</span>
+                <span class="nav-wallet-balance" id="navWalletBalance">2,500.00 hUSD</span>
             </div>
 
             <!-- Part 3: Network Badge + Network Switcher Dropdown -->
@@ -340,6 +342,14 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
                     </div>
                 </div>
             </div>
+            <!-- /Network Switcher Dropdown -->
+            </div>
+
+            <div class="nav-wallet-session-disconnected" hidden>
+                <div class="nav-wallet-avatar">
+                    <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                </div>
+            </div>
 
             <!-- User Dropdown — direct child of #navWalletDisplay (right-aligned under full pill) -->
             <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
@@ -351,14 +361,18 @@ Paste verbatim after the skip link. Adjust `data-nav-active` on `<body>` per pag
                             <div class="dropdown-user-email-nav">jane@example.com</div>
                         </div>
                     </div>
-                    <div class="dropdown-wallet-badge-nav">
-                        <!-- account_balance_wallet FILL=0 -->
+                    <div class="dropdown-wallet-badge-nav dropdown-wallet-status-nav"
+                         id="dropdownWalletStatusChip"
+                         data-state="disconnected"
+                         role="status"
+                         aria-live="polite">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                              viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
                             <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
                         </svg>
-                        <span id="dropdownWalletAddress">0x742d...3a8f</span>
+                        <span id="dropdownWalletStatusText">No wallet connected</span>
                     </div>
+                    <span id="dropdownWalletAddress" class="visually-hidden" aria-hidden="true"></span>
                 </div>
                 <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
             </div>
@@ -1030,13 +1044,13 @@ Then immediately after both blocks:
 
 ## Section 8 — Auth State Behavior
 
-`consumer-app-nav.js:syncNavAuthState()` reads localStorage and toggles:
+`consumer-app-nav.js:syncNavAuthState()` and `applyNavWalletSession()` read localStorage and toggle:
 
 | Condition | Nav shows |
 |---|---|
 | Not logged in | `#navAuthLinks` (LOG IN / SIGN UP); hides bell, wallet pill |
-| Logged in, wallet NOT connected | `#navConnectBtn`; hides `#walletNavLink`, `#navWalletDisplay` |
-| Logged in, wallet connected | `#walletNavLink`, `#navWalletDisplay` pill; hides CONNECT |
+| Logged in, wallet NOT connected | `#navConnectBtn`; **avatar-only** `#navWalletDisplay` (`data-wallet-session="disconnected"`); bell visible; user dropdown with status chip + **Connect wallet** menu item |
+| Logged in, wallet connected | `#walletNavLink`, full 3-part `#navWalletDisplay` pill; hides CONNECT |
 
 localStorage keys: `unera_user`, `isLoggedIn`, `loggedIn`, `walletConnected`, `walletAddress`, `walletBalance`, `selectedNetwork` (JSON `{id, label, color}`).
 

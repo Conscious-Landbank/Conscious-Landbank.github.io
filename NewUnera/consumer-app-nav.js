@@ -20,6 +20,294 @@
         el.style.display = 'none';
     }
 
+    function hasDualSessionNav() {
+        var display = document.getElementById('navWalletDisplay');
+        return !!(display && display.querySelector('.nav-wallet-session-connected'));
+    }
+
+    function getWalletSessionConnected() {
+        return localStorage.getItem('walletConnected') === 'true' ||
+            !!localStorage.getItem('walletAddress');
+    }
+
+    function getPrimaryBoundWalletShort() {
+        try {
+            var bound = JSON.parse(localStorage.getItem('boundWallets') || '[]');
+            if (!bound.length) return '';
+            var primary = bound.find(function (w) { return w.isPrimary; }) || bound[0];
+            var a = primary.address || '';
+            if (a.length < 10) return a;
+            return a.slice(0, 6) + '...' + a.slice(-4);
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function getWalletStatusChipCopy(connected) {
+        if (connected) {
+            var live = localStorage.getItem('walletAddress') || '';
+            return live.length > 10 ? live.slice(0, 6) + '...' + live.slice(-4) : (live || 'Connected');
+        }
+        var saved = getPrimaryBoundWalletShort();
+        return saved ? ('Saved · ' + saved + ' · Not connected') : 'No wallet connected';
+    }
+
+    function syncNavWalletFields(address, balance, network) {
+        var short = shortAddress(address);
+        var addrEl = document.getElementById('navWalletAddress');
+        var balEl = document.getElementById('navWalletBalance');
+        var netEl = document.getElementById('navNetworkLabel') || document.getElementById('navWalletNetwork');
+        var dAddr = document.getElementById('drawerWalletAddress');
+        var dBal = document.getElementById('drawerWalletBalance');
+        var dNet = document.getElementById('drawerWalletNetwork');
+        var dMeta = document.getElementById('drawerWalletMeta');
+        if (addrEl) addrEl.textContent = short || '0x742d...3a8f';
+        if (balEl) balEl.textContent = balance;
+        if (netEl) netEl.textContent = network;
+        if (dAddr) dAddr.textContent = short;
+        if (dBal) dBal.textContent = balance;
+        if (dNet) dNet.textContent = network;
+        if (dMeta) dMeta.textContent = balance + ' · ' + network;
+    }
+
+    var NAV_CONNECT_MENU_SVG =
+        '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+        '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>' +
+        '</svg>';
+
+    var SESSION_ONLY_MENU_IDS = [
+        'switchWalletItem', 'disconnectWalletItem',
+        'switchWalletItemMobile', 'disconnectWalletItemMobile'
+    ];
+
+    function isMyWalletMenuLink(el) {
+        if (!el || el.tagName !== 'A') return false;
+        var href = el.getAttribute('href') || '';
+        if (href.indexOf('wallet-enhanced') !== -1) return true;
+        return el.textContent.replace(/\s+/g, ' ').trim() === 'My Wallet';
+    }
+
+    function setMenuItemVisible(el, visible) {
+        if (!el) return;
+        el.style.display = visible ? '' : 'none';
+        if (!visible) {
+            el.setAttribute('aria-hidden', 'true');
+            el.hidden = true;
+        } else {
+            el.removeAttribute('aria-hidden');
+            el.hidden = false;
+        }
+    }
+
+    function ensureNavConnectMenuItem(show) {
+        var desktop = document.getElementById('desktopMenuContainer');
+        var mobileContent = document.querySelector('#mobileUserDropdown .mobile-user-dropdown-content');
+
+        [desktop, mobileContent].forEach(function (container) {
+            if (!container) return;
+
+            var legacyDivider = container.querySelector('[data-nav-connect-divider="true"]');
+            if (legacyDivider) legacyDivider.remove();
+
+            if (!show) {
+                var stale = container.querySelector('[data-nav-connect-menu="true"]');
+                if (stale) stale.remove();
+                return;
+            }
+
+            var logoutLink = container.querySelector('a[onclick*="logout"]');
+            if (!logoutLink) return;
+
+            var existing = container.querySelector('[data-nav-connect-menu="true"]');
+            if (existing && existing.nextElementSibling === logoutLink) return;
+            if (existing) existing.remove();
+
+            var itemClass = container.id === 'desktopMenuContainer'
+                ? 'dropdown-item-nav'
+                : 'mobile-dropdown-item';
+
+            var link = document.createElement('a');
+            link.href = '#';
+            link.className = itemClass;
+            link.setAttribute('data-nav-connect-menu', 'true');
+            link.setAttribute('id', container.id === 'desktopMenuContainer'
+                ? 'navConnectMenuItemDesktop' : 'navConnectMenuItemMobile');
+            link.setAttribute('aria-label', 'Connect wallet');
+            link.innerHTML = NAV_CONNECT_MENU_SVG + ' Connect wallet';
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (typeof openConnectModal === 'function') openConnectModal();
+            });
+
+            container.insertBefore(link, logoutLink);
+        });
+    }
+
+    function patchUserMenuItemsForSession(connected) {
+        SESSION_ONLY_MENU_IDS.forEach(function (id) {
+            setMenuItemVisible(document.getElementById(id), connected);
+        });
+
+        document.querySelectorAll(
+            '#desktopMenuContainer a.dropdown-item-nav, ' +
+            '#mobileUserDropdown a.mobile-dropdown-item'
+        ).forEach(function (el) {
+            if (isMyWalletMenuLink(el)) {
+                setMenuItemVisible(el, connected);
+            }
+        });
+
+        ensureNavConnectMenuItem(!connected);
+    }
+
+    function patchMobileDisconnectedChrome(connected) {
+        var copy = getWalletStatusChipCopy(connected);
+
+        var drawerWallet = document.getElementById('drawerWalletRow');
+        if (drawerWallet) drawerWallet.style.display = connected ? 'flex' : 'none';
+
+        var mobileBadge = document.querySelector('#mobileUserMenu .mobile-wallet-badge');
+        if (mobileBadge) mobileBadge.style.display = connected ? 'flex' : 'none';
+
+        var mobileAddr = document.getElementById('mobileDropdownWalletAddress');
+        if (mobileAddr && connected) {
+            mobileAddr.textContent = getWalletStatusChipCopy(true);
+        }
+
+        var content = document.querySelector('#mobileUserDropdown .mobile-user-dropdown-content');
+        if (!content) return;
+
+        var statusChip = document.getElementById('mobileWalletStatusChip');
+        if (!statusChip) {
+            statusChip = document.createElement('div');
+            statusChip.id = 'mobileWalletStatusChip';
+            statusChip.className = 'mobile-wallet-status';
+            statusChip.setAttribute('role', 'status');
+            statusChip.innerHTML = '<span id="mobileWalletStatusText"></span>';
+            var badge = content.querySelector('.mobile-wallet-badge');
+            content.insertBefore(statusChip, badge ? badge.nextSibling : content.firstChild);
+        }
+
+        var statusText = document.getElementById('mobileWalletStatusText');
+        if (statusText) statusText.textContent = copy;
+        if (connected) {
+            statusChip.hidden = true;
+        } else {
+            statusChip.hidden = false;
+            statusChip.removeAttribute('hidden');
+        }
+
+        content.querySelectorAll('.mobile-dropdown-section').forEach(function (section) {
+            var title = section.querySelector('.mobile-dropdown-section-title');
+            if (title && title.textContent.trim().toUpperCase() === 'NETWORK') {
+                section.setAttribute('data-session-section', 'network');
+                if (connected) {
+                    section.removeAttribute('hidden');
+                    section.style.display = '';
+                } else {
+                    section.hidden = true;
+                    section.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    function patchDropdownHeaderStatusChip(connected) {
+        var chip = document.getElementById('dropdownWalletStatusChip');
+        var chipText = document.getElementById('dropdownWalletStatusText');
+        var legacyAddr = document.getElementById('dropdownWalletAddress');
+        var copy = getWalletStatusChipCopy(connected);
+        if (chip) chip.dataset.state = connected ? 'connected' : 'disconnected';
+        if (chipText) chipText.textContent = copy;
+        if (legacyAddr) legacyAddr.textContent = connected ? copy : '';
+    }
+
+    window.applyNavWalletSession = function applyNavWalletSession() {
+        if (!hasDualSessionNav()) return;
+
+        var connected = getWalletSessionConnected();
+        var display = document.getElementById('navWalletDisplay');
+        if (!display) return;
+
+        document.body.dataset.walletSession = connected ? 'connected' : 'disconnected';
+
+        var connectedBlock = display.querySelector('.nav-wallet-session-connected');
+        var disconnectedBlock = display.querySelector('.nav-wallet-session-disconnected');
+        var connectBtn = document.getElementById('navConnectBtn');
+        var walletLink = document.getElementById('walletNavLink');
+
+        display.dataset.walletSession = connected ? 'connected' : 'disconnected';
+        display.style.display = 'flex';
+        display.setAttribute('aria-label', connected
+            ? ('Wallet: ' + (document.getElementById('navWalletAddress')?.textContent || '') +
+               ' on ' + (document.getElementById('navNetworkLabel')?.textContent || ''))
+            : 'Account menu — wallet not connected');
+
+        if (connectedBlock) connectedBlock.hidden = !connected;
+        if (disconnectedBlock) disconnectedBlock.hidden = connected;
+
+        if (connectBtn) connectBtn.style.display = connected ? 'none' : 'inline-flex';
+        if (walletLink) walletLink.style.display = connected ? 'inline-flex' : 'none';
+
+        if (connected) {
+            var live = localStorage.getItem('walletAddress') || '';
+            var balance = localStorage.getItem('walletBalance') || '2,500.00 hUSD';
+            var _rawNetwork = localStorage.getItem('walletNetwork') || localStorage.getItem('selectedNetwork') ||
+                JSON.stringify({ id: 'base', label: 'Base', color: '#0052FF' });
+            var network;
+            try {
+                var _parsedNet = JSON.parse(_rawNetwork);
+                network = (_parsedNet && _parsedNet.label) ? _parsedNet.label : _rawNetwork;
+            } catch (e) {
+                network = _rawNetwork;
+            }
+            syncNavWalletFields(live, balance, network);
+        }
+
+        patchDropdownHeaderStatusChip(connected);
+        patchMobileDisconnectedChrome(connected);
+        patchUserMenuItemsForSession(connected);
+
+        var drawerConnect = document.getElementById('drawerConnectRow');
+        if (drawerConnect) {
+            drawerConnect.style.display = 'none';
+            drawerConnect.hidden = true;
+            drawerConnect.setAttribute('aria-hidden', 'true');
+        }
+
+        if (connected && typeof applyUnsupportedNetworkState === 'function') {
+            applyUnsupportedNetworkState();
+        }
+    };
+
+    function initNavWalletSessionMenuHooks() {
+        if (!hasDualSessionNav()) return;
+
+        var mobileMenu = document.getElementById('mobileUserMenu');
+        var desktopMenu = document.getElementById('desktopMenuContainer');
+        if (typeof MutationObserver !== 'undefined') {
+            var patchQueued = false;
+            var observer = new MutationObserver(function () {
+                if (patchQueued) return;
+                patchQueued = true;
+                requestAnimationFrame(function () {
+                    patchQueued = false;
+                    patchUserMenuItemsForSession(getWalletSessionConnected());
+                });
+            });
+            if (mobileMenu) observer.observe(mobileMenu, { childList: true, subtree: true });
+            if (desktopMenu) observer.observe(desktopMenu, { childList: true, subtree: true });
+        }
+
+        var origToggleMobileUser = window.toggleMobileUserDropdown;
+        if (typeof origToggleMobileUser === 'function') {
+            window.toggleMobileUserDropdown = function () {
+                origToggleMobileUser.apply(this, arguments);
+                applyNavWalletSession();
+            };
+        }
+    }
+
     /* ─── Auth + wallet nav state ─────────────────────────── */
     window.syncNavAuthState = function syncNavAuthState() {
         var isLoggedIn = localStorage.getItem('unera_user') !== null ||
@@ -85,6 +373,21 @@
         var nameEl = document.getElementById('navUserName') || document.querySelector('.user-name-nav');
         if (initEl) initEl.textContent = initials || 'U';
         if (nameEl) nameEl.textContent = userName;
+
+        if (hasDualSessionNav()) {
+            if (isConnected) {
+                syncNavWalletFields(address, balance, network);
+                if (ddDisconnect) ddDisconnect.style.display = '';
+                if (ddSwitch) ddSwitch.style.display = '';
+                if (ddSwitchMobile) ddSwitchMobile.style.display = '';
+            } else {
+                if (ddDisconnect) ddDisconnect.style.display = 'none';
+                if (ddSwitch) ddSwitch.style.display = 'none';
+                if (ddSwitchMobile) ddSwitchMobile.style.display = 'none';
+            }
+            applyNavWalletSession();
+            return;
+        }
 
         if (isConnected) {
             if (connectBtn) {
@@ -1094,7 +1397,9 @@
         normalizeDrawerWalletRow();
         hydrateUserMenus();
         initConsumerNavWalletNetwork();
+        initNavWalletSessionMenuHooks();
         syncNavAuthState();
+        applyNavWalletSession();
         setNavActive();
         initNavDropdowns();
         initUserDropdownOutsideClick();
@@ -1104,7 +1409,10 @@
         initMobileDrawerAccordionReset();
     });
 
-    window.addEventListener('storage', syncNavAuthState);
+    window.addEventListener('storage', function () {
+        syncNavAuthState();
+        applyNavWalletSession();
+    });
 
     /** Prefer shared wallet-auth modal when script is loaded on the page */
     window.openConnectModal = function openConnectModalFromNav() {
