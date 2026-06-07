@@ -2728,6 +2728,137 @@
             margin-top: 0.25rem;
             margin-bottom: 0.5rem;
         }
+
+        /* Account Settings demo bar (wallet-edge pattern) */
+        .account-settings-demo-bar {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1.5px dashed var(--neutral-300);
+        }
+        .demo-label {
+            font-size: 0.688rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+        .demo-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+        .demo-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border-subtle);
+            background: var(--brand-white);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            color: var(--text-secondary);
+            min-height: 34px;
+        }
+        .demo-btn:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+        }
+        .demo-btn:focus,
+        .demo-btn:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .demo-btn.active {
+            border-color: var(--brand-deep-blue);
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+        }
+        @media (max-width: 768px) {
+            .demo-btn { min-height: 44px; }
+        }
+
+        /* Unsupported network — page-scoped nav chrome */
+        .nav-network-badge.is-unsupported #navNetworkIcon {
+            color: var(--warning);
+        }
+        .nav-network-badge.is-unsupported #navNetworkLabel {
+            color: var(--warning);
+        }
+        #drawerWalletNetwork.is-unsupported {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        .dropdown-network-warning[hidden],
+        .mobile-unsupported-network-banner[hidden],
+        .account-unsupported-banner[hidden] {
+            display: none !important;
+        }
+        .dropdown-network-warning:not([hidden]),
+        .mobile-unsupported-network-banner:not([hidden]) {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+        .dropdown-network-warning:not([hidden]) {
+            margin-top: 0.625rem;
+            padding: 0.5rem 0.625rem;
+            border-radius: 0.5rem;
+            background: var(--surface-warning-soft);
+            border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+        }
+        .dropdown-network-warning svg {
+            flex-shrink: 0;
+            color: var(--warning);
+        }
+        .mobile-unsupported-network-banner:not([hidden]) {
+            margin: 0 0.5rem 0.75rem;
+            padding: 0.5rem 0.625rem;
+            border-radius: 0.5rem;
+            background: var(--surface-warning-soft);
+            border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+        }
+        .mobile-unsupported-network-banner svg {
+            flex-shrink: 0;
+            color: var(--warning);
+        }
+        .account-unsupported-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.625rem;
+            flex-wrap: wrap;
+            padding: 0.875rem 1rem;
+            background: var(--surface-warning-soft);
+            border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+            border-radius: 0.75rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        .account-unsupported-banner > svg {
+            flex-shrink: 0;
+            color: var(--warning);
+        }
+        .account-unsupported-banner-body {
+            flex: 1 1 12rem;
+            min-width: 0;
+        }
+        .account-unsupported-banner-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .account-unsupported-banner-text {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
     </style>
     <link rel="stylesheet" href="consumer-app-nav.css">
 </head>
@@ -2961,6 +3092,12 @@
                                     </svg>
                                     <span id="dropdownWalletStatusText">No wallet connected</span>
                                 </div>
+                                <div class="dropdown-network-warning" id="dropdownNetworkWarning" hidden role="status">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                        <path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/>
+                                    </svg>
+                                    <span>Unsupported Network — switch to Base or Sepolia</span>
+                                </div>
                                 <span id="dropdownWalletAddress" class="visually-hidden" aria-hidden="true"></span>
                             </div>
                             <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
@@ -3015,11 +3152,26 @@
             <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
             </ul>
         <div id="mobileUserMenu"></div>
-                <div id="mobileNotificationsSection"></div>
     </div>
 
     <!-- Main Content -->
     <main id="main-content" class="container">
+        <div class="account-settings-demo-bar" id="accountSettingsDemoBar">
+            <p class="demo-label">Prototype — simulate account state:</p>
+            <div class="demo-btns" id="accountSettingsDemoBtns" role="group" aria-label="Account settings demo scenario selector"></div>
+        </div>
+        <div id="accountSettingsDemoAnnouncer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+
+        <div class="account-unsupported-banner" id="accountUnsupportedBanner" role="alert" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                <path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/>
+            </svg>
+            <div class="account-unsupported-banner-body">
+                <div class="account-unsupported-banner-title">Wallet on unsupported network</div>
+                <div class="account-unsupported-banner-text">Unera requires Base or Sepolia. Switch your wallet network to continue.</div>
+            </div>
+        </div>
+
         <div class="page-header">
             <p class="welcome-text">⚙️ Account & Wallets</p>
             <h1 class="page-title">Account Settings</h1>
@@ -3781,30 +3933,24 @@
 
         function markNotificationRead(id) {
             const n = notifications.find(x => x.id === id);
-            if (n) { n.read = true; renderNotificationPanel('desktop'); renderNotificationPanel('mobile'); saveNotifications(); updateNotificationBadges(notifications.filter(x => !x.read).length); }
+            if (n) { n.read = true; renderNotificationPanel('desktop'); saveNotifications(); updateNotificationBadges(notifications.filter(x => !x.read).length); }
         }
 
         function markAllNotificationsRead() {
             notifications.forEach(n => { n.read = true; });
             renderNotificationPanel('desktop');
-            const mobileSection = document.getElementById('mobileNotificationsSection');
-            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
             saveNotifications();
         }
 
         function clearNotification(id) {
             notifications = notifications.filter(n => n.id !== id);
             renderNotificationPanel('desktop');
-            const mobileSection = document.getElementById('mobileNotificationsSection');
-            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
             saveNotifications();
         }
 
         function clearAllNotifications() {
             notifications = [];
             renderNotificationPanel('desktop');
-            const mobileSection = document.getElementById('mobileNotificationsSection');
-            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
             saveNotifications();
         }
 
@@ -3812,8 +3958,6 @@
             const id = 'n' + Date.now();
             notifications.unshift({ id, type: data.type || 'system', title: data.title || 'Notification', message: data.message || '', timestamp: new Date().toISOString(), read: false });
             renderNotificationPanel('desktop');
-            const mobileSection = document.getElementById('mobileNotificationsSection');
-            if (mobileSection) mobileSection.innerHTML = renderNotificationPanel('mobile');
             saveNotifications();
             const bell = document.getElementById('notificationBell');
             if (bell) {
@@ -3862,8 +4006,6 @@
             sepolia:      { path: 'M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z', viewBox: '0 0 24 24', fill: 'currentColor' },
             'base-sepolia': { path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.18 0 9.44-3.93 9.95-9H12v-2h11.95c-.5-5.5-5.1-9.99-11.95-9.99V2z', viewBox: '0 0 24 24', fill: 'currentColor' }
         };
-
-        const NAV_SUPPORTED_NETWORK_IDS = ['ethereum', 'base', 'sepolia', 'base-sepolia'];
 
         function switchNetwork(chainId, label, chainColor, optionEl) {
             // Update active state in desktop dropdown
@@ -3976,7 +4118,7 @@
                 showNotification('Wallet disconnected', 'success');
             }
             renderWallets();
-            applyAccountSettingsNavWalletSession();
+            applyNavWalletSession();
         }
 
         function disconnectWallet() {
@@ -4008,7 +4150,7 @@
 
             showNotification('Wallet connected', 'success');
             renderWallets();
-            applyAccountSettingsNavWalletSession();
+            applyNavWalletSession();
         }
 
         function disconnectFromCard() {
@@ -4310,9 +4452,7 @@
                             <span class="test-scenarios-label">DEV · Simulate scenario</span>
                             <div class="scenario-pills">
                                 <button type="button" class="scenario-pill active" data-scenario="happy" onclick="setConnectScenario('happy', this)">Happy path</button>
-                                <button type="button" class="scenario-pill" data-scenario="wrong-network" onclick="setConnectScenario('wrong-network', this)">Wrong Network</button>
-                                <button type="button" class="scenario-pill" data-scenario="not-installed" onclick="setConnectScenario('not-installed', this)">Not Installed</button>
-                                <button type="button" class="scenario-pill" data-scenario="user-rejected" onclick="setConnectScenario('user-rejected', this)">User Rejected</button>
+                                <button type="button" class="scenario-pill" data-scenario="unsupported-network" onclick="setConnectScenario('unsupported-network', this)">Unsupported Network</button>
                             </div>
                         </div>
                         <p class="modal-desc" id="connectModalDesc">Unera is your gateway to impact. Select a supported wallet to authenticate and continue.</p>
@@ -4398,42 +4538,13 @@
                 modalBody.innerHTML = originalContent;
                 const scenario = window._connectScenario || 'happy';
 
-                if (scenario === 'wrong-network') {
+                if (scenario === 'unsupported-network') {
                     closeWalletSelectionModal();
                     showNotification(
                         `${name} is connected to an unsupported network. Unera requires Base or Sepolia — switch your wallet to the correct network and try again.`,
                         'warning',
                         {
                             actionLabel: 'Switch to Base (Simulated)',
-                            actionFn: showWalletSelectionModal
-                        }
-                    );
-                    return;
-                }
-
-                if (scenario === 'not-installed') {
-                    closeWalletSelectionModal();
-                    showNotification(
-                        `${name} isn't installed in this browser. Install it to continue, then come back and connect.`,
-                        'error',
-                        {
-                            actionLabel: `Install ${name}`,
-                            actionFn: () => {
-                                window.open(INSTALL_LINKS[provider] || 'https://metamask.io/download/', '_blank');
-                                showWalletSelectionModal();
-                            }
-                        }
-                    );
-                    return;
-                }
-
-                if (scenario === 'user-rejected') {
-                    closeWalletSelectionModal();
-                    showNotification(
-                        `You declined the connection request in ${name}. No action was taken — you can try again whenever you're ready.`,
-                        'warning',
-                        {
-                            actionLabel: 'Try Again',
                             actionFn: showWalletSelectionModal
                         }
                     );
@@ -4739,7 +4850,7 @@
                     localStorage.setItem('walletConnected', 'true');
                     localStorage.setItem('walletAddress', address);
                     localStorage.setItem('walletProvider', provider);
-                    applyAccountSettingsNavWalletSession();
+                    applyNavWalletSession();
                     renderWallets();
                     showStatusDialog(`Wallet "${finalName}" connected successfully!`, 'Wallet Connected');
                 }, 1500);
@@ -4763,10 +4874,6 @@
             ];
             saveNotifications();
         }
-        const mobileNotificationsSection = document.getElementById('mobileNotificationsSection');
-        if (mobileNotificationsSection) {
-            mobileNotificationsSection.innerHTML = renderNotificationPanel('mobile');
-        }
         renderNotificationPanel('desktop');
         initializeDummyWallets();
         renderWallets();
@@ -4779,33 +4886,6 @@
                 savedAddressesCard.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
             }
         }
-
-        // Restore previously selected network
-        (function restoreSelectedNetwork() {
-            try {
-                const saved = localStorage.getItem('selectedNetwork');
-                if (!saved) return;
-                let net = JSON.parse(saved);
-                if (!net || !net.id || !net.label) return;
-                if (!NAV_SUPPORTED_NETWORK_IDS.includes(net.id)) {
-                    net = { id: 'ethereum', label: 'Ethereum', color: '#627EEA' };
-                    localStorage.setItem('selectedNetwork', JSON.stringify(net));
-                }
-                const match = document.querySelector('.network-option-nav[data-chain-id="' + net.id + '"]');
-                if (match) {
-                    switchNetwork(net.id, net.label, net.color || '#627EEA', match);
-                    return;
-                }
-                const navLabel = document.getElementById('navNetworkLabel');
-                if (navLabel) navLabel.textContent = net.label;
-                const navIcon = document.getElementById('navNetworkIcon');
-                if (navIcon && net.color) navIcon.style.color = net.color;
-                const badge = document.querySelector('.nav-network-badge');
-                if (badge) badge.setAttribute('aria-label', 'Switch network, currently ' + net.label);
-            } catch(e) {}
-        })();
-
-        applyAccountSettingsNavWalletSession();
     </script>
     <!-- Wallet Nickname Dialog -->
     <div class="preset-dialog" id="nicknameDialog" role="dialog" aria-modal="true" aria-labelledby="nicknameDialogTitle" aria-hidden="true">
@@ -4993,6 +5073,174 @@ const networkDropdown = document.getElementById('networkDropdown');
         window.openConnectModal = function () {
             if (typeof showWalletSelectionModal === 'function') showWalletSelectionModal();
         };
+
+        // ===== ACCOUNT SETTINGS DEMO (prototype — page-scoped) =====
+        var ACCOUNT_SETTINGS_DEMO_PILLS = [
+            { label: 'Happy path', state: 'happy' },
+            { label: 'Unsupported Network', state: 'unsupported-network' }
+        ];
+        var DEMO_HAPPY_NETWORK = { id: 'base', label: 'Base', color: '#0052FF', chainId: '8453' };
+        var DEMO_UNSUPPORTED_NETWORK = { id: 'polygon', label: 'Polygon', color: '#8247E5', chainId: '137' };
+        var NAV_WARNING_ICON_SVG = '<path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/>';
+        var NAV_BASE_ICON_SVG = '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.18 0 9.44-3.93 9.95-9H12v-2h11.95c-.5-5.5-5.1-9.99-11.95-9.99V2z"/>';
+
+        var accountSettingsDemoState = 'happy';
+        var accountSettingsSavedNetworkIcon = null;
+
+        function renderAccountSettingsDemoPills() {
+            var container = document.getElementById('accountSettingsDemoBtns');
+            if (!container) return;
+            container.innerHTML = ACCOUNT_SETTINGS_DEMO_PILLS.map(function (pill) {
+                return '<button type="button" class="demo-btn" data-state="' + pill.state +
+                    '" onclick="applyAccountSettingsDemoState(\'' + pill.state + '\')">' + pill.label + '</button>';
+            }).join('');
+            syncAccountSettingsDemoPills();
+        }
+
+        function syncAccountSettingsDemoPills() {
+            document.querySelectorAll('#accountSettingsDemoBtns .demo-btn').forEach(function (btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-state') === accountSettingsDemoState);
+            });
+        }
+
+        function setNavNetworkIconWarning(isWarning) {
+            var icon = document.getElementById('navNetworkIcon');
+            if (!icon) return;
+            if (!accountSettingsSavedNetworkIcon) {
+                accountSettingsSavedNetworkIcon = icon.innerHTML;
+            }
+            if (isWarning) {
+                icon.innerHTML = NAV_WARNING_ICON_SVG;
+                icon.setAttribute('viewBox', '0 -960 960 960');
+                icon.style.color = 'var(--warning)';
+            } else {
+                icon.innerHTML = NAV_BASE_ICON_SVG;
+                icon.setAttribute('viewBox', '0 0 24 24');
+                icon.style.color = DEMO_HAPPY_NETWORK.color;
+            }
+        }
+
+        function ensureMobileUnsupportedBanner() {
+            var content = document.querySelector('#mobileUserDropdown .mobile-user-dropdown-content');
+            if (!content) return null;
+            var existing = document.getElementById('mobileUnsupportedNetworkBanner');
+            if (existing) return existing;
+            var banner = document.createElement('div');
+            banner.className = 'mobile-unsupported-network-banner';
+            banner.id = 'mobileUnsupportedNetworkBanner';
+            banner.setAttribute('role', 'status');
+            banner.innerHTML =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">' +
+                NAV_WARNING_ICON_SVG +
+                '</svg>' +
+                '<span>Unsupported Network — switch to Base or Sepolia</span>';
+            content.insertBefore(banner, content.firstChild);
+            return banner;
+        }
+
+        function setUnsupportedNetworkBannerVisible(el, visible) {
+            if (!el) return;
+            if (visible) {
+                el.hidden = false;
+                el.removeAttribute('aria-hidden');
+            } else {
+                el.hidden = true;
+                el.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        function patchAccountSettingsUnsupportedChrome(isUnsupported) {
+            var badge = document.querySelector('.nav-network-badge');
+            var label = document.getElementById('navNetworkLabel');
+            var drawerNet = document.getElementById('drawerWalletNetwork');
+            var dropdownWarn = document.getElementById('dropdownNetworkWarning');
+            var pageBanner = document.getElementById('accountUnsupportedBanner');
+            var mobileBanner = document.getElementById('mobileUnsupportedNetworkBanner');
+
+            if (badge) badge.classList.toggle('is-unsupported', isUnsupported);
+            if (label) label.textContent = isUnsupported ? 'Unsupported Network' : DEMO_HAPPY_NETWORK.label;
+            if (badge) {
+                badge.setAttribute('aria-label',
+                    'Switch network, currently ' + (isUnsupported ? 'Unsupported Network' : DEMO_HAPPY_NETWORK.label));
+            }
+            setNavNetworkIconWarning(isUnsupported);
+
+            if (drawerNet) {
+                drawerNet.textContent = isUnsupported ? 'Unsupported Network' : DEMO_HAPPY_NETWORK.label;
+                drawerNet.classList.toggle('is-unsupported', isUnsupported);
+            }
+
+            setUnsupportedNetworkBannerVisible(dropdownWarn, isUnsupported);
+            setUnsupportedNetworkBannerVisible(pageBanner, isUnsupported);
+
+            if (isUnsupported) {
+                mobileBanner = ensureMobileUnsupportedBanner();
+                setUnsupportedNetworkBannerVisible(mobileBanner, true);
+            } else if (mobileBanner) {
+                mobileBanner.remove();
+            }
+        }
+
+        function applyAccountSettingsDemoState(state) {
+            accountSettingsDemoState = state;
+            syncAccountSettingsDemoPills();
+
+            var isUnsupported = state === 'unsupported-network';
+            var net = isUnsupported ? DEMO_UNSUPPORTED_NETWORK : DEMO_HAPPY_NETWORK;
+
+            try {
+                localStorage.setItem('walletConnected', 'true');
+                if (!localStorage.getItem('walletAddress')) {
+                    localStorage.setItem('walletAddress', '0x742d35Cc6634C0532925a3b844Bc454e4438f44e');
+                }
+                localStorage.setItem('selectedNetwork', JSON.stringify(net));
+                localStorage.setItem('chainId', net.chainId);
+            } catch (e) { /* ignore */ }
+
+            var match = document.querySelector('.network-option-nav[data-chain-id="' + net.id + '"]');
+            if (match && typeof switchNetwork === 'function' && !isUnsupported) {
+                switchNetwork(net.id, net.label, net.color, match);
+            }
+
+            if (typeof syncNavAuthState === 'function') syncNavAuthState();
+            if (typeof applyNavWalletSession === 'function') applyNavWalletSession();
+
+            patchAccountSettingsUnsupportedChrome(isUnsupported);
+
+            var announcer = document.getElementById('accountSettingsDemoAnnouncer');
+            if (announcer) {
+                announcer.textContent = isUnsupported
+                    ? 'Unsupported Network scenario active.'
+                    : 'Happy path scenario active.';
+            }
+        }
+
+        window.applyAccountSettingsDemoState = applyAccountSettingsDemoState;
+
+        (function hookDemoNetworkReset() {
+            var orig = window.switchNetwork;
+            if (typeof orig !== 'function') return;
+            window.switchNetwork = function (chainId, label, chainColor, optionEl) {
+                orig.apply(this, arguments);
+                if (accountSettingsDemoState === 'unsupported-network' &&
+                    ['ethereum', 'base', 'sepolia', 'base-sepolia'].indexOf(chainId) !== -1) {
+                    applyAccountSettingsDemoState('happy');
+                } else if (accountSettingsDemoState === 'happy') {
+                    patchAccountSettingsUnsupportedChrome(false);
+                }
+            };
+        })();
+
+        function initAccountSettingsDemo() {
+            renderAccountSettingsDemoPills();
+            applyAccountSettingsDemoState('happy');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAccountSettingsDemo);
+        } else {
+            initAccountSettingsDemo();
+        }
     </script>
 </body>
 </html>
