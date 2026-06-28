@@ -1,0 +1,257 @@
+<!-- @dsCard group="Edge & Error" viewport="1180x2280" name="Edge & Error Cases" subtitle="Loading · empty · sync error · unsupported network · field validation · KYC banners · terminal failures — from wallet-edge / send-enhanced / dashboard-kyc" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--neutral-100); margin: 0; padding: 24px; color: var(--text-primary); }
+  .glabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin: 0 0 6px; }
+  .glabel:not(.first) { margin-top: 36px; }
+  .gsub { font-size: 12px; color: var(--text-secondary); margin: 0 0 16px; max-width: 760px; line-height: 1.55; }
+  .gsub code { font-family: var(--font-mono); font-size: 11px; background: var(--neutral-200); padding: 1px 5px; border-radius: 4px; }
+  .panel { background: #fff; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 1.5rem; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  .btn { font-family: var(--font-body); font-weight: 600; font-size: 0.875rem; border-radius: 8px; border: 2px solid transparent; min-height: 44px; padding: 0 1.25rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+  .btn-primary { background: var(--brand-deep-blue); color: #fff; }
+  .btn-secondary { background: #fff; border-color: var(--border-strong); color: var(--text-primary); }
+
+  /* KYC alert banner */
+  .alert-banner { background: var(--brand-deep-blue); border-radius: 1.25rem; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; gap: 2rem; box-shadow: 0 4px 16px rgba(23,61,71,0.25); flex-wrap: wrap; }
+  .alert-content { display: flex; align-items: center; gap: 1.25rem; flex: 1; min-width: 240px; }
+  .alert-icon { width: 28px; height: 28px; fill: #fff; flex-shrink: 0; }
+  .alert-title { color: #fff; font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+  .alert-description { color: rgba(255,255,255,0.9); font-size: 0.875rem; line-height: 1.5; }
+  .alert-cta { background: var(--brand-deep-blue); color: var(--brand-yellow); border: none; padding: 0.75rem 1.5rem; border-radius: 980px; font-weight: 600; font-size: 0.938rem; cursor: pointer; font-family: var(--font-body); display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+  .alert-cta svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* Inline soft banners (error / warning) */
+  .soft-banner { display: flex; align-items: flex-start; gap: 0.625rem; flex-wrap: wrap; padding: 0.875rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; }
+  .soft-banner.error { background: var(--surface-error-soft); border: 1px solid color-mix(in srgb, var(--brand-red) 22%, transparent); }
+  .soft-banner.warning { background: var(--surface-warning-soft); border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent); }
+  .soft-banner > svg { flex-shrink: 0; width: 20px; height: 20px; }
+  .soft-banner.error > svg { color: var(--error); fill: var(--error); }
+  .soft-banner.warning > svg { color: var(--warning); fill: var(--warning); }
+  .soft-banner-body { flex: 1 1 12rem; min-width: 0; }
+  .soft-banner-title { font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+  .soft-banner-text { font-size: 0.813rem; color: var(--text-secondary); line-height: 1.45; }
+  .soft-banner .btn { min-height: 40px; font-size: 0.813rem; flex-shrink: 0; align-self: center; }
+
+  /* Skeleton loading */
+  .sk-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+  .sk-stat { padding: 1rem; border-radius: 0.875rem; border: 1px solid var(--border-subtle); background: #fff; }
+  .sk-row { padding: 1rem 0; border-bottom: 1px solid var(--border-subtle); display: grid; grid-template-columns: 2.5rem 1fr auto; gap: 0.75rem; align-items: center; }
+  .sk-row:last-child { border-bottom: none; }
+  .sk-avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--neutral-200); }
+  .sk-line { height: 0.875rem; border-radius: 0.375rem; background: var(--neutral-200); animation: skPulse 1.2s ease-in-out infinite; }
+  .sk-line-lg { height: 1.5rem; width: 45%; }
+  .sk-line-sm { width: 40%; margin-top: 0.375rem; height: 0.625rem; }
+  .sk-line-md { width: 70%; }
+  .sk-line-right { width: 4rem; justify-self: end; }
+  @keyframes skPulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .sk-line { animation: none; } }
+
+  /* Empty states */
+  .empty-panel { text-align: center; padding: 3rem 1.5rem; border: 2px dashed var(--border-subtle); border-radius: 1.25rem; background: var(--surface-sky); }
+  .empty-icon { width: 64px; height: 64px; margin: 0 auto 1.25rem; opacity: 0.35; color: var(--brand-deep-blue); fill: currentColor; }
+  .empty-title { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+  .empty-text { color: var(--text-secondary); max-width: 420px; margin: 0 auto 1.5rem; font-size: 0.938rem; line-height: 1.55; }
+  .empty-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+  .empty-action { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1.75rem; background: var(--brand-deep-blue); border: none; border-radius: 980px; color: #fff; font-weight: 600; font-size: 0.938rem; cursor: pointer; font-family: var(--font-body); }
+  .empty-action svg { width: 18px; height: 18px; fill: currentColor; }
+
+  /* Outcome (error / timeout) */
+  .outcome { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+  .outcome-icon-wrap { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
+  .outcome-icon-wrap svg { width: 46px; height: 46px; fill: currentColor; }
+  .outcome-icon-wrap--error { background: var(--surface-error-soft); color: var(--error); border: 2px solid color-mix(in srgb, var(--brand-red) 28%, transparent); }
+  .outcome-icon-wrap--timeout { background: var(--surface-warning-soft); color: var(--brand-deep-blue); border: 2px solid color-mix(in srgb, var(--warning) 35%, transparent); }
+  .outcome-title { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+  .outcome-body { color: var(--text-secondary); font-size: 0.938rem; line-height: 1.55; max-width: 400px; margin: 0 auto 1.5rem; }
+  .outcome-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+
+  /* Field validation */
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 0.813rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+  .field input { width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--border-subtle); border-radius: 0.75rem; font-size: 1rem; font-family: var(--font-body); color: var(--text-primary); }
+  .field input[aria-invalid="true"] { border-color: var(--error); box-shadow: 0 0 0 3px var(--error-soft); }
+  .input-error { color: var(--error); font-size: 0.875rem; margin-top: 0.5rem; display: flex; align-items: center; gap: 0.375rem; }
+  .input-error svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+  /* Connect / prerequisite gate */
+  .prereq-card { background: var(--neutral-100); border: 2px solid var(--border-subtle); border-radius: 1rem; padding: 1.5rem; display: flex; align-items: flex-start; gap: 1rem; }
+  .prereq-icon { flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: var(--brand-deep-blue); display: flex; align-items: center; justify-content: center; color: #fff; }
+  .prereq-icon svg { width: 24px; height: 24px; fill: currentColor; }
+  .prereq-title { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+  .prereq-desc { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.45; }
+
+  /* Scenario pills (dev/demo) */
+  .scenario-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .scenario-pill { padding: 0.5rem 1rem; border-radius: 980px; border: 2px solid var(--border-subtle); background: #fff; font-family: var(--font-body); font-size: 0.813rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+  .scenario-pill.active { background: var(--brand-deep-blue); border-color: var(--brand-deep-blue); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="glabel first">What this section covers</div>
+<p class="gsub">Every non-happy path the consumer app must handle: <strong>loading, empty, partial-failure, unsupported-network, field-validation, identity-blocked, and terminal-failure</strong> states. Sources: <code>wallet-edge.html</code>, <code>send-enhanced.html</code>, <code>dashboard-kyc-blocked.html</code>, <code>dashboard-kyc-retry.html</code>. Rule: failure and success are <em>different</em> components — never recolor one into the other. Errors use <code>--error</code> / <code>--surface-error-soft</code>; cautions use <code>--warning</code> / <code>--surface-warning-soft</code>; money direction stays on <code>--fin-up</code> / <code>--fin-down</code>.</p>
+
+<!-- KYC banners -->
+<div class="glabel">Identity (KYC) alert banners — gradient banner, Deep&nbsp;Blue CTA with Yellow label</div>
+<p class="gsub">Account-level blockers shown above the dashboard. <strong>Blocked</strong> (under review) offers only a support contact; <strong>retry</strong> (more info needed) offers a resume CTA. Both use <code>role="alert"</code> + <code>aria-live</code>.</p>
+<div style="display:flex; flex-direction:column; gap:14px;">
+  <div class="alert-banner" role="alert" aria-live="polite">
+    <div class="alert-content">
+      <svg class="alert-icon" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240ZM330-120 120-330v-300l210-210h300l210 210v300L630-120H330Z"/></svg>
+      <div class="alert-text">
+        <div class="alert-title">Identity verification unavailable</div>
+        <div class="alert-description">You're not able to complete identity verification on this account while we review it. Please contact support for next steps.</div>
+      </div>
+    </div>
+    <div class="alert-actions"><a class="alert-cta" href="#"><svg viewBox="0 -960 960 960"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280 320-200v-80L480-520 160-720v80l320 200Z"/></svg>Contact support</a></div>
+  </div>
+  <div class="alert-banner" role="alert" aria-live="polite">
+    <div class="alert-content">
+      <svg class="alert-icon" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-242 226-226-58-56-168 168-84-84-58 58 142 140Z"/></svg>
+      <div class="alert-text">
+        <div class="alert-title">Verification needs another try</div>
+        <div class="alert-description">Additional information is needed to complete your identity check. Please resume the verification flow to resubmit.</div>
+      </div>
+    </div>
+    <div class="alert-actions"><button class="alert-cta">Resume verification</button></div>
+  </div>
+</div>
+
+<!-- Loading skeletons -->
+<div class="glabel">Loading — skeleton placeholders (shimmer, reduced-motion safe)</div>
+<p class="gsub">Portfolio stats + token rows while balances resolve. Animation gated by <code>prefers-reduced-motion</code>. Marked <code>aria-hidden</code>; a separate live region announces "Loading balances".</p>
+<div class="panel">
+  <div class="sk-stats">
+    <div class="sk-stat"><div class="sk-line" style="width:60%; margin-bottom:.5rem;"></div><div class="sk-line sk-line-lg"></div></div>
+    <div class="sk-stat"><div class="sk-line" style="width:60%; margin-bottom:.5rem;"></div><div class="sk-line sk-line-lg"></div></div>
+    <div class="sk-stat"><div class="sk-line" style="width:60%; margin-bottom:.5rem;"></div><div class="sk-line sk-line-lg"></div></div>
+  </div>
+  <div class="sk-row" aria-hidden="true"><div class="sk-avatar"></div><div><div class="sk-line sk-line-md"></div><div class="sk-line sk-line-sm"></div></div><div class="sk-line sk-line-right"></div></div>
+  <div class="sk-row" aria-hidden="true"><div class="sk-avatar"></div><div><div class="sk-line sk-line-md"></div><div class="sk-line sk-line-sm"></div></div><div class="sk-line sk-line-right"></div></div>
+  <div class="sk-row" aria-hidden="true"><div class="sk-avatar"></div><div><div class="sk-line sk-line-md"></div><div class="sk-line sk-line-sm"></div></div><div class="sk-line sk-line-right"></div></div>
+</div>
+
+<!-- Empty states -->
+<div class="glabel">Empty states — dashed panel on <code>--surface-sky</code>, low-opacity icon, primary recovery action</div>
+<div class="two">
+  <div class="empty-panel">
+    <svg class="empty-icon" viewBox="0 -960 960 960" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760H520q-71 0-115.5 44.5T360-600v240q0 71 44.5 115.5T520-200h320q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Z"/></svg>
+    <h3 class="empty-title">No tokens yet</h3>
+    <p class="empty-text">Your wallet is connected, but we didn't find any UNERA-supported tokens on this network.</p>
+    <div class="empty-actions"><button class="empty-action"><svg viewBox="0 -960 960 960"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z"/></svg>Add Tokens</button><button class="btn btn-secondary">Refresh</button></div>
+  </div>
+  <div class="empty-panel">
+    <svg class="empty-icon" viewBox="0 -960 960 960" aria-hidden="true"><path d="M240-80q-50 0-85-35t-35-85v-120h120v-560l60 60 60-60 60 60 60-60 60 60 60-60 60 60 60-60v680q0 50-35 85t-85 35H240Zm480-80q17 0 28.5-11.5T760-200v-560H320v440h360v120q0 17 11.5 28.5T720-160ZM360-600v-80h240v80H360Zm0 120v-80h240v80H360Z"/></svg>
+    <h3 class="empty-title">No transactions found</h3>
+    <p class="empty-text">Try adjusting your filters or search terms, or start by adding funds to your wallet.</p>
+    <div class="empty-actions"><button class="empty-action"><svg viewBox="0 -960 960 960"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z"/></svg>Add funds</button><button class="btn btn-secondary">Clear filters</button></div>
+  </div>
+</div>
+
+<!-- Partial failure / sync error -->
+<div class="glabel">Partial failure — inline sync banner (soft error, non-blocking)</div>
+<p class="gsub">Balances couldn't refresh but the page is still usable. Quiet <code>--surface-error-soft</code> banner with a retry — distinct from the full error panel below.</p>
+<div style="display:flex; flex-direction:column; gap:12px;">
+  <div class="soft-banner error" role="alert">
+    <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="m40-120 440-760 440 760H40Zm440-120q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg>
+    <div class="soft-banner-body"><div class="soft-banner-title">Couldn't load tokens</div><div class="soft-banner-text">Some balances may be out of date. Check your connection and try again.</div></div>
+    <button class="btn btn-secondary">Retry</button>
+  </div>
+</div>
+
+<!-- Full error + timeout -->
+<div class="glabel">Hard failure — full error & timeout panels (asymmetric to success; no celebration hero)</div>
+<div class="two">
+  <div class="panel outcome">
+    <div class="outcome-icon-wrap outcome-icon-wrap--error"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></div>
+    <h3 class="outcome-title">Couldn't load tokens</h3>
+    <p class="outcome-body">Check your internet connection and try again. If the problem continues, your network may be temporarily unavailable.</p>
+    <div class="outcome-actions"><button class="btn btn-primary">Try again</button><button class="btn btn-secondary">Contact support</button></div>
+  </div>
+  <div class="panel outcome">
+    <div class="outcome-icon-wrap outcome-icon-wrap--timeout"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Z"/></svg></div>
+    <h3 class="outcome-title">This is taking longer than usual</h3>
+    <p class="outcome-body">Loading balances took too long. Check your connection and retry — your funds are safe.</p>
+    <div class="outcome-actions"><button class="btn btn-primary">Retry</button></div>
+  </div>
+</div>
+
+<!-- Unsupported network -->
+<div class="glabel">Unsupported / wrong network — caution banner, switch action</div>
+<p class="gsub">Wallet connected to a chain UNERA doesn't support. <code>--surface-warning-soft</code> (caution, not failure) with a switch CTA. Mirrors the connect-modal <code>wrong-network</code> scenario.</p>
+<div class="soft-banner warning" role="alert">
+  <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="m40-120 440-760 440 760H40Zm440-120q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg>
+  <div class="soft-banner-body"><div class="soft-banner-title">Wrong network for tokens</div><div class="soft-banner-text">Switch to Base or Sepolia to load supported tokens. UNERA doesn't support the currently selected network.</div></div>
+  <button class="btn btn-primary">Switch network</button>
+</div>
+
+<!-- Field validation -->
+<div class="glabel">Field validation — inline errors (Send), <code>aria-invalid</code> + descriptive message</div>
+<p class="gsub">Validation lives under the field, error-colored, announced via <code>aria-describedby</code>. The most common Send edge cases: insufficient balance, malformed address, and sending to your own address.</p>
+<div class="two">
+  <div class="panel">
+    <div class="field">
+      <label for="amt">Amount</label>
+      <input id="amt" value="5,000.00" aria-invalid="true">
+      <div class="input-error"><svg viewBox="0 -960 960 960"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Insufficient balance — you have 2,500.00 hUSD available.</div>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="addr">Recipient address</label>
+      <input id="addr" value="0xZZ12…not-valid" aria-invalid="true">
+      <div class="input-error"><svg viewBox="0 -960 960 960"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Enter a valid wallet address (0x followed by 40 hex characters).</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="field" style="margin-bottom:0;">
+      <label for="self">Recipient address</label>
+      <input id="self" value="0x0822…7B75 (your wallet)" aria-invalid="true">
+      <div class="input-error"><svg viewBox="0 -960 960 960"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>You can't send to your own wallet address.</div>
+    </div>
+    <div class="soft-banner warning" style="margin-top:1.25rem;">
+      <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q150 0 255 105t105 255q0 150-105 255T480-120Zm-40-160 280-280-56-56-224 224-114-114-56 56 170 170Z"/></svg>
+      <div class="soft-banner-body"><div class="soft-banner-title">On-chain transfers are irreversible</div><div class="soft-banner-text">Double-check the recipient. Once confirmed, a transfer can't be undone or refunded by UNERA.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Prerequisite gate -->
+<div class="glabel">Prerequisite gates — action blocked until a step is done</div>
+<div class="two">
+  <div class="prereq-card">
+    <div class="prereq-icon"><svg viewBox="0 -960 960 960"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg></div>
+    <div>
+      <div class="prereq-title">Connect a wallet to continue</div>
+      <div class="prereq-desc">You need a connected wallet before you can view balances or transact.</div>
+      <button class="btn btn-primary">Connect wallet</button>
+    </div>
+  </div>
+  <div class="prereq-card">
+    <div class="prereq-icon"><svg viewBox="0 -960 960 960"><path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg></div>
+    <div>
+      <div class="prereq-title">Verify your identity to send</div>
+      <div class="prereq-desc">KYC verification is required before you can move funds. It takes about 3 minutes.</div>
+      <button class="btn btn-primary">Verify identity</button>
+    </div>
+  </div>
+</div>
+
+<!-- Demo scenario pills -->
+<div class="glabel">Demo scenario pills — prototype-only outcome switches (in-memory; never persisted)</div>
+<p class="gsub">The prototypes expose the connect/transact failure modes behind dev pills so designers can preview each terminal state. These are demo affordances, not production UI.</p>
+<div class="scenario-row">
+  <button class="scenario-pill active">Happy path</button>
+  <button class="scenario-pill">Wrong network</button>
+  <button class="scenario-pill">Wallet not installed</button>
+  <button class="scenario-pill">User rejected</button>
+  <button class="scenario-pill">Insufficient gas</button>
+  <button class="scenario-pill">Timeout</button>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!-- @dsCard group="Components" viewport="700x420" subtitle="ReserveGauge · CompositionDonut · MaturityLadder · TrendChart" name="Charts" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{padding:24px;background:#fff;color:var(--text-primary)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+  .lbl{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px}
+  .full{grid-column:1/-1}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body>
+  <div id="root"></div>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="../../_ds_bundle.js"></script>
+  <script type="text/babel" data-presets="react">
+    const NS = window[Object.keys(window).find(k => window[k] && window[k].ReserveGauge && window[k].TrendChart)] || {};
+    const { ReserveGauge, CompositionDonut, MaturityLadder, TrendChart } = NS;
+    const series = Array.from({length:90},(_,i)=>101.5+Math.sin(i/7)*1.2+i*0.04);
+    function Demo(){
+      return (
+        <div className="grid">
+          <div style={{textAlign:'center'}}><div className="lbl">ReserveGauge</div><ReserveGauge value={105.2} floor={100} size={220}/></div>
+          <div style={{textAlign:'center'}}><div className="lbl">CompositionDonut</div>
+            <CompositionDonut size={190} centerValue="$3.0M" centerLabel="Reserves" items={[
+              {asset:'bank',pct:60},{asset:'stablecoin',pct:30},{asset:'treasury',pct:8},{asset:'cash',pct:2}]}/>
+          </div>
+          <div><div className="lbl">MaturityLadder</div>
+            <MaturityLadder buckets={[{label:'≤ 7 days',pct:42},{label:'8–30 days',pct:31},{label:'31–90 days',pct:19},{label:'91–365 days',pct:8}]}/>
+          </div>
+          <div><div className="lbl">TrendChart · 90-day ratio</div>
+            <TrendChart data={series} floor={100} color="var(--brand-teal)" height={150}/>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+  </script>
+</body></html>

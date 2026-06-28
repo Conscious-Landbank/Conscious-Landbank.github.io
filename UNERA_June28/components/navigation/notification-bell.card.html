@@ -1,0 +1,84 @@
+<!-- @dsCard group="Components" viewport="760x640" name="Notification Bell" subtitle="Nav bell + level-model panel (NotificationBell) — DS mirror of the shared notifications-bell.js controller" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--neutral-100); margin: 0; padding: 24px; color: var(--text-primary); }
+  .lab { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin: 0 0 9px 2px; }
+  .lab:not(:first-child) { margin-top: 26px; }
+  .navbar { background: var(--brand-deep-blue); border-radius: 10px; height: 44px; display: flex; align-items: center; justify-content: flex-end; padding: 0 1.25rem; gap: 0.75rem; }
+  .stage { position: relative; min-height: 540px; }
+  .row { display: flex; gap: 40px; flex-wrap: wrap; }
+  .mini { background: var(--brand-deep-blue); border-radius: 10px; height: 44px; display: flex; align-items: center; justify-content: flex-end; padding: 0 1rem; width: 200px; }
+  .mini-wrap { display: flex; flex-direction: column; }
+  .note { font-size: 12px; color: var(--text-secondary); margin: 8px 2px 0; max-width: 360px; }
+  .note b { color: var(--text-primary); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { useState } = React;
+
+  const SEED = [
+    { id: 'e1', level: 'error',       title: 'Swap couldn\u2019t be completed', message: 'We couldn\u2019t finalize your 100 USDC \u2192 USDT swap. No funds left your wallet.', time: '6 min ago',  ctaLabel: 'View details',     read: false },
+    { id: 'c1', level: 'completed',   title: 'Buy order completed',             message: 'Your OTC purchase of 500 hUSD is complete and added to your balance.',                 time: '22 min ago', ctaLabel: 'View order',       read: false },
+    { id: 'p1', level: 'progressing', title: 'Swap is settling',                message: 'Your USDC \u2192 USDT swap is confirmed. Balances are updating now.',                  time: '25 min ago', ctaLabel: 'View transaction', read: false },
+    { id: 'w1', level: 'warning',     title: 'Buy order taking longer',         message: 'Your OTC purchase is still processing. We\u2019ll let you know when it settles.',          time: '40 min ago', ctaLabel: 'View order',       read: false },
+    { id: 'i1', level: 'info',        title: 'New network supported',           message: 'You can now hold and move hUSD on Base.',                                            time: 'yesterday',  ctaLabel: 'Learn more',       read: true  },
+  ];
+
+  function mount() {
+    const ns = window.UNERADesignSystem_679671;
+    if (!ns || !ns.NotificationBell) { return setTimeout(mount, 60); }
+    const { NotificationBell } = ns;
+
+    function Demo() {
+      const [open, setOpen] = useState(true);
+      const [items, setItems] = useState(SEED);
+      const unread = items.filter((n) => !n.read).length;
+      return (
+        <div>
+          <div className="lab">Interactive — click the bell to toggle, dismiss rows, mark all read</div>
+          <div className="stage">
+            <div className="navbar">
+              <NotificationBell
+                open={open}
+                items={items}
+                unreadCount={unread}
+                onBellClick={() => setOpen((o) => !o)}
+                onMarkAllRead={() => setItems((xs) => xs.map((x) => ({ ...x, read: true })))}
+                onClearAll={() => setItems([])}
+                onDismiss={(id) => setItems((xs) => xs.filter((x) => x.id !== id))}
+              />
+            </div>
+          </div>
+
+          <div className="lab">States</div>
+          <div className="row">
+            <div className="mini-wrap">
+              <div className="mini"><NotificationBell open={false} unreadCount={120} items={SEED} /></div>
+              <p className="note"><b>Badge caps at 99+</b> and hides at zero (PRD §7.5.2.3).</p>
+            </div>
+            <div className="mini-wrap">
+              <div className="mini"><NotificationBell open={false} unreadCount={0} items={[]} /></div>
+              <p className="note"><b>Zero unread</b> — no badge. Open shows the “You’re all caught up” empty state.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+  }
+  mount();
+</script>
+</body>
+</html>

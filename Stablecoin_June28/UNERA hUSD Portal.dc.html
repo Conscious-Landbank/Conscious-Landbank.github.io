@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="tokens/typography.css">
+<link rel="stylesheet" href="tokens/colors.css">
+<style>
+  html, body { margin: 0; background: #07090a; }
+  * { box-sizing: border-box; }
+  ::selection { background: rgba(236,214,160,0.3); }
+  @keyframes uFloat { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-12px) } }
+  @keyframes uSpin { to { transform: rotate(360deg) } }
+  @keyframes uDrift { 0% { transform: translate(0,0) scale(1) } 50% { transform: translate(4%,-3%) scale(1.08) } 100% { transform: translate(0,0) scale(1) } }
+  @keyframes uDrift2 { 0% { transform: translate(0,0) scale(1) } 50% { transform: translate(-5%,4%) scale(1.12) } 100% { transform: translate(0,0) scale(1) } }
+  @keyframes uPulse { 0%,100% { opacity: 0.55 } 50% { opacity: 1 } }
+  @keyframes uRise { from { transform: translateY(16px) } to { transform: translateY(0) } }
+  @keyframes uShimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
+  @keyframes uLivePulse { 0% { box-shadow: 0 0 0 0 rgba(63,184,166,0.5) } 70% { box-shadow: 0 0 0 7px rgba(63,184,166,0) } 100% { box-shadow: 0 0 0 0 rgba(63,184,166,0) } }
+</style>
+</helmet>
+
+<div ref="{{ setRoot }}" style="
+  --ink:#07090a; --ink2:#0b0f10; --panel:#10171a; --panel2:#141d20;
+  --line:rgba(255,255,255,0.09); --line2:rgba(255,255,255,0.055);
+  --txt:#eef3f2; --dim:#94a3a2; --mute:#5f6e6d;
+  --gold:#ecd6a0; --gold-bright:#f7e8bd; --gold-deep:#caac6c;
+  --teal:#43c0ad; --teal-deep:#2f7682;
+  --up:#3ccf94; --down:#df7e98;
+  --bank:#3ccf94; --treasury:#a892c8; --stable:#43c0ad; --cash:#e7c267;
+  font-family:var(--font-body); color:var(--txt); background:var(--ink);
+  min-height:100vh; -webkit-font-smoothing:antialiased; position:relative; overflow:hidden;">
+
+  <!-- ambient background glows -->
+  <div style="position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;">
+    <div style="position:absolute; top:-18%; left:-8%; width:55vw; height:55vw; border-radius:50%; background:radial-gradient(circle, rgba(63,184,166,0.16), transparent 62%); filter:blur(20px); animation:uDrift 22s ease-in-out infinite;"></div>
+    <div style="position:absolute; top:-10%; right:-12%; width:50vw; height:50vw; border-radius:50%; background:radial-gradient(circle, rgba(236,214,160,0.13), transparent 60%); filter:blur(20px); animation:uDrift2 26s ease-in-out infinite;"></div>
+    <div style="position:absolute; bottom:-25%; left:30%; width:45vw; height:45vw; border-radius:50%; background:radial-gradient(circle, rgba(47,118,130,0.12), transparent 65%); filter:blur(30px); animation:uDrift 30s ease-in-out infinite;"></div>
+  </div>
+
+  <!-- ─────────────── NAV ─────────────── -->
+  <nav style="position:sticky; top:0; z-index:50; background:rgba(8,11,12,0.72); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid var(--line);">
+    <div style="max-width:1240px; margin:0 auto; height:60px; display:flex; align-items:center; justify-content:space-between; padding:0 28px;">
+      <div style="display:flex; align-items:center; gap:1.6rem;">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <img src="assets/logos/unera-white-text-nav.svg" alt="UNERA" style="height:23px;">
+          <span style="background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; font-size:0.56rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.18rem 0.5rem; border-radius:980px;">hUSD</span>
+        </div>
+        <div style="display:flex; gap:0.2rem; align-items:center;">
+          <button onClick="{{ goSlot1 }}" style="{{ navSlot1Style }}"><sc-if value="{{ navSlot1Active }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">{{ slot1Label }}</span></button>
+          <button onClick="{{ goGet }}" style="{{ navGetStyle }}"><sc-if value="{{ navGetActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Get hUSD</span></button>
+          <button onClick="{{ goRedeem }}" style="{{ navRedeemStyle }}"><sc-if value="{{ navRedeemActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Redeem</span></button>
+          <button onClick="{{ goPor }}" style="{{ navPorStyle }}"><sc-if value="{{ navPorActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Proof of Reserve</span></button>
+          <button onClick="{{ goActivity }}" style="{{ navActivityStyle }}"><sc-if value="{{ navActivityActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Activity</span></button>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <!-- preview-state selector (demo control for the spec's user & service states) -->
+        <div style="position:relative;">
+          <button onClick="{{ togglePreview }}" title="Preview state" style="display:flex; align-items:center; gap:0.45rem; background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.34rem 0.7rem; cursor:pointer; font-family:var(--font-body); color:var(--dim); font-size:0.66rem; font-weight:700;">
+            <span style="width:7px; height:7px; border-radius:50%; background:{{ previewDot }};"></span>{{ previewLabel }}
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <sc-if value="{{ previewOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closePreview }}" style="position:fixed; inset:0; z-index:55;"></div>
+          <div style="position:absolute; top:calc(100% + 0.5rem); right:0; width:228px; background:var(--panel2); border:1px solid var(--line); border-radius:12px; box-shadow:0 24px 50px -12px rgba(0,0,0,0.7); z-index:60; overflow:hidden; padding:0.3rem;">
+            <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--mute); font-weight:700; padding:0.5rem 0.6rem 0.35rem;">Preview state</div>
+            <sc-for list="{{ previewStates }}" as="p" hint-placeholder-count="6">
+              <button onClick="{{ p.action }}" style="width:100%; display:flex; align-items:center; gap:0.6rem; background:{{ p.bg }}; border:none; cursor:pointer; border-radius:8px; padding:0.5rem 0.6rem; font-family:var(--font-body); text-align:left;">
+                <span style="width:7px; height:7px; border-radius:50%; background:{{ p.dot }}; flex-shrink:0;"></span>
+                <span style="flex:1; font-size:0.78rem; font-weight:600; color:{{ p.color }};">{{ p.label }}</span>
+                <sc-if value="{{ p.active }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg></sc-if>
+              </button>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+        <!-- notification center -->
+        <div style="position:relative;">
+          <button onClick="{{ toggleNotif }}" aria-label="Notifications" style="position:relative; width:38px; height:38px; border-radius:50%; background:var(--panel); border:1px solid var(--line); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--dim);">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+            <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; top:7px; right:8px; min-width:15px; height:15px; padding:0 3px; border-radius:980px; background:var(--gold); color:#3a2c08; font-size:0.58rem; font-weight:800; display:flex; align-items:center; justify-content:center; line-height:1;">{{ unreadCount }}</span></sc-if>
+          </button>
+          <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closeNotif }}" style="position:fixed; inset:0; z-index:55;"></div>
+          <div style="position:absolute; top:calc(100% + 0.6rem); right:0; width:340px; background:var(--panel2); border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -12px rgba(0,0,0,0.7); z-index:60; overflow:hidden;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1rem; border-bottom:1px solid var(--line);"><span style="font-size:0.84rem; font-weight:700;">Notifications</span><button onClick="{{ markAllRead }}" style="background:none; border:none; color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.72rem; font-weight:600;">Mark all read</button></div>
+            <div style="max-height:340px; overflow:auto;">
+              <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="4">
+                <div style="display:flex; gap:0.7rem; align-items:flex-start; padding:0.8rem 1rem; border-bottom:1px solid var(--line2); background:{{ n.bg }};">
+                  <span style="width:30px; height:30px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:{{ n.iconBg }}; color:{{ n.iconColor }};"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="{{ n.iconPath }}"/></svg></span>
+                  <div style="flex:1; min-width:0;"><div style="font-size:0.8rem; font-weight:600; color:var(--txt);">{{ n.title }}</div><div style="font-size:0.72rem; color:var(--dim); line-height:1.4; margin-top:0.1rem;">{{ n.body }}</div><div style="font-size:0.66rem; color:var(--mute); margin-top:0.25rem;">{{ n.time }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+        <!-- wallet / sign-in -->
+        <sc-if value="{{ isPublic }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ setAcctVerified }}" style="background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.8rem; font-weight:700; padding:0.5rem 1rem; border-radius:980px;">Log in</button>
+        </sc-if>
+        <sc-if value="{{ showConnect }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ openWallet }}" style="display:inline-flex; align-items:center; gap:0.45rem; background:var(--panel); border:1px solid var(--gold); color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.8rem; font-weight:700; padding:0.5rem 1rem; border-radius:980px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12V7H5a2 2 0 010-4h14v4M3 5v14a2 2 0 002 2h16v-5M18 12a2 2 0 000 4h4v-4z"/></svg>Connect wallet</button>
+        </sc-if>
+        <sc-if value="{{ walletConnected }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative;">
+            <button onClick="{{ toggleWalletMenu }}" style="display:flex; align-items:center; gap:0.55rem; background:var(--panel); border:1px solid {{ walletNetDot }}; border-radius:980px; padding:0.28rem 0.6rem 0.28rem 0.3rem; cursor:pointer; font-family:var(--font-body);">
+              <span style="position:relative; width:26px; height:26px; border-radius:50%; background:conic-gradient(from 140deg, #3a8891, #7a5bd0, #43c0ad, #3a8891);"><span style="position:absolute; right:-1px; bottom:-1px; width:9px; height:9px; border-radius:50%; background:{{ walletNetDot }}; border:1.5px solid var(--panel);"></span></span>
+              <div style="line-height:1.05; text-align:left;">
+                <div style="font-size:0.74rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--txt);">$24,180</div>
+                <div style="font-size:0.6rem; color:var(--mute);">0x74…3a8f</div>
+              </div>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <sc-if value="{{ walletMenuOpen }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ closeWalletMenu }}" style="position:fixed; inset:0; z-index:55;"></div>
+            <div style="position:absolute; top:calc(100% + 0.5rem); right:0; width:248px; background:var(--panel2); border:1px solid var(--line); border-radius:12px; box-shadow:0 24px 50px -12px rgba(0,0,0,0.7); z-index:60; overflow:hidden; padding:0.4rem;">
+              <div style="display:flex; align-items:center; gap:0.55rem; padding:0.55rem 0.6rem;">
+                <span style="width:30px; height:30px; border-radius:50%; background:conic-gradient(from 140deg, #3a8891, #7a5bd0, #43c0ad, #3a8891); flex-shrink:0;"></span>
+                <div style="flex:1; min-width:0;"><div style="font-family:ui-monospace,Menlo,monospace; font-size:0.78rem; color:var(--txt);">0x74…3a8f</div><div style="font-size:0.64rem; color:var(--mute);">MetaMask</div></div>
+                <sc-if value="{{ walletVerifiedChip }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:0.25rem; font-size:0.6rem; font-weight:700; color:var(--teal); background:rgba(67,192,173,0.12); border-radius:980px; padding:0.18rem 0.45rem;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Verified</span></sc-if>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0.6rem; margin-top:0.2rem; border-top:1px solid var(--line2);">
+                <span style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.72rem; color:var(--dim);"><span style="width:7px; height:7px; border-radius:50%; background:{{ walletNetDot }};"></span>{{ walletNetLabel }}</span>
+              </div>
+              <div style="display:flex; gap:0.3rem; padding:0 0.2rem 0.2rem;">
+                <sc-for list="{{ netOptions }}" as="n" hint-placeholder-count="3">
+                  <button onClick="{{ n.action }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.7rem; font-weight:600;">{{ n.name }}</button>
+                </sc-for>
+              </div>
+              <button onClick="{{ simulateWrongNet }}" style="width:100%; text-align:left; background:none; border:none; color:var(--mute); cursor:pointer; border-radius:8px; padding:0.5rem 0.6rem; font-family:var(--font-body); font-size:0.68rem;">Simulate unsupported network →</button>
+              <button onClick="{{ disconnectWallet }}" style="width:100%; display:flex; align-items:center; gap:0.5rem; background:none; border:none; color:var(--down); cursor:pointer; border-radius:8px; padding:0.55rem 0.6rem; font-family:var(--font-body); font-size:0.78rem; font-weight:600; border-top:1px solid var(--line2); margin-top:0.2rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 17l5-5-5-5M21 12H9M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/></svg>Disconnect wallet</button>
+            </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </nav>
+
+  <div style="position:relative; z-index:1;">
+
+  <!-- account/service state banner (spec: user states & operational notices) -->
+  <sc-if value="{{ showBanner }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1240px; margin:1.1rem auto 0; padding:0 28px;">
+    <div style="display:flex; align-items:center; gap:0.85rem; background:{{ bannerBg }}; border:1px solid {{ bannerBd }}; border-radius:14px; padding:0.85rem 1.1rem;">
+      <span style="width:30px; height:30px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:{{ bannerIconBg }}; color:{{ bannerIconColor }};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="{{ bannerIconPath }}"/></svg></span>
+      <div style="flex:1; min-width:0;"><div style="font-size:0.86rem; font-weight:700; color:var(--txt);">{{ bannerTitle }}</div><div style="font-size:0.76rem; color:var(--dim); margin-top:0.1rem;">{{ bannerBody }}</div></div>
+      <button onClick="{{ bannerAction }}" style="flex-shrink:0; background:{{ bannerCtaBg }}; color:{{ bannerCtaColor }}; border:1px solid {{ bannerCtaBd }}; cursor:pointer; font-family:var(--font-body); font-size:0.8rem; font-weight:700; padding:0.55rem 1.05rem; border-radius:980px;">{{ bannerCta }}</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ PORTFOLIO ═══════════════ -->
+  <sc-if value="{{ isPortfolio }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1240px; margin:0 auto; padding:3rem 28px 5rem;">
+    <!-- hero -->
+    <div style="display:grid; grid-template-columns:1.35fr 1fr; gap:2rem; align-items:center; margin-bottom:2.4rem; animation:uRise .6s ease both;">
+      <div>
+        <div style="display:inline-flex; align-items:center; gap:0.5rem; background:var(--panel); border:1px solid var(--line); border-radius:980px; padding:0.35rem 0.85rem; margin-bottom:1.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:{{ dataDot }};"></span>
+          <span style="font-size:0.7rem; color:var(--dim); letter-spacing:0.04em;">{{ dataLabel }}</span>
+        </div>
+        <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Total hUSD balance</div>
+        <div style="display:flex; align-items:baseline; gap:0.5rem;">
+          <span style="font-family:var(--font-display); font-size:0.05rem; opacity:0;">$</span>
+          <span data-count-to="24180.42" data-dec="2" data-prefix="$" style="font-family:var(--font-display); font-weight:700; font-size:5rem; line-height:0.95; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#ffffff,#cfdad9); -webkit-background-clip:text; background-clip:text; color:transparent;">$24,180.42</span>
+          <span style="font-family:var(--font-display); font-weight:600; font-size:1.6rem; color:var(--gold);">hUSD</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:1.2rem; margin-top:1.1rem;">
+          <span style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.82rem; color:var(--dim);"><span style="width:7px;height:7px;border-radius:50%;background:{{ walletNetDot }};"></span>Wallet 0x74…3a8f · {{ walletNetwork }}</span>
+          <span style="font-size:0.82rem; color:var(--mute);">Balance refreshed 30s ago · <span style="color:var(--gold); cursor:pointer;">Refresh</span></span>
+        </div>
+        <div style="display:flex; gap:0.8rem; margin-top:1.8rem;">
+          <button onClick="{{ goGet }}" style="display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.92rem; font-weight:700; padding:0.85rem 1.6rem; border-radius:12px; box-shadow:0 10px 30px -8px rgba(236,214,160,0.5); transition:transform .2s;" style-hover="transform:translateY(-2px)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Get hUSD
+          </button>
+          <button onClick="{{ goRedeem }}" style="display:inline-flex; align-items:center; gap:0.5rem; background:var(--panel2); color:var(--txt); border:1px solid var(--line); cursor:pointer; font-family:var(--font-body); font-size:0.92rem; font-weight:600; padding:0.85rem 1.5rem; border-radius:12px; transition:border-color .2s;" style-hover="border-color:var(--gold)">Redeem to bank</button>
+        </div>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem; flex-wrap:wrap;">
+          <button onClick="{{ goActivity }}" style="display:inline-flex; align-items:center; gap:0.4rem; background:none; border:1px solid var(--line); color:var(--dim); cursor:pointer; font-family:var(--font-body); font-size:0.78rem; font-weight:600; padding:0.45rem 0.9rem; border-radius:980px;" style-hover="color:var(--gold); border-color:var(--gold)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>View activity</button>
+          <button onClick="{{ goPor }}" style="display:inline-flex; align-items:center; gap:0.4rem; background:none; border:1px solid var(--line); color:var(--dim); cursor:pointer; font-family:var(--font-body); font-size:0.78rem; font-weight:600; padding:0.45rem 0.9rem; border-radius:980px;" style-hover="color:var(--gold); border-color:var(--gold)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Proof of reserve</button>
+        </div>
+      </div>
+      <!-- 3D coin -->
+      <div style="display:flex; justify-content:center; align-items:center;">
+        <div style="position:relative; width:248px; height:248px; animation:uFloat 6s ease-in-out infinite;">
+          <div style="position:absolute; inset:-50px; background:radial-gradient(circle, rgba(236,214,160,0.45), transparent 62%); filter:blur(24px);"></div>
+          <div style="position:absolute; inset:0; border-radius:50%; overflow:hidden; background:radial-gradient(130% 130% at 32% 24%, #fdf1d2 0%, #f0dca8 32%, #d8b873 60%, #b0894a 84%, #8a6831 100%); box-shadow:inset 0 6px 16px rgba(255,255,255,0.6), inset 0 -16px 34px rgba(110,80,28,0.55), 0 30px 60px -14px rgba(180,140,60,0.6);">
+            <div style="position:absolute; inset:-30%; background:conic-gradient(from 0deg, transparent, rgba(255,255,255,0.55), transparent 30%); animation:uSpin 7s linear infinite; mix-blend-mode:screen;"></div>
+          </div>
+          <div style="position:absolute; inset:14px; border-radius:50%; border:2px solid rgba(255,255,255,0.3); box-shadow:inset 0 0 0 1.5px rgba(120,88,36,0.45);"></div>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div style="font-family:var(--font-display); font-weight:700; font-size:96px; line-height:0.8; color:#6b4f1c; text-shadow:0 2px 1px rgba(255,255,255,0.45), 0 -1px 1px rgba(90,66,24,0.5);">h</div>
+            <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.28em; color:#7a5a22; margin-top:2px; padding-left:0.28em;">USD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.3rem 1.4rem;">
+        <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.6rem;">Reserve ratio</div>
+        <div style="display:flex; align-items:baseline; gap:0.3rem;"><span data-count-to="102.4" data-dec="1" data-suffix="%" style="font-family:var(--font-display); font-weight:700; font-size:2rem; color:var(--teal); font-variant-numeric:tabular-nums;">102.4%</span></div>
+        <div style="font-size:0.72rem; color:var(--dim); margin-top:0.2rem;">of 100% floor</div>
+      </div>
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.3rem 1.4rem;">
+        <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.6rem;">Circulating supply</div>
+        <div><span data-count-to="1284.6" data-dec="1" data-prefix="$" data-suffix="M" style="font-family:var(--font-display); font-weight:700; font-size:2rem; color:var(--txt); font-variant-numeric:tabular-nums;">$1,284.6M</span></div>
+        <div style="font-size:0.72rem; color:var(--up); margin-top:0.2rem;">+2.1% this week</div>
+      </div>
+      <div onClick="{{ goActivity }}" style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.3rem 1.4rem; cursor:pointer; transition:border-color .2s;" style-hover="border-color:var(--gold)">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;"><span style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600;">In progress</span><span style="font-size:0.68rem; color:var(--gold); font-weight:600;">View →</span></div>
+        <div style="display:flex; align-items:baseline; gap:0.3rem;"><span data-count-to="1" data-dec="0" style="font-family:var(--font-display); font-weight:700; font-size:2rem; color:var(--gold); font-variant-numeric:tabular-nums;">1</span><span style="font-size:0.9rem; color:var(--dim); font-weight:600;">transaction</span></div>
+        <div style="font-size:0.72rem; color:var(--dim); margin-top:0.2rem;">Redemption · processing</div>
+      </div>
+      <div onClick="{{ goVerify }}" style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.3rem 1.4rem; cursor:pointer; transition:border-color .2s;" style-hover="border-color:var(--gold)">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;"><span style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600;">Verification</span><span style="font-size:0.68rem; color:var(--gold); font-weight:600;">Manage →</span></div>
+        <div style="display:flex; align-items:center; gap:0.4rem;"><span style="font-family:var(--font-display); font-weight:700; font-size:1.5rem; color:var(--txt);">Level 2</span><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--teal)"><path d="M12 1l3 5.5 6 1-4.5 4.3 1 6-5.5-2.8L6.5 18l1-6L3 7.5l6-1z"/></svg></div>
+        <div style="font-size:0.72rem; color:var(--dim); margin-top:0.2rem;">Issue & redeem unlocked</div>
+      </div>
+    </div>
+
+    <!-- holdings by network + recent activity -->
+    <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:1.2rem;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem 1.6rem;">
+        <div style="font-size:0.95rem; font-weight:700; margin-bottom:1.2rem;">Balance across networks</div>
+        <div style="display:flex; flex-direction:column; gap:1.1rem;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem;"><span style="display:flex; align-items:center; gap:0.5rem; font-size:0.86rem;"><span style="width:9px;height:9px;border-radius:50%;background:#627eea;"></span>Ethereum</span><span style="font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums;">$18,420.00</span></div>
+            <div style="height:7px; background:var(--ink2); border-radius:980px; overflow:hidden;"><div style="height:100%; width:76%; background:linear-gradient(90deg,#627eea,#8aa0f5); border-radius:980px;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem;"><span style="display:flex; align-items:center; gap:0.5rem; font-size:0.86rem;"><span style="width:9px;height:9px;border-radius:50%;background:#28a0f0;"></span>Arbitrum</span><span style="font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums;">$4,260.42</span></div>
+            <div style="height:7px; background:var(--ink2); border-radius:980px; overflow:hidden;"><div style="height:100%; width:18%; background:linear-gradient(90deg,#28a0f0,#5fc0f5); border-radius:980px;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem;"><span style="display:flex; align-items:center; gap:0.5rem; font-size:0.86rem;"><span style="width:9px;height:9px;border-radius:50%;background:#0052ff;"></span>Base</span><span style="font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums;">$1,500.00</span></div>
+            <div style="height:7px; background:var(--ink2); border-radius:980px; overflow:hidden;"><div style="height:100%; width:6%; background:linear-gradient(90deg,#0052ff,#4b86ff); border-radius:980px;"></div></div>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem; padding-top:1.2rem; border-top:1px solid var(--line2); display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.78rem; color:var(--dim);">hUSD contract</span>
+          <span style="font-family:ui-monospace,Menlo,monospace; font-size:0.76rem; color:var(--teal);">0x9f2A…b41E ↗</span>
+        </div>
+      </div>
+
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem 1.6rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <span style="font-size:0.95rem; font-weight:700;">Recent activity</span>
+          <button onClick="{{ goActivity }}" style="background:none; border:none; color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.8rem; font-weight:600;">View all →</button>
+        </div>
+        <sc-for list="{{ recent }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; gap:0.85rem; padding:0.7rem 0; border-bottom:1px solid var(--line2);">
+            <span style="width:34px; height:34px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:{{ r.iconBg }}; color:{{ r.iconColor }};">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="{{ r.iconPath }}"/></svg>
+            </span>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:0.86rem; font-weight:600;">{{ r.title }}</div>
+              <div style="font-size:0.72rem; color:var(--mute);">{{ r.time }}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.88rem; font-weight:700; color:{{ r.amtColor }}; font-variant-numeric:tabular-nums;">{{ r.amount }}</div>
+              <div style="font-size:0.68rem; color:var(--dim);">{{ r.status }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- public aggregate network activity (anonymized, Dashboard §5.4) -->
+    <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem 1.6rem; margin-top:1.2rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem; flex-wrap:wrap; gap:0.6rem;">
+        <span style="font-size:0.95rem; font-weight:700;">Network activity</span>
+        <span style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.7rem; color:var(--teal);"><span style="width:7px; height:7px; border-radius:50%; background:var(--teal); animation:uLivePulse 2.4s infinite;"></span>Live · anonymized aggregate</span>
+      </div>
+      <div style="display:flex; gap:1.6rem; margin:0.6rem 0 1.1rem;">
+        <div><div style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600;">Total issued</div><div style="font-family:var(--font-display); font-weight:700; font-size:1.35rem; color:var(--up); font-variant-numeric:tabular-nums;">$1.41B</div></div>
+        <div><div style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600;">Total redeemed</div><div style="font-family:var(--font-display); font-weight:700; font-size:1.35rem; color:var(--txt); font-variant-numeric:tabular-nums;">$128.4M</div></div>
+        <div><div style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600;">24h volume</div><div style="font-family:var(--font-display); font-weight:700; font-size:1.35rem; color:var(--txt); font-variant-numeric:tabular-nums;">$4.2M</div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.2rem 1.6rem;">
+        <sc-for list="{{ aggFeed }}" as="a" hint-placeholder-count="5">
+          <div style="display:flex; align-items:center; gap:0.7rem; padding:0.55rem 0; border-bottom:1px solid var(--line2);">
+            <span style="width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:{{ a.iconBg }}; color:{{ a.iconColor }};"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="{{ a.iconPath }}"/></svg></span>
+            <div style="flex:1; min-width:0;"><div style="font-size:0.8rem; font-weight:600;">{{ a.label }}</div><div style="font-size:0.68rem; color:var(--mute);">{{ a.time }}</div></div>
+            <span style="font-size:0.84rem; font-weight:700; color:{{ a.amtColor }}; font-variant-numeric:tabular-nums;">{{ a.amt }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:0.68rem; color:var(--mute); margin-top:0.8rem;">Aggregate and anonymized — no wallet addresses or user data. Reflects mint &amp; burn events across the hUSD network.</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ GET / MINT ═══════════════ -->
+  <sc-if value="{{ isGet }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1240px; margin:0 auto; padding:2.6rem 28px 5rem;">
+    <div style="text-align:center; max-width:640px; margin:0 auto 2.2rem; animation:uRise .5s ease both;">
+      <div style="font-size:0.74rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:700; margin-bottom:0.7rem;">Get hUSD · Mint</div>
+      <h1 style="font-family:var(--font-display); font-weight:700; font-size:2.8rem; line-height:1.05; letter-spacing:-0.02em; margin:0 0 0.7rem;">Put dollars on-chain, 1:1.</h1>
+      <p style="font-size:1rem; color:var(--dim); margin:0; line-height:1.55;">Pay with fiat (USD) or allowlisted stablecoins. Every hUSD is minted only after funds settle and compliance checks clear — so every token is backed 1:1 at issuance.</p>
+    </div>
+
+    <!-- stepper -->
+    <div style="display:flex; align-items:center; justify-content:center; gap:0; max-width:560px; margin:0 auto 2rem;">
+      <sc-for list="{{ getSteps }}" as="st" hint-placeholder-count="3">
+        <div style="display:flex; align-items:center;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.4rem;">
+            <div style="width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; font-variant-numeric:tabular-nums; background:{{ st.bg }}; color:{{ st.fg }}; border:1.5px solid {{ st.bd }}; transition:all .3s;">{{ st.mark }}</div>
+            <span style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ st.lblColor }}; font-weight:600;">{{ st.label }}</span>
+          </div>
+          <div style="width:54px; height:1.5px; background:{{ st.lineColor }}; margin:0 0.3rem 1rem;"></div>
+        </div>
+      </sc-for>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.4rem;">
+        <div style="width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; background:{{ getDoneBg }}; color:{{ getDoneFg }}; border:1.5px solid {{ getDoneBd }};">{{ getDoneMark }}</div>
+        <span style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ getDoneLbl }}; font-weight:600;">Done</span>
+      </div>
+    </div>
+
+    <!-- STEP 0: amount -->
+    <sc-if value="{{ getStep0 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:540px; margin:0 auto; animation:uRise .4s ease both;">
+      <!-- path toggle -->
+      <div style="display:flex; gap:0.5rem; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:0.4rem; margin-bottom:1.3rem;">
+        <button onClick="{{ setFiat }}" style="flex:1; display:flex; flex-direction:column; align-items:flex-start; gap:0.15rem; background:{{ fiatBg }}; border:1px solid {{ fiatBd }}; cursor:pointer; border-radius:10px; padding:0.75rem 0.9rem; transition:all .2s; font-family:var(--font-body); text-align:left;">
+          <span style="font-size:0.86rem; font-weight:700; color:{{ fiatTxt }};">Pay with fiat</span>
+          <span style="font-size:0.7rem; color:var(--dim);">Card · bank transfer</span>
+        </button>
+        <button onClick="{{ setCrypto }}" style="flex:1; display:flex; flex-direction:column; align-items:flex-start; gap:0.15rem; background:{{ cryptoBg }}; border:1px solid {{ cryptoBd }}; cursor:pointer; border-radius:10px; padding:0.75rem 0.9rem; transition:all .2s; font-family:var(--font-body); text-align:left;">
+          <span style="font-size:0.86rem; font-weight:700; color:{{ cryptoTxt }};">Pay with crypto</span>
+          <span style="font-size:0.7rem; color:var(--dim);">USDC · USDT</span>
+        </button>
+      </div>
+
+      <!-- fiat funding currency (USD / CAD as FX + markup — issuance, not a swap) -->
+      <sc-if value="{{ showFiatCcy }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; align-items:center; gap:0.7rem; margin-bottom:1.3rem;">
+        <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600;">Funding currency</span>
+        <div style="display:flex; gap:0.4rem; flex:1;">
+          <button onClick="{{ setUsd }}" style="flex:1; background:{{ usdBg }}; border:1px solid {{ usdBd }}; color:{{ usdTxt }}; cursor:pointer; border-radius:9px; padding:0.5rem; font-family:var(--font-body); font-size:0.8rem; font-weight:700;">USD</button>
+          <button onClick="{{ setCad }}" style="flex:1; background:{{ cadBg }}; border:1px solid {{ cadBd }}; color:{{ cadTxt }}; cursor:pointer; border-radius:9px; padding:0.5rem; font-family:var(--font-body); font-size:0.8rem; font-weight:700;">CAD</button>
+        </div>
+      </div>
+      <sc-if value="{{ isCad }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; align-items:flex-start; gap:0.55rem; margin:-0.5rem 0 1.2rem; padding:0.7rem 0.9rem; background:rgba(67,192,173,0.06); border:1px solid rgba(67,192,173,0.2); border-radius:10px; font-size:0.74rem; color:var(--dim); line-height:1.45;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>CAD is converted to USD at the live FX rate plus markup, then issued as hUSD. This is issuance — not a swap or trade.</span>
+      </div>
+      </sc-if>
+      </sc-if>
+
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.6rem;">
+        <!-- pay -->
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600; margin-bottom:0.6rem;">You pay</div>
+        <div style="display:flex; align-items:center; gap:0.8rem; background:var(--ink2); border:1px solid var(--line); border-radius:14px; padding:0.9rem 1.1rem;">
+          <span style="font-family:var(--font-display); font-size:1.7rem; font-weight:700; color:var(--dim);">{{ paySymbol }}</span>
+          <input value="{{ getAmt }}" onInput="{{ onGetAmt }}" inputMode="decimal" style="flex:1; min-width:0; background:none; border:none; outline:none; color:var(--txt); font-family:var(--font-display); font-size:2.2rem; font-weight:700; font-variant-numeric:tabular-nums; width:100%;">
+          <button onClick="{{ pickAsset }}" style="display:flex; align-items:center; gap:0.4rem; background:var(--panel2); border:1px solid var(--line); border-radius:980px; padding:0.4rem 0.7rem; cursor:pointer; font-family:var(--font-body); color:var(--txt); flex-shrink:0;">
+            <span style="width:20px; height:20px; border-radius:50%; background:{{ payTokenBg }};"></span>
+            <span style="font-size:0.84rem; font-weight:700;">{{ payToken }}</span>
+          </button>
+        </div>
+        <div style="display:flex; gap:0.45rem; margin-top:0.7rem;">
+          <button onClick="{{ amt1k }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600;">1,000</button>
+          <button onClick="{{ amt5k }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600;">5,000</button>
+          <button onClick="{{ amt10k }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600;">10,000</button>
+          <button onClick="{{ amtMax }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--gold); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.76rem; font-weight:700;">MAX</button>
+        </div>
+
+        <!-- arrow -->
+        <div style="display:flex; justify-content:center; margin:1rem 0 0.3rem;"><span style="width:36px; height:36px; border-radius:50%; background:var(--ink2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--gold);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span></div>
+
+        <!-- receive -->
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600; margin-bottom:0.6rem;">You receive</div>
+        <div style="display:flex; align-items:center; gap:0.8rem; background:linear-gradient(180deg, rgba(236,214,160,0.08), rgba(236,214,160,0.02)); border:1px solid rgba(236,214,160,0.25); border-radius:14px; padding:0.9rem 1.1rem;">
+          <input value="{{ getRecv }}" onInput="{{ onGetRecv }}" inputMode="decimal" style="flex:1; min-width:0; background:none; border:none; outline:none; font-family:var(--font-display); font-size:2.2rem; font-weight:700; font-variant-numeric:tabular-nums; width:100%; color:var(--gold-bright);">
+          <div style="display:flex; align-items:center; gap:0.4rem; background:var(--panel2); border-radius:980px; padding:0.4rem 0.7rem;">
+            <span style="width:20px; height:20px; border-radius:50%; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep));"></span>
+            <span style="font-size:0.84rem; font-weight:700;">hUSD</span>
+          </div>
+        </div>
+        <div style="font-size:0.72rem; color:var(--mute); margin-top:0.5rem; display:flex; align-items:center; gap:0.35rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10l5 5 5-5"/><path d="M7 14l5-5 5 5"/></svg>Enter either amount — we calculate the other side in real time.</div>
+
+        <!-- network -->
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600; margin:1.2rem 0 0.6rem;">Receive on network</div>
+        <div style="display:flex; gap:0.5rem;">
+          <button onClick="{{ netEth }}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:0.4rem; background:{{ netEthBg }}; border:1px solid {{ netEthBd }}; color:{{ netEthTxt }}; cursor:pointer; border-radius:10px; padding:0.6rem; font-family:var(--font-body); font-size:0.8rem; font-weight:600;"><span style="width:8px;height:8px;border-radius:50%;background:#627eea;"></span>Ethereum</button>
+          <button onClick="{{ netArb }}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:0.4rem; background:{{ netArbBg }}; border:1px solid {{ netArbBd }}; color:{{ netArbTxt }}; cursor:pointer; border-radius:10px; padding:0.6rem; font-family:var(--font-body); font-size:0.8rem; font-weight:600;"><span style="width:8px;height:8px;border-radius:50%;background:#28a0f0;"></span>Arbitrum</button>
+          <button onClick="{{ netBase }}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:0.4rem; background:{{ netBaseBg }}; border:1px solid {{ netBaseBd }}; color:{{ netBaseTxt }}; cursor:pointer; border-radius:10px; padding:0.6rem; font-family:var(--font-body); font-size:0.8rem; font-weight:600;"><span style="width:8px;height:8px;border-radius:50%;background:#0052ff;"></span>Base</button>
+        </div>
+      </div>
+
+      <!-- 60-second quote -->
+      <div style="background:var(--panel); border:1px solid {{ quoteBd }}; border-radius:14px; padding:1rem 1.2rem; margin-top:1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:0.7rem; border-bottom:1px solid var(--line2);">
+          <span style="display:flex; align-items:center; gap:0.45rem; font-size:0.8rem; color:var(--dim);"><span style="width:7px;height:7px;border-radius:50%;background:{{ quoteDot }};"></span>{{ quoteRateLabel }}</span>
+          <span style="font-size:0.78rem; color:{{ quoteCountColor }}; font-variant-numeric:tabular-nums;">{{ quoteCountLabel }}</span>
+        </div>
+        <sc-if value="{{ quoteExpired }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ refreshQuote }}" style="width:100%; margin-top:0.7rem; background:var(--ink2); border:1px solid var(--gold); color:var(--gold); cursor:pointer; border-radius:9px; padding:0.55rem; font-family:var(--font-body); font-size:0.8rem; font-weight:700;">Refresh quote</button>
+        </sc-if>
+        <div style="display:flex; justify-content:space-between; padding-top:0.7rem;"><span style="font-size:0.82rem; color:var(--dim);">{{ quoteSourceLabel }}</span><span style="font-size:0.82rem; color:var(--mute);">{{ quoteSourceMeta }}</span></div>
+        <div style="display:flex; justify-content:space-between; margin-top:0.4rem;"><span style="font-size:0.82rem; color:var(--dim);">Mint fee · 0.10%</span><span style="font-size:0.82rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ getFeeStr }}</span></div>
+        <div style="display:flex; justify-content:space-between; margin-top:0.4rem;"><span style="font-size:0.82rem; color:var(--dim);">Daily remaining limit · L2</span><span style="font-size:0.82rem; font-weight:600; color:var(--dim); font-variant-numeric:tabular-nums;">$45,000</span></div>
+      </div>
+
+      <button onClick="{{ getPrimary }}" disabled="{{ getCtaDisabled }}" style="{{ getCtaStyle }}">{{ getCtaLabel }}</button>
+      <div style="display:flex; align-items:center; justify-content:center; gap:0.4rem; margin-top:0.9rem; font-size:0.74rem; color:var(--mute);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Funds held in segregated reserve accounts · attested daily</div>
+    </div>
+    </sc-if>
+
+    <!-- STEP 1: review -->
+    <sc-if value="{{ getStep1 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:520px; margin:0 auto; animation:uRise .4s ease both;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
+        <div style="text-align:center; margin-bottom:1.5rem;">
+          <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">You'll receive</div>
+          <div style="font-family:var(--font-display); font-weight:700; font-size:3rem; color:var(--gold-bright); font-variant-numeric:tabular-nums; line-height:1;">{{ getReceiveStr }}</div>
+          <div style="font-size:0.9rem; color:var(--dim); margin-top:0.3rem;">hUSD on {{ getNetwork }}</div>
+        </div>
+        <div style="background:var(--ink2); border-radius:12px; padding:0.4rem 1.1rem;">
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.84rem; color:var(--dim);">You pay</span><span style="font-size:0.84rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ getPayStr }} {{ payToken }}</span></div>
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.84rem; color:var(--dim);">Exchange rate</span><span style="font-size:0.84rem; font-weight:600;">{{ getRateRow }}</span></div>
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.84rem; color:var(--dim);">Mint fee · 0.10%</span><span style="font-size:0.84rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ getFeeStr }}</span></div>
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.84rem; color:var(--dim);">Funding method</span><span style="font-size:0.84rem; font-weight:600;">{{ payMethodLabel }}</span></div>
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0;"><span style="font-size:0.84rem; color:var(--dim);">Destination</span><span style="font-family:ui-monospace,Menlo,monospace; font-size:0.8rem; font-weight:600; color:var(--teal);">0x74…3a8f</span></div>
+        </div>
+
+        <sc-if value="{{ isCrypto }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:1rem; background:rgba(67,192,173,0.07); border:1px solid rgba(67,192,173,0.22); border-radius:12px; padding:1.1rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.7rem;">
+            <span style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); font-weight:700;">Your unique deposit address</span>
+            <span style="font-size:0.66rem; color:var(--mute); display:inline-flex; align-items:center; gap:0.3rem;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>expires in 60 min</span>
+          </div>
+          <div style="display:flex; gap:1rem; align-items:center;">
+            <div style="flex-shrink:0; padding:7px; background:#fff; border-radius:10px; line-height:0;">{{ depQr }}</div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:0.74rem; color:var(--dim); margin-bottom:0.5rem; line-height:1.45;">Send exactly <strong style="color:var(--txt); font-variant-numeric:tabular-nums;">{{ getPayStr }} {{ payToken }}</strong> on <strong style="color:var(--txt);">{{ getNetwork }}</strong>.</div>
+              <div style="display:flex; align-items:center; gap:0.5rem; background:var(--ink2); border-radius:9px; padding:0.55rem 0.7rem;">
+                <span style="font-family:ui-monospace,Menlo,monospace; font-size:0.74rem; color:var(--teal); flex:1; overflow:hidden; text-overflow:ellipsis;">{{ depositAddr }}</span>
+                <button onClick="{{ depCopy }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:7px; padding:0.3rem 0.6rem; font-family:var(--font-body); font-size:0.72rem; font-weight:600;">{{ depCopyLabel }}</button>
+              </div>
+              <div style="font-size:0.66rem; color:var(--mute); margin-top:0.45rem;">Unique to this request · never reused across users.</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid var(--line2); font-size:0.72rem; color:var(--down); line-height:1.45;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <span>{{ allowlistNote }}</span>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="display:flex; align-items:flex-start; gap:0.6rem; margin-top:1.1rem; font-size:0.78rem; color:var(--dim); line-height:1.5;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>hUSD is minted only after funds settle and compliance screening clears. The rate and fee shown are locked into your receipt.</span>
+        </div>
+
+        <div style="display:flex; gap:0.7rem; margin-top:1.4rem;">
+          <button onClick="{{ getBack }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:12px; padding:1rem 1.4rem; font-family:var(--font-body); font-size:0.92rem; font-weight:600;">Back</button>
+          <button onClick="{{ getConfirm }}" style="flex:1; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.96rem; font-weight:700; border-radius:12px; box-shadow:0 10px 30px -8px rgba(236,214,160,0.45);">Confirm & mint</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- STEP 2: status -->
+    <sc-if value="{{ getStep2 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:520px; margin:0 auto; animation:uRise .4s ease both;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem; text-align:center;">
+        <sc-if value="{{ mintComplete }}" hint-placeholder-val="{{ true }}">
+          <div style="width:74px; height:74px; border-radius:50%; margin:0.4rem auto 1rem; background:radial-gradient(circle, rgba(60,207,148,0.25), transparent 70%); display:flex; align-items:center; justify-content:center;"><span style="width:54px; height:54px; border-radius:50%; background:var(--up); display:flex; align-items:center; justify-content:center;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06140d" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.7rem; margin:0 0 0.3rem;">{{ getReceiveStr }} hUSD minted</h2>
+          <p style="font-size:0.9rem; color:var(--dim); margin:0 0 0.4rem;">Now in your wallet on {{ getNetwork }}</p>
+        </sc-if>
+        <sc-if value="{{ mintPending }}" hint-placeholder-val="{{ true }}">
+          <div style="width:74px; height:74px; border-radius:50%; margin:0.4rem auto 1rem; border:3px solid var(--line); border-top-color:var(--gold); animation:uSpin 1s linear infinite;"></div>
+          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.6rem; margin:0 0 0.3rem;">Minting your hUSD…</h2>
+          <p style="font-size:0.9rem; color:var(--dim); margin:0 0 0.4rem;">This usually takes under a minute. You can safely leave this page.</p>
+        </sc-if>
+
+        <!-- confirmation-depth meter (crypto onramp) -->
+        <sc-if value="{{ showConfMeter }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:left; margin-top:1.4rem; background:var(--ink2); border:1px solid var(--line); border-radius:12px; padding:0.9rem 1.1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.55rem;">
+            <span style="font-size:0.74rem; color:var(--dim); font-weight:600;">On-chain confirmations</span>
+            <span style="font-size:0.78rem; font-weight:700; color:var(--teal); font-variant-numeric:tabular-nums;">{{ confLabel }}</span>
+          </div>
+          <div style="height:7px; background:var(--panel2); border-radius:980px; overflow:hidden;"><div style="height:100%; width:{{ confPct }}%; background:linear-gradient(90deg,var(--teal),#5fd6c4); border-radius:980px; transition:width .6s ease;"></div></div>
+          <div style="font-size:0.68rem; color:var(--mute); margin-top:0.5rem;">Deposit settles once the required confirmation depth is reached. Minting begins after screening clears.</div>
+        </div>
+        </sc-if>
+
+        <!-- timeline -->
+        <div style="text-align:left; margin-top:1.6rem;">
+          <sc-for list="{{ mintStages }}" as="m" hint-placeholder-count="4">
+            <div style="display:flex; gap:0.9rem; align-items:flex-start;">
+              <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                <span style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:{{ m.dotBg }}; border:1.5px solid {{ m.dotBd }}; color:{{ m.dotFg }};">{{ m.dotInner }}</span>
+                <span style="width:1.5px; height:{{ m.lineH }}; background:{{ m.lineColor }};"></span>
+              </div>
+              <div style="padding-bottom:1rem; flex:1;">
+                <div style="font-size:0.88rem; font-weight:600; color:{{ m.titleColor }};">{{ m.title }}</div>
+                <div style="font-size:0.74rem; color:var(--mute); margin-top:0.1rem;">{{ m.sub }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex; gap:0.7rem; margin-top:0.6rem;">
+          <button onClick="{{ goActivity }}" style="flex:1; background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:12px; padding:0.9rem; font-family:var(--font-body); font-size:0.9rem; font-weight:600;">View receipt</button>
+          <button onClick="{{ getReset }}" style="flex:1; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; border-radius:12px; padding:0.9rem; font-family:var(--font-body); font-size:0.9rem; font-weight:700;">Done</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ REDEEM / BURN ═══════════════ -->
+  <sc-if value="{{ isRedeem }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1240px; margin:0 auto; padding:2.6rem 28px 5rem;">
+    <div style="text-align:center; max-width:640px; margin:0 auto 2.2rem; animation:uRise .5s ease both;">
+      <div style="font-size:0.74rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:700; margin-bottom:0.7rem;">Redeem hUSD · Burn</div>
+      <h1 style="font-family:var(--font-display); font-weight:700; font-size:2.8rem; line-height:1.05; letter-spacing:-0.02em; margin:0 0 0.7rem;">Back to dollars, on demand.</h1>
+      <p style="font-size:1rem; color:var(--dim); margin:0; line-height:1.55;">Burn hUSD and receive USD to your verified bank account. Redemptions clear against live reserves — standard requests target one business day; during high demand a request may be queued, and we'll show you the status the whole way.</p>
+      <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(67,192,173,0.1); border:1px solid rgba(67,192,173,0.25); border-radius:980px; padding:0.4rem 0.95rem; margin-top:1.2rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2"><path d="M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>
+        <span style="font-size:0.76rem; color:var(--teal); font-weight:600;">Redeem 1:1 to fiat · burn confirmed on-chain before any payout · ~1 business day</span>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:center; gap:0; max-width:480px; margin:0 auto 2rem;">
+      <sc-for list="{{ redeemSteps }}" as="st" hint-placeholder-count="2">
+        <div style="display:flex; align-items:center;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.4rem;">
+            <div style="width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; background:{{ st.bg }}; color:{{ st.fg }}; border:1.5px solid {{ st.bd }}; transition:all .3s;">{{ st.mark }}</div>
+            <span style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ st.lblColor }}; font-weight:600;">{{ st.label }}</span>
+          </div>
+          <div style="width:60px; height:1.5px; background:{{ st.lineColor }}; margin:0 0.3rem 1rem;"></div>
+        </div>
+      </sc-for>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.4rem;">
+        <div style="width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; background:{{ redDoneBg }}; color:{{ redDoneFg }}; border:1.5px solid {{ redDoneBd }};">{{ redDoneMark }}</div>
+        <span style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ redDoneLbl }}; font-weight:600;">Status</span>
+      </div>
+    </div>
+
+    <!-- redeem step 0 -->
+    <sc-if value="{{ redStep0 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:540px; margin:0 auto; animation:uRise .4s ease both;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.6rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+          <span style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600;">You redeem</span>
+          <span style="font-size:0.74rem; color:var(--dim);">Balance <strong style="color:var(--txt); font-variant-numeric:tabular-nums;">$24,180.42 hUSD</strong></span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.8rem; background:var(--ink2); border:1px solid var(--line); border-radius:14px; padding:0.9rem 1.1rem;">
+          <span style="width:30px; height:30px; border-radius:50%; flex-shrink:0; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep));"></span>
+          <input value="{{ redeemAmt }}" onInput="{{ onRedeemAmt }}" inputMode="decimal" style="flex:1; min-width:0; background:none; border:none; outline:none; color:var(--txt); font-family:var(--font-display); font-size:2.2rem; font-weight:700; font-variant-numeric:tabular-nums; width:100%;">
+          <span style="font-size:0.9rem; font-weight:700; color:var(--dim);">hUSD</span>
+        </div>
+        <div style="display:flex; gap:0.45rem; margin-top:0.7rem;">
+          <button onClick="{{ red25 }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600;">25%</button>
+          <button onClick="{{ red50 }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600;">50%</button>
+          <button onClick="{{ red100 }}" style="flex:1; background:var(--ink2); border:1px solid var(--line); color:var(--gold); cursor:pointer; border-radius:8px; padding:0.4rem; font-family:var(--font-body); font-size:0.76rem; font-weight:700;">MAX</button>
+        </div>
+
+        <div style="display:flex; justify-content:center; margin:1rem 0 0.3rem;"><span style="width:36px; height:36px; border-radius:50%; background:var(--ink2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--gold);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span></div>
+
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600; margin-bottom:0.6rem;">You receive</div>
+        <div style="display:flex; align-items:center; gap:0.8rem; background:linear-gradient(180deg, rgba(60,207,148,0.08), transparent); border:1px solid rgba(60,207,148,0.22); border-radius:14px; padding:0.9rem 1.1rem;">
+          <span style="font-family:var(--font-display); font-size:2.2rem; font-weight:700; font-variant-numeric:tabular-nums; flex:1; color:var(--up);">{{ redeemReceiveStr }}</span>
+          <span style="font-size:0.9rem; font-weight:700; color:var(--dim);">{{ redeemOutCcy }}</span>
+        </div>
+
+        <!-- destination -->
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600; margin:1.2rem 0 0.6rem;">Disburse to</div>
+        <div style="display:flex; align-items:center; gap:0.8rem; background:rgba(236,214,160,0.08); border:1px solid var(--gold); border-radius:12px; padding:0.85rem 1rem;">
+          <span style="width:36px; height:36px; border-radius:9px; background:var(--ink2); display:flex; align-items:center; justify-content:center; color:var(--teal); flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-6h6v6"/></svg></span>
+          <div style="flex:1;"><div style="font-size:0.86rem; font-weight:700; color:var(--gold);">Bank account · USD</div><div style="font-size:0.72rem; color:var(--dim);">RBC ····4821 · ~1 business day · free</div></div>
+          <button style="background:var(--panel2); border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:8px; padding:0.4rem 0.7rem; font-family:var(--font-body); font-size:0.72rem; font-weight:600;">Change</button>
+        </div>
+      </div>
+
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1rem 1.2rem; margin-top:1rem;">
+        <div style="display:flex; justify-content:space-between; padding-bottom:0.6rem; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">Redemption fee · 0.10%</span><span style="font-size:0.82rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ redeemFeeStr }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding-top:0.6rem;"><span style="font-size:0.82rem; color:var(--dim);">Estimated arrival</span><span style="font-size:0.82rem; font-weight:600;">{{ redeemEta }}</span></div>
+      </div>
+
+      <sc-if value="{{ willQueue }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; align-items:flex-start; gap:0.55rem; margin-top:1rem; padding:0.75rem 0.95rem; background:rgba(236,214,160,0.07); border:1px solid rgba(236,214,160,0.28); border-radius:11px; font-size:0.76rem; color:var(--dim); line-height:1.45;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>Large redemptions may be queued briefly for reserve liquidity. Your rate is locked and your payout is protected the whole way — estimated arrival ~1–2 business days.</span>
+      </div>
+      </sc-if>
+      <button onClick="{{ redeemReview }}" style="width:100%; margin-top:1.1rem; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:700; padding:1rem; border-radius:12px; box-shadow:0 10px 30px -8px rgba(236,214,160,0.45);">Review redemption</button>
+    </div>
+    </sc-if>
+
+    <!-- redeem step 1: review -->
+    <sc-if value="{{ redStep1 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:520px; margin:0 auto; animation:uRise .4s ease both;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
+        <div style="text-align:center; margin-bottom:1.5rem;">
+          <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">You'll receive</div>
+          <div style="font-family:var(--font-display); font-weight:700; font-size:3rem; color:var(--up); font-variant-numeric:tabular-nums; line-height:1;">{{ redeemReceiveStr }}</div>
+          <div style="font-size:0.9rem; color:var(--dim); margin-top:0.3rem;">{{ redeemOutCcy }} · {{ redeemDestLabel }}</div>
+        </div>
+        <div style="background:var(--ink2); border-radius:12px; padding:0.4rem 1.1rem;">
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.84rem; color:var(--dim);">You burn</span><span style="font-size:0.84rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ redeemAmtStr }} hUSD</span></div>
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.84rem; color:var(--dim);">Redemption fee</span><span style="font-size:0.84rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ redeemFeeStr }}</span></div>
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.84rem; color:var(--dim);">Destination</span><span style="font-size:0.84rem; font-weight:600;">{{ redeemDestLabel }}</span></div>
+          <div style="display:flex; justify-content:space-between; padding:0.7rem 0;"><span style="font-size:0.84rem; color:var(--dim);">Estimated arrival</span><span style="font-size:0.84rem; font-weight:600;">{{ redeemEta }}</span></div>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:0.6rem; margin-top:1.1rem; font-size:0.78rem; color:var(--dim); line-height:1.5;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>Burning is irreversible. Your hUSD is destroyed on-chain and the matching reserves are released to your destination.</span>
+        </div>
+        <div style="display:flex; gap:0.7rem; margin-top:1.4rem;">
+          <button onClick="{{ redeemBack }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:12px; padding:1rem 1.4rem; font-family:var(--font-body); font-size:0.92rem; font-weight:600;">Back</button>
+          <button onClick="{{ redeemConfirm }}" style="flex:1; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.96rem; font-weight:700; border-radius:12px; box-shadow:0 10px 30px -8px rgba(236,214,160,0.45);">Confirm & burn</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- redeem step 2: status -->
+    <sc-if value="{{ redStep2 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:520px; margin:0 auto; animation:uRise .4s ease both;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem; text-align:center;">
+        <sc-if value="{{ redeemComplete }}" hint-placeholder-val="{{ true }}">
+          <div style="width:74px; height:74px; border-radius:50%; margin:0.4rem auto 1rem; background:radial-gradient(circle, rgba(60,207,148,0.25), transparent 70%); display:flex; align-items:center; justify-content:center;"><span style="width:54px; height:54px; border-radius:50%; background:var(--up); display:flex; align-items:center; justify-content:center;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06140d" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.6rem; margin:0 0 0.3rem;">Redemption on its way</h2>
+          <p style="font-size:0.9rem; color:var(--dim); margin:0;">{{ redeemReceiveStr }} {{ redeemOutCcy }} → {{ redeemDestLabel }}</p>
+        </sc-if>
+        <sc-if value="{{ redeemPending }}" hint-placeholder-val="{{ true }}">
+          <div style="width:74px; height:74px; border-radius:50%; margin:0.4rem auto 1rem; border:3px solid var(--line); border-top-color:var(--gold); animation:uSpin 1s linear infinite;"></div>
+          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.6rem; margin:0 0 0.3rem;">Processing redemption…</h2>
+          <p style="font-size:0.9rem; color:var(--dim); margin:0;">Burning hUSD and confirming reserves.</p>
+        </sc-if>
+
+        <div style="text-align:left; margin-top:1.6rem;">
+          <sc-for list="{{ burnStages }}" as="b" hint-placeholder-count="4">
+            <div style="display:flex; gap:0.9rem; align-items:flex-start;">
+              <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                <span style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:{{ b.dotBg }}; border:1.5px solid {{ b.dotBd }}; color:{{ b.dotFg }};">{{ b.dotInner }}</span>
+                <span style="width:1.5px; height:{{ b.lineH }}; background:{{ b.lineColor }};"></span>
+              </div>
+              <div style="padding-bottom:1rem; flex:1;">
+                <div style="font-size:0.88rem; font-weight:600; color:{{ b.titleColor }};">{{ b.title }}</div>
+                <div style="font-size:0.74rem; color:var(--mute); margin-top:0.1rem;">{{ b.sub }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <button onClick="{{ redeemReset }}" style="width:100%; margin-top:0.6rem; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; border-radius:12px; padding:0.9rem; font-family:var(--font-body); font-size:0.92rem; font-weight:700;">Done</button>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ PROOF OF RESERVE ═══════════════ -->
+  <sc-if value="{{ isPor }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1240px; margin:0 auto; padding:2.6rem 28px 5rem;">
+    <div style="text-align:center; max-width:680px; margin:0 auto 2.4rem; animation:uRise .5s ease both;">
+      <div style="display:inline-flex; align-items:center; gap:0.45rem; background:rgba(67,192,173,0.1); border:1px solid rgba(67,192,173,0.25); border-radius:980px; padding:0.35rem 0.85rem; margin-bottom:1.2rem;">
+        <span style="width:7px; height:7px; border-radius:50%; background:var(--teal); animation:uLivePulse 2.4s infinite;"></span>
+        <span style="font-size:0.72rem; color:var(--teal); letter-spacing:0.04em; font-weight:600;">Live · updated 14s ago</span>
+      </div>
+      <h1 style="font-family:var(--font-display); font-weight:700; font-size:2.9rem; line-height:1.05; letter-spacing:-0.02em; margin:0 0 0.7rem;">Reserve transparency for every hUSD.</h1>
+      <p style="font-size:1rem; color:var(--dim); margin:0; line-height:1.55;">Reserves are held 1:1 in cash and short-dated U.S. Treasuries, attested daily and verified on-chain. Nothing is lent, leveraged, or rehypothecated.</p>
+    </div>
+
+    <!-- redemption liquidity coverage -->
+    <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.6rem 1.8rem; margin-bottom:1.2rem; display:grid; grid-template-columns:0.8fr 1.4fr; gap:2rem; align-items:center;">
+      <div>
+        <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--teal); font-weight:700; margin-bottom:0.6rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Redemption coverage</div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:2.1rem; line-height:1;">$355.1M ready</div>
+        <div style="font-size:0.8rem; color:var(--dim); margin-top:0.4rem;">Cash & stablecoin reserves available now, with short-dated Treasuries settling within T+1. Redemptions are not instant — standard requests target one business day.</div>
+      </div>
+      <div>
+        <div style="height:14px; border-radius:980px; overflow:hidden; display:flex; margin-bottom:0.9rem;">
+          <div style="width:27%; background:linear-gradient(90deg,var(--teal-deep),var(--teal));"></div>
+          <div style="width:73%; background:linear-gradient(90deg,var(--gold-deep),var(--gold-bright));"></div>
+        </div>
+        <div style="display:flex; gap:2rem;">
+          <div style="flex:1;"><div style="display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:var(--dim);"><span style="width:9px;height:9px;border-radius:3px;background:var(--teal);"></span>Available now · cash & USDC</div><div style="font-size:1.1rem; font-weight:700; font-variant-numeric:tabular-nums; margin-top:0.2rem;">$355.1M <span style="font-size:0.8rem; color:var(--mute); font-weight:600;">· 27%</span></div></div>
+          <div style="flex:1;"><div style="display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:var(--dim);"><span style="width:9px;height:9px;border-radius:3px;background:var(--gold);"></span>Within T+1 · Treasuries</div><div style="font-size:1.1rem; font-weight:700; font-variant-numeric:tabular-nums; margin-top:0.2rem;">$960.1M <span style="font-size:0.8rem; color:var(--mute); font-weight:600;">· 73%</span></div></div>
+          <div style="flex:1;"><div style="display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:var(--dim);">Largest 24h outflow</div><div style="font-size:1.1rem; font-weight:700; font-variant-numeric:tabular-nums; margin-top:0.2rem;">$84.2M <span style="font-size:0.8rem; color:var(--up); font-weight:600;">· 6.4%</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- hero gauge + headline stats -->
+    <div style="display:grid; grid-template-columns:1fr 1.25fr; gap:1.2rem; margin-bottom:1.2rem;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.8rem; display:flex; flex-direction:column; align-items:center; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:-30%; left:50%; transform:translateX(-50%); width:80%; height:80%; background:radial-gradient(circle, rgba(67,192,173,0.18), transparent 65%); filter:blur(20px);"></div>
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--mute); font-weight:600; margin-bottom:1rem; position:relative;">Reserve ratio</div>
+        <div style="position:relative; width:230px; height:230px;">
+          <svg viewBox="0 0 200 200" style="width:100%; height:100%; transform:rotate(135deg);">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="var(--ink2)" stroke-width="16" pathLength="100" stroke-dasharray="75 100" stroke-linecap="round"/>
+            <circle cx="100" cy="100" r="86" fill="none" stroke="url(#gaugeGrad)" stroke-width="16" pathLength="100" stroke-dasharray="69 100" stroke-linecap="round"/>
+            <defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43c0ad"/><stop offset="1" stop-color="#ecd6a0"/></linearGradient></defs>
+          </svg>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <span data-count-to="102.4" data-dec="1" data-suffix="%" style="font-family:var(--font-display); font-weight:700; font-size:2.9rem; color:var(--txt); font-variant-numeric:tabular-nums; line-height:1;">102.4%</span>
+            <span style="font-size:0.74rem; color:var(--up); font-weight:600; margin-top:0.2rem;">+2.4% over floor</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.6rem; font-size:0.74rem; color:var(--mute);"><span style="width:8px; height:8px; border-radius:2px; background:var(--teal);"></span>100% floor required by reserve policy</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:1.2rem;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; flex:1;">
+          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
+            <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Total reserves</div>
+            <div><span data-count-to="1315.2" data-dec="1" data-prefix="$" data-suffix="M" style="font-family:var(--font-display); font-weight:700; font-size:2.1rem; font-variant-numeric:tabular-nums;">$1,315.2M</span></div>
+            <div style="font-size:0.74rem; color:var(--dim); margin-top:0.2rem;">backing $1,284.6M hUSD</div>
+          </div>
+          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
+            <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Excess reserves</div>
+            <div><span data-count-to="30.6" data-dec="1" data-prefix="$" data-suffix="M" style="font-family:var(--font-display); font-weight:700; font-size:2.1rem; color:var(--up); font-variant-numeric:tabular-nums;">$30.6M</span></div>
+            <div style="font-size:0.74rem; color:var(--dim); margin-top:0.2rem;">capital buffer above 1:1</div>
+          </div>
+          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
+            <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Avg. maturity</div>
+            <div><span style="font-family:var(--font-display); font-weight:700; font-size:2.1rem; font-variant-numeric:tabular-nums;">21</span><span style="font-size:1rem; color:var(--dim); font-weight:600;"> days</span></div>
+            <div style="font-size:0.74rem; color:var(--dim); margin-top:0.2rem;">short-dated, liquid</div>
+          </div>
+          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
+            <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Last attestation</div>
+            <div style="font-family:var(--font-display); font-weight:700; font-size:2.1rem;">Today</div>
+            <div style="font-size:0.74rem; color:var(--teal); margin-top:0.2rem;">by Grant Thornton ↗</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- composition donut + custodians -->
+    <div style="display:grid; grid-template-columns:1fr 1.3fr; gap:1.2rem; margin-bottom:1.2rem;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1.2rem;"><span style="font-size:0.95rem; font-weight:700;">Reserve composition</span><span style="font-size:0.68rem; color:var(--mute);">updated 14s ago</span></div>
+        <div style="display:flex; align-items:center; gap:1.6rem;">
+          <div style="position:relative; width:150px; height:150px; flex-shrink:0;">
+            <svg viewBox="0 0 200 200" style="width:100%; height:100%; transform:rotate(-90deg);">
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--ink2)" stroke-width="26"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--treasury)" stroke-width="26" pathLength="100" stroke-dasharray="64 36" stroke-dashoffset="0"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--cash)" stroke-width="26" pathLength="100" stroke-dasharray="22 78" stroke-dashoffset="-64"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bank)" stroke-width="26" pathLength="100" stroke-dasharray="9 91" stroke-dashoffset="-86"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--stable)" stroke-width="26" pathLength="100" stroke-dasharray="5 95" stroke-dashoffset="-95"/>
+            </svg>
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;"><span style="font-family:var(--font-display); font-weight:700; font-size:1.3rem;">5</span><span style="font-size:0.62rem; color:var(--mute);">asset types</span></div>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:0.7rem;">
+            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--treasury);"></span><span style="flex:1; font-size:0.82rem; color:var(--dim);">U.S. Treasury bills</span><span style="font-size:0.82rem; font-weight:700; font-variant-numeric:tabular-nums;">64%</span></div>
+            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--cash);"></span><span style="flex:1; font-size:0.82rem; color:var(--dim);">Cash at banks</span><span style="font-size:0.82rem; font-weight:700; font-variant-numeric:tabular-nums;">22%</span></div>
+            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--bank);"></span><span style="flex:1; font-size:0.82rem; color:var(--dim);">Overnight repo</span><span style="font-size:0.82rem; font-weight:700; font-variant-numeric:tabular-nums;">9%</span></div>
+            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--stable);"></span><span style="flex:1; font-size:0.82rem; color:var(--dim);">USDC (transit)</span><span style="font-size:0.82rem; font-weight:700; font-variant-numeric:tabular-nums;">5%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1.3rem;"><span style="font-size:0.95rem; font-weight:700;">Reserves by custodian</span><span style="font-size:0.68rem; color:var(--mute);">concentration risk</span></div>
+        <div style="display:flex; flex-direction:column; gap:1.1rem;">
+          <sc-for list="{{ custodians }}" as="c" hint-placeholder-count="4">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;"><span style="font-size:0.84rem; color:var(--txt);">{{ c.name }}</span><span style="font-size:0.82rem; font-weight:700; color:var(--dim); font-variant-numeric:tabular-nums;">{{ c.label }}</span></div>
+              <div style="height:8px; background:var(--ink2); border-radius:980px; overflow:hidden;"><div style="height:100%; width:{{ c.pct }}%; background:linear-gradient(90deg,var(--teal-deep),var(--teal)); border-radius:980px;"></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <!-- maturity ladder + 90d trend -->
+    <div style="display:grid; grid-template-columns:1fr 1.3fr; gap:1.2rem; margin-bottom:1.2rem;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
+        <div style="font-size:0.95rem; font-weight:700; margin-bottom:1.3rem;">Maturity ladder</div>
+        <div style="display:flex; align-items:flex-end; gap:0.7rem; height:140px;">
+          <sc-for list="{{ maturity }}" as="m" hint-placeholder-count="5">
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:0.5rem; height:100%; justify-content:flex-end;">
+              <span style="font-size:0.72rem; font-weight:700; color:var(--dim); font-variant-numeric:tabular-nums;">{{ m.label }}</span>
+              <div style="width:100%; display:flex; align-items:flex-end; height:100px;"><div style="width:100%; height:{{ m.pct }}%; min-height:4px; background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep)); border-radius:6px 6px 0 0; align-self:flex-end;"></div></div>
+              <span style="font-size:0.66rem; color:var(--mute); text-align:center;">{{ m.bucket }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1.2rem;">
+          <span style="font-size:0.95rem; font-weight:700;">90-day reserve ratio</span>
+          <div style="display:flex; align-items:center; gap:1rem;"><span style="display:flex; align-items:center; gap:0.35rem; font-size:0.72rem; color:var(--dim);"><span style="width:14px; height:2px; background:var(--teal);"></span>Ratio</span><span style="display:flex; align-items:center; gap:0.35rem; font-size:0.72rem; color:var(--dim);"><span style="width:14px; height:2px; background:var(--gold);"></span>Supply</span></div>
+        </div>
+        <svg viewBox="0 0 600 200" preserveAspectRatio="none" style="width:100%; height:160px; animation:uRise 1s ease both;">
+          <line x1="0" y1="60" x2="600" y2="60" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+          <line x1="0" y1="110" x2="600" y2="110" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+          <line x1="0" y1="90" x2="600" y2="90" stroke="rgba(67,192,173,0.3)" stroke-width="1" stroke-dasharray="4 4"/>
+          <defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(67,192,173,0.28)"/><stop offset="1" stop-color="rgba(67,192,173,0)"/></linearGradient></defs>
+          <path d="M0,78 C60,70 90,82 150,72 C210,62 240,80 300,66 C360,54 390,70 450,58 C510,48 540,62 600,52 L600,200 L0,200 Z" fill="url(#areaGrad)"/>
+          <path d="M0,78 C60,70 90,82 150,72 C210,62 240,80 300,66 C360,54 390,70 450,58 C510,48 540,62 600,52" fill="none" stroke="var(--teal)" stroke-width="2.5"/>
+          <path d="M0,150 C80,146 140,140 220,134 C300,128 360,122 440,114 C520,106 560,100 600,96" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-dasharray="3 4" opacity="0.85"/>
+        </svg>
+        <div style="display:flex; justify-content:space-between; font-size:0.68rem; color:var(--mute); margin-top:0.5rem;"><span>90d ago</span><span>60d</span><span>30d</span><span>Today</span></div>
+      </div>
+    </div>
+
+    <!-- yield to humanity centres + attestations -->
+    <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:1.2rem;">
+      <div style="background:linear-gradient(135deg, rgba(67,192,173,0.08), rgba(236,214,160,0.05)); border:1px solid var(--line); border-radius:20px; padding:1.7rem; position:relative; overflow:hidden;">
+        <div style="position:absolute; bottom:-30%; right:-10%; width:50%; height:90%; background:radial-gradient(circle, rgba(236,214,160,0.18), transparent 65%); filter:blur(20px);"></div>
+        <div style="position:relative;">
+          <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:0.7rem;">Reserve yield · this month</div>
+          <div style="font-family:var(--font-display); font-weight:700; font-size:2.4rem; font-variant-numeric:tabular-nums; margin-bottom:1.2rem;"><span data-count-to="4.62" data-dec="2" data-prefix="$" data-suffix="M">$4.62M</span></div>
+          <div style="display:flex; gap:1.2rem;">
+            <div style="flex:1;">
+              <div style="height:8px; border-radius:980px; background:var(--ink2); overflow:hidden; margin-bottom:0.5rem;"><div style="height:100%; width:70%; background:var(--teal);"></div></div>
+              <div style="font-size:0.78rem; color:var(--dim);">Operations & buffer</div>
+              <div style="font-size:0.9rem; font-weight:700;">$3.23M · 70%</div>
+            </div>
+            <div style="flex:1;">
+              <div style="height:8px; border-radius:980px; background:var(--ink2); overflow:hidden; margin-bottom:0.5rem;"><div style="height:100%; width:30%; background:var(--gold);"></div></div>
+              <div style="font-size:0.78rem; color:var(--dim);">Humanity Centres</div>
+              <div style="font-size:0.9rem; font-weight:700; color:var(--gold);">$1.39M · 30%</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-top:1.2rem; font-size:0.78rem; color:var(--dim);"><svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21z"/></svg>A share of reserve income funds community well-being — value, shared by design.</div>
+        </div>
+      </div>
+
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
+        <div style="font-size:0.95rem; font-weight:700; margin-bottom:0.4rem;">On-chain proof & attestations</div>
+        <div style="display:flex; align-items:center; gap:0.6rem; background:var(--ink2); border-radius:10px; padding:0.7rem 0.9rem; margin:1rem 0 0.6rem;">
+          <span style="font-size:0.66rem; color:var(--mute); text-transform:uppercase; letter-spacing:0.06em;">hUSD</span>
+          <span style="font-family:ui-monospace,Menlo,monospace; font-size:0.78rem; color:var(--teal); flex:1; overflow:hidden; text-overflow:ellipsis;">0x9f2A4c8E…b41E093f</span>
+          <button onClick="{{ copyAddr }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:7px; padding:0.3rem 0.6rem; font-family:var(--font-body); font-size:0.72rem; font-weight:600;">{{ copyLabel }}</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.1rem;">
+          <span style="font-size:0.7rem; color:var(--dim); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.25rem 0.65rem;">Network · Ethereum</span>
+          <span style="font-size:0.7rem; color:var(--dim); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.25rem 0.65rem;">Decimals · 18</span>
+          <span style="font-size:0.7rem; color:var(--teal); background:rgba(67,192,173,0.1); border:1px solid rgba(67,192,173,0.25); border-radius:980px; padding:0.25rem 0.65rem;">Status · Active</span>
+          <span style="font-size:0.7rem; color:var(--teal); cursor:pointer; background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.25rem 0.65rem;">Etherscan ↗</span>
+        </div>
+        <sc-for list="{{ attestations }}" as="a" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; gap:0.85rem; padding:0.75rem 0; border-bottom:1px solid var(--line2);">
+            <span style="width:34px; height:34px; border-radius:9px; background:rgba(67,192,173,0.1); color:var(--teal); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></span>
+            <div style="flex:1;"><div style="display:flex; align-items:center; gap:0.5rem;"><span style="font-size:0.84rem; font-weight:600;">{{ a.title }}</span><span style="font-size:0.62rem; font-weight:700; padding:0.12rem 0.45rem; border-radius:980px; background:{{ a.stBg }}; color:{{ a.stFg }};">{{ a.status }}</span></div><div style="font-size:0.72rem; color:var(--mute);">{{ a.meta }}</div></div>
+            <button style="background:none; border:none; color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.78rem; font-weight:600;">{{ a.action }} ↓</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- independent issuer · layer separation -->
+    <div style="margin-top:1.2rem; background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem 1.8rem;">
+      <div style="display:flex; align-items:center; gap:0.55rem; margin-bottom:1.1rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span style="font-size:0.95rem; font-weight:700;">An independent issuer, by design</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem;">
+        <div>
+          <div style="font-size:0.74rem; font-weight:700; color:var(--teal); margin-bottom:0.4rem;">Stablecoin issuance only</div>
+          <div style="font-size:0.82rem; color:var(--dim); line-height:1.55;">UNERA Stablecoin Portal issues and redeems hUSD and manages the reserve — nothing else. No payments, lending, savings, or DeFi run inside this entity.</div>
+        </div>
+        <div>
+          <div style="font-size:0.74rem; font-weight:700; color:var(--teal); margin-bottom:0.4rem;">Own KYC &amp; AML</div>
+          <div style="font-size:0.82rem; color:var(--dim); line-height:1.55;">The Portal runs its own compliance programme and owns every decision — identity, sanctions, PEP, geography. No external party, including the UNERA Platform, can access or override it.</div>
+        </div>
+        <div>
+          <div style="font-size:0.74rem; font-weight:700; color:var(--teal); margin-bottom:0.4rem;">Reserve yield, kept in-layer</div>
+          <div style="font-size:0.82rem; color:var(--dim); line-height:1.55;">HQLA interest funds portal operations and Humanity Centres directly. Platform earnings and the UYT/UGT token layers sit in separate legal entities.</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1.3rem; padding-top:1.2rem; border-top:1px solid var(--line2);">
+        <span style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.72rem; font-weight:600; color:var(--txt); background:rgba(67,192,173,0.1); border:1px solid rgba(67,192,173,0.25); border-radius:980px; padding:0.32rem 0.8rem;"><span style="width:6px;height:6px;border-radius:50%;background:var(--teal);"></span>Stablecoin Layer · hUSD <span style="color:var(--mute); font-weight:500;">· you are here</span></span>
+        <span style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.72rem; font-weight:600; color:var(--dim); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.32rem 0.8rem;"><span style="width:6px;height:6px;border-radius:50%;background:var(--treasury);"></span>Platform Layer · UNERA Platform · UYT</span>
+        <span style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.72rem; font-weight:600; color:var(--dim); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.32rem 0.8rem;"><span style="width:6px;height:6px;border-radius:50%;background:var(--gold);"></span>Association Layer · UNERA Governance · UGT</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ ACTIVITY ═══════════════ -->
+  <sc-if value="{{ isActivity }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1100px; margin:0 auto; padding:2.6rem 28px 5rem; animation:uRise .5s ease both;">
+    <div style="margin-bottom:1.8rem;">
+      <h1 style="font-family:var(--font-display); font-weight:700; font-size:2.2rem; margin:0 0 0.4rem;">Activity</h1>
+      <p style="font-size:0.95rem; color:var(--dim); margin:0;">Your mint and redemption history, with on-chain references.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.2rem 1.3rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">Total minted</div><div style="font-family:var(--font-display); font-weight:700; font-size:1.7rem; color:var(--up); font-variant-numeric:tabular-nums;">$58,420</div></div>
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.2rem 1.3rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">Total redeemed</div><div style="font-family:var(--font-display); font-weight:700; font-size:1.7rem; color:var(--txt); font-variant-numeric:tabular-nums;">$34,240</div></div>
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.2rem 1.3rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">Net position</div><div style="font-family:var(--font-display); font-weight:700; font-size:1.7rem; color:var(--gold); font-variant-numeric:tabular-nums;">$24,180</div></div>
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.2rem 1.3rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">Transactions</div><div style="font-family:var(--font-display); font-weight:700; font-size:1.7rem; color:var(--txt); font-variant-numeric:tabular-nums;">17</div></div>
+    </div>
+    <!-- filters (Issuance §8) -->
+    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+      <sc-for list="{{ actFilters }}" as="f" hint-placeholder-count="5">
+        <button onClick="{{ f.action }}" style="background:{{ f.bg }}; border:1px solid {{ f.bd }}; color:{{ f.color }}; cursor:pointer; border-radius:980px; padding:0.42rem 0.95rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600;">{{ f.label }}</button>
+      </sc-for>
+      <span style="margin-left:auto; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.74rem; color:var(--mute); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.42rem 0.85rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Last 90 days</span>
+    </div>
+    <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden;">
+      <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr 0.8fr 1fr; gap:1rem; padding:1rem 1.5rem; border-bottom:1px solid var(--line); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:700;">
+        <span>Date · Type</span><span>In</span><span>Out</span><span>Fee</span><span style="text-align:right;">Status · Tx</span>
+      </div>
+      <sc-for list="{{ history }}" as="h" hint-placeholder-count="6">
+        <div onClick="{{ h.openReceipt }}" title="View receipt" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 0.8fr 1fr; gap:1rem; align-items:center; padding:1rem 1.5rem; border-bottom:1px solid var(--line2); cursor:pointer; transition:background .15s;" style-hover="background:var(--ink2)">
+          <div><div style="font-size:0.86rem; font-weight:600;">{{ h.type }}</div><div style="font-size:0.72rem; color:var(--mute);">{{ h.date }}</div></div>
+          <span style="font-size:0.86rem; font-variant-numeric:tabular-nums; color:var(--dim);">{{ h.in }}</span>
+          <span style="font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums; color:{{ h.outColor }};">{{ h.out }}</span>
+          <span style="font-size:0.82rem; font-variant-numeric:tabular-nums; color:var(--mute);">{{ h.fee }}</span>
+          <div style="display:flex; align-items:center; justify-content:flex-end; gap:0.6rem;"><span style="font-size:0.72rem; font-weight:600; padding:0.2rem 0.55rem; border-radius:980px; background:{{ h.stBg }}; color:{{ h.stFg }};">{{ h.status }}</span><span style="font-family:ui-monospace,Menlo,monospace; font-size:0.74rem; color:var(--teal);">{{ h.tx }} ↗</span></div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ historyEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:2.6rem 1.5rem; text-align:center; color:var(--mute); font-size:0.86rem;">No transactions match this filter.</div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ VERIFICATION ═══════════════ -->
+  <sc-if value="{{ isVerify }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1100px; margin:0 auto; padding:2.6rem 28px 5rem; animation:uRise .5s ease both;">
+    <div style="text-align:center; max-width:640px; margin:0 auto 2.4rem;">
+      <div style="font-size:0.74rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:700; margin-bottom:0.7rem;">Verification</div>
+      <h1 style="font-family:var(--font-display); font-weight:700; font-size:2.6rem; line-height:1.05; letter-spacing:-0.02em; margin:0 0 0.7rem;">Your access level</h1>
+      <p style="font-size:1rem; color:var(--dim); margin:0; line-height:1.55;">Verification unlocks issuance, redemption, and higher limits. We screen every account so reserves stay clean and compliant — that's what keeps hUSD trusted.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem;">
+      <sc-for list="{{ verifyTiers }}" as="t" hint-placeholder-count="3">
+        <div style="background:var(--panel); border:{{ t.border }}; border-radius:20px; padding:1.6rem; display:flex; flex-direction:column;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:700;">{{ t.level }}</span>
+            <span style="font-size:0.68rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:980px; background:{{ t.badgeBg }}; color:{{ t.badgeColor }};">{{ t.statusLabel }}</span>
+          </div>
+          <div style="font-family:var(--font-display); font-weight:700; font-size:1.5rem; margin-bottom:1.1rem;">{{ t.name }}</div>
+          <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.2rem;">
+            <sc-for list="{{ t.reqs }}" as="req" hint-placeholder-count="3">
+              <div style="display:flex; align-items:center; gap:0.6rem;"><span style="width:18px; height:18px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; color:{{ req.color }};">{{ req.mark }}</span><span style="font-size:0.82rem; color:var(--dim);">{{ req.text }}</span></div>
+            </sc-for>
+          </div>
+          <div style="background:var(--ink2); border-radius:12px; padding:0.5rem 1rem; margin-top:auto;">
+            <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.76rem; color:var(--mute);">Issuance</span><span style="font-size:0.76rem; font-weight:600;">{{ t.limitMint }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.76rem; color:var(--mute);">Redemption</span><span style="font-size:0.76rem; font-weight:600;">{{ t.limitRedeem }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:0.5rem 0;"><span style="font-size:0.76rem; color:var(--mute);">Daily limit</span><span style="font-size:0.76rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ t.daily }}</span></div>
+          </div>
+          <sc-if value="{{ t.hasCta }}" hint-placeholder-val="{{ false }}">
+          <button style="margin-top:1rem; width:100%; background:{{ t.ctaBg }}; color:{{ t.ctaColor }}; border:1px solid var(--line); cursor:pointer; font-family:var(--font-body); font-size:0.86rem; font-weight:700; padding:0.8rem; border-radius:11px;">{{ t.cta }}</button>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-top:1.8rem; font-size:0.8rem; color:var(--mute);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Your documents are encrypted and screened by our compliance partner — never shared or sold.</div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ CONNECT WALLET (Wallet Connection spec §5/§6) ═══════════════ -->
+  <sc-if value="{{ wcOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeWallet }}" style="position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:1.5rem; background:rgba(4,6,7,0.62); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);">
+    <div onClick="{{ stop }}" style="width:100%; max-width:400px; background:var(--panel2); border:1px solid var(--line); border-radius:16px; box-shadow:0 30px 70px -20px rgba(0,0,0,0.8); padding:1.6rem; animation:uRise .3s ease both;">
+      <sc-if value="{{ wcChoose }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0;">Connect a wallet</h2>
+          <button onClick="{{ closeWallet }}" aria-label="Close" style="background:none; border:none; color:var(--mute); cursor:pointer; font-size:1.2rem; line-height:1;">✕</button>
+        </div>
+        <p style="font-size:0.8rem; color:var(--dim); line-height:1.5; margin:0 0 1.1rem;">Connect the wallet that will receive hUSD. We verify ownership by signature before any issuance or redemption.</p>
+        <div style="display:flex; flex-direction:column; gap:0.55rem;">
+          <sc-for list="{{ wcProviders }}" as="p" hint-placeholder-count="3">
+            <button onClick="{{ p.action }}" style="display:flex; align-items:center; gap:0.8rem; background:var(--ink2); border:1px solid var(--line); cursor:pointer; border-radius:12px; padding:0.85rem 1rem; font-family:var(--font-body); text-align:left; transition:border-color .15s;" style-hover="border-color:var(--gold)">
+              <span style="width:38px; height:38px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; font-size:1.1rem; background:{{ p.bg }}; color:{{ p.fg }};">{{ p.glyph }}</span>
+              <div style="flex:1; min-width:0;"><div style="font-size:0.92rem; font-weight:700; color:var(--txt);">{{ p.name }}</div><div style="font-size:0.7rem; color:var(--mute);">{{ p.sub }}</div></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:0.4rem; margin-top:1.1rem; font-size:0.72rem; color:var(--mute);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>We never hold your keys. Read-only until you sign.</div>
+      </sc-if>
+      <sc-if value="{{ wcQr }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+          <button onClick="{{ wcBackToChoose }}" aria-label="Back" style="background:var(--ink2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:8px; width:30px; height:30px; display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; margin:0;">Scan with your wallet</h2>
+        </div>
+        <div style="display:flex; justify-content:center; margin-bottom:0.9rem;"><div style="padding:10px; background:#fff; border-radius:12px; line-height:0;">{{ wcQrEl }}</div></div>
+        <p style="font-size:0.8rem; color:var(--dim); line-height:1.5; text-align:center; margin:0 0 1.1rem;">Open your mobile wallet, scan this WalletConnect code, and approve the connection. Then verify ownership by signing.</p>
+        <button onClick="{{ wcQrConfirm }}" disabled="{{ wcConnecting }}" style="width:100%; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; border-radius:11px; padding:0.85rem; font-family:var(--font-body); font-size:0.9rem; font-weight:700;">I've scanned it</button>
+      </sc-if>
+      <sc-if value="{{ wcConnecting }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; justify-content:center; gap:0.6rem; margin-top:1rem; font-size:0.82rem; color:var(--dim);"><span style="width:18px; height:18px; border-radius:50%; border:2px solid var(--line); border-top-color:var(--gold); animation:uSpin 1s linear infinite;"></span>Connecting {{ wcProvider }}…</div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ WALLET SIGNATURE GATE (Common Rules §3) ═══════════════ -->
+  <sc-if value="{{ signOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:1.5rem; background:rgba(4,6,7,0.62); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);">
+    <div style="width:100%; max-width:400px; background:var(--panel2); border:1px solid var(--line); border-radius:16px; box-shadow:0 30px 70px -20px rgba(0,0,0,0.8); padding:1.7rem; animation:uRise .3s ease both;">
+      <div style="width:52px; height:52px; border-radius:13px; background:rgba(67,192,173,0.12); display:flex; align-items:center; justify-content:center; color:var(--teal); margin-bottom:1rem;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7z"/></svg></div>
+      <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.3rem; margin:0 0 0.4rem;">Verify wallet ownership</h2>
+      <p style="font-size:0.86rem; color:var(--dim); line-height:1.5; margin:0 0 1rem;">Sign a message to prove you control <span style="font-family:ui-monospace,Menlo,monospace; color:var(--teal);">0x74…3a8f</span> before confirming. It's free, gasless, and never moves funds.</p>
+      <div style="background:var(--ink2); border:1px solid var(--line); border-radius:10px; padding:0.8rem 0.95rem; font-family:ui-monospace,Menlo,monospace; font-size:0.72rem; color:var(--dim); line-height:1.55; margin-bottom:1.2rem;">UNERA Stablecoin Portal<br>Verify wallet ownership<br>Nonce: a3f9-7c20-e518</div>
+      <div style="display:flex; gap:0.7rem;">
+        <button onClick="{{ cancelSign }}" style="background:var(--panel); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:11px; padding:0.85rem 1.3rem; font-family:var(--font-body); font-size:0.9rem; font-weight:600;">Cancel</button>
+        <button onClick="{{ doSign }}" disabled="{{ signing }}" style="flex:1; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; border-radius:11px; padding:0.85rem; font-family:var(--font-body); font-size:0.92rem; font-weight:700;">{{ signBtnLabel }}</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════════ RECEIPT / TRANSACTION DETAIL (Issuance §9.2) ═══════════════ -->
+  <sc-if value="{{ receiptOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeReceipt }}" style="position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:1.5rem; background:rgba(4,6,7,0.62); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);">
+    <div onClick="{{ stop }}" style="width:100%; max-width:440px; background:var(--panel2); border:1px solid var(--line); border-radius:16px; box-shadow:0 30px 70px -20px rgba(0,0,0,0.8); overflow:hidden; animation:uRise .3s ease both;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:1.2rem 1.5rem; border-bottom:1px solid var(--line);">
+        <div><div style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--mute); font-weight:700;">Transaction receipt</div><div style="font-size:1.05rem; font-weight:700; margin-top:0.15rem;">{{ receipt.type }}</div></div>
+        <span style="font-size:0.72rem; font-weight:600; padding:0.25rem 0.7rem; border-radius:980px; background:{{ receipt.stBg }}; color:{{ receipt.stFg }};">{{ receipt.status }}</span>
+      </div>
+      <div style="padding:0.4rem 1.5rem;">
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">Date</span><span style="font-size:0.82rem; font-weight:600;">{{ receipt.date }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">In</span><span style="font-size:0.82rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ receipt.in }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">Out</span><span style="font-size:0.82rem; font-weight:700; font-variant-numeric:tabular-nums; color:{{ receipt.outColor }};">{{ receipt.out }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">Locked rate</span><span style="font-size:0.82rem; font-weight:600;">{{ receipt.rate }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">Fee</span><span style="font-size:0.82rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ receipt.fee }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">Method</span><span style="font-size:0.82rem; font-weight:600;">{{ receipt.method }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.82rem; color:var(--dim);">Destination</span><span style="font-size:0.82rem; font-weight:600;">{{ receipt.dest }}</span></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem 0;"><span style="font-size:0.82rem; color:var(--dim);">Transaction</span><span style="font-family:ui-monospace,Menlo,monospace; font-size:0.8rem; font-weight:600; color:var(--teal);">{{ receipt.tx }} ↗</span></div>
+      </div>
+      <sc-if value="{{ receipt.note }}" hint-placeholder-val="{{ false }}">
+      <div style="margin:0 1.5rem 0.4rem; padding:0.8rem 0.95rem; background:rgba(223,126,152,0.07); border:1px solid rgba(223,126,152,0.22); border-radius:10px; font-size:0.76rem; color:var(--dim); line-height:1.45;">{{ receipt.note }}</div>
+      </sc-if>
+      <div style="display:flex; gap:0.7rem; padding:1rem 1.5rem 1.5rem;">
+        <button onClick="{{ closeReceipt }}" style="background:var(--panel); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:11px; padding:0.8rem 1.3rem; font-family:var(--font-body); font-size:0.88rem; font-weight:600;">Close</button>
+        <button style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; border-radius:11px; padding:0.8rem; font-family:var(--font-body); font-size:0.9rem; font-weight:700;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download receipt</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- NEWSECTIONS -->
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    screen: 'portfolio', acct: 'verified', notifOpen: false, notifReadAll: false, previewOpen: false,
+    getStep: 0, getPath: 'fiat', fiatCcy: 'USD', getAmt: '5,000', getRecv: '4,995.00', getNetwork: 'Ethereum', getAsset: 'USDC',
+    quoteLeft: 60, quoteExpired: false, mintStage: 0, copied: false, depCopied: false,
+    redeemStep: 0, redeemAmt: '2,500', burnStage: 0,
+    walletVerified: false, signOpen: false, _pending: null, signing: false,
+    actFilter: 'all', receipt: null,
+    walletConnected: true, walletNetwork: 'Ethereum', walletMenuOpen: false,
+    wcOpen: false, wcStep: 'choose', wcProvider: null, wcConnecting: false,
+  };
+
+  SUPPORTED_NETWORKS = ['Ethereum', 'Arbitrum', 'Base'];
+
+  FX = 0.7300; // 1 CAD = 0.7300 USD (off-chain FX, exchangerate-api.com)
+  QUEUE_THRESHOLD = 20000;
+
+  componentDidMount() {
+    this.quoteTimer = setInterval(() => {
+      this.setState((st) => {
+        if (st.quoteExpired) return null;
+        if (st.quoteLeft <= 1) return { quoteLeft: 0, quoteExpired: true };
+        return { quoteLeft: st.quoteLeft - 1 };
+      });
+    }, 1000);
+    this.animateAll();
+  }
+  componentDidUpdate() { this.animateAll(); }
+  componentWillUnmount() {
+    clearInterval(this.quoteTimer);
+    (this._timers || []).forEach(clearTimeout);
+  }
+
+  setRoot = (el) => { if (el) this.root = el; };
+
+  animateAll() {
+    if (!this.root) return;
+    const raf = (fn) => requestAnimationFrame(fn);
+    this.root.querySelectorAll('[data-count-to]').forEach((el) => {
+      if (el.dataset.counted) return; el.dataset.counted = '1';
+      const to = parseFloat(el.dataset.countTo);
+      const dec = parseInt(el.dataset.dec || '0', 10);
+      const pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+      const dur = 1150, st = performance.now();
+      const fmt = (v) => pre + v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + suf;
+      const tick = (now) => {
+        const t = Math.min(1, (now - st) / dur), e = 1 - Math.pow(1 - t, 3);
+        el.textContent = fmt(to * e);
+        if (t < 1) raf(tick); else el.textContent = fmt(to);
+      };
+      raf(tick);
+    });
+  }
+
+  parse(s) { const n = parseFloat(String(s).replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; }
+  fmt(n, d) { return n.toLocaleString('en-US', { minimumFractionDigits: d == null ? 2 : d, maximumFractionDigits: d == null ? 2 : d }); }
+
+  go(screen) {
+    if (this._timers) this._timers.forEach(clearTimeout);
+    this._timers = [];
+    this.setState({ screen, getStep: 0, mintStage: 0, redeemStep: 0, burnStage: 0, notifOpen: false, previewOpen: false, signOpen: false, receipt: null, walletMenuOpen: false, wcOpen: false, quoteLeft: 60, quoteExpired: false });
+    window.scrollTo(0, 0);
+  }
+  setAcct(acct, walletConnected) {
+    const wc = walletConnected === undefined ? (acct === 'blocked' || acct === 'maintenance' || acct === 'data_unavailable') : walletConnected;
+    this.setState({ acct, walletConnected: wc, walletNetwork: 'Ethereum', walletVerified: false, screen: 'portfolio', notifOpen: false, previewOpen: false, walletMenuOpen: false });
+    window.scrollTo(0, 0);
+  }
+
+  startMint() {
+    this.setState({ mintStage: 0 });
+    this._timers = [1, 2, 3, 4].map((n, i) => setTimeout(() => this.setState({ mintStage: n }), (i + 1) * 1300));
+  }
+  startBurn(total) {
+    const t = total || 4;
+    this.setState({ burnStage: 0 });
+    const steps = []; for (let n = 1; n <= t; n++) steps.push(n);
+    this._timers = steps.map((n, i) => setTimeout(() => this.setState({ burnStage: n }), (i + 1) * 1300));
+  }
+
+  stepVisual(idx, current) {
+    if (idx < current) return { bg: 'var(--up)', fg: '#06140d', bd: 'var(--up)', mark: '\u2713', lblColor: 'var(--dim)', lineColor: 'var(--up)' };
+    if (idx === current) return { bg: 'linear-gradient(135deg,var(--gold-bright),var(--gold-deep))', fg: '#3a2c08', bd: 'var(--gold)', mark: String(idx + 1), lblColor: 'var(--txt)', lineColor: 'var(--line)' };
+    return { bg: 'var(--ink2)', fg: 'var(--mute)', bd: 'var(--line)', mark: String(idx + 1), lblColor: 'var(--mute)', lineColor: 'var(--line)' };
+  }
+
+  timelineRow(idx, stage, title, sub, last) {
+    const done = idx < stage, active = idx === stage;
+    return {
+      title, sub,
+      dotBg: done ? 'var(--up)' : (active ? 'rgba(236,214,160,0.15)' : 'var(--ink2)'),
+      dotBd: done ? 'var(--up)' : (active ? 'var(--gold)' : 'var(--line)'),
+      dotFg: done ? '#06140d' : 'var(--gold)',
+      dotInner: done ? '\u2713' : (active ? '\u25cf' : ''),
+      titleColor: (done || active) ? 'var(--txt)' : 'var(--mute)',
+      lineColor: done ? 'var(--up)' : 'var(--line)',
+      lineH: last ? '0px' : '26px',
+    };
+  }
+
+  // deterministic faux-QR (finder patterns + seeded modules) for the deposit address
+  qrEl(seed, px) {
+    const N = 25, cell = px / N;
+    let h = 0; for (let i = 0; i < seed.length; i++) { h = (h * 31 + seed.charCodeAt(i)) >>> 0; }
+    const rng = () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; };
+    const isFinder = (r, c) => {
+      const inBox = (br, bc) => r >= br && r < br + 7 && c >= bc && c < bc + 7;
+      const ring = (br, bc) => { const dr = r - br, dc = c - bc; const m = Math.max(Math.abs(dr - 3), Math.abs(dc - 3)); return m === 3 || m <= 1; };
+      if (inBox(0, 0)) return ring(0, 0); if (inBox(0, N - 7)) return ring(0, N - 7); if (inBox(N - 7, 0)) return ring(N - 7, 0);
+      return null;
+    };
+    const rects = [];
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const f = isFinder(r, c);
+      const on = f === null ? rng() > 0.52 : f;
+      const near = (r < 8 && c < 8) || (r < 8 && c >= N - 8) || (r >= N - 8 && c < 8);
+      if (on && !(f === null && near)) rects.push(React.createElement('rect', { key: r + '-' + c, x: c * cell, y: r * cell, width: cell + 0.5, height: cell + 0.5, fill: '#0b0e0f' }));
+    }
+    return React.createElement('svg', { width: px, height: px, viewBox: '0 0 ' + px + ' ' + px, style: { display: 'block', borderRadius: '8px', background: '#fff' } }, rects);
+  }
+
+  // ── wallet connection (Wallet Connection spec §5/§6/§9) ──
+  openWallet() { this.setState({ wcOpen: true, wcStep: 'choose', wcProvider: null, walletMenuOpen: false }); }
+  closeWallet() { this.setState({ wcOpen: false, wcConnecting: false }); }
+  pickProvider(p) {
+    if (p === 'WalletConnect') { this.setState({ wcProvider: p, wcStep: 'qr' }); return; }
+    this.connectWallet(p);
+  }
+  connectWallet(p) {
+    this.setState({ wcProvider: p, wcConnecting: true });
+    setTimeout(() => {
+      // MetaMask connects unverified (read-only); WalletConnect/Coinbase can verify by signature at confirm time
+      this.setState({ walletConnected: true, walletNetwork: 'Ethereum', wcOpen: false, wcConnecting: false, walletVerified: false });
+      const proceed = this._afterConnect; this._afterConnect = null;
+      if (proceed) setTimeout(proceed, 150);
+    }, 1100);
+  }
+  disconnectWallet() { this.setState({ walletConnected: false, walletVerified: false, walletMenuOpen: false, walletNetwork: 'Ethereum' }); }
+  switchNetwork(n) { this.setState({ walletNetwork: n, walletMenuOpen: false }); }
+
+  // wallet ownership verification by signed message (Common Rules §3)
+  requireSig(proceed) {
+    if (!this.state.walletConnected) { this._afterConnect = () => this.requireSig(proceed); this.openWallet(); return; }
+    if (this.state.walletVerified) { proceed(); return; }
+    this._sigProceed = proceed;
+    this.setState({ signOpen: true });
+  }
+  doSign() {
+    this.setState({ signing: true });
+    setTimeout(() => {
+      const proceed = this._sigProceed; this._sigProceed = null;
+      this.setState({ signing: false, walletVerified: true, signOpen: false });
+      if (proceed) proceed();
+    }, 1100);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const baseNav = { position: 'relative', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: '0.74rem', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', padding: '0.5rem 0.8rem', borderRadius: '980px', transition: 'all .2s', whiteSpace: 'nowrap' };
+    const navStyle = (k) => ({ ...baseNav, color: s.screen === k ? 'var(--gold)' : 'var(--dim)' });
+
+    // ── account / service state (Dashboard §3, §7, §11 · Auth/KYC §4.6) ──
+    const isPublic = s.acct === 'public', isKycNone = s.acct === 'kyc_none', isPending = s.acct === 'kyc_pending';
+    const isRejected = s.acct === 'kyc_rejected', isVerified = s.acct === 'verified';
+    const isBlocked = s.acct === 'blocked', isMaint = s.acct === 'maintenance', isDataDown = s.acct === 'data_unavailable';
+    const isAuthed = !isPublic;
+    const kycApproved = isVerified || isBlocked || isMaint || isDataDown; // KYC Level 2 approved baseline
+    const walletConnected = s.walletConnected;
+    const wrongNetwork = walletConnected && this.SUPPORTED_NETWORKS.indexOf(s.walletNetwork) === -1; // §9.3 network validation
+    // can confirm only when KYC-approved, region/service OK, wallet connected on a supported network
+    const canTransact = kycApproved && !isBlocked && !isMaint && walletConnected && !wrongNetwork;
+    const needsConnect = kycApproved && !isBlocked && !isMaint && !walletConnected; // approved but must connect first (Dashboard §7)
+
+    const previewMeta = [
+      { key: 'public', label: 'Public visitor', dot: 'var(--teal)', wallet: false },
+      { key: 'kyc_none', label: 'Logged in · KYC not started', dot: 'var(--gold)', wallet: false },
+      { key: 'kyc_pending', label: 'KYC in review', dot: 'var(--gold)', wallet: false },
+      { key: 'kyc_rejected', label: 'KYC needs attention', dot: 'var(--down)', wallet: false },
+      { key: 'verified', label: 'Approved · wallet not connected', dot: 'var(--gold)', wallet: false },
+      { key: 'verified', label: 'Verified · wallet connected', dot: 'var(--up)', wallet: true, connected: true },
+      { key: 'blocked', label: 'Blocked region', dot: 'var(--down)', wallet: true },
+      { key: 'maintenance', label: 'Maintenance', dot: 'var(--gold)', wallet: true },
+      { key: 'data_unavailable', label: 'Data unavailable', dot: 'var(--mute)', wallet: true },
+    ];
+    const curIdx = (s.acct === 'verified') ? (walletConnected ? 5 : 4) : previewMeta.findIndex((p) => p.key === s.acct);
+    const curPrev = previewMeta[curIdx === -1 ? 5 : curIdx];
+    const previewStates = previewMeta.map((p, i) => ({ label: p.label, dot: p.dot, active: i === curIdx, color: i === curIdx ? 'var(--txt)' : 'var(--dim)', bg: i === curIdx ? 'var(--ink2)' : 'transparent', action: () => this.setAcct(p.key, !!p.connected) }));
+
+    // ── GET economics (bidirectional, USD/CAD fiat or USDC/USDT crypto) ──
+    const isCrypto = s.getPath === 'crypto';
+    const isCad = !isCrypto && s.fiatCcy === 'CAD';
+    const fx = this.FX; // hUSD minted per unit funded (CAD via off-chain FX; USD & stablecoins 1:1)
+    const rate = isCad ? fx : 1;
+    const payN = this.parse(s.getAmt), recvN = this.parse(s.getRecv);
+    const usdValue = payN * rate;       // value in USD terms after FX
+    const gFee = usdValue * 0.001;       // 0.10% on USD value
+    const payToken = isCrypto ? s.getAsset : s.fiatCcy;
+    const paySymbol = isCrypto ? '' : (isCad ? 'C$' : '$');
+    const setBoth = (pay) => this.setState({ getAmt: this.fmt(pay), getRecv: this.fmt(pay * rate * 0.999), quoteLeft: 60, quoteExpired: false });
+
+    const getSteps = [0, 1, 2].map((i) => this.stepVisual(i, s.getStep)).map((v, i) => ({ ...v, label: ['Amount', 'Review', 'Confirm'][i] }));
+    const gd = s.getStep > 2 ? { getDoneBg: 'var(--up)', getDoneFg: '#06140d', getDoneBd: 'var(--up)', getDoneMark: '\u2713', getDoneLbl: 'var(--dim)' }
+      : { getDoneBg: 'var(--ink2)', getDoneFg: 'var(--mute)', getDoneBd: 'var(--line)', getDoneMark: '\u2713', getDoneLbl: 'var(--mute)' };
+
+    const mintComplete = s.mintStage >= 4;
+    const mintStages = isCrypto ? [
+      this.timelineRow(0, s.mintStage, 'Transfer detected', this.fmt(payN) + ' ' + payToken + ' received at deposit address'),
+      this.timelineRow(1, s.mintStage, 'Confirming on-chain', 'Awaiting required confirmation depth on ' + s.getNetwork),
+      this.timelineRow(2, s.mintStage, 'Under review', 'Wallet & transaction screening (Chainalysis)'),
+      this.timelineRow(3, s.mintStage, mintComplete ? 'Completed' : 'Minting', mintComplete ? ('On-chain \u00b7 ' + s.getNetwork + ' \u00b7 tx 0x8c\u202642a') : 'Minting hUSD to your verified wallet', true),
+    ] : [
+      this.timelineRow(0, s.mintStage, 'Payment received', '$' + this.fmt(usdValue) + ' settled via bank transfer'),
+      this.timelineRow(1, s.mintStage, 'Under review', 'Compliance & sanctions screening'),
+      this.timelineRow(2, s.mintStage, 'Processing', 'Minting hUSD to your verified wallet'),
+      this.timelineRow(3, s.mintStage, 'Completed', 'On-chain \u00b7 ' + s.getNetwork + ' \u00b7 tx 0x8c\u202642a', true),
+    ];
+    // confirmation-depth meter (crypto onramp, Issuance §6.5)
+    const confTotal = 12, confNow = Math.min(confTotal, [1, 5, 12, 12, 12][s.mintStage] || 0);
+    const confPct = Math.round((confNow / confTotal) * 100);
+    const confDone = confNow >= confTotal;
+
+    const pathBtn = (active) => ({ bg: active ? 'rgba(236,214,160,0.1)' : 'transparent', bd: active ? 'var(--gold)' : 'transparent', txt: active ? 'var(--gold)' : 'var(--txt)' });
+    const fb = pathBtn(!isCrypto), cb = pathBtn(isCrypto);
+    const netBtn = (k) => ({ bg: s.getNetwork === k ? 'rgba(236,214,160,0.1)' : 'var(--ink2)', bd: s.getNetwork === k ? 'var(--gold)' : 'var(--line)', txt: s.getNetwork === k ? 'var(--gold)' : 'var(--dim)' });
+    const neth = netBtn('Ethereum'), narb = netBtn('Arbitrum'), nbase = netBtn('Base');
+
+    // quote
+    const quoteRateLabel = isCad
+      ? ('Rate \u00b7 1 CAD = ' + fx.toFixed(4) + ' USD = ' + fx.toFixed(4) + ' hUSD')
+      : ('Rate \u00b7 1.0000 ' + (isCrypto ? payToken : 'USD') + ' = 1.0000 hUSD');
+    const ctaReason = isPublic ? 'Log in to continue'
+      : isKycNone ? 'Complete KYC to mint'
+      : isPending ? 'Verification in review'
+      : isRejected ? 'Verification needs attention'
+      : isBlocked ? 'Not available in your region'
+      : isMaint ? 'Issuance paused for maintenance'
+      : wrongNetwork ? 'Switch to a supported network'
+      : 'Verify to continue';
+    // when approved but no wallet, the CTA becomes an enabled "Connect wallet" entry (Dashboard §7)
+    const getCtaEnabled = needsConnect || (canTransact && !s.quoteExpired);
+    const getCtaDisabled = !getCtaEnabled;
+    const baseCta = { width: '100%', marginTop: '1.1rem', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: '0.98rem', fontWeight: 700, padding: '1rem', borderRadius: '12px', transition: 'transform .2s' };
+    const getCtaStyle = getCtaDisabled
+      ? { ...baseCta, background: 'var(--panel2)', color: 'var(--mute)', cursor: 'not-allowed', border: '1px solid var(--line)' }
+      : { ...baseCta, background: 'linear-gradient(135deg,var(--gold-bright),var(--gold-deep))', color: '#3a2c08', boxShadow: '0 10px 30px -8px rgba(236,214,160,0.45)' };
+    const getCtaLabel = needsConnect ? 'Connect wallet to continue' : (!canTransact ? ctaReason : (s.quoteExpired ? 'Refresh quote to continue' : 'Review mint'));
+
+    // ── REDEEM economics (bank only) ──
+    const rAmt = this.parse(s.redeemAmt);
+    const rFee = rAmt * 0.001, rRecv = Math.max(0, rAmt - rFee);
+    const redeemOutCcy = 'USD', redeemDestLabel = 'RBC \u00b7\u00b7\u00b7\u00b74821';
+    const willQueue = rRecv > this.QUEUE_THRESHOLD; // large redemptions may wait for reserve liquidity (§7.3)
+    const redeemEta = willQueue ? '~1\u20132 business days' : '~1 business day';
+
+    const redeemSteps = [0, 1].map((i) => this.stepVisual(i, s.redeemStep)).map((v, i) => ({ ...v, label: ['Amount', 'Review'][i] }));
+    const rd = s.redeemStep > 1 ? { redDoneBg: 'var(--up)', redDoneFg: '#06140d', redDoneBd: 'var(--up)', redDoneMark: '\u2713', redDoneLbl: 'var(--dim)' }
+      : { redDoneBg: 'var(--ink2)', redDoneFg: 'var(--mute)', redDoneBd: 'var(--line)', redDoneMark: '\u2713', redDoneLbl: 'var(--mute)' };
+
+    const burnTotal = willQueue ? 5 : 4;
+    const redeemComplete = s.burnStage >= burnTotal;
+    const burnStages = [
+      this.timelineRow(0, s.burnStage, 'Redemption initiated', this.fmt(rAmt) + ' hUSD locked for redemption'),
+      this.timelineRow(1, s.burnStage, 'Burn confirmed', 'hUSD destroyed on-chain \u00b7 ' + s.getNetwork + ' \u00b7 tx 0x3f\u20269d1'),
+      this.timelineRow(2, s.burnStage, 'Under review', 'Compliance & liquidity checks'),
+    ];
+    if (willQueue) burnStages.push(this.timelineRow(3, s.burnStage, 'Queued for liquidity', 'High demand \u2014 your payout is in the queue and protected at the locked rate'));
+    burnStages.push(this.timelineRow(burnTotal - 1, s.burnStage, redeemComplete ? 'Completed \u00b7 USD disbursed' : 'Payout processing', 'RBC \u00b7\u00b7\u00b7\u00b74821 \u00b7 arrives ' + redeemEta, true));
+
+    // ── notifications (spec \u00a711) ──
+    const ro = s.notifReadAll;
+    const rawNotifs = [
+      { read: false, icon: 'M20 6L9 17l-5-5', ic: 'var(--up)', icb: 'rgba(60,207,148,0.14)', title: 'Mint completed', body: '5,000.00 hUSD minted to 0x74\u20263a8f.', time: 'Today \u00b7 09:42' },
+      { read: false, icon: 'M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z', ic: 'var(--gold)', icb: 'rgba(236,214,160,0.14)', title: 'Redemption in progress', body: 'Burn confirmed \u00b7 USD payout to RBC \u00b7\u00b7\u00b7\u00b74821 is processing.', time: '2 hr ago' },
+      { read: true, icon: 'M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6', ic: 'var(--teal)', icb: 'rgba(67,192,173,0.14)', title: 'Bank payout completed', body: '$2,497.50 deposited to RBC \u00b7\u00b7\u00b7\u00b74821.', time: 'Jun 14' },
+      { read: true, icon: 'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z', ic: 'var(--dim)', icb: 'var(--ink2)', title: 'Service announcement', body: 'Scheduled maintenance Jun 20, 02:00\u201303:00 UTC. Issuance & redemption paused briefly.', time: 'Jun 12' },
+    ];
+    const notifs = rawNotifs.map((n) => ({ iconPath: n.icon, iconColor: n.ic, iconBg: n.icb, title: n.title, body: n.body, time: n.time, bg: (!n.read && !ro) ? 'rgba(236,214,160,0.045)' : 'transparent' }));
+    const unreadCount = ro ? 0 : rawNotifs.filter((n) => !n.read).length;
+
+    // ── banner per account / service state (Dashboard §7 user states + §11 operational notices) ──
+    let banner = null;
+    if (isPublic) banner = { title: 'Viewing public transparency data', body: 'Supply, reserves and audit reports are open to everyone. Log in to see your balance and to issue or redeem hUSD.', cta: 'Create account', action: () => this.setAcct('verified', true), bg: 'rgba(67,192,173,0.07)', bd: 'rgba(67,192,173,0.25)', iconBg: 'rgba(67,192,173,0.15)', iconColor: 'var(--teal)', icon: 'M12 16v-4M12 8h.01M12 22a10 10 0 110-20 10 10 0 010 20z', ctaBg: 'linear-gradient(135deg,var(--gold-bright),var(--gold-deep))', ctaColor: '#3a2c08', ctaBd: 'transparent' };
+    else if (isKycNone) banner = { title: 'Complete KYC to issue or redeem hUSD', body: 'You\u2019re signed in and can hold, receive, and view hUSD. Verify your identity with Sumsub (Level 2) to unlock issuance and redemption.', cta: 'Complete KYC', action: () => this.go('verify'), bg: 'rgba(236,214,160,0.07)', bd: 'rgba(236,214,160,0.3)', iconBg: 'rgba(236,214,160,0.15)', iconColor: 'var(--gold)', icon: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM19 8v6M22 11h-6', ctaBg: 'linear-gradient(135deg,var(--gold-bright),var(--gold-deep))', ctaColor: '#3a2c08', ctaBd: 'transparent' };
+    else if (isPending) banner = { title: 'Verification in review', body: 'Your identity check is being reviewed \u2014 usually within minutes. You can explore the portal; issuing and redeeming unlock once you\u2019re approved.', cta: 'View status', action: () => this.go('verify'), bg: 'rgba(236,214,160,0.07)', bd: 'rgba(236,214,160,0.3)', iconBg: 'rgba(236,214,160,0.15)', iconColor: 'var(--gold)', icon: 'M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z', ctaBg: 'var(--panel2)', ctaColor: 'var(--txt)', ctaBd: 'var(--line)' };
+    else if (isRejected) banner = { title: 'Verification needs attention', body: 'We couldn\u2019t complete your identity verification. Please review your details and resubmit, or contact support \u2014 issuance and redemption stay disabled until this is resolved.', cta: 'Review verification', action: () => this.go('verify'), bg: 'rgba(223,126,152,0.08)', bd: 'rgba(223,126,152,0.32)', iconBg: 'rgba(223,126,152,0.15)', iconColor: 'var(--down)', icon: 'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z', ctaBg: 'var(--panel2)', ctaColor: 'var(--txt)', ctaBd: 'var(--line)' };
+    else if (needsConnect) banner = { title: 'Connect your wallet to issue or redeem', body: 'You\u2019re verified (Level 2). Connect and verify a wallet so we can mint hUSD to you and confirm ownership before any transaction.', cta: 'Connect wallet', action: () => this.openWallet(), bg: 'rgba(67,192,173,0.07)', bd: 'rgba(67,192,173,0.25)', iconBg: 'rgba(67,192,173,0.15)', iconColor: 'var(--teal)', icon: 'M21 12V7H5a2 2 0 010-4h14v4M3 5v14a2 2 0 002 2h16v-5M18 12a2 2 0 000 4h4v-4z', ctaBg: 'linear-gradient(135deg,var(--gold-bright),var(--gold-deep))', ctaColor: '#3a2c08', ctaBd: 'transparent' };
+    else if (wrongNetwork) banner = { title: 'Unsupported network', body: 'Your wallet is on ' + s.walletNetwork + '. Switch to Ethereum, Arbitrum, or Base to issue or redeem hUSD.', cta: 'Switch to Ethereum', action: () => this.switchNetwork('Ethereum'), bg: 'rgba(223,126,152,0.08)', bd: 'rgba(223,126,152,0.32)', iconBg: 'rgba(223,126,152,0.15)', iconColor: 'var(--down)', icon: 'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z', ctaBg: 'linear-gradient(135deg,var(--gold-bright),var(--gold-deep))', ctaColor: '#3a2c08', ctaBd: 'transparent' };
+    else if (isBlocked) banner = { title: 'Not available in your region', body: 'Issuance and redemption aren\u2019t available at your current location. You can still view public reserve and supply data. Contact support if you believe this is an error.', cta: 'Contact support', action: () => {}, bg: 'rgba(223,126,152,0.08)', bd: 'rgba(223,126,152,0.32)', iconBg: 'rgba(223,126,152,0.15)', iconColor: 'var(--down)', icon: 'M4.9 4.9l14.2 14.2M12 22a10 10 0 110-20 10 10 0 010 20z', ctaBg: 'var(--panel2)', ctaColor: 'var(--txt)', ctaBd: 'var(--line)' };
+    else if (isMaint) banner = { title: 'Scheduled maintenance', body: 'Issuance and redemption are paused briefly while we complete maintenance. Public data stays available and your balance is safe. Service resumes shortly.', cta: 'Service status', action: () => {}, bg: 'rgba(236,214,160,0.07)', bd: 'rgba(236,214,160,0.3)', iconBg: 'rgba(236,214,160,0.15)', iconColor: 'var(--gold)', icon: 'M14.7 6.3a4 4 0 01-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 015.4-5.4l-2.7 2.7-2-2 2.7-2.7z', ctaBg: 'var(--panel2)', ctaColor: 'var(--txt)', ctaBd: 'var(--line)' };
+    else if (isDataDown) banner = { title: 'Reserve data is updating', body: 'Live reserve and supply figures are momentarily unavailable from the data pipeline. Showing the last confirmed snapshot below \u2014 issuance and redemption are unaffected.', cta: 'Proof of reserve', action: () => this.go('por'), bg: 'var(--ink2)', bd: 'var(--line)', iconBg: 'var(--panel2)', iconColor: 'var(--dim)', icon: 'M12 8v4M12 16h.01M12 22a10 10 0 110-20 10 10 0 010 20z', ctaBg: 'var(--panel2)', ctaColor: 'var(--txt)', ctaBd: 'var(--line)' };
+
+    // data-freshness label for the dashboard hero (Dashboard §5.1)
+    const dataState = isMaint ? { dot: 'var(--gold)', label: 'Service maintenance \u00b7 actions paused', icon: false }
+      : isDataDown ? { dot: 'var(--mute)', label: 'Reserve data unavailable \u00b7 last snapshot 6m ago', icon: false }
+      : { dot: 'var(--teal)', label: '1:1 USD-backed \u00b7 reserve data current \u00b7 updated 14s ago', icon: true };
+
+    // ── verification tiers ──
+    const vMeta = {
+      done: { border: '1px solid rgba(60,207,148,0.35)', badgeBg: 'rgba(60,207,148,0.12)', badgeColor: 'var(--up)', reqColor: 'var(--up)', reqMark: '\u2713', cta: '', ctaBg: '', ctaColor: '' },
+      current: { border: '1px solid var(--gold)', badgeBg: 'rgba(236,214,160,0.14)', badgeColor: 'var(--gold)', reqColor: 'var(--up)', reqMark: '\u2713', cta: 'Manage details', ctaBg: 'var(--panel2)', ctaColor: 'var(--txt)' },
+      locked: { border: '1px solid var(--line)', badgeBg: 'var(--ink2)', badgeColor: 'var(--dim)', reqColor: 'var(--mute)', reqMark: '\u25cb', cta: 'Upgrade to Level 3', ctaBg: 'linear-gradient(135deg,var(--gold-bright),var(--gold-deep))', ctaColor: '#3a2c08' },
+    };
+    const verifyTiers = [
+      { level: 'Level 1', name: 'Starter', status: 'done', statusLabel: 'Complete', ...vMeta.done, hasCta: false,
+        reqs: ['Email verified', 'Basic profile'], limitMint: 'Hold & receive only', limitRedeem: 'Not enabled', daily: '\u2014' },
+      { level: 'Level 2', name: 'Verified', status: 'current', statusLabel: 'Current', ...vMeta.current, hasCta: true,
+        reqs: ['Government ID + selfie (Sumsub)', 'Address on file', 'Sanctions & PEP screening'], limitMint: 'Issue enabled', limitRedeem: 'Redeem to bank enabled', daily: '$50,000 / day' },
+      { level: 'Level 3', name: 'Institutional', status: 'locked', statusLabel: 'Upgrade', ...vMeta.locked, hasCta: true,
+        reqs: ['Proof of address', 'Source of funds', 'Entity / KYB docs'], limitMint: 'Higher limits', limitRedeem: 'Wire + priority redeem', daily: 'Custom limits' },
+    ];
+
+    // ── transaction history (kind/group power the filters; detail fields power the receipt) ──
+    const stDone = { stBg: 'rgba(60,207,148,0.12)', stFg: 'var(--up)' };
+    const stProg = { stBg: 'rgba(236,214,160,0.14)', stFg: 'var(--gold)' };
+    const stFail = { stBg: 'rgba(223,126,152,0.14)', stFg: 'var(--down)' };
+    const history = [
+      { kind: 'issue', group: 'done', type: 'Issue \u00b7 Fiat', date: 'Jun 17, 2026 \u00b7 09:42', in: '$5,000.00', out: '+4,995.00 hUSD', outColor: 'var(--up)', fee: '$5.00', status: 'Completed', ...stDone, tx: '0x8c\u202642a', rate: '1.0000 USD = 1.0000 hUSD', method: 'Bank transfer \u00b7 USD', dest: '0x74\u20263a8f \u00b7 Ethereum', net: 'Ethereum' },
+      { kind: 'redeem', group: 'done', type: 'Redeem \u00b7 Bank', date: 'Jun 14, 2026 \u00b7 16:20', in: '2,500.00 hUSD', out: '+$2,497.50', outColor: 'var(--txt)', fee: '$2.50', status: 'Completed', ...stDone, tx: '0x3f\u20269d1', rate: '1.0000 hUSD = 1.0000 USD', method: 'Burn \u2192 bank payout', dest: 'RBC \u00b7\u00b7\u00b7\u00b74821', net: 'Ethereum' },
+      { kind: 'issue', group: 'done', type: 'Issue \u00b7 USDC', date: 'Jun 11, 2026 \u00b7 11:05', in: '10,000 USDC', out: '+9,990.00 hUSD', outColor: 'var(--up)', fee: '$10.00', status: 'Completed', ...stDone, tx: '0x1a\u202677b', rate: '1.0000 USDC = 1.0000 hUSD', method: 'USDC on Arbitrum', dest: '0x74\u20263a8f \u00b7 Arbitrum', net: 'Arbitrum' },
+      { kind: 'issue', group: 'done', type: 'Issue \u00b7 Fiat (CAD)', date: 'Jun 03, 2026 \u00b7 14:10', in: 'C$34,247.00', out: '+24,975.00 hUSD', outColor: 'var(--up)', fee: '$25.00', status: 'Completed', ...stDone, tx: '0x9b\u2026c04', rate: '1 CAD = 0.7300 USD \u2192 hUSD', method: 'Bank transfer \u00b7 CAD (FX + markup)', dest: '0x74\u20263a8f \u00b7 Ethereum', net: 'Ethereum' },
+      { kind: 'redeem', group: 'done', type: 'Redeem \u00b7 Bank', date: 'May 28, 2026 \u00b7 10:33', in: '8,000.00 hUSD', out: '+$7,992.00', outColor: 'var(--txt)', fee: '$8.00', status: 'Completed', ...stDone, tx: '0x44\u20261e2', rate: '1.0000 hUSD = 1.0000 USD', method: 'Burn \u2192 bank payout', dest: 'RBC \u00b7\u00b7\u00b7\u00b74821', net: 'Ethereum' },
+      { kind: 'redeem', group: 'progress', type: 'Redeem \u00b7 Bank', date: 'May 20, 2026 \u00b7 19:48', in: '3,000.00 hUSD', out: 'Processing', outColor: 'var(--gold)', fee: '$3.00', status: 'Processing', ...stProg, tx: '0x77\u20269aa', rate: '1.0000 hUSD = 1.0000 USD', method: 'Burn \u2192 bank payout', dest: 'RBC \u00b7\u00b7\u00b7\u00b74821', net: 'Ethereum' },
+      { kind: 'issue', group: 'failed', type: 'Issue \u00b7 Fiat', date: 'May 12, 2026 \u00b7 08:15', in: '$1,000.00', out: 'Payment failed', outColor: 'var(--down)', fee: '\u2014', status: 'Failed', ...stFail, tx: '\u2014', rate: '1.0000 USD = 1.0000 hUSD', method: 'Card \u00b7 USD', dest: '\u2014', net: 'Ethereum', note: 'Funding payment was declined by the provider. No hUSD was minted and no funds were taken.' },
+      { kind: 'issue', group: 'failed', type: 'Issue \u00b7 USDC', date: 'May 04, 2026 \u00b7 22:41', in: '\u2014', out: 'Quote expired', outColor: 'var(--mute)', fee: '\u2014', status: 'Expired', ...stFail, tx: '\u2014', rate: '\u2014', method: 'USDC on Ethereum', dest: '\u2014', net: 'Ethereum', note: 'The 60-second quote expired before confirmation. Start a new quote to continue.' },
+    ];
+
+    // ── anonymized aggregate network activity (public, Dashboard §5.4) ──
+    const aggFeed = [
+      { dir: 'mint', label: 'Mint completed', amt: '+12,500 hUSD', time: '2 min ago', iconBg: 'rgba(60,207,148,0.12)', iconColor: 'var(--up)', iconPath: 'M12 5v14M5 12h14', amtColor: 'var(--up)' },
+      { dir: 'redeem', label: 'Redemption completed', amt: '\u22128,000 hUSD', time: '9 min ago', iconBg: 'rgba(223,126,152,0.12)', iconColor: 'var(--down)', iconPath: 'M5 12h14', amtColor: 'var(--dim)' },
+      { dir: 'mint', label: 'Mint completed', amt: '+50,000 hUSD', time: '17 min ago', iconBg: 'rgba(60,207,148,0.12)', iconColor: 'var(--up)', iconPath: 'M12 5v14M5 12h14', amtColor: 'var(--up)' },
+      { dir: 'mint', label: 'Mint completed', amt: '+3,250 hUSD', time: '24 min ago', iconBg: 'rgba(60,207,148,0.12)', iconColor: 'var(--up)', iconPath: 'M12 5v14M5 12h14', amtColor: 'var(--up)' },
+      { dir: 'redeem', label: 'Redemption completed', amt: '\u221221,400 hUSD', time: '38 min ago', iconBg: 'rgba(223,126,152,0.12)', iconColor: 'var(--down)', iconPath: 'M5 12h14', amtColor: 'var(--dim)' },
+    ];
+
+    return {
+      setRoot: this.setRoot,
+      stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+      screen: s.screen,
+      isPortfolio: s.screen === 'portfolio', isGet: s.screen === 'get', isRedeem: s.screen === 'redeem', isPor: s.screen === 'por', isActivity: s.screen === 'activity', isVerify: s.screen === 'verify',
+
+      // nav
+      goSlot1: () => this.go('portfolio'), slot1Label: 'Portfolio',
+      goGet: () => this.go('get'), goRedeem: () => this.go('redeem'), goPor: () => this.go('por'), goActivity: () => this.go('activity'), goVerify: () => this.go('verify'),
+      navSlot1Style: navStyle('portfolio'), navSlot1Active: s.screen === 'portfolio',
+      navGetStyle: navStyle('get'), navRedeemStyle: navStyle('redeem'), navPorStyle: navStyle('por'), navActivityStyle: navStyle('activity'),
+      navGetActive: s.screen === 'get', navRedeemActive: s.screen === 'redeem', navPorActive: s.screen === 'por', navActivityActive: s.screen === 'activity',
+
+      // account / service state
+      isPublic, isKycNone, isPending, isRejected, isVerified, isAuthed, isBlocked, isMaint, isDataDown,
+      needsConnect, wrongNetwork, walletConnected,
+      setAcctVerified: () => this.setAcct('verified', true),
+      previewStates, previewLabel: curPrev.label, previewDot: curPrev.dot,
+      previewOpen: s.previewOpen, togglePreview: () => this.setState((st) => ({ previewOpen: !st.previewOpen })), closePreview: () => this.setState({ previewOpen: false }),
+      dataDot: dataState.dot, dataLabel: dataState.label, dataIcon: dataState.icon,
+
+      // ── wallet connection (Wallet Connection spec) ──
+      walletNetwork: s.walletNetwork,
+      showConnect: !walletConnected, // disconnected pill → Connect wallet button
+      openWallet: () => this.openWallet(),
+      walletMenuOpen: s.walletMenuOpen, toggleWalletMenu: () => this.setState((st) => ({ walletMenuOpen: !st.walletMenuOpen })), closeWalletMenu: () => this.setState({ walletMenuOpen: false }),
+      walletVerifiedChip: s.walletVerified,
+      walletNetDot: wrongNetwork ? 'var(--down)' : 'var(--up)',
+      walletNetLabel: wrongNetwork ? (s.walletNetwork + ' · unsupported') : (s.walletNetwork + ' · connected'),
+      disconnectWallet: () => this.disconnectWallet(),
+      switchToEth: () => this.switchNetwork('Ethereum'), simulateWrongNet: () => this.switchNetwork('Polygon'),
+      netOptions: this.SUPPORTED_NETWORKS.map((n) => ({ name: n, active: n === s.walletNetwork, action: () => this.switchNetwork(n) })),
+      // connect modal
+      wcOpen: s.wcOpen, closeWallet: () => this.closeWallet(),
+      wcChoose: s.wcStep === 'choose', wcQr: s.wcStep === 'qr', wcConnecting: s.wcConnecting, wcProvider: s.wcProvider,
+      wcProviders: [
+        { name: 'MetaMask', sub: 'Browser extension · read-only until you sign', bg: 'rgba(245,156,55,0.12)', fg: '#f6851b', glyph: 'M' },
+        { name: 'WalletConnect', sub: 'Scan with a mobile wallet · verified', bg: 'rgba(59,153,252,0.12)', fg: '#3b99fc', glyph: 'W' },
+        { name: 'Coinbase Wallet', sub: 'Coinbase extension or mobile', bg: 'rgba(0,82,255,0.12)', fg: '#0052ff', glyph: 'C' },
+      ].map((p) => ({ ...p, action: () => this.pickProvider(p.name === 'Coinbase Wallet' ? 'Coinbase' : p.name) })),
+      wcBackToChoose: () => this.setState({ wcStep: 'choose', wcProvider: null }),
+      wcQrConfirm: () => this.connectWallet('WalletConnect'),
+      wcQrEl: this.qrEl('wc:relay:husd:' + s.walletNetwork + ':' + (s.wcProvider || 'WalletConnect'), 150),
+      showBanner: !!banner,
+      bannerTitle: banner && banner.title, bannerBody: banner && banner.body, bannerCta: banner && banner.cta, bannerAction: banner ? banner.action : (() => {}),
+      bannerBg: banner && banner.bg, bannerBd: banner && banner.bd, bannerIconBg: banner && banner.iconBg, bannerIconColor: banner && banner.iconColor, bannerIconPath: banner && banner.icon,
+      bannerCtaBg: banner && banner.ctaBg, bannerCtaColor: banner && banner.ctaColor, bannerCtaBd: banner && banner.ctaBd,
+
+      // notifications
+      notifOpen: s.notifOpen, toggleNotif: () => this.setState((st) => ({ notifOpen: !st.notifOpen })), closeNotif: () => this.setState({ notifOpen: false }),
+      markAllRead: () => this.setState({ notifReadAll: true }),
+      notifs, unreadCount, hasUnread: unreadCount > 0,
+
+      recent: [
+        { iconBg: 'rgba(60,207,148,0.12)', iconColor: 'var(--up)', iconPath: 'M12 5v14M5 12h14', title: 'Issued hUSD \u00b7 Fiat', time: 'Today \u00b7 09:42', amount: '+5,000.00', amtColor: 'var(--up)', status: 'Completed' },
+        { iconBg: 'rgba(223,126,152,0.12)', iconColor: 'var(--down)', iconPath: 'M5 12h14', title: 'Redeemed to bank', time: 'Jun 14 \u00b7 16:20', amount: '\u22122,500.00', amtColor: 'var(--down)', status: 'Completed' },
+        { iconBg: 'rgba(60,207,148,0.12)', iconColor: 'var(--up)', iconPath: 'M12 5v14M5 12h14', title: 'Issued hUSD \u00b7 USDC', time: 'Jun 11 \u00b7 11:05', amount: '+10,000.00', amtColor: 'var(--up)', status: 'Completed' },
+        { iconBg: 'rgba(236,214,160,0.12)', iconColor: 'var(--gold)', iconPath: 'M12 8v4l3 2', title: 'Redemption \u00b7 processing', time: 'Jun 10 \u00b7 14:02', amount: '\u22123,000.00', amtColor: 'var(--gold)', status: 'Processing' },
+      ],
+
+      // GET
+      getStep: s.getStep, getStep0: s.getStep === 0, getStep1: s.getStep === 1, getStep2: s.getStep === 2,
+      getSteps, ...gd,
+      isCrypto, isCad, payToken, paySymbol, getNetwork: s.getNetwork,
+      payTokenBg: isCrypto ? (s.getAsset === 'USDC' ? '#2775ca' : '#26a17b') : 'linear-gradient(135deg,#7ec9a0,#3ccf94)',
+      payMethodLabel: isCrypto ? (s.getAsset + ' on ' + s.getNetwork) : ('Bank transfer \u00b7 ' + s.fiatCcy),
+      getAmt: s.getAmt, getRecv: s.getRecv,
+      getReceiveStr: this.fmt(recvN), getPayStr: this.fmt(payN), getFeeStr: '$' + this.fmt(gFee),
+      getRateRow: isCad ? ('1 CAD = ' + fx.toFixed(4) + ' USD \u2192 1.0000 hUSD') : '1.0000 \u2192 1.0000 hUSD',
+      onGetAmt: (e) => { const v = e.target.value; this.setState({ getAmt: v, getRecv: this.fmt(this.parse(v) * rate * 0.999), quoteLeft: 60, quoteExpired: false }); },
+      onGetRecv: (e) => { const v = e.target.value; this.setState({ getRecv: v, getAmt: this.fmt(this.parse(v) / (rate * 0.999)), quoteLeft: 60, quoteExpired: false }); },
+      amt1k: () => setBoth(1000), amt5k: () => setBoth(5000), amt10k: () => setBoth(10000), amtMax: () => setBoth(45000),
+      setFiat: () => this.setState({ getPath: 'fiat', quoteLeft: 60, quoteExpired: false }), setCrypto: () => this.setState({ getPath: 'crypto', quoteLeft: 60, quoteExpired: false }),
+      pickAsset: () => { if (isCrypto) this.setState((st) => ({ getAsset: st.getAsset === 'USDC' ? 'USDT' : 'USDC' })); },
+      fiatBg: fb.bg, fiatBd: fb.bd, fiatTxt: fb.txt, cryptoBg: cb.bg, cryptoBd: cb.bd, cryptoTxt: cb.txt,
+      // fiat currency (USD / CAD as FX + markup issuance — not a swap)
+      showFiatCcy: !isCrypto,
+      setUsd: () => this.setState({ fiatCcy: 'USD', getRecv: this.fmt(this.parse(s.getAmt) * 1 * 0.999), quoteLeft: 60, quoteExpired: false }),
+      setCad: () => this.setState({ fiatCcy: 'CAD', getRecv: this.fmt(this.parse(s.getAmt) * fx * 0.999), quoteLeft: 60, quoteExpired: false }),
+      usdBg: !isCad ? 'rgba(236,214,160,0.1)' : 'var(--ink2)', usdBd: !isCad ? 'var(--gold)' : 'var(--line)', usdTxt: !isCad ? 'var(--gold)' : 'var(--dim)',
+      cadBg: isCad ? 'rgba(236,214,160,0.1)' : 'var(--ink2)', cadBd: isCad ? 'var(--gold)' : 'var(--line)', cadTxt: isCad ? 'var(--gold)' : 'var(--dim)',
+      netEth: () => this.setState({ getNetwork: 'Ethereum' }), netArb: () => this.setState({ getNetwork: 'Arbitrum' }), netBase: () => this.setState({ getNetwork: 'Base' }),
+      netEthBg: neth.bg, netEthBd: neth.bd, netEthTxt: neth.txt, netArbBg: narb.bg, netArbBd: narb.bd, netArbTxt: narb.txt, netBaseBg: nbase.bg, netBaseBd: nbase.bd, netBaseTxt: nbase.txt,
+      quoteLeft: s.quoteLeft, quoteExpired: s.quoteExpired,
+      quoteRateLabel, quoteDot: s.quoteExpired ? 'var(--down)' : 'var(--teal)', quoteBd: s.quoteExpired ? 'rgba(223,126,152,0.4)' : 'var(--line)',
+      quoteSourceLabel: isCad ? 'Rate source \u00b7 exchangerate-api.com' : 'Rate source \u00b7 exchangerate-api.com',
+      quoteSourceMeta: isCad ? 'off-chain FX \u00b7 issuance, not a swap' : 'off-chain FX',
+      quoteCountLabel: s.quoteExpired ? 'Quote expired' : ('Expires in ' + s.quoteLeft + 's'),
+      quoteCountColor: s.quoteExpired ? 'var(--down)' : (s.quoteLeft <= 10 ? 'var(--gold)' : 'var(--mute)'),
+      refreshQuote: () => this.setState({ quoteLeft: 60, quoteExpired: false }),
+      getCtaDisabled, getCtaStyle, getCtaLabel,
+      getNext: () => { this.setState({ getStep: 1 }); window.scrollTo(0, 0); },
+      getPrimary: () => { if (needsConnect) { this.openWallet(); return; } if (getCtaDisabled) return; this.setState({ getStep: 1 }); window.scrollTo(0, 0); },
+      getConfirm: () => this.requireSig(() => { this.setState({ getStep: 2 }); this.startMint(); window.scrollTo(0, 0); }),
+      getBack: () => this.setState({ getStep: Math.max(0, s.getStep - 1) }),
+      getReset: () => this.go('portfolio'),
+      mintComplete, mintPending: !mintComplete, mintStages,
+      // crypto deposit (Issuance §6.2 / §6.5)
+      depositAddr: '0x4F9a2C7e' + (isCrypto ? '3B6d' : '0000') + '\u2026D11baF09',
+      depQr: this.qrEl('husd:0x4F9a2C7e3B6dD11baF09:' + payToken + ':' + s.getNetwork, 132),
+      depCopy: () => { this.setState({ depCopied: true }); setTimeout(() => this.setState({ depCopied: false }), 1400); },
+      depCopyLabel: s.depCopied ? 'Copied' : 'Copy',
+      allowlistNote: 'Only send ' + payToken + ' on ' + s.getNetwork + '. Other tokens or networks will not be credited and may be lost.',
+      showConfMeter: isCrypto && !mintComplete, confNow, confTotal, confPct, confDone,
+      confLabel: confDone ? 'Confirmed' : (confNow + ' / ' + confTotal + ' confirmations'),
+      copyAddr: () => { this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1400); },
+      copyLabel: s.copied ? 'Copied' : 'Copy',
+
+      // REDEEM
+      redeemStep: s.redeemStep, redStep0: s.redeemStep === 0, redStep1: s.redeemStep === 1, redStep2: s.redeemStep === 2,
+      redeemSteps, ...rd,
+      redeemAmt: s.redeemAmt, redeemAmtStr: this.fmt(rAmt), redeemReceiveStr: this.fmt(rRecv), redeemFeeStr: '$' + this.fmt(rFee),
+      redeemOutCcy, redeemEta, redeemDestLabel,
+      onRedeemAmt: (e) => this.setState({ redeemAmt: e.target.value }),
+      red25: () => this.setState({ redeemAmt: '6,045' }), red50: () => this.setState({ redeemAmt: '12,090' }), red100: () => this.setState({ redeemAmt: '24,180.42' }),
+      redeemReview: () => { this.setState({ redeemStep: 1 }); window.scrollTo(0, 0); },
+      redeemConfirm: () => this.requireSig(() => { this.setState({ redeemStep: 2 }); this.startBurn(burnTotal); window.scrollTo(0, 0); }),
+      redeemBack: () => this.setState({ redeemStep: Math.max(0, s.redeemStep - 1) }),
+      redeemReset: () => this.go('portfolio'),
+      redeemComplete, redeemPending: !redeemComplete, burnStages,
+      willQueue,
+
+      // POR
+      custodians: [
+        { name: 'BlackRock \u00b7 Circle Reserve Fund', label: '$842M \u00b7 64%', pct: 64 },
+        { name: 'BNY Mellon \u00b7 cash', label: '$184M \u00b7 14%', pct: 14 },
+        { name: 'JPMorgan \u00b7 cash', label: '$105M \u00b7 8%', pct: 8 },
+        { name: 'Customers Bank \u00b7 cash', label: '$118M \u00b7 9%', pct: 9 },
+        { name: 'On-chain USDC (transit)', label: '$66M \u00b7 5%', pct: 5 },
+      ],
+      maturity: [
+        { label: '38%', bucket: '0\u20137d', pct: 76 },
+        { label: '31%', bucket: '8\u201330d', pct: 62 },
+        { label: '18%', bucket: '31\u201360d', pct: 38 },
+        { label: '9%', bucket: '61\u201390d', pct: 22 },
+        { label: '4%', bucket: '90d+', pct: 12 },
+      ],
+      attestations: [
+        { title: 'Daily reserve report', meta: 'Jun 17, 2026 \u00b7 Grant Thornton', action: 'PDF', status: 'Latest', stBg: 'rgba(67,192,173,0.14)', stFg: 'var(--teal)' },
+        { title: 'Q2 2026 attestation', meta: 'Apr\u2013Jun \u00b7 independent audit', action: 'PDF', status: 'Archived', stBg: 'var(--ink2)', stFg: 'var(--dim)' },
+        { title: 'Monthly transparency report', meta: 'May 2026 \u00b7 full holdings', action: 'PDF', status: 'Archived', stBg: 'var(--ink2)', stFg: 'var(--dim)' },
+      ],
+
+      // ACTIVITY (with filters + Failed/Expired rows, Issuance §8)
+      actFilter: s.actFilter, setActFilter: (k) => () => this.setState({ actFilter: k }),
+      actFilters: [
+        { key: 'all', label: 'All' }, { key: 'issue', label: 'Issuance' }, { key: 'redeem', label: 'Redemption' },
+        { key: 'progress', label: 'In progress' }, { key: 'failed', label: 'Failed / expired' },
+      ].map((f) => ({ label: f.label, active: s.actFilter === f.key, action: () => this.setState({ actFilter: f.key }),
+        bg: s.actFilter === f.key ? 'rgba(236,214,160,0.12)' : 'var(--ink2)', bd: s.actFilter === f.key ? 'var(--gold)' : 'var(--line)', color: s.actFilter === f.key ? 'var(--gold)' : 'var(--dim)' })),
+      history: history.filter((h) => {
+        if (s.actFilter === 'all') return true;
+        if (s.actFilter === 'issue') return h.kind === 'issue';
+        if (s.actFilter === 'redeem') return h.kind === 'redeem';
+        if (s.actFilter === 'progress') return h.group === 'progress';
+        if (s.actFilter === 'failed') return h.group === 'failed';
+        return true;
+      }).map((h) => ({ ...h, openReceipt: () => this.setState({ receipt: h }) })),
+      historyEmpty: history.filter((h) => {
+        if (s.actFilter === 'progress') return h.group === 'progress';
+        if (s.actFilter === 'failed') return h.group === 'failed';
+        if (s.actFilter === 'issue') return h.kind === 'issue';
+        if (s.actFilter === 'redeem') return h.kind === 'redeem';
+        return true;
+      }).length === 0,
+
+      // public aggregate activity feed (Dashboard §5.4 — anonymized)
+      aggFeed,
+
+      // receipt / transaction detail modal (Issuance §9.2)
+      receiptOpen: !!s.receipt,
+      receipt: s.receipt || {},
+      closeReceipt: () => this.setState({ receipt: null }),
+
+      // wallet ownership signature gate (Common Rules §3)
+      signOpen: s.signOpen, signing: s.signing, walletVerified: s.walletVerified,
+      doSign: () => this.doSign(), cancelSign: () => this.setState({ signOpen: false }),
+      signBtnLabel: s.signing ? 'Waiting for signature\u2026' : 'Sign to verify ownership',
+
+      // VERIFICATION
+      verifyTiers: verifyTiers.map((t) => ({ ...t, reqs: t.reqs.map((text) => ({ text, mark: t.reqMark, color: t.reqColor })) })),
+    };
+  }
+}
+</script>
+</body>
+</html>
