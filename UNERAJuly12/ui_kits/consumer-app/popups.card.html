@@ -1,0 +1,101 @@
+<!-- @dsCard group="Consumer App" viewport="980x720" name="Popups & Modals" subtitle="Connect modal · confirmation dialog · dropdown popover — verbatim from source" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="consumer-app.css">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--neutral-100); margin: 0; padding: 24px; color: var(--text-primary); }
+  .glabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin: 0 0 12px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+  /* faux modal scrim (static, not fixed — shown inline as a spec) */
+  .scrim { background: rgba(23,61,71,0.32); border-radius: var(--radius-card); padding: 28px; display: flex; align-items: center; justify-content: center; }
+
+  /* Connect modal */
+  .modal-box { background: #fff; border-radius: var(--radius-card); padding: 1.75rem; max-width: 420px; width: 100%; box-shadow: 0 24px 64px rgba(23,61,71,0.28); }
+  .modal-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.375rem; }
+  .modal-desc { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.25rem; }
+  .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+  .wallet-opt { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1.1rem 0.5rem; border: 2px solid var(--border-subtle); border-radius: var(--radius-md); background: #fff; cursor: pointer; font-family: var(--font-body); }
+  .wallet-opt:hover { border-color: var(--brand-deep-blue); background: rgba(23,61,71,0.02); }
+  .wallet-opt-glyph { font-size: 1.75rem; }
+  .wallet-opt-name { font-size: 0.875rem; font-weight: 600; }
+
+  /* Confirmation dialog */
+  .preset-dialog-content { background: #fff; border-radius: 1.25rem; padding: 2rem; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .confirmation-dialog-body { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+  .confirmation-icon { flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--brand-deep-blue); background: color-mix(in srgb, var(--warning) 18%, #fff); border-radius: 50%; }
+  .confirmation-icon svg { width: 22px; height: 22px; fill: currentColor; }
+  .confirmation-dialog-body h3 { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; }
+  .confirmation-dialog-body p { margin: 0; font-size: 0.938rem; color: var(--text-secondary); }
+  .preset-dialog-actions { display: flex; gap: 1rem; }
+  .preset-dialog-actions button { flex: 1; padding: 0.875rem 1.5rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); font-size: 0.875rem; border: 2px solid var(--border-subtle); background: #fff; color: var(--text-primary); }
+  .preset-dialog-actions .danger { background: var(--brand-deep-blue); border: none; color: #fff; }
+
+  /* Dropdown popover */
+  .pop { width: 240px; background: #fff; border-radius: 0.75rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+  .pop-h { font-size: 0.688rem; font-weight: 700; color: var(--neutral-600); letter-spacing: 0.05em; padding: 0.75rem 0.75rem 0.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .pop-list { padding: 0.375rem 0.5rem 0.5rem; }
+  .pop-opt { display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; min-height: 44px; }
+  .pop-opt:hover { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); }
+  .pop-opt.active { color: var(--brand-deep-blue); font-weight: 600; background: rgba(23,61,71,0.06); }
+  .pop-dot { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; }
+  .pop-name { flex: 1; }
+  .pop-check { width: 14px; height: 14px; color: var(--brand-deep-blue); flex-shrink: 0; }
+  .testnet { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.05em; background: color-mix(in srgb, var(--warning) 15%, #fff); color: var(--warning); border-radius: 0.25rem; padding: 0.125rem 0.375rem; text-transform: uppercase; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+</style>
+</head>
+<body>
+<div class="cols">
+  <div>
+    <div class="glabel">Connect wallet modal</div>
+    <div class="scrim">
+      <div class="modal-box">
+        <div class="modal-title">Connect a wallet</div>
+        <div class="modal-desc">Connect to hold value, transact and donate. Your keys, your control.</div>
+        <div class="wallet-grid">
+          <button class="wallet-opt"><span class="wallet-opt-glyph">🦊</span><span class="wallet-opt-name">MetaMask</span></button>
+          <button class="wallet-opt"><span class="wallet-opt-glyph">🔗</span><span class="wallet-opt-name">WalletConnect</span></button>
+          <button class="wallet-opt"><span class="wallet-opt-glyph">🔵</span><span class="wallet-opt-name">Coinbase</span></button>
+          <button class="wallet-opt"><span class="wallet-opt-glyph">✉️</span><span class="wallet-opt-name">Email / social</span></button>
+        </div>
+        <button class="btn btn-secondary btn-block">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="glabel">Confirmation dialog (destructive)</div>
+    <div class="scrim">
+      <div class="preset-dialog-content">
+        <div class="confirmation-dialog-body">
+          <div class="confirmation-icon"><svg viewBox="0 -960 960 960"><path d="m40-120 440-760 440 760H40Zm440-120q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg></div>
+          <div><h3>Disconnect Wallet</h3><p>Are you sure you want to disconnect your wallet? You can reconnect at any time.</p></div>
+        </div>
+        <div class="preset-dialog-actions">
+          <button>Cancel</button>
+          <button class="danger">Disconnect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="glabel" style="margin-top:24px">Network switcher popover</div>
+    <div class="pop">
+      <div class="pop-h">Mainnet</div>
+      <div class="pop-list">
+        <div class="pop-opt active"><span class="pop-dot" style="background:#627EEA"></span><span class="pop-name">Ethereum</span><svg class="pop-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="pop-opt"><span class="pop-dot" style="background:#0052FF"></span><span class="pop-name">Base</span></div>
+      </div>
+      <div class="pop-h" style="border-top:1px solid rgba(0,0,0,0.06);border-bottom:none">Testnet</div>
+      <div class="pop-list">
+        <div class="pop-opt"><span class="pop-dot" style="background:#627EEA;opacity:0.5"></span><span class="pop-name">Sepolia</span><span class="testnet">Testnet</span></div>
+        <div class="pop-opt"><span class="pop-dot" style="background:#0052FF;opacity:0.5"></span><span class="pop-name">Base Sepolia</span><span class="testnet">Testnet</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

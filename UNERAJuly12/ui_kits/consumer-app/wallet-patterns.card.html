@@ -1,0 +1,109 @@
+<!-- @dsCard group="Consumer App" viewport="900x900" name="Wallet Patterns" subtitle="Transaction rows, activity icons, status & rail badges, distribution bars — verbatim from wallet-enhanced.html" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="consumer-app.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  body { background: var(--neutral-100); padding: 24px; }
+  .grp { margin-bottom: 28px; }
+  .glabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 12px; }
+  .panel { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-card); padding: 18px 22px; }
+  .iconrow { display: flex; flex-wrap: wrap; gap: 22px; }
+  .iconcell { text-align: center; }
+  .iconcell .lbl { font-size: 11px; color: var(--text-secondary); margin-top: 8px; }
+  .chiprow { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="icons.jsx"></script>
+<script type="text/babel">
+  const UI = window.UI;
+  const txTypes = [
+    { type: "in", icon: UI.received, lbl: "in · received" },
+    { type: "out", icon: UI.send, lbl: "out · sent" },
+    { type: "donation", icon: UI.heart, lbl: "donation" },
+    { type: "pending", icon: UI.bank, lbl: "pending · fiat" },
+    { type: "yield", icon: UI.yield, lbl: "yield" },
+    { type: "convert", icon: UI.exchange, lbl: "convert" },
+    { type: "reward", icon: UI.bolt, lbl: "reward" },
+  ];
+  function App() {
+    return (
+      <div>
+        <div className="grp">
+          <div className="glabel">Activity / transaction icons (56px wells, semantic tints + rings)</div>
+          <div className="panel iconrow">
+            {txTypes.map((t,i) => (
+              <div className="iconcell" key={i}>
+                <div className={"transaction-icon " + t.type} aria-hidden="true">{t.icon}</div>
+                <div className="lbl">{t.lbl}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grp">
+          <div className="glabel">Status & rail badges</div>
+          <div className="panel chiprow">
+            <span className="transaction-status completed">Completed</span>
+            <span className="transaction-status pending">Pending</span>
+            <span className="transaction-status failed">Failed</span>
+            <span className="activity-rail-badge activity-rail-badge--chain">On-chain</span>
+            <span className="activity-rail-badge activity-rail-badge--fiat">Off-chain</span>
+          </div>
+        </div>
+
+        <div className="grp">
+          <div className="glabel">Transaction rows</div>
+          <div className="panel" style={{padding:0}}>
+            <div className="transaction-list">
+              <div className="transaction-item">
+                <div className="transaction-icon in">{UI.received}</div>
+                <div className="transaction-details">
+                  <div className="transaction-title">Received from Alice Johnson</div>
+                  <div className="transaction-meta"><span>10:32 AM</span><span aria-hidden="true">•</span><span className="transaction-status completed">Completed</span><span aria-hidden="true">•</span><span className="activity-rail-badge activity-rail-badge--chain">On-chain</span><span aria-hidden="true">•</span><span>hUSD</span></div>
+                </div>
+                <div className="transaction-amount"><div className="amount-primary positive">+ $500.00</div><div className="amount-secondary">hUSD</div></div>
+              </div>
+              <div className="transaction-item">
+                <div className="transaction-icon pending">{UI.bank}</div>
+                <div className="transaction-details">
+                  <div className="transaction-title">Bank Transfer In</div>
+                  <div className="transaction-meta"><span>08:45 AM</span><span aria-hidden="true">•</span><span className="transaction-status pending">Pending</span><span aria-hidden="true">•</span><span className="activity-rail-badge activity-rail-badge--fiat">Off-chain</span><span aria-hidden="true">•</span><span>hUSD</span></div>
+                </div>
+                <div className="transaction-amount"><div className="amount-primary positive">+ $1,000.00</div><div className="amount-secondary">Est. 2-3 days</div></div>
+              </div>
+              <div className="transaction-item">
+                <div className="transaction-icon donation">{UI.heart}</div>
+                <div className="transaction-details">
+                  <div className="transaction-title">Donation to Nairobi Humanity Centre</div>
+                  <div className="transaction-meta"><span>09:15 AM</span><span aria-hidden="true">•</span><span className="transaction-status completed">Completed</span><span aria-hidden="true">•</span><span className="activity-rail-badge activity-rail-badge--chain">On-chain</span><span aria-hidden="true">•</span><span>hUSD</span></div>
+                </div>
+                <div className="transaction-amount"><div className="amount-primary negative">- $250.00</div><div className="amount-secondary">hUSD</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grp">
+          <div className="glabel">Portfolio distribution bars</div>
+          <div className="panel">
+            <div className="distribution-bar" style={{marginBottom:10}}><div className="distribution-bar-fill husd" style={{width:"30.3%"}}>30.3%</div></div>
+            <div className="distribution-bar" style={{marginBottom:10}}><div className="distribution-bar-fill hcad" style={{width:"22%"}}>22%</div></div>
+            <div className="distribution-bar" style={{marginBottom:10}}><div className="distribution-bar-fill heur" style={{width:"15.2%"}}>15.2%</div></div>
+            <div className="distribution-bar"><div className="distribution-bar-fill huma" style={{width:"10.3%"}}>10.3%</div></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
