@@ -1,0 +1,100 @@
+<!-- @dsCard group="Components" viewport="780x560" name="Notifications" subtitle="Level model + center card, bell panel & toast specs (PRD: Notification Services)" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { margin:0; box-sizing:border-box; }
+  body { font-family:var(--font-body); background:var(--brand-white); color:var(--text-primary); padding:22px; }
+  h2 { font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:12px; }
+  .wrap { display:grid; grid-template-columns:1fr 1fr; gap:26px; }
+  /* Level list */
+  .lvl { display:flex; align-items:flex-start; gap:11px; padding:9px 0; border-bottom:1px solid var(--border-subtle); }
+  .lvl:last-child { border-bottom:0; }
+  .well { width:34px; height:34px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .well svg { width:19px; height:19px; fill:currentColor; }
+  .lvl-completed   { background:var(--fin-up-bg);            color:var(--fin-up); }
+  .lvl-progressing { background:rgba(23,61,71,0.10);         color:var(--brand-deep-blue); }
+  .lvl-info        { background:var(--fin-neutral-bg);       color:var(--fin-neutral); }
+  .lvl-warning     { background:rgba(184,160,48,0.14);       color:var(--warning); }
+  .lvl-error       { background:var(--error-bg);             color:var(--error); }
+  .lvl-name { font-size:13px; font-weight:600; }
+  .lvl-meta { font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .lvl-tok { font-family:ui-monospace,monospace; font-size:10.5px; color:var(--text-secondary); }
+  /* Sample center card — matches the shipped notification-center card (cloud-blue unread, branded well, muted level label, no left bar) */
+  .card { display:flex; gap:14px; align-items:flex-start; background:color-mix(in srgb,var(--brand-cloud-blue) 30%,var(--brand-white)); border:1px solid rgba(23,61,71,0.22); border-radius:18px; padding:16px; box-shadow:var(--shadow-card); margin-bottom:14px; }
+  .card .well { width:44px; height:44px; border-radius:11px; }
+  .card .well svg { width:23px; height:23px; }
+  .card-level { font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--text-secondary); }
+  .card-title { font-size:14px; font-weight:600; margin:2px 0; }
+  .card-msg { font-size:12.5px; color:var(--text-secondary); line-height:1.45; }
+  .card-ref { font-size:11.5px; color:var(--text-secondary); font-variant-numeric:tabular-nums; margin-top:3px; }
+  .card-foot { display:flex; align-items:center; justify-content:space-between; margin-top:7px; }
+  .card-cta { font-size:12.5px; font-weight:600; color:var(--brand-deep-blue); text-decoration:underline; }
+  .card-time { font-size:11px; color:var(--text-secondary); }
+  /* Sample toast */
+  .toast { display:flex; gap:11px; align-items:flex-start; background:var(--brand-white); border:1px solid var(--border-subtle); border-left:4px solid var(--error); border-radius:12px; box-shadow:0 12px 30px rgba(23,61,71,.16); padding:12px 12px 12px 14px; }
+  .toast .well { width:28px; height:28px; border-radius:50%; }
+  .toast .well svg { width:15px; height:15px; }
+  .toast-title { font-size:13px; font-weight:600; }
+  .toast-msg { font-size:11.5px; color:var(--text-secondary); line-height:1.4; margin-top:1px; }
+  .spec { margin-top:16px; font-size:11.5px; color:var(--text-secondary); line-height:1.7; }
+  .spec b { color:var(--text-primary); font-weight:600; }
+  .note { font-size:11px; color:var(--text-secondary); margin-top:6px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <h2>Notification levels</h2>
+      <div class="lvl">
+        <span class="well lvl-completed"><svg viewBox="0 -960 960 960"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></span>
+        <div><div class="lvl-name">Completed <span class="lvl-tok">· --fin-up</span></div><div class="lvl-meta">Action finished successfully — buy/trade/swap done.</div></div>
+      </div>
+      <div class="lvl">
+        <span class="well lvl-progressing"><svg viewBox="0 -960 960 960"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm112-192 56-56-148-148v-184h-80v216l172 172Z"/></svg></span>
+        <div><div class="lvl-name">In progress <span class="lvl-tok">· --brand-deep-blue</span></div><div class="lvl-meta">A downstream user-visible step has started.</div></div>
+      </div>
+      <div class="lvl">
+        <span class="well lvl-info"><svg viewBox="0 -960 960 960"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></span>
+        <div><div class="lvl-name">Info <span class="lvl-tok">· --fin-neutral</span></div><div class="lvl-meta">Neutral update — service announcement, maintenance.</div></div>
+      </div>
+      <div class="lvl">
+        <span class="well lvl-warning"><svg viewBox="0 -960 960 960"><path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg></span>
+        <div><div class="lvl-name">Warning <span class="lvl-tok">· --warning</span></div><div class="lvl-meta">Attention needed or delayed — not a final failure.</div></div>
+      </div>
+      <div class="lvl">
+        <span class="well lvl-error"><svg viewBox="0 -960 960 960"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></span>
+        <div><div class="lvl-name">Error <span class="lvl-tok">· --error</span></div><div class="lvl-meta">Failure or blocked action — no sensitive reason codes.</div></div>
+      </div>
+      <p class="note">Color maps to level, never alone — always paired with icon + text label.</p>
+    </div>
+
+    <div>
+      <h2>Center card &amp; toast</h2>
+      <div class="card">
+        <span class="well lvl-completed"><svg viewBox="0 -960 960 960"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <div class="card-level">Completed</div>
+          <div class="card-title">Buy order completed</div>
+          <div class="card-msg">Your OTC purchase of 500 hUSD is complete and added to your balance.</div>
+          <div class="card-ref">Order OTC-48210</div>
+          <div class="card-foot"><a class="card-cta">View order</a><span class="card-time">22 min ago</span></div>
+        </div>
+      </div>
+      <div class="toast">
+        <span class="well lvl-error"><svg viewBox="0 -960 960 960"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></span>
+        <div style="flex:1;"><div class="toast-title">Error: Swap couldn’t be completed</div><div class="toast-msg">We couldn’t finalize your swap. No funds left your wallet.</div></div>
+      </div>
+      <div class="spec">
+        <b>Center card</b> — cloud-blue unread tint, branded icon well, muted level label (level color reserved for the icon glyph + panel/toast). Title + 1–2 line body + reference + single CTA.<br>
+        <b>Bell panel</b> — 400px desktop / full-width drawer &lt;768px · 70vh max, scroll · header: title + unread count + “Mark all as read” · skeleton rows on load · empty: “You’re all caught up.” · unread items shown by a bolder title + an unread dot.<br>
+        <b>Badge</b> — unread count, caps at <b>99+</b>, hidden at zero; mirrored in the browser tab title.<br>
+        <b>Toasts</b> — top-right (top-center &lt;768px), max 3 · auto-dismiss completed/info 5s, in progress 8s, warning/error persist · <code>role="alert"</code> for warning/error, <code>role="status"</code> otherwise.<br>
+        <b>A11y</b> — bell Enter/Space, panel arrow-key nav, Esc returns focus; each row carries a level label + icon <code>aria-label</code>.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
