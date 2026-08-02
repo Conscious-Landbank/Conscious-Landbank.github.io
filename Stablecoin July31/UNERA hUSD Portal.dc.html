@@ -154,7 +154,7 @@
           <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ closeNotif }}" style="position:fixed; inset:0; z-index:55;"></div>
           <div style="position:absolute; top:calc(100% + 0.6rem); right:0; width:min(340px, calc(100vw - 24px)); background:var(--panel2); border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -12px rgba(0,0,0,0.7); z-index:60; overflow:hidden;">
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1rem; border-bottom:1px solid var(--line);"><span style="font-size:0.92rem; font-weight:700;">Notifications</span><button onClick="{{ markAllRead }}" style="background:none; border:none; color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.86rem; font-weight:600;">Mark all read</button></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1rem; border-bottom:1px solid var(--line);"><span style="font-size:0.92rem; font-weight:700;">Your notifications</span><button onClick="{{ markAllRead }}" style="background:none; border:none; color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.86rem; font-weight:600;">Mark all read</button></div>
             <div role="region" aria-label="Notifications" style="max-height:340px; overflow:auto;">
               <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="4">
                 <div role="{{ n.role }}" style="display:flex; gap:0.7rem; align-items:flex-start; padding:0.8rem 1rem; border-bottom:1px solid var(--line2); background:{{ n.bg }};">
@@ -202,7 +202,7 @@
                 </sc-for>
               </div>
               <button onClick="{{ simulateWrongNet }}" style="width:100%; text-align:left; background:none; border:none; color:var(--mute); cursor:pointer; border-radius:8px; padding:0.5rem 0.6rem; font-family:var(--font-body); font-size:0.85rem;">Simulate unsupported network →</button>
-              <button onClick="{{ simulateQuoteMismatch }}" style="width:100%; text-align:left; background:none; border:none; color:var(--mute); cursor:pointer; border-radius:8px; padding:0.5rem 0.6rem; font-family:var(--font-body); font-size:0.85rem;">Simulate quote mismatch (ErrQuoteMismatch) →</button>
+              <button onClick="{{ simulateQuoteMismatch }}" style="width:100%; text-align:left; background:none; border:none; color:var(--mute); cursor:pointer; border-radius:8px; padding:0.5rem 0.6rem; font-family:var(--font-body); font-size:0.85rem;">{{ simMismatchLabel }}</button>
               <button onClick="{{ goWallets }}" style="width:100%; display:flex; align-items:center; gap:0.5rem; background:none; border:none; color:var(--dim); cursor:pointer; border-radius:8px; padding:0.55rem 0.6rem; font-family:var(--font-body); font-size:0.9rem; font-weight:600; border-top:1px solid var(--line2); margin-top:0.2rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 010-4h14v4M3 5v14a2 2 0 002 2h16v-5M18 12a2 2 0 000 4h4v-4z"/></svg>Manage wallets</button>
               <button onClick="{{ goSettings }}" style="width:100%; display:flex; align-items:center; gap:0.5rem; background:none; border:none; color:var(--dim); cursor:pointer; border-radius:8px; padding:0.55rem 0.6rem; font-family:var(--font-body); font-size:0.9rem; font-weight:600;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Payment methods</button>
               <button onClick="{{ openBanks }}" style="width:100%; display:flex; align-items:center; gap:0.5rem; background:none; border:none; color:var(--dim); cursor:pointer; border-radius:8px; padding:0.55rem 0.6rem; font-family:var(--font-body); font-size:0.9rem; font-weight:600;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-6h6v6"/></svg>Bank accounts</button>
@@ -262,12 +262,9 @@
         <div style="display:inline-flex; align-items:center; gap:0.5rem; background:var(--panel); border:1px solid var(--line); border-radius:980px; padding:0.35rem 0.85rem; margin-bottom:1.4rem;">
           <span style="width:8px; height:8px; border-radius:50%; background:{{ dataDot }};"></span>
           <span style="font-size:0.85rem; color:var(--dim); letter-spacing:0.04em;">{{ dataLabel }}</span>
-          <!-- Manual balance refresh — BE-confirmed feasible as an eth_call wrapper (Ducke 07-24); freshness age computed on FE (Kevin 2026-07) -->
-          <sc-if value="{{ dataIcon }}" hint-placeholder-val="{{ true }}">
-          <button onClick="{{ refreshBalance }}" aria-label="Refresh balance" title="Refresh balance" style="display:inline-flex; align-items:center; background:none; border:none; cursor:pointer; padding:0.1rem; margin-left:0.1rem; color:var(--mute);" style-hover="color:var(--gold)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 12a9 9 0 11-2.64-6.36M21 3v6h-6"/></svg></button>
-          </sc-if>
+          <sc-if value="{{ dataIcon }}" hint-placeholder-val="{{ true }}"><button onClick="{{ refreshBalance }}" aria-label="Refresh balance" title="Refresh balance now" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:none; border:none; color:var(--mute); cursor:pointer; border-radius:50%; padding:0;" style-hover="color:var(--teal);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg></button></sc-if>
         </div>
-        <!-- Personalized copy — "Your …" on signed-in widgets (Kevin 2026-07-30) --><div style="font-size:0.9rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Your <span style="text-transform:none;">hUSD</span> balance · connected network</div>
+        <div style="font-size:0.9rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Your <span style="text-transform:none;">hUSD</span> balance · connected network</div>
         <sc-if value="{{ showBalance }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex; align-items:baseline; gap:0.5rem;">
           <span style="font-family:var(--font-display); font-size:0.05rem; opacity:0;">$</span>
@@ -541,6 +538,12 @@
             <span style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(223,126,152,0.14); color:var(--down); border:1px solid rgba(223,126,152,0.4); border-radius:980px; padding:0.35rem 0.7rem; font-size:0.8rem; font-weight:700; white-space:nowrap;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 8v4M12 16h.01M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>{{ softLabel }}</span>
           </sc-if>
         </div>
+        <sc-if value="{{ quoteMismatch }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="display:flex; align-items:flex-start; gap:0.6rem; background:rgba(236,214,160,0.08); border:1px solid rgba(236,214,160,0.35); border-radius:12px; padding:0.85rem 1rem; margin-bottom:1.3rem; font-size:0.88rem; color:var(--dim); line-height:1.5; animation:uRise .3s ease both;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" style="flex-shrink:0; margin-top:2px;"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span><strong style="color:var(--gold);">The rate changed while you were reviewing.</strong> Your quote was refreshed to the latest rate — review the updated numbers below and confirm again.</span>
+        </div>
+        </sc-if>
         <div style="text-align:center; margin-bottom:1.5rem;">
           <div style="font-size:0.86rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">You'll receive</div>
           <div style="font-family:var(--font-display); font-weight:700; font-size:3rem; color:var(--gold-bright); font-variant-numeric:tabular-nums; line-height:1;">{{ getReceiveStr }}</div>
@@ -576,10 +579,9 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
             <span>{{ allowlistNote }}</span>
           </div>
-          <!-- Partial / wrong-amount & late-arrival policy (Ducke 07-24 edge cases — proposed copy, confirm policy with PM) -->
-          <div style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:0.6rem; font-size:0.82rem; color:var(--mute); line-height:1.5;">
+          <div style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:0.7rem; font-size:0.82rem; color:var(--mute); line-height:1.5;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-            <span>Sent a different amount? hUSD is created for the amount that actually arrives, at your locked rate. Any overpayment — or a transfer that lands after this request expires — is automatically returned to the sending address (network fees deducted).</span>
+            <span>Sent more or less than the exact amount? hUSD is created for the amount that actually arrives, at your locked rate. Overpayments and transfers after the 60-minute window are automatically returned to the sending address, minus network fees. <span style="color:var(--dim);">Proposed policy — pending PM confirmation.</span></span>
           </div>
         </div>
         </sc-if>
@@ -588,14 +590,6 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
           <span>We create your hUSD only after your payment clears and identity checks pass. The rate and fee shown here are locked in on your receipt.</span>
         </div>
-
-        <!-- Server-side quote re-verification failure (ErrQuoteMismatch — Ducke 07-24): quote is auto-refreshed, user must re-review -->
-        <sc-if value="{{ quoteMismatch }}" hint-placeholder-val="{{ false }}">
-        <div role="alert" style="display:flex; align-items:flex-start; gap:0.6rem; margin-top:1.1rem; background:rgba(223,126,152,0.08); border:1px solid rgba(223,126,152,0.32); border-radius:12px; padding:0.9rem 1rem; font-size:0.9rem; line-height:1.5;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--down)" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
-          <span style="color:var(--dim);"><strong style="color:var(--txt);">The rate changed while you were reviewing.</strong> Every quote is re-verified by our server before any money moves. Your quote has been refreshed with the current rate — please review the updated numbers above, then confirm again.</span>
-        </div>
-        </sc-if>
 
         <div style="display:flex; gap:0.7rem; margin-top:1.4rem;">
           <button onClick="{{ getBack }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:12px; padding:1rem 1.4rem; font-family:var(--font-body); font-size:0.92rem; font-weight:600;">Back</button>
@@ -1327,7 +1321,7 @@
   <div data-r="container" style="max-width:780px; margin:0 auto; padding:2.6rem 28px 5rem; animation:uRise .5s ease both;">
     <div style="margin-bottom:2rem;">
       <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:700; margin-bottom:0.5rem;">Settings</div>
-      <h1 data-r="h1" style="font-family:var(--font-display); font-weight:700; font-size:2.2rem; line-height:1.05; letter-spacing:-0.02em; margin:0;">Payment &amp; payouts</h1>
+      <h1 data-r="h1" style="font-family:var(--font-display); font-weight:700; font-size:2.2rem; line-height:1.05; letter-spacing:-0.02em; margin:0;">Your payments &amp; payouts</h1>
     </div>
 
     <!-- Payment methods (saved cards) -->
@@ -1713,7 +1707,7 @@ class Component extends DCLogic {
     screen: 'portfolio', acct: 'verified', notifOpen: false, notifReadAll: false, previewOpen: false, navOpen: false, signedOut: false,
     heroCopied: false, dataAge: 14,
     getStep: 0, getPath: 'fiat', fiatCcy: 'USD', getAmt: '5,000', getRecv: '4,995.00', getNetwork: 'Ethereum', getAsset: 'USDC',
-    quoteLeft: 60, quoteExpired: false, quoteMismatch: false, simMismatch: false, mintStage: 0, copied: false, depCopied: false,
+    quoteLeft: 60, quoteExpired: false, quoteMismatch: false, mismatchArmed: false, mintStage: 0, copied: false, depCopied: false,
     redeemStep: 0, redeemAmt: '2,500', burnStage: 0,
     walletVerified: false, signOpen: false, sigMode: 'ownership', sigTxnKind: null, _pending: null, signing: false,
     banks: [{ id: 1, name: 'RBC Royal Bank', bankShort: 'RBC', last4: '4821', holder: 'Alex Morgan', primary: true }],
@@ -1806,7 +1800,7 @@ class Component extends DCLogic {
   go(screen) {
     if (this._timers) this._timers.forEach(clearTimeout);
     this._timers = [];
-    this.setState({ screen, getStep: 0, mintStage: 0, redeemStep: 0, burnStage: 0, notifOpen: false, previewOpen: false, navOpen: false, signOpen: false, receipt: null, walletMenuOpen: false, wcOpen: false, quoteLeft: 60, quoteExpired: false, quoteMismatch: false, cardAdding: false, hardLeft: 180, hardExpired: false, coMode: 'new', coCvv: '', /* guest checkout: card form is the default */ confirmAction: null, notice: null, verifyingId: null, editingId: null });
+    this.setState({ screen, getStep: 0, mintStage: 0, quoteMismatch: false, redeemStep: 0, burnStage: 0, notifOpen: false, previewOpen: false, navOpen: false, signOpen: false, receipt: null, walletMenuOpen: false, wcOpen: false, quoteLeft: 60, quoteExpired: false, cardAdding: false, hardLeft: 180, hardExpired: false, coMode: 'new', coCvv: '', /* guest checkout: card form is the default */ confirmAction: null, notice: null, verifyingId: null, editingId: null });
     window.scrollTo(0, 0);
   }
   setAcct(acct, walletConnected) {
@@ -2533,7 +2527,7 @@ class Component extends DCLogic {
       previewStates, previewLabel: curPrev.label, previewDot: curPrev.dot,
       previewOpen: s.previewOpen, togglePreview: () => this.setState((st) => ({ previewOpen: !st.previewOpen })), closePreview: () => this.setState({ previewOpen: false }),
       dataDot: dataState.dot, dataLabel: dataState.label, dataIcon: dataState.icon,
-      refreshBalance: () => this.setState({ dataAge: 0 }), // eth_call wrapper on BE (Ducke 07-24); age restarts from 0s
+      refreshBalance: () => this.setState({ dataAge: 0 }), // eth_call wrapper on BE; age computed on FE (Ducke 07-24)
 
       // ── wallet connection (Wallet Connection spec) ──
       walletNetwork: s.walletNetwork,
@@ -2553,7 +2547,8 @@ class Component extends DCLogic {
       walletNetLabel: wrongNetwork ? (s.walletNetwork + ' · unsupported') : (s.walletNetwork + ' · connected'),
       disconnectWallet: () => this.disconnectWallet(),
       switchToEth: () => this.switchNetwork('Ethereum'), simulateWrongNet: () => this.switchNetwork('Polygon'),
-      simulateQuoteMismatch: () => { this.setState({ simMismatch: true, walletMenuOpen: false }); this.setNotice('success', 'Armed: the next purchase confirm will fail the server rate re-check (ErrQuoteMismatch).'); },
+      simulateQuoteMismatch: () => this.setState((st) => ({ mismatchArmed: !st.mismatchArmed })),
+      simMismatchLabel: s.mismatchArmed ? 'Quote mismatch armed \u00b7 confirm a purchase \u2192' : 'Simulate quote mismatch (ErrQuoteMismatch) \u2192',
       netOptions: this.SUPPORTED_NETWORKS.map((n) => ({ name: n, active: n === s.walletNetwork, action: () => this.switchNetwork(n) })),
       // connect modal
       wcOpen: s.wcOpen, closeWallet: () => this.closeWallet(),
@@ -2631,7 +2626,7 @@ class Component extends DCLogic {
       cadBg: isCad ? 'rgba(236,214,160,0.1)' : 'var(--ink2)', cadBd: isCad ? 'var(--gold)' : 'var(--line)', cadTxt: isCad ? 'var(--gold)' : 'var(--dim)',
       netEth: () => this.setState({ getNetwork: 'Ethereum' }), netBase: () => this.setState({ getNetwork: 'Base' }),
       netEthBg: neth.bg, netEthBd: neth.bd, netEthTxt: neth.txt, netBaseBg: nbase.bg, netBaseBd: nbase.bd, netBaseTxt: nbase.txt,
-      quoteLeft: s.quoteLeft, quoteExpired: s.quoteExpired,
+      quoteLeft: s.quoteLeft, quoteExpired: s.quoteExpired, quoteMismatch: s.quoteMismatch,
       quoteRateLabel, quoteDot: s.quoteExpired ? 'var(--down)' : 'var(--teal)', quoteBd: s.quoteExpired ? 'rgba(223,126,152,0.4)' : 'var(--line)',
       quoteSourceLabel: isVolatile ? 'Rate source \u00b7 exchange rate' : 'Rate source \u00b7 FX rate',
       quoteIsExchange: isVolatile, quoteIsFx: !isVolatile,
@@ -2639,24 +2634,22 @@ class Component extends DCLogic {
       quoteSourceMeta: isVolatile ? 'CoinGecko' : (isCad ? 'currency conversion, not a trade' : 'currency conversion'),
       quoteCountLabel: s.quoteExpired ? 'Quote expired' : ('Expires in ' + s.quoteLeft + 's'),
       quoteCountColor: s.quoteExpired ? 'var(--down)' : (s.quoteLeft <= 10 ? 'var(--gold)' : 'var(--mute)'),
-      refreshQuote: () => this.setState({ quoteLeft: 60, quoteExpired: false, quoteMismatch: false }),
+      refreshQuote: () => this.setState({ quoteLeft: 60, quoteExpired: false }),
       getCtaDisabled, getCtaStyle, getCtaLabel,
       getNext: () => { this.setState({ getStep: 1 }); window.scrollTo(0, 0); },
       getPrimary: () => { if (needsConnect) { this.openWallet(); return; } if (getCtaDisabled) return; this.setState({ getStep: 1 }); window.scrollTo(0, 0); },
       getConfirm: () => {
-        // Server re-verifies the quote before charging (ErrQuoteMismatch — Ducke 07-24). On mismatch: refresh quote, surface banner, require re-confirm.
-        if (s.simMismatch) { this.setState({ simMismatch: false, quoteMismatch: true, quoteLeft: 60, quoteExpired: false }); return; }
-        if (s.quoteMismatch) this.setState({ quoteMismatch: false });
-        if (cardFlow) { this.setState({ getStep: 2, hardLeft: 180, hardExpired: false, coCvv: '' }); window.scrollTo(0, 0); return; }
-        this.approveTxn(isCrypto ? 'transfer' : 'none', () => { this.setState({ getStep: 3 }); this.startMint(); window.scrollTo(0, 0); });
+        // server verifies the quote before executing — on ErrQuoteMismatch the quote auto-refreshes and the user must re-confirm (Ducke 07-24)
+        if (s.mismatchArmed) { this.setState({ mismatchArmed: false, quoteMismatch: true, quoteLeft: 60, quoteExpired: false }); return; }
+        if (cardFlow) { this.setState({ getStep: 2, quoteMismatch: false, hardLeft: 180, hardExpired: false, coCvv: '' }); window.scrollTo(0, 0); return; }
+        this.approveTxn(isCrypto ? 'transfer' : 'none', () => { this.setState({ getStep: 3, quoteMismatch: false }); this.startMint(); window.scrollTo(0, 0); });
       },
       getConfirmLabel: cardFlow ? 'Confirm rate \u2192 enter card' : 'Confirm & purchase',
-      getBack: () => this.setState({ getStep: Math.max(0, s.getStep - 1) }),
+      getBack: () => this.setState({ getStep: Math.max(0, s.getStep - 1), quoteMismatch: false }),
       getReset: () => this.go('portfolio'),
       // ── step 2 review soft-lock chip (~60s, latest rate) ──
       softLabel: s.quoteExpired ? 'Rate expired \u2014 refresh' : ('Rate locked for 0:' + String(s.quoteLeft).padStart(2, '0')),
       softExpiring: !s.quoteExpired && s.quoteLeft <= 15, softExpired: s.quoteExpired, softActive: !s.quoteExpired,
-      quoteMismatch: s.quoteMismatch, // server rate re-check failed (ErrQuoteMismatch) — banner on Review step
       // ── step 3 CARD CHECKOUT (hard-lock, Paysafe) ──
       savedCardList, hasSavedCards: s.cards.length > 0,
       coSaved: s.coMode === 'saved', coNew: s.coMode === 'new',
