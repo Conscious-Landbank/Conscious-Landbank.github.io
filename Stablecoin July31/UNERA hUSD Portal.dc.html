@@ -120,7 +120,6 @@
           <button onClick="{{ goSlot1 }}" style="{{ navSlot1Style }}"><sc-if value="{{ navSlot1Active }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">{{ slot1Label }}</span></button>
           <button onClick="{{ goGet }}" style="{{ navGetStyle }}"><sc-if value="{{ navGetActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Get <span style="text-transform:none;">hUSD</span></span></button>
           <button onClick="{{ goRedeem }}" style="{{ navRedeemStyle }}"><sc-if value="{{ navRedeemActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Redeem</span></button>
-          <button onClick="{{ goPor }}" style="{{ navPorStyle }}"><sc-if value="{{ navPorActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Proof of Reserve</span></button>
           <button onClick="{{ goActivity }}" style="{{ navActivityStyle }}"><sc-if value="{{ navActivityActive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; background:rgba(236,214,160,0.15); border-radius:980px;"></span></sc-if><span style="position:relative;">Activity</span></button>
         </div>
       </div>
@@ -154,12 +153,18 @@
           <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ closeNotif }}" style="position:fixed; inset:0; z-index:55;"></div>
           <div style="position:absolute; top:calc(100% + 0.6rem); right:0; width:min(340px, calc(100vw - 24px)); background:var(--panel2); border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -12px rgba(0,0,0,0.7); z-index:60; overflow:hidden;">
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1rem; border-bottom:1px solid var(--line);"><span style="font-size:0.92rem; font-weight:700;">Your notifications</span><button onClick="{{ markAllRead }}" style="background:none; border:none; color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.86rem; font-weight:600;">Mark all read</button></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.6rem; padding:0.85rem 1rem; border-bottom:1px solid var(--line);"><span style="font-size:0.92rem; font-weight:700;">Your notifications</span><div style="display:flex; align-items:center; gap:0.75rem;"><button onClick="{{ markAllRead }}" style="background:none; border:none; color:var(--dim); cursor:pointer; font-family:var(--font-body); font-size:0.84rem; font-weight:600;" style-hover="color:var(--gold)">Mark all read</button><button onClick="{{ goNotifications }}" style="background:none; border:none; color:var(--gold); cursor:pointer; font-family:var(--font-body); font-size:0.84rem; font-weight:700;">View all →</button></div></div>
             <div role="region" aria-label="Notifications" style="max-height:340px; overflow:auto;">
               <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="4">
                 <div role="{{ n.role }}" style="display:flex; gap:0.7rem; align-items:flex-start; padding:0.8rem 1rem; border-bottom:1px solid var(--line2); background:{{ n.bg }};">
                   <span style="width:30px; height:30px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:{{ n.iconBg }}; color:{{ n.iconColor }};"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="{{ n.iconPath }}"/></svg></span>
-                  <div style="flex:1; min-width:0;"><div style="font-size:0.875rem; font-weight:600; color:var(--txt);">{{ n.title }}</div><div style="font-size:0.86rem; color:var(--dim); line-height:1.4; margin-top:0.1rem;">{{ n.body }}</div><div style="font-size:0.8rem; color:var(--mute); margin-top:0.25rem;">{{ n.time }}</div></div>
+                  <div role="button" tabIndex="0" onClick="{{ n.open }}" style="flex:1; min-width:0; cursor:pointer; outline:none;">
+                    <div style="font-size:0.875rem; font-weight:600; color:var(--txt);">{{ n.title }}</div>
+                    <div style="font-size:0.86rem; color:var(--dim); line-height:1.4; margin-top:0.1rem;">{{ n.body }}</div>
+                    <div style="display:flex; align-items:center; gap:0.6rem; margin-top:0.25rem;"><span style="font-size:0.8rem; color:var(--mute);">{{ n.time }}</span><span style="font-size:0.8rem; color:var(--gold); font-weight:700;">{{ n.cta }} →</span></div>
+                  </div>
+                  <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ false }}"><span style="width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:6px;"></span></sc-if>
+                  <button onClick="{{ n.dismiss }}" aria-label="Dismiss notification" style="width:22px; height:22px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:none; border:none; color:var(--mute); cursor:pointer; border-radius:50%; padding:0;" style-hover="color:var(--down)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
                 </div>
               </sc-for>
               <sc-if value="{{ notifsEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:2.4rem 1rem; text-align:center; color:var(--mute); font-size:0.9rem;">You’re all caught up</div></sc-if>
@@ -220,7 +225,6 @@
       <button onClick="{{ goSlot1 }}" style="display:flex; align-items:center; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:600; color:{{ dwPortfolio }}; padding:0.82rem 0.5rem; border-radius:10px;">{{ slot1Label }}</button>
       <button onClick="{{ goGet }}" style="display:flex; align-items:center; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:600; color:{{ dwGet }}; padding:0.82rem 0.5rem; border-radius:10px;">Get hUSD</button>
       <button onClick="{{ goRedeem }}" style="display:flex; align-items:center; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:600; color:{{ dwRedeem }}; padding:0.82rem 0.5rem; border-radius:10px;">Redeem</button>
-      <button onClick="{{ goPor }}" style="display:flex; align-items:center; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:600; color:{{ dwPor }}; padding:0.82rem 0.5rem; border-radius:10px;">Proof of Reserve</button>
       <button onClick="{{ goActivity }}" style="display:flex; align-items:center; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:600; color:{{ dwActivity }}; padding:0.82rem 0.5rem; border-radius:10px;">Activity</button>
       <button onClick="{{ goWallets }}" style="display:flex; align-items:center; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:600; color:{{ dwWallets }}; padding:0.82rem 0.5rem; border-radius:10px;">Wallets</button>
       <button onClick="{{ goSettings }}" style="display:flex; align-items:center; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.98rem; font-weight:600; color:{{ dwSettings }}; padding:0.82rem 0.5rem; border-radius:10px;">Payment methods</button>
@@ -429,23 +433,6 @@
         </button>
       </div>
 
-      <!-- funding method (fiat): Card = Paysafe rail (SAD-9) · bank transfer -->
-      <sc-if value="{{ showFundMethod }}" hint-placeholder-val="{{ true }}">
-      <div style="margin-bottom:1.3rem;">
-        <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600; margin-bottom:0.6rem;">Funding method</div>
-        <div style="display:flex; gap:0.5rem;">
-          <button onClick="{{ setFundCard }}" style="flex:1; display:flex; align-items:center; gap:0.55rem; background:{{ fundCardBg }}; border:1px solid {{ fundCardBd }}; color:{{ fundCardTxt }}; cursor:pointer; border-radius:10px; padding:0.7rem 0.85rem; font-family:var(--font-body); text-align:left;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-            <span style="display:flex; flex-direction:column; gap:0.1rem;"><span style="font-size:0.92rem; font-weight:700;">Card</span><span style="font-size:0.8rem; color:var(--dim);">Instant · Visa · Mastercard</span></span>
-          </button>
-          <button onClick="{{ setFundBank }}" style="flex:1; display:flex; align-items:center; gap:0.55rem; background:{{ fundBankBg }}; border:1px solid {{ fundBankBd }}; color:{{ fundBankTxt }}; cursor:pointer; border-radius:10px; padding:0.7rem 0.85rem; font-family:var(--font-body); text-align:left;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-6h6v6"/></svg>
-            <span style="display:flex; flex-direction:column; gap:0.1rem;"><span style="font-size:0.92rem; font-weight:700;">Bank transfer</span><span style="font-size:0.8rem; color:var(--dim);">1–2 business days</span></span>
-          </button>
-        </div>
-      </div>
-      </sc-if>
-
       <!-- fiat funding currency (USD / CAD as FX + markup — issuance, not a swap) -->
       <sc-if value="{{ showFiatCcy }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex; align-items:center; gap:0.7rem; margin-bottom:1.3rem;">
@@ -518,6 +505,9 @@
         <div style="display:flex; justify-content:space-between; gap:1rem; padding-top:0.7rem;"><span style="font-size:0.9rem; color:var(--dim);">{{ quoteSourceLabel }}</span><sc-if value="{{ quoteIsExchange }}" hint-placeholder-val="{{ false }}"><a href="{{ quoteSourceHref }}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:0.3rem; font-size:0.9rem; color:var(--teal); text-decoration:none;">{{ quoteSourceMeta }}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M9 7h8v8"/></svg></a></sc-if><sc-if value="{{ quoteIsFx }}" hint-placeholder-val="{{ true }}"><span style="font-size:0.9rem; color:var(--mute);">{{ quoteSourceMeta }}</span></sc-if></div>
         <div style="display:flex; justify-content:space-between; margin-top:0.4rem;"><span style="font-size:0.9rem; color:var(--dim);">Purchase fee · 0.10%</span><span style="font-size:0.9rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ getFeeStr }}</span></div>
         <div style="display:flex; justify-content:space-between; margin-top:0.4rem;"><span style="font-size:0.9rem; color:var(--dim);">Daily remaining limit · L2</span><span style="font-size:0.9rem; font-weight:600; color:var(--dim); font-variant-numeric:tabular-nums;">$45,000</span></div>
+        <sc-if value="{{ isCrypto }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:flex-start; gap:0.45rem; margin-top:0.75rem; padding-top:0.7rem; border-top:1px solid var(--line2); font-size:0.82rem; color:var(--mute); line-height:1.5;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"/></svg><span>The exact hUSD received can differ slightly (up to ±0.5%) if the market moves while your transfer confirms — your receipt shows the final rate.</span></div>
+        </sc-if>
       </div>
 
       <button onClick="{{ getPrimary }}" disabled="{{ getCtaDisabled }}" style="{{ getCtaStyle }}">{{ getCtaLabel }}</button>
@@ -557,6 +547,9 @@
           <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.92rem; color:var(--dim);">Destination</span><span style="font-family:ui-monospace,Menlo,monospace; font-size:0.875rem; font-weight:600; color:var(--teal);">0x74…3a8f</span></div>
           <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem 0 0.7rem;"><span style="font-size:0.98rem; font-weight:700; color:var(--txt);">Total received</span><span style="font-size:0.95rem; font-weight:700; color:var(--gold-bright); font-variant-numeric:tabular-nums;">{{ getReceiveStr }} hUSD</span></div>
         </div>
+        <sc-if value="{{ isCrypto }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:flex-start; gap:0.45rem; margin-top:0.7rem; padding:0 0.2rem; font-size:0.82rem; color:var(--mute); line-height:1.5;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"/></svg><span>The exact hUSD received can differ slightly (up to ±0.5%) if the market moves while your transfer confirms — your receipt shows the final rate.</span></div>
+        </sc-if>
 
         <sc-if value="{{ isCrypto }}" hint-placeholder-val="{{ true }}">
         <div style="margin-top:1rem; background:rgba(67,192,173,0.07); border:1px solid rgba(67,192,173,0.22); border-radius:12px; padding:1.1rem;">
@@ -604,13 +597,14 @@
     </div>
     </sc-if>
 
-    <!-- STEP 2: CARD CHECKOUT (hard-lock · Paysafe hosted fields) -->
+    <!-- STEP 2: PAY — method chosen here (V5 07-24) · Card = Paysafe hard-lock · Bank = transfer instructions (V4) -->
     <sc-if value="{{ getStep2 }}" hint-placeholder-val="{{ false }}">
     <div style="max-width:520px; margin:0 auto; animation:uRise .4s ease both;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.35rem;">
-          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0;">Card details</h2>
-          <sc-if value="{{ hardNormal }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.9rem;">
+          <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0;">{{ payStepTitle }}</h2>
+          <sc-if value="{{ coCard }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ hardNormal }}" hint-placeholder-val="{{ false }}">
             <span style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(236,214,160,0.1); color:var(--gold); border:1px solid var(--gold); border-radius:980px; padding:0.35rem 0.7rem; font-size:0.8rem; font-weight:700; white-space:nowrap; font-variant-numeric:tabular-nums;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Rate held · pay within {{ hardLabel }}</span>
           </sc-if>
           <sc-if value="{{ hardExpiring }}" hint-placeholder-val="{{ false }}">
@@ -619,7 +613,26 @@
           <sc-if value="{{ hardExpired }}" hint-placeholder-val="{{ false }}">
             <span style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(223,126,152,0.14); color:var(--down); border:1px solid rgba(223,126,152,0.4); border-radius:980px; padding:0.35rem 0.7rem; font-size:0.8rem; font-weight:700; white-space:nowrap;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 8v4M12 16h.01M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>Quote expired</span>
           </sc-if>
+          </sc-if>
         </div>
+        <!-- funding method — moved off the Amount step to the Pay step (V5, 07-24 call) -->
+        <div style="display:flex; gap:0.5rem; margin-bottom:1.2rem;">
+          <button onClick="{{ setFundCard }}" style="flex:1; display:flex; align-items:center; gap:0.55rem; background:{{ fundCardBg }}; border:1px solid {{ fundCardBd }}; color:{{ fundCardTxt }}; cursor:pointer; border-radius:10px; padding:0.7rem 0.85rem; font-family:var(--font-body); text-align:left;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"/></svg>
+            <span style="display:flex; flex-direction:column; gap:0.1rem;"><span style="font-size:0.92rem; font-weight:700;">Card</span><span style="font-size:0.8rem; color:var(--dim);">Instant · Visa · Mastercard</span></span>
+          </button>
+          <button onClick="{{ setFundBank }}" style="flex:1; display:flex; align-items:center; gap:0.55rem; background:{{ fundBankBg }}; border:1px solid {{ fundBankBd }}; color:{{ fundBankTxt }}; cursor:pointer; border-radius:10px; padding:0.7rem 0.85rem; font-family:var(--font-body); text-align:left;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-6h6v6"/></svg>
+            <span style="display:flex; flex-direction:column; gap:0.1rem;"><span style="font-size:0.92rem; font-weight:700;">Bank transfer</span><span style="font-size:0.8rem; color:var(--dim);">1–2 business days</span></span>
+          </button>
+        </div>
+        <sc-if value="{{ coUnpicked }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--ink2); border-radius:12px; padding:1rem 1.1rem; font-size:0.9rem; color:var(--dim); line-height:1.5;">Pick how you'd like to fund this purchase. Card is instant with a short rate lock; bank transfer shows exact wire details to send from your bank.</div>
+        <div style="display:flex; gap:0.7rem; margin-top:1.4rem;">
+          <button onClick="{{ getBack }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:12px; padding:1rem 1.4rem; font-family:var(--font-body); font-size:0.92rem; font-weight:600;">Back</button>
+        </div>
+        </sc-if>
+        <sc-if value="{{ coCard }}" hint-placeholder-val="{{ false }}">
         <p style="font-size:0.9rem; color:var(--dim); margin:0 0 1.2rem; line-height:1.5;">Your rate is locked while the timer runs. We only charge your card when you press Confirm &amp; Pay.</p>
 
         <!-- order summary -->
@@ -686,7 +699,7 @@
               <label style="flex:1; display:block;"><span style="display:block; font-size:0.85rem; color:var(--dim); margin-bottom:0.3rem;">Country</span><input value="{{ cardFormCountry }}" onInput="{{ onCardCountry }}" placeholder="United States" style="width:100%; box-sizing:border-box; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:0.6rem 0.75rem; color:var(--txt); font-family:var(--font-body); font-size:0.9rem; outline:none;"></label>
             </div>
           </div>
-          <div style="font-size:0.8rem; color:var(--mute); margin-top:0.6rem; line-height:1.45;">Billing ZIP &amp; country are required for card verification (AVS).</div>
+          <div style="font-size:0.8rem; color:var(--mute); margin-top:0.6rem; line-height:1.45;">Name and billing details are pre-filled from your verified profile — edit them if your card differs. Billing ZIP &amp; country are required for card verification (AVS).</div>
           <!-- One-Time Guest Checkout (Ducke, #collab-be Jul 7) — no card saving this phase -->
           <div style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:0.9rem; font-size:0.84rem; color:var(--mute); line-height:1.45;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>One-time guest checkout — your card is tokenized by Paysafe for this payment only and never stored by UNERA.</span></div>
         </div>
@@ -701,6 +714,54 @@
         <div style="display:flex; gap:0.7rem; margin-top:1.4rem;">
           <button onClick="{{ getBack }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:12px; padding:1rem 1.4rem; font-family:var(--font-body); font-size:0.92rem; font-weight:600;">Back</button>
           <button onClick="{{ coPayNow }}" disabled="{{ hardExpired }}" style="{{ payNowStyle }}">{{ payNowLabel }}</button>
+        </div>
+        </sc-if>
+        </sc-if>
+
+        <!-- BANK TRANSFER instructions (V4, 07-24 call · mirrors the crypto deposit card) -->
+        <sc-if value="{{ coBank }}" hint-placeholder-val="{{ false }}">
+        <p style="font-size:0.9rem; color:var(--dim); margin:0 0 1.2rem; line-height:1.5;">Send <strong style="color:var(--txt); font-variant-numeric:tabular-nums;">{{ coPayAmount }}</strong> from your bank using the details below. We create your hUSD after the transfer arrives and clears review.</p>
+        <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:600; margin-bottom:0.6rem;">Receiving account</div>
+        <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1.1rem;">
+          <sc-for list="{{ recvAccounts }}" as="b" hint-placeholder-count="2">
+            <button onClick="{{ b.select }}" style="display:flex; align-items:center; gap:0.7rem; width:100%; text-align:left; background:{{ b.rowBg }}; border:1.5px solid {{ b.rowBd }}; border-radius:12px; padding:0.75rem 0.95rem; cursor:pointer; font-family:var(--font-body);">
+              <span style="width:18px; height:18px; border-radius:50%; border:1.5px solid {{ b.radioBd }}; background:{{ b.radioBg }}; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#06140d; font-size:0.65rem; font-weight:800;">{{ b.radioMark }}</span>
+              <span style="flex:1; min-width:0; display:flex; flex-direction:column; gap:0.1rem;"><span style="font-size:0.93rem; font-weight:700; color:var(--txt);">{{ b.bank }}</span><span style="font-size:0.8rem; color:var(--mute);">{{ b.sub }}</span></span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="background:rgba(67,192,173,0.07); border:1px solid rgba(67,192,173,0.22); border-radius:12px; padding:1.1rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.8rem;">
+            <span style="font-size:0.86rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); font-weight:700;">Make your transfer</span>
+            <span style="font-size:0.8rem; color:var(--mute); display:inline-flex; align-items:center; gap:0.3rem;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>details valid for 24 h</span>
+          </div>
+          <div data-r="flexwrap" style="display:flex; gap:1rem; align-items:flex-start;">
+            <div style="flex-shrink:0; text-align:center;">
+              <div style="padding:7px; background:#fff; border-radius:10px; line-height:0; display:inline-block;">{{ bankQr }}</div>
+              <div style="font-size:0.76rem; color:var(--mute); margin-top:0.4rem; max-width:146px; line-height:1.4;">Scan in your mobile banking app to pre-fill the transfer</div>
+            </div>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
+              <sc-for list="{{ bankRows }}" as="f" hint-placeholder-count="6">
+                <div style="display:flex; align-items:center; gap:0.6rem; padding:0.45rem 0; border-bottom:1px solid var(--line2);">
+                  <span style="width:104px; flex-shrink:0; font-size:0.8rem; color:var(--mute);">{{ f.label }}</span>
+                  <span style="flex:1; min-width:0; font-family:ui-monospace,Menlo,monospace; font-size:0.84rem; color:{{ f.color }}; font-weight:{{ f.weight }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ f.value }}</span>
+                  <button onClick="{{ f.copy }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:7px; padding:0.22rem 0.5rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600; flex-shrink:0; width:58px; text-align:left;">{{ f.copyLabel }}</button>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:0.85rem; padding-top:0.85rem; border-top:1px solid var(--line2); font-size:0.86rem; color:var(--down); line-height:1.45;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <span>Include the reference code exactly as shown — it's how we match your transfer to this request. It's unique to this request and never reused.</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:0.7rem; font-size:0.82rem; color:var(--mute); line-height:1.5;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"/></svg>
+            <span>Receiving accounts are issued per request and can change — always use the details shown here, not saved ones. Your rate and fee are locked on your receipt once the transfer arrives within the window.</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.7rem; margin-top:1.4rem;">
+          <button onClick="{{ getBack }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:12px; padding:1rem 1.4rem; font-family:var(--font-body); font-size:0.92rem; font-weight:600;">Back</button>
+          <button onClick="{{ bankSent }}" style="flex:1; background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color:#3a2c08; border:none; cursor:pointer; font-family:var(--font-body); font-size:0.96rem; font-weight:700; border-radius:12px; box-shadow:0 10px 30px -8px rgba(236,214,160,0.45);">I've sent the transfer</button>
         </div>
         </sc-if>
       </div>
@@ -908,6 +969,52 @@
   </div>
   </sc-if>
 
+  <!-- ═══════════════ NOTIFICATIONS (full page — Unera-platform-inspired, stablecoin context) ═══════════════ -->
+  <sc-if value="{{ isNotifications }}" hint-placeholder-val="{{ false }}">
+  <div data-r="container" data-screen-label="Notifications" style="max-width:880px; margin:0 auto; padding:2.6rem 28px 5rem;">
+    <div style="margin-bottom:1.8rem; animation:uRise .5s ease both;">
+      <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:700; margin-bottom:0.7rem;">Notification centre</div>
+      <h1 data-r="h1" style="font-family:var(--font-display); font-weight:700; font-size:2.4rem; line-height:1.05; letter-spacing:-0.02em; margin:0 0 0.5rem;">Your notifications</h1>
+      <p style="font-size:1rem; color:var(--dim); margin:0; line-height:1.55;">Updates on your purchases, redemptions and identity verification, plus service announcements. Selecting one takes you to where the action is.</p>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.2rem;">
+      <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+        <sc-for list="{{ notifFilters }}" as="f" hint-placeholder-count="5">
+          <button onClick="{{ f.action }}" style="background:{{ f.bg }}; border:1px solid {{ f.bd }}; color:{{ f.color }}; cursor:pointer; border-radius:980px; padding:0.45rem 0.95rem; font-family:var(--font-body); font-size:0.875rem; font-weight:600;">{{ f.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:0.5rem;">
+        <button onClick="{{ markAllRead }}" style="background:none; border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:980px; padding:0.45rem 0.95rem; font-family:var(--font-body); font-size:0.86rem; font-weight:600;" style-hover="color:var(--gold); border-color:var(--gold)">Mark all as read</button>
+        <button onClick="{{ clearAllNotifs }}" style="background:none; border:1px solid var(--line); color:var(--dim); cursor:pointer; border-radius:980px; padding:0.45rem 0.95rem; font-family:var(--font-body); font-size:0.86rem; font-weight:600;" style-hover="color:var(--down); border-color:var(--down)">Clear all</button>
+      </div>
+    </div>
+    <sc-for list="{{ notifPage }}" as="n" hint-placeholder-count="5">
+      <div role="button" tabIndex="0" onClick="{{ n.open }}" style="display:flex; gap:1rem; align-items:flex-start; background:{{ n.cardBg }}; border:1px solid {{ n.cardBd }}; border-radius:16px; padding:1.2rem 1.3rem; margin-bottom:0.8rem; cursor:pointer; transition:border-color .2s, transform .2s; animation:uRise .4s ease both; outline:none;" style-hover="border-color:var(--gold); transform:translateY(-2px)">
+        <span style="width:44px; height:44px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:{{ n.iconBg }}; color:{{ n.iconColor }};"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="{{ n.iconPath }}"/></svg></span>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:{{ n.lvlColor }}; margin-bottom:0.2rem;">{{ n.lvlLabel }}</div>
+          <div style="font-size:1rem; font-weight:700; color:var(--txt);">{{ n.title }}</div>
+          <div style="font-size:0.9rem; color:var(--dim); line-height:1.5; margin-top:0.15rem;">{{ n.body }}</div>
+          <sc-if value="{{ n.hasRef }}" hint-placeholder-val="{{ false }}"><div style="font-family:ui-monospace,Menlo,monospace; font-size:0.78rem; color:var(--mute); margin-top:0.3rem;">{{ n.ref }}</div></sc-if>
+          <div style="display:flex; align-items:center; gap:1rem; margin-top:0.55rem;">
+            <span style="font-size:0.875rem; font-weight:700; color:var(--gold);">{{ n.cta }} →</span>
+            <span style="font-size:0.8rem; color:var(--mute); margin-left:auto;">{{ n.time }}</span>
+          </div>
+        </div>
+        <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ false }}"><span style="width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:8px;"></span></sc-if>
+        <button onClick="{{ n.dismiss }}" aria-label="Dismiss notification" style="width:26px; height:26px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:none; border:none; color:var(--mute); cursor:pointer; border-radius:50%; padding:0;" style-hover="color:var(--down)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+    </sc-for>
+    <sc-if value="{{ notifPageEmpty }}" hint-placeholder-val="{{ false }}">
+    <div style="text-align:center; padding:4rem 2rem; background:var(--panel); border:2px dashed var(--line); border-radius:18px;">
+      <div style="width:60px; height:60px; margin:0 auto 1.1rem; display:flex; align-items:center; justify-content:center; background:var(--ink2); border-radius:14px; color:var(--teal);"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div style="font-family:var(--font-display); font-size:1.4rem; font-weight:700; margin-bottom:0.4rem;">{{ notifEmptyTitle }}</div>
+      <div style="font-size:0.95rem; color:var(--dim); max-width:420px; margin:0 auto; line-height:1.55;">{{ notifEmptyText }}</div>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
   <!-- ═══════════════ PROOF OF RESERVE ═══════════════ -->
   <sc-if value="{{ isPor }}" hint-placeholder-val="{{ true }}">
   <div data-r="container" style="max-width:1240px; margin:0 auto; padding:2.6rem 28px 5rem;">
@@ -920,11 +1027,17 @@
       </div>
       <h1 data-r="h1" style="font-family:var(--font-display); font-weight:700; font-size:2rem; line-height:1.05; letter-spacing:-0.02em; margin:0 0 0.3rem;">Proof of reserve</h1>
       <p style="font-size:0.95rem; color:var(--dim); margin:0 0 0.9rem; line-height:1.5;">Every hUSD is backed 1:1 by cash and short-term U.S. government bonds, checked daily by an independent auditor and published for anyone to verify.</p>
-      <div style="display:inline-flex; align-items:center; gap:0.6rem; background:var(--ink2); border:1px solid var(--line); border-radius:10px; padding:0.55rem 0.9rem;">
-        <span style="font-size:0.8rem; color:var(--mute); letter-spacing:0.06em;">hUSD contract</span>
-        <span style="font-family:ui-monospace,Menlo,monospace; font-size:0.88rem; color:var(--teal);">0x9f2A4c8E…b41E093f</span>
-        <button onClick="{{ copyAddr }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:7px; padding:0.25rem 0.55rem; font-family:var(--font-body); font-size:0.78rem; font-weight:600;" style-hover="border-color:var(--gold); color:var(--gold)">{{ copyLabel }}</button>
-        <a href="#" onClick="{{ stop }}" style="font-size:0.8rem; color:var(--teal); text-decoration:none; font-weight:600;">Explorer ↗</a>
+      <!-- V4 08-03 (Kevin): the single contract list lives here at the top; duplicate in Proof & audit reports removed -->
+      <div style="display:flex; flex-direction:column; background:var(--ink2); border:1px solid var(--line); border-radius:10px; padding:0.3rem 0.9rem; width:100%; box-sizing:border-box;">
+        <div style="font-size:0.8rem; color:var(--mute); letter-spacing:0.06em; padding:0.35rem 0 0.2rem;">hUSD contract addresses · one per network</div>
+        <sc-for list="{{ contracts }}" as="c" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; gap:0.6rem; padding:0.38rem 0; border-top:1px solid var(--line2);">
+            <span style="display:inline-flex; align-items:center; gap:0.35rem; width:86px; flex-shrink:0; font-size:0.82rem; color:var(--dim); font-weight:600;"><span style="width:7px; height:7px; border-radius:50%; background:{{ c.dot }};"></span>{{ c.net }}</span>
+            <span title="{{ c.addr }}" style="font-family:ui-monospace,Menlo,monospace; font-size:0.82rem; color:var(--teal); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ c.addr }}</span>
+            <button onClick="{{ c.copy }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:7px; padding:0.22rem 0.5rem; font-family:var(--font-body); font-size:0.76rem; font-weight:600; flex-shrink:0; width:58px; text-align:left;" style-hover="border-color:var(--gold); color:var(--gold)">{{ c.copyLabel }}</button>
+            <a href="#" onClick="{{ stop }}" style="font-size:0.78rem; color:var(--teal); text-decoration:none; font-weight:600; flex-shrink:0; width:76px; white-space:nowrap;">{{ c.explorer }} ↗</a>
+          </div>
+        </sc-for>
       </div>
     </div>
     </sc-if>
@@ -1011,23 +1124,14 @@
       </div>
 
       <div style="display:flex; flex-direction:column; gap:1.2rem;">
-        <div data-r="g2phone" style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; flex:1;">
-          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
+        <!-- V4 08-03 (Kevin): Excess reserves + Avg. maturity removed — tedious to sync; reserve breakdown below covers it -->
+        <div data-r="g2phone" style="display:grid; grid-template-columns:1fr; gap:1.2rem; flex:1;">
+          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem; display:flex; flex-direction:column; justify-content:center;">
             <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Total reserves</div>
             <div><span data-count-to="1315.2" data-dec="1" data-prefix="$" data-suffix="M" style="font-family:var(--font-display); font-weight:700; font-size:2.1rem; font-variant-numeric:tabular-nums;">$1,315.2M</span></div>
             <div style="font-size:0.85rem; color:var(--dim); margin-top:0.2rem;">backing $1,284.6M hUSD</div>
           </div>
-          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
-            <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Excess reserves</div>
-            <div><span data-count-to="30.6" data-dec="1" data-prefix="$" data-suffix="M" style="font-family:var(--font-display); font-weight:700; font-size:2.1rem; color:var(--up); font-variant-numeric:tabular-nums;">$30.6M</span></div>
-            <div style="font-size:0.85rem; color:var(--dim); margin-top:0.2rem;">capital buffer above 1:1</div>
-          </div>
-          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
-            <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Avg. maturity</div>
-            <div><span style="font-family:var(--font-display); font-weight:700; font-size:2.1rem; font-variant-numeric:tabular-nums;">21</span><span style="font-size:1rem; color:var(--dim); font-weight:600;"> days</span></div>
-            <div style="font-size:0.85rem; color:var(--dim); margin-top:0.2rem;">short-dated, liquid</div>
-          </div>
-          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem;">
+          <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.5rem; display:flex; flex-direction:column; justify-content:center;">
             <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--mute); font-weight:600; margin-bottom:0.7rem;">Last audit</div>
             <div style="font-family:var(--font-display); font-weight:700; font-size:2.1rem;">Today</div>
             <div style="font-size:0.85rem; color:var(--teal); margin-top:0.2rem;">by Grant Thornton ↗</div>
@@ -1040,22 +1144,33 @@
     <div data-r="g2" style="display:grid; grid-template-columns:1fr 1.3fr; gap:1.2rem; margin-bottom:1.2rem;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
         <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1.2rem;"><span style="font-size:0.95rem; font-weight:700;">Reserve composition</span><span style="font-size:0.85rem; color:var(--mute);">updated 14s ago</span></div>
+        <!-- V3 07-24: hover/focus any slice or legend row to read its $ and % -->
         <div data-r="flexwrap" style="display:flex; align-items:center; gap:1.6rem;">
           <div style="position:relative; width:150px; height:150px; flex-shrink:0;">
-            <svg viewBox="0 0 200 200" style="width:100%; height:100%; transform:rotate(-90deg);">
-              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--ink2)" stroke-width="26"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--treasury)" stroke-width="26" pathLength="100" stroke-dasharray="64 36" stroke-dashoffset="0"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--cash)" stroke-width="26" pathLength="100" stroke-dasharray="22 78" stroke-dashoffset="-64"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bank)" stroke-width="26" pathLength="100" stroke-dasharray="9 91" stroke-dashoffset="-86"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--stable)" stroke-width="26" pathLength="100" stroke-dasharray="5 95" stroke-dashoffset="-95"/>
+            <svg viewBox="0 0 200 200" style="width:100%; height:100%; transform:rotate(-90deg); overflow:visible;">
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--ink2)" stroke-width="26"></circle>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--treasury)" stroke-width="{{ d0sw }}" pathLength="100" stroke-dasharray="64 36" stroke-dashoffset="0" opacity="{{ d0op }}" onMouseEnter="{{ d0hov }}" onMouseLeave="{{ donutUnhov }}" style="cursor:pointer; transition:opacity .15s;"></circle>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--cash)" stroke-width="{{ d1sw }}" pathLength="100" stroke-dasharray="22 78" stroke-dashoffset="-64" opacity="{{ d1op }}" onMouseEnter="{{ d1hov }}" onMouseLeave="{{ donutUnhov }}" style="cursor:pointer; transition:opacity .15s;"></circle>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bank)" stroke-width="{{ d2sw }}" pathLength="100" stroke-dasharray="9 91" stroke-dashoffset="-86" opacity="{{ d2op }}" onMouseEnter="{{ d2hov }}" onMouseLeave="{{ donutUnhov }}" style="cursor:pointer; transition:opacity .15s;"></circle>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--stable)" stroke-width="{{ d3sw }}" pathLength="100" stroke-dasharray="5 95" stroke-dashoffset="-95" opacity="{{ d3op }}" onMouseEnter="{{ d3hov }}" onMouseLeave="{{ donutUnhov }}" style="cursor:pointer; transition:opacity .15s;"></circle>
             </svg>
-            <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;"><span style="font-family:var(--font-display); font-weight:700; font-size:1.3rem;">5</span><span style="font-size:0.78rem; color:var(--mute);">asset types</span></div>
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none;">
+              <sc-if value="{{ donutHovOn }}" hint-placeholder-val="{{ false }}">
+                <span style="font-family:var(--font-display); font-weight:700; font-size:1.2rem; font-variant-numeric:tabular-nums;">{{ donutHovUsd }}</span>
+                <span style="font-size:0.78rem; color:var(--teal); font-weight:700;">{{ donutHovPct }} of reserves</span>
+                <span style="font-size:0.72rem; color:var(--mute); max-width:92px; line-height:1.25; margin-top:0.15rem;">{{ donutHovName }}</span>
+              </sc-if>
+              <sc-if value="{{ donutHovOff }}" hint-placeholder-val="{{ true }}">
+                <span style="font-family:var(--font-display); font-weight:700; font-size:1.3rem;">4</span><span style="font-size:0.78rem; color:var(--mute);">asset types</span>
+              </sc-if>
+            </div>
           </div>
-          <div style="flex:1; display:flex; flex-direction:column; gap:0.7rem;">
-            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--treasury);"></span><span style="flex:1; font-size:0.9rem; color:var(--dim);">U.S. Treasury bills</span><span style="font-size:0.9rem; font-weight:700; font-variant-numeric:tabular-nums;">64%</span></div>
-            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--cash);"></span><span style="flex:1; font-size:0.9rem; color:var(--dim);">Cash at banks</span><span style="font-size:0.9rem; font-weight:700; font-variant-numeric:tabular-nums;">22%</span></div>
-            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--bank);"></span><span style="flex:1; font-size:0.9rem; color:var(--dim);">Overnight repo</span><span style="font-size:0.9rem; font-weight:700; font-variant-numeric:tabular-nums;">9%</span></div>
-            <div style="display:flex; align-items:center; gap:0.55rem;"><span style="width:10px;height:10px;border-radius:3px;background:var(--stable);"></span><span style="flex:1; font-size:0.9rem; color:var(--dim);">USDC (transit)</span><span style="font-size:0.9rem; font-weight:700; font-variant-numeric:tabular-nums;">5%</span></div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:0.3rem;">
+            <sc-for list="{{ donutSegs }}" as="d" hint-placeholder-count="4">
+              <div tabIndex="0" onMouseEnter="{{ d.hov }}" onMouseLeave="{{ d.unhov }}" onFocus="{{ d.hov }}" onBlur="{{ d.unhov }}" style="display:flex; align-items:center; gap:0.55rem; background:{{ d.rowBg }}; border-radius:8px; padding:0.28rem 0.45rem; cursor:default; outline:none;">
+                <span style="width:10px;height:10px;border-radius:3px;background:{{ d.color }}; flex-shrink:0;"></span><span style="flex:1; font-size:0.9rem; color:var(--dim);">{{ d.name }}</span><span style="font-size:0.84rem; color:var(--mute); font-variant-numeric:tabular-nums;">{{ d.usd }}</span><span style="font-size:0.9rem; font-weight:700; font-variant-numeric:tabular-nums;">{{ d.pctLabel }}</span>
+              </div>
+            </sc-for>
           </div>
         </div>
       </div>
@@ -1076,11 +1191,15 @@
     <!-- maturity ladder + 90d trend -->
     <div data-r="g2" style="display:grid; grid-template-columns:1fr 1.3fr; gap:1.2rem; margin-bottom:1.2rem;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
-        <div style="font-size:0.95rem; font-weight:700; margin-bottom:1.3rem;">Maturity ladder</div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1.3rem; gap:0.6rem;">
+          <span style="font-size:0.95rem; font-weight:700;">Maturity ladder</span>
+          <sc-if value="{{ matHovOn }}" hint-placeholder-val="{{ false }}"><span style="font-size:0.84rem; color:var(--gold); font-weight:600; font-variant-numeric:tabular-nums;">{{ matHovLabel }}</span></sc-if>
+          <sc-if value="{{ matHovOff }}" hint-placeholder-val="{{ true }}"><span style="font-size:0.8rem; color:var(--mute);">hover a bar for $</span></sc-if>
+        </div>
         <div style="display:flex; align-items:flex-end; gap:0.7rem; height:140px;">
           <sc-for list="{{ maturity }}" as="m" hint-placeholder-count="5">
-            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:0.5rem; height:100%; justify-content:flex-end;">
-              <span style="font-size:0.86rem; font-weight:700; color:var(--dim); font-variant-numeric:tabular-nums;">{{ m.label }}</span>
+            <div tabIndex="0" onMouseEnter="{{ m.hov }}" onMouseLeave="{{ m.unhov }}" onFocus="{{ m.hov }}" onBlur="{{ m.unhov }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:0.5rem; height:100%; justify-content:flex-end; cursor:default; outline:none; opacity:{{ m.op }}; transition:opacity .15s;">
+              <span style="font-size:0.86rem; font-weight:700; color:{{ m.lblColor }}; font-variant-numeric:tabular-nums;">{{ m.label }}</span>
               <div style="width:100%; display:flex; align-items:flex-end; height:100px;"><div style="width:100%; height:{{ m.pct }}%; min-height:4px; background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep)); border-radius:6px 6px 0 0; align-self:flex-end;"></div></div>
               <span style="font-size:0.8rem; color:var(--mute); text-align:center;">{{ m.bucket }}</span>
             </div>
@@ -1097,14 +1216,21 @@
             </sc-for>
           </div>
         </div>
-        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;"><span style="display:flex; align-items:center; gap:0.35rem; font-size:0.86rem; color:var(--dim);"><span style="width:14px; height:2px; background:var(--teal);"></span>Circulating supply</span><span style="font-size:0.86rem; color:var(--up); font-weight:600;">{{ trendDelta }}</span></div>
-        <svg viewBox="0 0 600 200" preserveAspectRatio="none" style="width:100%; height:160px; animation:uRise 1s ease both;">
-          <line x1="0" y1="60" x2="600" y2="60" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-          <line x1="0" y1="110" x2="600" y2="110" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-          <defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(67,192,173,0.28)"/><stop offset="1" stop-color="rgba(67,192,173,0)"/></linearGradient></defs>
-          <path d="{{ trendArea }}" fill="url(#areaGrad)"/>
-          <path d="{{ trendLine }}" fill="none" stroke="var(--teal)" stroke-width="2.5"/>
-        </svg>
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap;"><span style="display:flex; align-items:center; gap:0.35rem; font-size:0.86rem; color:var(--dim);"><span style="width:14px; height:2px; background:var(--teal);"></span>Circulating supply</span><span style="font-size:0.86rem; color:var(--up); font-weight:600;">{{ trendDelta }}</span><sc-if value="{{ trendHovOn }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto; font-size:0.86rem; color:var(--teal); font-weight:700; font-variant-numeric:tabular-nums; background:rgba(67,192,173,0.1); border:1px solid rgba(67,192,173,0.25); border-radius:980px; padding:0.15rem 0.6rem;">{{ trendHovLabel }}</span></sc-if><sc-if value="{{ trendHovOff }}" hint-placeholder-val="{{ true }}"><span style="margin-left:auto; font-size:0.8rem; color:var(--mute);">hover for values</span></sc-if></div>
+        <div style="position:relative;">
+          <svg viewBox="0 0 600 200" preserveAspectRatio="none" style="width:100%; height:160px; animation:uRise 1s ease both; display:block;">
+            <line x1="0" y1="60" x2="600" y2="60" stroke="rgba(255,255,255,0.06)" stroke-width="1"></line>
+            <line x1="0" y1="110" x2="600" y2="110" stroke="rgba(255,255,255,0.06)" stroke-width="1"></line>
+            <defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(67,192,173,0.28)"></stop><stop offset="1" stop-color="rgba(67,192,173,0)"></stop></linearGradient></defs>
+            <path d="{{ trendArea }}" fill="url(#areaGrad)"></path>
+            <path d="{{ trendLine }}" fill="none" stroke="var(--teal)" stroke-width="2.5"></path>
+          </svg>
+          <div style="position:absolute; inset:0; display:flex;">
+            <sc-for list="{{ trendPts }}" as="t" hint-placeholder-count="8">
+              <div tabIndex="0" onMouseEnter="{{ t.hov }}" onMouseLeave="{{ t.unhov }}" onFocus="{{ t.hov }}" onBlur="{{ t.unhov }}" style="flex:1; background:{{ t.bg }}; outline:none; cursor:crosshair;"></div>
+            </sc-for>
+          </div>
+        </div>
         <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--mute); margin-top:0.5rem;"><span>{{ trendAx0 }}</span><span>{{ trendAx1 }}</span><span>{{ trendAx2 }}</span><span>{{ trendAx3 }}</span></div>
         <div style="display:flex; align-items:center; gap:0.35rem; font-size:0.8rem; color:var(--mute); margin-top:0.7rem;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>{{ trendUpdated }}</div>
       </div>
@@ -1135,16 +1261,10 @@
 
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:1.7rem;">
         <div style="font-size:0.95rem; font-weight:700; margin-bottom:0.4rem;">Proof & audit reports</div>
-        <div style="display:flex; align-items:center; gap:0.6rem; background:var(--ink2); border-radius:10px; padding:0.7rem 0.9rem; margin:1rem 0 0.6rem;">
-          <span style="font-size:0.8rem; color:var(--mute); letter-spacing:0.06em;">hUSD</span>
-          <span style="font-family:ui-monospace,Menlo,monospace; font-size:0.9rem; color:var(--teal); flex:1; overflow:hidden; text-overflow:ellipsis;">0x9f2A4c8E…b41E093f</span>
-          <button onClick="{{ copyAddr }}" style="background:var(--panel2); border:1px solid var(--line); color:var(--txt); cursor:pointer; border-radius:7px; padding:0.3rem 0.6rem; font-family:var(--font-body); font-size:0.86rem; font-weight:600;">{{ copyLabel }}</button>
-        </div>
-        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.1rem;">
-          <span style="font-size:0.85rem; color:var(--dim); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.25rem 0.65rem;">Network · Ethereum</span>
+        <!-- V4 08-03 (Kevin): contract list removed here — the single list sits at the top of the page -->
+        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin:0.8rem 0 1.1rem;">
           <span style="font-size:0.85rem; color:var(--dim); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.25rem 0.65rem;">Decimals · 18</span>
           <span style="font-size:0.85rem; color:var(--teal); background:rgba(67,192,173,0.1); border:1px solid rgba(67,192,173,0.25); border-radius:980px; padding:0.25rem 0.65rem;">Status · Active</span>
-          <span style="font-size:0.85rem; color:var(--teal); cursor:pointer; background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.25rem 0.65rem;">Etherscan ↗</span>
         </div>
         <sc-for list="{{ attestations }}" as="a" hint-placeholder-count="3">
           <div style="display:flex; align-items:center; gap:0.85rem; padding:0.75rem 0; border-bottom:1px solid var(--line2);">
@@ -1232,19 +1352,24 @@
           </sc-for>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:1.4rem; margin-bottom:1rem;">
-        <span style="display:flex; align-items:center; gap:0.4rem; font-size:0.86rem; color:var(--dim);"><span style="width:14px; height:2px; background:var(--teal);"></span>Issued <strong style="color:var(--txt); font-variant-numeric:tabular-nums;">{{ actIssuedTot }}</strong></span>
-        <span style="display:flex; align-items:center; gap:0.4rem; font-size:0.86rem; color:var(--dim);"><span style="width:14px; height:2px; background:var(--gold);"></span>Redeemed <strong style="color:var(--txt); font-variant-numeric:tabular-nums;">{{ actRedeemTot }}</strong></span>
+      <div style="display:flex; align-items:center; gap:1.4rem; margin-bottom:1rem; flex-wrap:wrap;">
+        <span style="display:flex; align-items:center; gap:0.4rem; font-size:0.86rem; color:var(--dim);"><span style="width:10px; height:10px; border-radius:3px; background:var(--teal);"></span>Issued <strong style="color:var(--txt); font-variant-numeric:tabular-nums;">{{ actIssuedTot }}</strong></span>
+        <span style="display:flex; align-items:center; gap:0.4rem; font-size:0.86rem; color:var(--dim);"><span style="width:10px; height:10px; border-radius:3px; background:var(--gold);"></span>Redeemed <strong style="color:var(--txt); font-variant-numeric:tabular-nums;">{{ actRedeemTot }}</strong></span>
+        <sc-if value="{{ actHovOn }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto; font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--txt); background:var(--ink2); border:1px solid var(--line); border-radius:980px; padding:0.15rem 0.6rem;">{{ actHovDate }} · <span style="color:var(--teal);">{{ actHovIssued }}</span> · <span style="color:var(--gold);">{{ actHovRedeem }}</span></span></sc-if>
+        <sc-if value="{{ actHovOff }}" hint-placeholder-val="{{ true }}"><span style="margin-left:auto; font-size:0.8rem; color:var(--mute);">hover for values</span></sc-if>
       </div>
-      <svg viewBox="0 0 600 200" preserveAspectRatio="none" style="width:100%; height:150px; animation:uRise 1s ease both;">
-        <line x1="0" y1="70" x2="600" y2="70" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-        <line x1="0" y1="130" x2="600" y2="130" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-        <defs><linearGradient id="actAreaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(67,192,173,0.24)"/><stop offset="1" stop-color="rgba(67,192,173,0)"/></linearGradient></defs>
-        <path d="{{ actIssuedArea }}" fill="url(#actAreaGrad)"/>
-        <path d="{{ actIssuedLine }}" fill="none" stroke="var(--teal)" stroke-width="2.5"/>
-        <path d="{{ actRedeemLine }}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-dasharray="4 4"/>
-      </svg>
-      <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--mute); margin-top:0.5rem;"><span>{{ actAx0 }}</span><span>{{ actAx1 }}</span><span>{{ actAx2 }}</span><span>{{ actAx3 }}</span></div>
+      <!-- V4 08-03 (Kevin): activities are discrete/independent → grouped bar chart, not a line -->
+      <div style="display:flex; animation:uRise .6s ease both;">
+        <sc-for list="{{ actBars }}" as="b" hint-placeholder-count="8">
+          <div tabIndex="0" onMouseEnter="{{ b.hov }}" onMouseLeave="{{ b.unhov }}" onFocus="{{ b.hov }}" onBlur="{{ b.unhov }}" style="flex:1; outline:none; cursor:pointer; border-radius:10px 10px 0 0; background:{{ b.bg }};">
+            <div style="height:150px; display:flex; align-items:flex-end; justify-content:center; gap:5px; border-bottom:1px solid var(--line); padding:0 12%;">
+              <div style="flex:1; max-width:22px; height:{{ b.issuedH }}; background:var(--teal); border-radius:3px 3px 0 0; transition:height .35s ease;"></div>
+              <div style="flex:1; max-width:22px; height:{{ b.redeemH }}; background:var(--gold); border-radius:3px 3px 0 0; transition:height .35s ease;"></div>
+            </div>
+            <div style="text-align:center; font-size:0.8rem; color:{{ b.lblColor }}; padding:0.5rem 0 0.1rem; white-space:nowrap;">{{ b.label }}</div>
+          </div>
+        </sc-for>
+      </div>
     </div>
     <!-- filters (Issuance §8) -->
     <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
@@ -1255,7 +1380,7 @@
     </div>
     <div data-r="acttable" style="background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden;">
       <div data-r="actrow" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 0.8fr 1fr; gap:1rem; padding:1rem 1.5rem; border-bottom:1px solid var(--line); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--mute); font-weight:700;">
-        <span>Date · Type</span><span>In</span><span>Out</span><span>Fee</span><span style="text-align:right;">Status · Tx</span>
+        <span>Date · Type</span><span>In</span><span>Out</span><span>Fee</span><span>Status · Tx</span>
       </div>
       <sc-for list="{{ history }}" as="h" hint-placeholder-count="6">
         <div onClick="{{ h.openReceipt }}" title="View receipt" data-r="actrow" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 0.8fr 1fr; gap:1rem; align-items:center; padding:1rem 1.5rem; border-bottom:1px solid var(--line2); cursor:pointer; transition:background .15s;" style-hover="background:var(--ink2)">
@@ -1263,7 +1388,8 @@
           <span style="font-size:0.94rem; font-variant-numeric:tabular-nums; color:var(--dim);">{{ h.in }}</span>
           <span style="font-size:0.94rem; font-weight:700; font-variant-numeric:tabular-nums; color:{{ h.outColor }};">{{ h.out }}</span>
           <span style="font-size:0.9rem; font-variant-numeric:tabular-nums; color:var(--mute);">{{ h.fee }}</span>
-          <div style="display:flex; align-items:center; justify-content:flex-end; gap:0.6rem;"><span style="font-size:0.86rem; font-weight:600; padding:0.2rem 0.55rem; border-radius:980px; background:{{ h.stBg }}; color:{{ h.stFg }};">{{ h.status }}</span><span style="font-family:ui-monospace,Menlo,monospace; font-size:0.85rem; color:var(--teal);">{{ h.tx }} ↗</span></div>
+          <!-- V4 08-03: status badges left-aligned in a fixed rail so Completed/Processing/Failed/Expired line up -->
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:0.6rem;"><span style="font-size:0.86rem; font-weight:600; padding:0.2rem 0.55rem; border-radius:980px; background:{{ h.stBg }}; color:{{ h.stFg }};">{{ h.status }}</span><span style="font-family:ui-monospace,Menlo,monospace; font-size:0.85rem; color:var(--teal); white-space:nowrap;">{{ h.tx }} ↗</span></div>
         </div>
       </sc-for>
       <sc-if value="{{ historyEmpty }}" hint-placeholder-val="{{ false }}">
@@ -1704,7 +1830,7 @@
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = {
-    screen: 'portfolio', acct: 'verified', notifOpen: false, notifReadAll: false, previewOpen: false, navOpen: false, signedOut: false,
+    screen: 'portfolio', acct: 'verified', notifOpen: false, notifFilter: 'all', kycNotifRead: false, kycNotifCleared: false, previewOpen: false, navOpen: false, signedOut: false,
     heroCopied: false, dataAge: 14,
     getStep: 0, getPath: 'fiat', fiatCcy: 'USD', getAmt: '5,000', getRecv: '4,995.00', getNetwork: 'Ethereum', getAsset: 'USDC',
     quoteLeft: 60, quoteExpired: false, quoteMismatch: false, mismatchArmed: false, mintStage: 0, copied: false, depCopied: false,
@@ -1713,11 +1839,27 @@ class Component extends DCLogic {
     banks: [{ id: 1, name: 'RBC Royal Bank', bankShort: 'RBC', last4: '4821', holder: 'Alex Morgan', primary: true }],
     bankModalOpen: false, bankAdding: false, bankForm: { holder: '', bank: '', number: '', transit: '' },
     // ── saved payment cards (FE-163) ──
-    fundMethod: 'card', // fiat funding rail: 'card' (Paysafe) | 'bank'
+    fundMethod: null, // fiat funding rail — chosen on the Pay step (V5 07-24): 'card' (Paysafe) | 'bank' | null
+    recvBankIdx: 0, bankCopied: null, // bank-transfer instructions (V4)
+    donutHov: -1, matHov: -1, trendHov: -1, actHov: -1, contractCopied: null, // PoR chart hover + per-network contracts (V3/V13)
+    // notification feed (Unera-platform-inspired centre, stablecoin journey language) — per-item read/dismiss; tgt = deep link
+    notifs: [
+      { id: 'n1', read: false, lvl: 'completed', cat: 'transaction', title: 'Purchase complete', body: '5,000.00 hUSD added to 0x74…3a8f.', time: 'Today · 09:42', ref: 'Tx 0x8c…42a', cta: 'View receipt', tgt: 'receipt:0' },
+      { id: 'n2', read: false, lvl: 'progressing', cat: 'transaction', title: 'Redemption in progress', body: 'Removal confirmed · USD payout to RBC ····4821 is processing.', time: '2 hr ago', ref: 'Tx 0x77…9aa', cta: 'Track status', tgt: 'progress' },
+      { id: 'n3', read: true, lvl: 'completed', cat: 'transaction', title: 'Bank payout completed', body: '$2,497.50 deposited to RBC ····4821.', time: 'Jun 14', ref: 'Tx 0x3f…9d1', cta: 'View receipt', tgt: 'receipt:1' },
+      { id: 'n4', read: true, lvl: 'info', cat: 'announcement', title: 'Service announcement', body: 'Scheduled maintenance Jun 20, 02:00–03:00 UTC. Buying & redeeming paused briefly.', time: 'Jun 12', cta: 'Service status', tgt: 'por' },
+      { id: 'n5', read: true, lvl: 'completed', cat: 'verification', title: 'Identity verified — Level 2 unlocked', body: 'Buying and redeeming are now enabled · daily limit $50,000.', time: 'Jun 9', cta: 'View access level', tgt: 'verify' },
+      { id: 'n6', read: true, lvl: 'info', cat: 'announcement', title: 'hUSD now on Base', body: 'You can now receive and redeem hUSD on the Base network.', time: 'Jun 5', cta: 'Get hUSD', tgt: 'get' },
+    ],
     // One-Time Guest Checkout this phase (Ducke, #collab-be Jul 7) — no card vault, cards are never stored
-    cards: [],
-    selectedCardId: null, coMode: 'new', coSaveNew: false, coCvv: '',
-    cardAdding: false, cardForm: { number: '', exp: '', cvv: '', name: '', zip: '', country: 'United States' },
+    // Demo saved cards (user request 08-03). Honest caveat: D7 (Ducke, #collab-be Jul 7) chose One-Time Guest
+    // Checkout — no card vault this phase. Only token+brand+last4+expiry shown; PAN/CVV never stored. Flag for PM.
+    cards: [
+      { id: 'c1', brand: 'Visa', last4: '4242', exp: '11/27', holder: 'Alex Morgan', primary: true },
+      { id: 'c2', brand: 'Mastercard', last4: '8810', exp: '03/26', holder: 'Alex Morgan', primary: false },
+    ],
+    selectedCardId: 'c1', coMode: 'saved', coSaveNew: false, coCvv: '',
+    cardAdding: false, cardForm: { number: '', exp: '', cvv: '', name: 'Alex Morgan', zip: '10014', country: 'United States' }, // name + AVS prefilled from the verified (L2) profile — PAN/CVV never stored (guest checkout, Ducke Jul 7)
     hardLeft: 180, hardExpired: false,
     actFilter: 'all', receipt: null, trendRange: '30d', actRange: '30d', actVisible: 8,
     walletConnected: true, walletNetwork: 'Ethereum', walletMenuOpen: false,
@@ -1740,6 +1882,29 @@ class Component extends DCLogic {
   RATES = { ETH: 3412.56, BTC: 64230.10, USDC: 0.9998, USDT: 0.9996 }; // hUSD per unit
   COINGECKO = { ETH: 'https://www.coingecko.com/en/coins/ethereum', BTC: 'https://www.coingecko.com/en/coins/bitcoin' };
   QUEUE_THRESHOLD = 20000;
+  BANK_REF = 'HUSD-8F3K2A'; // bank-transfer reference — unique per request (V4 07-24)
+  // per-network hUSD contracts (V13 07-24) — each chain has its own address; comes from data, never hard-coded copy
+  CONTRACTS = [
+    { net: 'Ethereum', dot: '#627eea', addr: '0x9f2A4c8E71b3D5f2A8c4E6b1D3f5A7c9b41E093f', explorer: 'Etherscan' },
+    { net: 'Arbitrum', dot: '#28a0f0', addr: '0x2c8B5d1F9a4E7c3B6d0A8f2C5e9B1d4F7a3C68De', explorer: 'Arbiscan' },
+    { net: 'Base', dot: '#0052ff', addr: '0x7E3f9C2b5A8d1F4c6B9e0D3a7F2c5E8b1A4d90Cf', explorer: 'BaseScan' },
+  ];
+  // UNERA receiving accounts for bank-transfer funding (V4) — issued per request by BE, can change
+  RECV_USD = [
+    { bank: 'J.P. Morgan Chase', sub: 'USD wire · fastest · same day', account: '883-120-447', routing: '021000021' },
+    { bank: 'Wells Fargo', sub: 'USD ACH · 1–2 business days', account: '4501-99-2210', routing: '121000248' },
+  ];
+  RECV_CAD = [
+    { bank: 'RBC Royal Bank', sub: 'CAD wire · 1–2 business days', account: '003-1642-889', routing: 'Transit 00312 · 003' },
+  ];
+  // notification level model (mirrors the Platform notifications PRD §3) — level drives glyph, colors and label
+  NOTIF_LVL = {
+    completed:   { icon: 'M20 6L9 17l-5-5', c: 'var(--up)', b: 'rgba(60,207,148,0.14)', label: 'Completed' },
+    progressing: { icon: 'M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z', c: 'var(--gold)', b: 'rgba(236,214,160,0.14)', label: 'In progress' },
+    info:        { icon: 'M12 16v-4M12 8h.01M12 22a10 10 0 110-20 10 10 0 010 20z', c: 'var(--dim)', b: 'var(--ink2)', label: 'Info' },
+    warning:     { icon: 'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z', c: '#e7c267', b: 'rgba(231,194,103,0.14)', label: 'Needs attention' },
+    error:       { icon: 'M12 8v4M12 16h.01M12 22a10 10 0 110-20 10 10 0 010 20z', c: 'var(--down)', b: 'rgba(223,126,152,0.14)', label: 'Failed' },
+  };
 
   componentDidMount() {
     this.quoteTimer = setInterval(() => {
@@ -1764,10 +1929,23 @@ class Component extends DCLogic {
   componentDidUpdate() { this.animateAll(); this.updateTabTitle(); }
   // Notif §7.5.2.4: reflect unread count in the browser tab title
   updateTabTitle() {
-    const u = this.state.notifReadAll ? 0 : 2;
-    const t = (u > 0 ? '(' + u + ') ' : '') + 'UNERA hUSD Portal';
+    const s = this.state;
+    const kycUnread = ((s.acct === 'kyc_retry' || s.acct === 'kyc_rejected') && !s.kycNotifCleared && !s.kycNotifRead) ? 1 : 0;
+    const u = kycUnread + s.notifs.filter((n) => !n.read).length;
+    const t = (u > 0 ? '(' + (u > 99 ? '99+' : u) + ') ' : '') + 'UNERA hUSD Portal';
     if (document.title !== t) document.title = t;
   }
+  // ── notification centre actions (per-item read/dismiss; 'kyc' is the synthesized needs-action item) ──
+  markNotifRead(id) {
+    if (id === 'kyc') { this.setState({ kycNotifRead: true }); return; }
+    this.setState((st) => ({ notifs: st.notifs.map((n) => n.id === id ? { ...n, read: true } : n) }));
+  }
+  dismissNotif(id) {
+    if (id === 'kyc') { this.setState({ kycNotifCleared: true }); return; }
+    this.setState((st) => ({ notifs: st.notifs.filter((n) => n.id !== id) }));
+  }
+  markAllNotifsRead() { this.setState((st) => ({ kycNotifRead: true, notifs: st.notifs.map((n) => ({ ...n, read: true })) })); }
+  clearAllNotifs() { this.setState((st) => ({ kycNotifCleared: true, notifs: [] })); }
   componentWillUnmount() {
     clearInterval(this.quoteTimer);
     (this._timers || []).forEach(clearTimeout);
@@ -1800,7 +1978,7 @@ class Component extends DCLogic {
   go(screen) {
     if (this._timers) this._timers.forEach(clearTimeout);
     this._timers = [];
-    this.setState({ screen, getStep: 0, mintStage: 0, quoteMismatch: false, redeemStep: 0, burnStage: 0, notifOpen: false, previewOpen: false, navOpen: false, signOpen: false, receipt: null, walletMenuOpen: false, wcOpen: false, quoteLeft: 60, quoteExpired: false, cardAdding: false, hardLeft: 180, hardExpired: false, coMode: 'new', coCvv: '', /* guest checkout: card form is the default */ confirmAction: null, notice: null, verifyingId: null, editingId: null });
+    this.setState({ screen, getStep: 0, mintStage: 0, quoteMismatch: false, redeemStep: 0, burnStage: 0, notifOpen: false, previewOpen: false, navOpen: false, signOpen: false, receipt: null, walletMenuOpen: false, wcOpen: false, quoteLeft: 60, quoteExpired: false, cardAdding: false, hardLeft: 180, hardExpired: false, coMode: 'saved', coCvv: '', /* default card preselected — CVV re-entry still required */ fundMethod: null, recvBankIdx: 0, bankCopied: null, donutHov: -1, matHov: -1, trendHov: -1, actHov: -1, confirmAction: null, notice: null, verifyingId: null, editingId: null });
     window.scrollTo(0, 0);
   }
   setAcct(acct, walletConnected) {
@@ -2042,7 +2220,7 @@ class Component extends DCLogic {
   cardExpired(exp) { const m = +String(exp).slice(0, 2), y = 2000 + +String(exp).slice(3, 5); return (y < 2026) || (y === 2026 && m < 7); }
   detectBrand(num) { const d = String(num).replace(/\D/g, ''); if (/^4/.test(d)) return 'Visa'; if (/^(5[1-5]|2[2-7])/.test(d)) return 'Mastercard'; if (/^3[47]/.test(d)) return 'Amex'; return 'Card'; }
   setCardField(k, v) { this.setState((st) => ({ cardForm: { ...st.cardForm, [k]: v } })); }
-  startAddCard() { this.setState({ cardAdding: true, cardForm: { number: '', exp: '', cvv: '', name: '', zip: '', country: 'United States' } }); }
+  startAddCard() { this.setState({ cardAdding: true, cardForm: { number: '', exp: '', cvv: '', name: 'Alex Morgan', zip: '10014', country: 'United States' } }); }
   cancelAddCard() { this.setState({ cardAdding: false }); }
   cardFormValid() {
     const f = this.state.cardForm; const digits = (f.number || '').replace(/\D/g, '');
@@ -2073,7 +2251,7 @@ class Component extends DCLogic {
     });
   }
   selectCard(id) { this.setState({ selectedCardId: id, coMode: 'saved', coCvv: '' }); }
-  useNewCard() { this.setState({ coMode: 'new', cardForm: { number: '', exp: '', cvv: '', name: '', zip: '', country: 'United States' } }); }
+  useNewCard() { this.setState({ coMode: 'new', cardForm: { number: '', exp: '', cvv: '', name: 'Alex Morgan', zip: '10014', country: 'United States' } }); }
 
   renderVals() {
     const s = this.state;
@@ -2131,10 +2309,12 @@ class Component extends DCLogic {
 
     // Card is the Paysafe rail (SAD-9); the card path adds a hard-lock checkout step (Slack: Ducke/Eric).
     const cardFlow = !isCrypto && s.fundMethod === 'card';
-    const stageLabels = cardFlow ? ['Amount', 'Confirm', 'Pay'] : ['Amount', 'Review', 'Confirm'];
-    const stepCur = cardFlow ? s.getStep : (s.getStep >= 3 ? 2 : s.getStep);
+    const bankFlow = !isCrypto && s.fundMethod === 'bank';
+    // fiat: funding method is chosen on the Pay step (V5 07-24) — Amount → Review → Pay; crypto: Amount → Review → Confirm
+    const stageLabels = isCrypto ? ['Amount', 'Review', 'Confirm'] : ['Amount', 'Review', 'Pay'];
+    const stepCur = isCrypto ? (s.getStep >= 3 ? 2 : s.getStep) : s.getStep;
     const getSteps = stageLabels.map((lbl, i) => ({ ...this.stepVisual(i, stepCur), label: lbl }));
-    const getDoneReached = cardFlow ? (s.getStep >= 3) : (s.mintStage >= 4);
+    const getDoneReached = s.mintStage >= 4;
     const gd = getDoneReached ? { getDoneBg: 'var(--up)', getDoneFg: '#06140d', getDoneBd: 'var(--up)', getDoneMark: '\u2713', getDoneLbl: 'var(--dim)' }
       : { getDoneBg: 'var(--ink2)', getDoneFg: 'var(--mute)', getDoneBd: 'var(--line)', getDoneMark: '\u2713', getDoneLbl: 'var(--mute)' };
 
@@ -2179,11 +2359,11 @@ class Component extends DCLogic {
     const mintStages = isCrypto ? [
       this.timelineRow(0, s.mintStage, 'Transfer detected', this.fmt(payN) + ' ' + payToken + ' received at deposit address'),
       this.timelineRow(1, s.mintStage, 'Confirming payment', 'Waiting for confirmations on ' + s.getNetwork),
-      this.timelineRow(2, s.mintStage, 'Under review', 'Identity and safety checks'),
+      this.timelineRow(2, s.mintStage, 'Under review', 'Identity & AML screening'),
       this.timelineRow(3, s.mintStage, mintComplete ? 'Completed' : 'Adding hUSD', mintComplete ? ('Confirmed \u00b7 ' + s.getNetwork + ' \u00b7 tx 0x8c\u202642a') : 'Adding hUSD to your wallet', true),
     ] : [
-      this.timelineRow(0, s.mintStage, cardFlow ? 'Card payment authorized' : 'Payment received', cardFlow ? coPayDesc : ('$' + this.fmt(usdValue) + ' received via bank transfer')),
-      this.timelineRow(1, s.mintStage, 'Under review', 'Identity and safety checks'),
+      this.timelineRow(0, s.mintStage, cardFlow ? 'Card payment authorized' : 'Transfer detected', cardFlow ? coPayDesc : ('$' + this.fmt(usdValue) + ' received via bank transfer \u00b7 ref ' + this.BANK_REF)),
+      this.timelineRow(1, s.mintStage, 'Under review', 'Identity & AML screening'),
       this.timelineRow(2, s.mintStage, 'Processing', 'Adding hUSD to your wallet'),
       this.timelineRow(3, s.mintStage, 'Completed', 'Confirmed \u00b7 ' + s.getNetwork + ' \u00b7 tx 0x8c\u202642a', true),
     ];
@@ -2272,24 +2452,13 @@ class Component extends DCLogic {
     const burnStages = [
       this.timelineRow(0, s.burnStage, 'Redemption started', this.fmt(rAmt) + ' hUSD set aside to redeem'),
       this.timelineRow(1, s.burnStage, 'Removal confirmed', 'hUSD permanently removed \u00b7 ' + s.getNetwork + ' \u00b7 tx 0x3f\u20269d1'),
-      this.timelineRow(2, s.burnStage, 'Under review', 'Identity and reserve checks'),
+      this.timelineRow(2, s.burnStage, 'Under review', 'Identity & AML screening'),
     ];
     if (willQueue) burnStages.push(this.timelineRow(3, s.burnStage, 'Waiting in the queue', 'High demand \u2014 your payout is in the queue and protected at the locked rate'));
     burnStages.push(this.timelineRow(burnTotal - 1, s.burnStage, redeemComplete ? 'Completed \u00b7 USD sent' : 'Payout processing', 'RBC \u00b7\u00b7\u00b7\u00b74821 \u00b7 arrives ' + redeemEta, true));
 
     // ── notifications (spec \u00a711) ──
-    const ro = s.notifReadAll;
-    const rawNotifs = [
-      { read: false, lvl: 'completed', icon: 'M20 6L9 17l-5-5', ic: 'var(--up)', icb: 'rgba(60,207,148,0.14)', title: 'Purchase complete', body: '5,000.00 hUSD added to 0x74\u20263a8f.', time: 'Today \u00b7 09:42' },
-      { read: false, lvl: 'progressing', icon: 'M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z', ic: 'var(--gold)', icb: 'rgba(236,214,160,0.14)', title: 'Redemption in progress', body: 'Removal confirmed \u00b7 USD payout to RBC \u00b7\u00b7\u00b7\u00b74821 is processing.', time: '2 hr ago' },
-      { read: true, lvl: 'completed', icon: 'M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6', ic: 'var(--teal)', icb: 'rgba(67,192,173,0.14)', title: 'Bank payout completed', body: '$2,497.50 deposited to RBC \u00b7\u00b7\u00b7\u00b74821.', time: 'Jun 14' },
-      { read: true, lvl: 'info', icon: 'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z', ic: 'var(--dim)', icb: 'var(--ink2)', title: 'Service announcement', body: 'Scheduled maintenance Jun 20, 02:00\u201303:00 UTC. Buying & redeeming paused briefly.', time: 'Jun 12' },
-    ];
-    // Notif §7.5.2.6: warning/error → role=alert, else role=status
-    const notifs = rawNotifs.map((n) => ({ iconPath: n.icon, iconColor: n.ic, iconBg: n.icb, title: n.title, body: n.body, time: n.time, role: (n.lvl === 'warning' || n.lvl === 'error') ? 'alert' : 'status', bg: (!n.read && !ro) ? 'rgba(236,214,160,0.045)' : 'transparent' }));
-    const unreadCount = ro ? 0 : rawNotifs.filter((n) => !n.read).length;
-    const notifBadge = unreadCount > 99 ? '99+' : String(unreadCount); // §7.5.2.3 cap at 99+
-    const notifsEmpty = notifs.length === 0;
+    // notifications are computed after `history` is defined (deep links need receipt rows) — see the notification-centre block below
 
     // ── banner per account / service state (Dashboard §7 user states + §11 operational notices) ──
     let banner = null;
@@ -2378,7 +2547,24 @@ class Component extends DCLogic {
       '1y':  { issued: 'M0,150 C60,142 110,148 180,132 C250,116 300,130 370,108 C440,86 490,100 540,74 C570,62 588,70 600,58', redeem: 'M0,160 C60,156 110,160 180,148 C250,136 300,148 370,132 C440,116 490,128 540,110 C570,102 588,110 600,100', axis: ['12mo ago', '8mo', '4mo', 'Today'], title: 'Your activity', issuedTot: '$142,900', redeemTot: '$88,050' },
     };
     const at = actTrendData[s.actRange] || actTrendData['30d'];
-    const actIssuedArea = at.issued + ' L600,200 L0,200 Z';
+    // V4 08-03 (Kevin): grouped bars per data point — activities are discrete and independent
+    const actPtData = {
+      '7d':  [['7d ago', 800, 150], ['6d', 950, 180], ['5d', 1100, 160], ['4d', 700, 120], ['3d', 900, 200], ['2d', 1050, 170], ['Yesterday', 500, 110], ['Today', 500, 110]],
+      '30d': [['30d ago', 2200, 600], ['26d', 2600, 680], ['21d', 2400, 620], ['17d', 2900, 740], ['13d', 2500, 640], ['9d', 2800, 720], ['4d', 2300, 750], ['Today', 2300, 750]],
+      '90d': [['90d ago', 6400, 3800], ['77d', 7100, 4200], ['64d', 6800, 4000], ['51d', 7600, 4500], ['39d', 7200, 4300], ['26d', 7900, 4600], ['13d', 7700, 4420], ['Today', 7720, 4420]],
+      '1y':  [['12mo ago', 15200, 9400], ['10mo', 16800, 10300], ['8mo', 17500, 10800], ['7mo', 18200, 11200], ['5mo', 17900, 11000], ['3mo', 18800, 11600], ['2mo', 19250, 11875], ['Today', 19250, 11875]],
+    };
+    const actPtList = actPtData[s.actRange] || actPtData['30d'];
+    const actMax = Math.max(...actPtList.map((p) => p[1]));
+    const actBars = actPtList.map((p, i) => ({
+      label: p[0],
+      issuedH: Math.max(4, Math.round((p[1] / actMax) * 100)) + '%',
+      redeemH: Math.max(3, Math.round((p[2] / actMax) * 100)) + '%',
+      bg: s.actHov === i ? 'rgba(236,214,160,0.08)' : 'transparent',
+      lblColor: s.actHov === i ? 'var(--txt)' : 'var(--mute)',
+      hov: () => this.setState({ actHov: i }), unhov: () => this.setState({ actHov: -1 }),
+    }));
+    const actHovPt = s.actHov >= 0 ? actPtList[s.actHov] : null;
     const actRanges = [['7d', '7D'], ['30d', '30D'], ['90d', '90D'], ['1y', '1Y']].map(([k, lbl]) => ({
       label: lbl, active: s.actRange === k, action: () => this.setState({ actRange: k }),
       bg: s.actRange === k ? 'rgba(236,214,160,0.12)' : 'var(--ink2)', bd: s.actRange === k ? 'var(--gold)' : 'var(--line)', color: s.actRange === k ? 'var(--gold)' : 'var(--dim)',
@@ -2493,11 +2679,137 @@ class Component extends DCLogic {
       closeConfirm: () => this.closeConfirm(), confirmProceed: () => this.confirmProceed(),
     };
 
+    // ── notification centre (spec §11 + Unera-platform page pattern): level model, deep links, filters ──
+    const kycNeedsAction = (isRetry || isRejected) && !s.kycNotifCleared;
+    const allNotifs = (kycNeedsAction ? [{ id: 'kyc', read: !!s.kycNotifRead, lvl: 'warning', cat: 'verification', title: 'Verification needs attention', body: 'We couldn\u2019t verify your document \u2014 resubmit to restore buying and redeeming.', time: '1 hr ago', cta: 'Resubmit verification', tgt: 'verify' }] : []).concat(s.notifs);
+    // clicking a notification leads to where the action is (receipt modal, activity filter, verify, PoR, get)
+    const openNotif = (n) => () => {
+      this.markNotifRead(n.id);
+      const t = n.tgt || 'activity';
+      if (t.indexOf('receipt:') === 0) { const h = history[parseInt(t.slice(8), 10)]; this.go('activity'); if (h) this.setState({ receipt: h }); return; }
+      if (t === 'progress') { this.go('activity'); this.setState({ actFilter: 'progress' }); return; }
+      this.go(t);
+    };
+    const notifView = (n) => {
+      const L = this.NOTIF_LVL[n.lvl] || this.NOTIF_LVL.info;
+      return {
+        id: n.id, title: n.title, body: n.body, time: n.time, cta: n.cta || 'Open',
+        iconPath: L.icon, iconColor: L.c, iconBg: L.b, lvlLabel: L.label, lvlColor: L.c,
+        role: (n.lvl === 'warning' || n.lvl === 'error') ? 'alert' : 'status',
+        bg: !n.read ? 'rgba(236,214,160,0.045)' : 'transparent',
+        unread: !n.read, hasRef: !!n.ref, ref: n.ref || '',
+        cardBg: !n.read ? 'rgba(236,214,160,0.05)' : 'var(--panel)', cardBd: !n.read ? 'rgba(236,214,160,0.28)' : 'var(--line)',
+        open: openNotif(n),
+        dismiss: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.dismissNotif(n.id); },
+      };
+    };
+    const notifs = allNotifs.map(notifView);
+    const unreadCount = allNotifs.filter((n) => !n.read).length;
+    const notifBadge = unreadCount > 99 ? '99+' : String(unreadCount); // §7.5.2.3 cap at 99+
+    const notifsEmpty = notifs.length === 0;
+    const nf = s.notifFilter || 'all';
+    const notifPage = allNotifs.filter((n) => nf === 'all' ? true : (nf === 'unread' ? !n.read : n.cat === nf)).map(notifView);
+    const notifPageEmpty = notifPage.length === 0;
+    const notifFilters = [['all', 'All'], ['unread', 'Unread'], ['transaction', 'Transactions'], ['verification', 'Verification'], ['announcement', 'Announcements']].map(([k, lbl]) => ({
+      label: lbl, action: () => this.setState({ notifFilter: k }),
+      bg: nf === k ? 'rgba(236,214,160,0.12)' : 'var(--ink2)', bd: nf === k ? 'var(--gold)' : 'var(--line)', color: nf === k ? 'var(--gold)' : 'var(--dim)',
+    }));
+    // filter-specific empty copy — a filtered view never falsely reads "all caught up"
+    const notifEmptyCopy = {
+      all: ['You\u2019re all caught up', 'No notifications right now \u2014 purchase, redemption and verification updates will appear here.'],
+      unread: ['You\u2019re all caught up', 'You\u2019ve read everything \u2014 new updates will appear here.'],
+      transaction: ['No transaction updates yet', 'Your purchase and redemption updates will show up here.'],
+      verification: ['No verification updates', 'Identity verification status changes will appear here.'],
+      announcement: ['No announcements', 'Service news and scheduled-maintenance notices will appear here.'],
+    };
+    const notifEmptyTitle = (notifEmptyCopy[nf] || notifEmptyCopy.all)[0];
+    const notifEmptyText = (notifEmptyCopy[nf] || notifEmptyCopy.all)[1];
+
+    // ── PoR chart hover values (V3 07-24): exact $/% on hover & keyboard focus ──
+    const donutData = [
+      { name: 'U.S. Treasury bills', pct: 64, usd: '$841.7M', color: 'var(--treasury)' },
+      { name: 'Cash at banks', pct: 22, usd: '$289.3M', color: 'var(--cash)' },
+      { name: 'Overnight repo', pct: 9, usd: '$118.4M', color: 'var(--bank)' },
+      { name: 'USDC (transit)', pct: 5, usd: '$65.8M', color: 'var(--stable)' },
+    ];
+    const donutSegs = donutData.map((d, i) => ({
+      ...d, pctLabel: d.pct + '%',
+      sw: s.donutHov === i ? 30 : 26,
+      op: (s.donutHov === -1 || s.donutHov === i) ? 1 : 0.35,
+      rowBg: s.donutHov === i ? 'var(--ink2)' : 'transparent',
+      hov: () => this.setState({ donutHov: i }), unhov: () => this.setState({ donutHov: -1 }),
+    }));
+    const donutHovSeg = s.donutHov >= 0 ? donutData[s.donutHov] : null;
+    const maturityData = [
+      { label: '38%', bucket: '0\u20137d', pct: 76, usd: '$499.8M' },
+      { label: '31%', bucket: '8\u201330d', pct: 62, usd: '$407.7M' },
+      { label: '18%', bucket: '31\u201360d', pct: 38, usd: '$236.7M' },
+      { label: '9%', bucket: '61\u201390d', pct: 22, usd: '$118.4M' },
+      { label: '4%', bucket: '90d+', pct: 12, usd: '$52.6M' },
+    ];
+    const maturitySegs = maturityData.map((m, i) => ({
+      ...m,
+      op: (s.matHov === -1 || s.matHov === i) ? 1 : 0.4,
+      lblColor: s.matHov === i ? 'var(--gold)' : 'var(--dim)',
+      hov: () => this.setState({ matHov: i }), unhov: () => this.setState({ matHov: -1 }),
+    }));
+    const matHovSeg = s.matHov >= 0 ? maturityData[s.matHov] : null;
+    const trendPtData = {
+      '7d':  [['7d ago', 1279.5], ['6d', 1280.2], ['5d', 1281.0], ['4d', 1280.6], ['3d', 1282.1], ['2d', 1283.0], ['Yesterday', 1284.0], ['Today', 1284.6]],
+      '30d': [['30d ago', 1258.2], ['26d', 1261.0], ['21d', 1259.4], ['17d', 1266.8], ['13d', 1270.1], ['9d', 1275.6], ['4d', 1280.3], ['Today', 1284.6]],
+      '90d': [['90d ago', 1203.4], ['77d', 1216.2], ['64d', 1224.8], ['51d', 1238.5], ['39d', 1247.9], ['26d', 1259.3], ['13d', 1272.0], ['Today', 1284.6]],
+      '1y':  [['12mo ago', 957.1], ['10mo', 998.4], ['8mo', 1043.2], ['7mo', 1088.6], ['5mo', 1130.9], ['3mo', 1189.5], ['2mo', 1241.7], ['Today', 1284.6]],
+    };
+    const trendPtList = trendPtData[s.trendRange] || trendPtData['30d'];
+    const trendPts = trendPtList.map((p, i) => ({
+      bg: s.trendHov === i ? 'linear-gradient(90deg, rgba(67,192,173,0.5) 0, rgba(67,192,173,0.5) 1.5px, rgba(67,192,173,0.07) 1.5px)' : 'transparent',
+      hov: () => this.setState({ trendHov: i }), unhov: () => this.setState({ trendHov: -1 }),
+    }));
+    const trendHovPt = s.trendHov >= 0 ? trendPtList[s.trendHov] : null;
+    // ── per-network contracts (V13) with copy state ──
+    const contracts = this.CONTRACTS.map((c) => ({
+      ...c, copyLabel: s.contractCopied === c.net ? 'Copied' : 'Copy',
+      copy: () => {
+        if (navigator.clipboard) { try { navigator.clipboard.writeText(c.addr); } catch (e) {} }
+        this.setState({ contractCopied: c.net });
+        this._timers = this._timers || [];
+        this._timers.push(setTimeout(() => this.setState({ contractCopied: null }), 1400));
+      },
+    }));
+    // ── bank-transfer instructions (V4): receiving account from data + per-field copy ──
+    const recvPool = isCad ? this.RECV_CAD : this.RECV_USD;
+    const recvIdx = Math.min(s.recvBankIdx, recvPool.length - 1);
+    const recvSel = recvPool[recvIdx];
+    const recvAccounts = recvPool.map((b, i) => ({
+      bank: b.bank, sub: b.sub,
+      rowBg: i === recvIdx ? 'rgba(60,207,148,0.07)' : 'var(--ink2)', rowBd: i === recvIdx ? 'var(--up)' : 'var(--line)',
+      radioBg: i === recvIdx ? 'var(--up)' : 'transparent', radioBd: i === recvIdx ? 'var(--up)' : 'var(--line)', radioMark: i === recvIdx ? '\u2713' : '',
+      select: () => this.setState({ recvBankIdx: i, bankCopied: null }),
+    }));
+    const bankRows = [
+      { k: 'name', label: 'Account name', value: 'UNERA Trust Company' },
+      { k: 'bank', label: 'Bank', value: recvSel.bank },
+      { k: 'acct', label: 'Account number', value: recvSel.account },
+      { k: 'route', label: isCad ? 'Transit \u00b7 institution' : 'Routing (ABA)', value: recvSel.routing },
+      { k: 'amt', label: 'Amount', value: paySymbol + this.fmt(payN) + ' ' + payToken },
+      { k: 'ref', label: 'Reference code', value: this.BANK_REF, hi: true },
+    ].map((f) => ({
+      label: f.label, value: f.value,
+      color: f.hi ? 'var(--gold)' : 'var(--txt)', weight: f.hi ? 700 : 500,
+      copyLabel: s.bankCopied === f.k ? 'Copied' : 'Copy',
+      copy: () => {
+        if (navigator.clipboard) { try { navigator.clipboard.writeText(f.value); } catch (e) {} }
+        this.setState({ bankCopied: f.k });
+        this._timers = this._timers || [];
+        this._timers.push(setTimeout(() => this.setState({ bankCopied: null }), 1400));
+      },
+    }));
+
     return {
       setRoot: this.setRoot,
       stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
       screen: s.screen,
-      isPortfolio: s.screen === 'portfolio', isGet: s.screen === 'get', isRedeem: s.screen === 'redeem', isPor: s.screen === 'por', isActivity: s.screen === 'activity', isVerify: s.screen === 'verify', isWallets: s.screen === 'wallets', isSettings: s.screen === 'settings',
+      isPortfolio: s.screen === 'portfolio', isGet: s.screen === 'get', isRedeem: s.screen === 'redeem', isPor: s.screen === 'por', isActivity: s.screen === 'activity', isVerify: s.screen === 'verify', isWallets: s.screen === 'wallets', isSettings: s.screen === 'settings', isNotifications: s.screen === 'notifications',
 
       // nav
       goSlot1: () => this.go('portfolio'), slot1Label: 'Portfolio',
@@ -2515,8 +2827,8 @@ class Component extends DCLogic {
       needsConnect, wrongNetwork, walletConnected,
       setAcctVerified: () => this.setAcct('verified', true),
       logOut: () => this.logOut(),
-      // Logo → home (Eric): public visitors land on the public PoR homepage; signed-in users on Portfolio
-      goHome: () => this.go(isPublic ? 'por' : 'portfolio'),
+      // Logo → home = Proof of Reserve for everyone (V1 07-24); PoR nav text item removed — Portfolio hero chip remains
+      goHome: () => this.go('por'),
       showSignedOut: s.signedOut && isPublic,
       dismissSignedOut: () => this.setState({ signedOut: false }),
       notPublic: !isPublic,
@@ -2570,8 +2882,11 @@ class Component extends DCLogic {
 
       // notifications
       notifOpen: s.notifOpen, toggleNotif: () => this.setState((st) => ({ notifOpen: !st.notifOpen })), closeNotif: () => this.setState({ notifOpen: false }),
-      markAllRead: () => this.setState({ notifReadAll: true }),
+      markAllRead: () => this.markAllNotifsRead(),
+      clearAllNotifs: () => this.clearAllNotifs(),
+      goNotifications: () => this.go('notifications'),
       notifs, unreadCount, notifBadge, notifsEmpty, hasUnread: unreadCount > 0,
+      notifFilters, notifPage, notifPageEmpty, notifEmptyTitle, notifEmptyText,
 
       // In-progress pinned on top, merged into Recent activity (Kevin/Eric)
       recentInProgress: 1,
@@ -2585,15 +2900,19 @@ class Component extends DCLogic {
       // GET
       getStep: s.getStep, getStep0: s.getStep === 0, getStep1: s.getStep === 1, getStep2: s.getStep === 2, getStep3: s.getStep === 3,
       cardFlow,
-      // fiat funding method — Card (Paysafe rail, SAD-9) vs bank transfer
-      showFundMethod: !isCrypto,
-      setFundCard: () => this.setState({ fundMethod: 'card' }), setFundBank: () => this.setState({ fundMethod: 'bank' }),
+      // fiat funding method — chosen on the Pay step (V5 07-24): Card (Paysafe rail, SAD-9) vs bank transfer (V4)
+      payStepTitle: cardFlow ? 'Card details' : (bankFlow ? 'Make your transfer' : 'How would you like to pay?'),
+      coUnpicked: !isCrypto && !s.fundMethod, coCard: cardFlow, coBank: bankFlow,
+      setFundCard: () => this.setState({ fundMethod: 'card', hardLeft: 180, hardExpired: false, coMode: 'saved', coCvv: '' }), setFundBank: () => this.setState({ fundMethod: 'bank', bankCopied: null }),
+      bankSent: () => { this.setState({ getStep: 3 }); this.startMint(); window.scrollTo(0, 0); },
+      recvAccounts, bankRows, bankRef: this.BANK_REF,
+      bankQr: this.qrEl('unera:wire:' + recvSel.bank + ':' + recvSel.account + ':' + this.BANK_REF + ':' + payN, 132),
       fundCardBg: cardFlow ? 'rgba(236,214,160,0.1)' : 'var(--ink2)', fundCardBd: cardFlow ? 'var(--gold)' : 'var(--line)', fundCardTxt: cardFlow ? 'var(--gold)' : 'var(--dim)',
       fundBankBg: (!isCrypto && s.fundMethod === 'bank') ? 'rgba(236,214,160,0.1)' : 'var(--ink2)', fundBankBd: (!isCrypto && s.fundMethod === 'bank') ? 'var(--gold)' : 'var(--line)', fundBankTxt: (!isCrypto && s.fundMethod === 'bank') ? 'var(--gold)' : 'var(--dim)',
       getSteps, ...gd,
       isCrypto, isCad, payToken, paySymbol, getNetwork: s.getNetwork,
       payTokenBg: isCrypto ? ({ USDC: '#2775ca', USDT: '#26a17b', ETH: '#627eea', BTC: '#f7931a' }[s.getAsset]) : 'linear-gradient(135deg,#7ec9a0,#3ccf94)',
-      payMethodLabel: isCrypto ? (s.getAsset + ' on ' + s.getNetwork) : (cardFlow ? ('Card \u00b7 ' + s.fiatCcy) : ('Bank transfer \u00b7 ' + s.fiatCcy)),
+      payMethodLabel: isCrypto ? (s.getAsset + ' on ' + s.getNetwork) : (cardFlow ? ('Card \u00b7 ' + s.fiatCcy) : (bankFlow ? ('Bank transfer \u00b7 ' + s.fiatCcy) : 'Chosen at the payment step')),
       getAmt: s.getAmt, getRecv: s.getRecv,
       getReceiveStr: this.fmt(recvN), getPayStr: this.fmt(payN), getFeeStr: '$' + this.fmt(gFee),
       getRateRow: isVolatile ? ('1 ' + s.getAsset + ' = ' + this.fmt(assetRate) + ' hUSD \u00b7 CoinGecko') : isCrypto ? ('1 ' + s.getAsset + ' = ' + assetRate.toFixed(4) + ' hUSD \u00b7 FX rate') : isCad ? ('1 CAD = ' + fx.toFixed(4) + ' USD \u2192 1.0000 hUSD') : '1.0000 \u2192 1.0000 hUSD',
@@ -2641,10 +2960,11 @@ class Component extends DCLogic {
       getConfirm: () => {
         // server verifies the quote before executing — on ErrQuoteMismatch the quote auto-refreshes and the user must re-confirm (Ducke 07-24)
         if (s.mismatchArmed) { this.setState({ mismatchArmed: false, quoteMismatch: true, quoteLeft: 60, quoteExpired: false }); return; }
-        if (cardFlow) { this.setState({ getStep: 2, quoteMismatch: false, hardLeft: 180, hardExpired: false, coCvv: '' }); window.scrollTo(0, 0); return; }
-        this.approveTxn(isCrypto ? 'transfer' : 'none', () => { this.setState({ getStep: 3, quoteMismatch: false }); this.startMint(); window.scrollTo(0, 0); });
+        // fiat: funding method is chosen on the Pay step (V5 07-24)
+        if (!isCrypto) { this.setState({ getStep: 2, quoteMismatch: false, fundMethod: null, hardLeft: 180, hardExpired: false, coCvv: '' }); window.scrollTo(0, 0); return; }
+        this.approveTxn('transfer', () => { this.setState({ getStep: 3, quoteMismatch: false }); this.startMint(); window.scrollTo(0, 0); });
       },
-      getConfirmLabel: cardFlow ? 'Confirm rate \u2192 enter card' : 'Confirm & purchase',
+      getConfirmLabel: isCrypto ? 'Confirm & purchase' : 'Continue to payment',
       getBack: () => this.setState({ getStep: Math.max(0, s.getStep - 1), quoteMismatch: false }),
       getReset: () => this.go('portfolio'),
       // ── step 2 review soft-lock chip (~60s, latest rate) ──
@@ -2704,13 +3024,20 @@ class Component extends DCLogic {
         { name: 'Customers Bank \u00b7 cash', label: '$118M \u00b7 9%', pct: 9 },
         { name: 'On-chain USDC (transit)', label: '$66M \u00b7 5%', pct: 5 },
       ],
-      maturity: [
-        { label: '38%', bucket: '0\u20137d', pct: 76 },
-        { label: '31%', bucket: '8\u201330d', pct: 62 },
-        { label: '18%', bucket: '31\u201360d', pct: 38 },
-        { label: '9%', bucket: '61\u201390d', pct: 22 },
-        { label: '4%', bucket: '90d+', pct: 12 },
-      ],
+      maturity: maturitySegs,
+      matHovOn: !!matHovSeg, matHovOff: !matHovSeg,
+      matHovLabel: matHovSeg ? (matHovSeg.bucket + ' \u00b7 ' + matHovSeg.label + ' of reserves \u00b7 ' + matHovSeg.usd) : '',
+      donutSegs,
+      d0sw: donutSegs[0].sw, d0op: donutSegs[0].op, d0hov: donutSegs[0].hov,
+      d1sw: donutSegs[1].sw, d1op: donutSegs[1].op, d1hov: donutSegs[1].hov,
+      d2sw: donutSegs[2].sw, d2op: donutSegs[2].op, d2hov: donutSegs[2].hov,
+      d3sw: donutSegs[3].sw, d3op: donutSegs[3].op, d3hov: donutSegs[3].hov,
+      donutUnhov: () => this.setState({ donutHov: -1 }),
+      donutHovOn: !!donutHovSeg, donutHovOff: !donutHovSeg,
+      donutHovName: donutHovSeg ? donutHovSeg.name : '', donutHovPct: donutHovSeg ? (donutHovSeg.pct + '%') : '', donutHovUsd: donutHovSeg ? donutHovSeg.usd : '',
+      trendPts, trendHovOn: !!trendHovPt, trendHovOff: !trendHovPt,
+      trendHovLabel: trendHovPt ? (trendHovPt[0] + ' \u00b7 $' + this.fmt(trendHovPt[1], 1) + 'M') : '',
+      contracts,
       attestations: [
         { title: 'Daily reserve report', meta: 'Jun 17, 2026 \u00b7 Grant Thornton', action: 'PDF', status: 'Latest', stBg: 'rgba(67,192,173,0.14)', stFg: 'var(--teal)' },
         { title: 'Q2 2026 attestation', meta: 'Apr\u2013Jun \u00b7 independent audit', action: 'PDF', status: 'Archived', stBg: 'var(--ink2)', stFg: 'var(--dim)' },
@@ -2731,9 +3058,12 @@ class Component extends DCLogic {
         bg: s.actFilter === f.key ? 'rgba(236,214,160,0.12)' : 'var(--ink2)', bd: s.actFilter === f.key ? 'var(--gold)' : 'var(--line)', color: s.actFilter === f.key ? 'var(--gold)' : 'var(--dim)' })),
 
       // personal activity chart range
-      actRanges, actTrendTitle: at.title, actIssuedLine: at.issued, actIssuedArea, actRedeemLine: at.redeem,
+      actRanges, actTrendTitle: at.title,
       actIssuedTot: at.issuedTot, actRedeemTot: at.redeemTot,
-      actAx0: at.axis[0], actAx1: at.axis[1], actAx2: at.axis[2], actAx3: at.axis[3],
+      actBars, actHovOn: !!actHovPt, actHovOff: !actHovPt,
+      actHovDate: actHovPt ? actHovPt[0] : '',
+      actHovIssued: actHovPt ? ('+$' + this.fmt(actHovPt[1], 0) + ' issued') : '',
+      actHovRedeem: actHovPt ? ('\u2212$' + this.fmt(actHovPt[2], 0) + ' redeemed') : '',
       history: actPaged,
       historyEmpty: actTotal === 0,
       actCountLabel, actHasMore, actRemaining, loadMoreAct,
