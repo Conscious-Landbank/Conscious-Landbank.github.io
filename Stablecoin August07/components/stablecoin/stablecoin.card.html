@@ -1,0 +1,60 @@
+<!-- @dsCard group="Components" viewport="700x440" subtitle="WalletPill (connect states) · ReserveBar · StatCard" name="Stablecoin" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{padding:24px;background:#fff;color:var(--text-primary)}
+  .grp{margin-bottom:22px}
+  .lbl{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px}
+  .deep{background:var(--brand-deep-blue);border-radius:14px;padding:12px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+</style></head>
+<body>
+  <div id="root"></div>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="../../_ds_bundle.js"></script>
+  <script type="text/babel" data-presets="react">
+    const NS = window[Object.keys(window).find(k => window[k] && window[k].WalletPill && window[k].ReserveBar)] || {};
+    const { WalletPill, ReserveBar, StatCard, StatusTimeline } = NS;
+    const supplyIcon = <svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-160v-440h160v440H160Zm240 0v-640h160v640H400Zm240 0v-280h160v280H640Z"/></svg>;
+    const shieldIcon = <svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg>;
+    function Demo(){
+      return (
+        <>
+          <div className="grp">
+            <div className="lbl">WalletPill — progressive connect</div>
+            <div className="deep">
+              <WalletPill onConnect={()=>{}} />
+              <WalletPill connected address="0x742d35Cc6634C0532925a3b844Bc3a8f" balance="$10,240" network="Ethereum" />
+            </div>
+          </div>
+          <div className="grp">
+            <div className="lbl">StatCard</div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+              <StatCard label="Circulating supply" value="2,845,290" currency="hCAD" icon={supplyIcon} />
+              <StatCard label="Reserve ratio" value="105.2%" trend="Fully backed" trendVariant="reserve" icon={shieldIcon} href="#" />
+            </div>
+          </div>
+          <div className="grp">
+            <div className="lbl">StatusTimeline — issuance state machine</div>
+            <StatusTimeline steps={[
+              { label:'Payment settled', state:'done', time:'2:30 PM' },
+              { label:'Compliance cleared', state:'done', time:'2:31 PM' },
+              { label:'Hold period', state:'current', detail:'Releases in ~10 min · risk tier: standard' },
+              { label:'hUSD minted', state:'pending' },
+            ]} />
+          </div>
+          <div className="grp" style={{marginBottom:0}}>
+            <div className="lbl">ReserveBar — Proof of Reserve composition</div>
+            <ReserveBar items={[
+              { asset:'bank', label:'Bank deposits (CAD)', pct:60, value:'$1,796,550' },
+              { asset:'stablecoin', label:'Stablecoins (USDC)', pct:30, value:'$898,275' },
+              { asset:'treasury', label:'Treasury bonds', pct:8, value:'$239,540' },
+              { asset:'cash', label:'Cash equivalent', pct:2, value:'$59,885' },
+            ]} />
+          </div>
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+  </script>
+</body></html>
