@@ -1,0 +1,907 @@
+<!-- @dsCard group="Auth" viewport="1280x820" subtitle="Login · signup (spec-order) · email 2FA + backup codes · password reset · sessions (mobile remember-me, idle, signed-out) · access levels" -->
+<!-- @startingPoint section="Auth" subtitle="Auth flow click-through" viewport="1280x820" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in · UNERA hUSD</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f10'/%3E%3Ccircle cx='32' cy='32' r='21' fill='%23ecd6a0'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='31' font-weight='700' text-anchor='middle' fill='%235a4212'%3Eh%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f10'/%3E%3Ccircle cx='32' cy='32' r='21' fill='%23ecd6a0'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='31' font-weight='700' text-anchor='middle' fill='%235a4212'%3Eh%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#07090a">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  /* ── Portal dark theme (mirrors UNERA hUSD Portal.dc.html palette exactly) ── */
+  :root {
+    --ink:#07090a; --ink2:#0b0f10; --panel:#10171a; --panel2:#141d20;
+    --line:rgba(255,255,255,0.09); --line2:rgba(255,255,255,0.055);
+    --txt:#eef3f2; --dim:#c4cecd; --mute:#9ca9a8;
+    --gold:#ecd6a0; --gold-bright:#f7e8bd; --gold-deep:#caac6c;
+    --teal:#43c0ad; --teal-deep:#2f7682;
+    --up:#3ccf94; --down:#df7e98;
+    /* remap the light-system vars used by inline styles onto the dark palette */
+    --text-primary: var(--txt); --text-secondary: var(--mute);
+    --border-subtle: var(--line);
+    --neutral-100: var(--ink2);
+    --surface-deep: var(--panel2);
+    --surface-verify: rgba(67,192,173,0.13); --verify-teal: var(--teal);
+    --surface-reserve: rgba(236,214,160,0.13); --reserve-gold-deep: var(--gold);
+    --fin-up-bg: rgba(60,207,148,0.14); --fin-up: var(--up);
+    --surface-warning-soft: rgba(231,194,103,0.10); --warning:#e7c267;
+    --surface-error-soft: rgba(223,126,152,0.12);
+  }
+  ::selection { background: rgba(236,214,160,0.3); }
+  @keyframes uFloat { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-12px) } }
+  @keyframes uPulse { 0%,100% { opacity: 0.55 } 50% { opacity: 1 } }
+  @keyframes uRise { from { transform: translateY(16px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+  @keyframes uSpin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
+
+  body { min-height: 100vh; display: grid; grid-template-columns: 1.05fr 1fr; background: var(--ink); color: var(--txt); }
+
+  /* ── brand panel: dark hero with the hUSD medallion ── */
+  .brand-panel { position: relative; overflow: hidden; background: radial-gradient(120% 90% at 78% 12%, #0d1518 0%, var(--ink) 62%); color: var(--txt); padding: 3rem 3.25rem; display: flex; flex-direction: column; border-right: 1px solid var(--line); }
+  .brand-panel .logo { display: flex; align-items: center; gap: 0.6rem; position: relative; z-index: 2; }
+  .brand-panel .logo img { height: 30px; display: block; }
+  .brand-panel .pill { display: inline-block; background: linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color: #3a2c08; font-size: 0.56rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 980px; }
+  .brand-mid { margin-top: auto; margin-bottom: auto; max-width: 34ch; position: relative; z-index: 2; animation: uRise .6s ease both; }
+  .brand-mid .eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: 980px; padding: 0.35rem 0.85rem; font-size: 0.85rem; color: var(--teal); letter-spacing: 0.04em; font-weight: 600; margin-bottom: 1.3rem; text-transform: none; }
+  .brand-mid .eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); animation: uPulse 2.4s ease-in-out infinite; }
+  .brand-mid h2 { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; color: var(--txt); }
+  .brand-mid h2 .goldgrad { background: linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .brand-mid p { color: var(--dim); margin-top: 1rem; font-size: 1rem; line-height: 1.6; }
+  .brand-trust { display: flex; gap: 0.7rem; margin-top: 2rem; flex-wrap: wrap; }
+  .brand-trust .item { display: flex; align-items: center; gap: 0.45rem; font-size: 0.84rem; color: var(--dim); background: var(--panel); border: 1px solid var(--line); border-radius: 980px; padding: 0.4rem 0.85rem; }
+  .brand-trust svg { color: var(--teal); }
+  .blob { position: absolute; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(236,214,160,0.16), transparent 68%); bottom: -140px; right: -110px; filter: blur(6px); }
+  .blob.teal { background: radial-gradient(circle at 60% 40%, rgba(67,192,173,0.10), transparent 70%); top: -160px; left: -140px; bottom: auto; right: auto; }
+  /* medallion (same gradient as the Portal's 3D coin) */
+  .coin { position: absolute; right: 3rem; bottom: 2.6rem; width: 150px; height: 150px; z-index: 1; animation: uFloat 6s ease-in-out infinite; }
+  .coin::before { content: ''; position: absolute; inset: -42px; background: radial-gradient(circle, rgba(236,214,160,0.4), transparent 62%); filter: blur(22px); }
+  .coin-face { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(130% 130% at 32% 24%, #fdf1d2 0%, #f0dca8 32%, #d8b873 60%, #b0894a 84%, #8a6831 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 22px 44px -14px rgba(0,0,0,0.6); }
+  .coin-face::before { content: ''; position: absolute; inset: 11px; border-radius: 50%; border: 1.5px dashed rgba(90,66,20,0.4); }
+  .coin-sym { font-family: var(--font-display); font-weight: 700; font-size: 2.4rem; line-height: 1; color: #5a4214; }
+  .coin-sub { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.16em; color: #7a5c22; margin-top: 0.3rem; }
+
+  /* ── form side ── */
+  .form-side { display: flex; align-items: center; justify-content: center; padding: 2.5rem 2rem; }
+  .auth-card { width: 100%; max-width: 430px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 2rem 2rem 1.8rem; box-shadow: 0 30px 80px -30px rgba(0,0,0,0.65); animation: uRise .5s ease both; }
+  .auth-card h1 { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; letter-spacing: -0.01em; color: var(--txt); }
+  .auth-card .sub { color: var(--mute); font-size: 0.95rem; margin: 0.45rem 0 1.6rem; line-height: 1.55; }
+  .field { margin-bottom: 1.05rem; }
+  .field label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--dim); margin-bottom: 0.45rem; }
+  .field input { width: 100%; background: var(--ink2); border: 1px solid var(--line); border-radius: 12px; padding: 0.85rem 0.95rem; font-size: 1rem; font-family: var(--font-body); color: var(--txt); outline: none; transition: all 0.15s; }
+  .field input::placeholder { color: var(--mute); opacity: 0.7; }
+  .field input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(236,214,160,0.14); }
+  .row-between { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+  .link { color: var(--gold); font-weight: 600; text-decoration: none; cursor: pointer; background: none; border: none; font-family: var(--font-body); font-size: 0.875rem; padding: 0; }
+  .link:hover { color: var(--gold-bright); text-decoration: underline; }
+  a { color: var(--gold); }
+  a:hover { color: var(--gold-bright); }
+  .divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.4rem 0; color: var(--mute); font-size: 0.86rem; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .alt-btn { width: 100%; border: 1px solid var(--line); background: var(--panel2); border-radius: 12px; padding: 0.8rem; font-size: 0.92rem; font-weight: 600; font-family: var(--font-body); color: var(--txt); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 48px; transition: all 0.15s; }
+  .alt-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .foot { text-align: center; margin-top: 1.4rem; font-size: 0.9rem; color: var(--mute); }
+
+  .otp { display: flex; gap: 0.55rem; justify-content: center; margin: 1.4rem 0; }
+  .otp input { width: 50px; height: 58px; text-align: center; font-size: 1.5rem; font-weight: 700; font-family: var(--font-display); background: var(--ink2); color: var(--txt); border: 1px solid var(--line); border-radius: 12px; outline: none; transition: all 0.15s; }
+  .otp input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(236,214,160,0.14); }
+  .sent-ic { width: 62px; height: 62px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; }
+
+  /* segmented control (signed-out cause switch) */
+  .method-seg { display: flex; gap: 0.4rem; background: var(--ink2); border: 1px solid var(--line); border-radius: 12px; padding: 4px; margin: 0 auto 0.4rem; }
+  .method-seg button { flex: 1; border: none; background: none; padding: 0.55rem; border-radius: 9px; font-size: 0.82rem; font-weight: 600; color: var(--mute); cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
+  .method-seg button.active { background: var(--panel2); color: var(--gold); border: 1px solid rgba(236,214,160,0.35); }
+  .method-note { font-size: 0.86rem; color: var(--mute); text-align: center; }
+
+  /* level chip on success */
+  .lvl-chip { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(236,214,160,0.12); border: 1px solid rgba(236,214,160,0.3); border-radius: 980px; padding: 0.22rem 0.7rem; font-size: 0.8rem; font-weight: 700; color: var(--gold); }
+
+  .btn { padding: 0.85rem 1.5rem; border-radius: 12px; font-size: 0.95rem; font-weight: 700; border: none; cursor: pointer; font-family: var(--font-body); display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 48px; text-decoration: none; transition: all 0.2s ease; }
+  .btn-primary { background: linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color: #3a2c08; }
+  .btn-primary:hover { background: linear-gradient(135deg,var(--gold-bright),var(--gold-deep)); color: #3a2c08; box-shadow: 0 10px 30px -8px rgba(236,214,160,0.55); filter: brightness(1.06); }
+  /* Accessibility: always-visible keyboard focus ring on every interactive element */
+  a:focus-visible, button:focus-visible, input:focus-visible, .btn:focus-visible, .link:focus-visible, .alt-btn:focus-visible, .opt-card:focus-visible, .method-seg button:focus-visible, .eye-btn:focus-visible {
+    outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px;
+  }
+  .btn-primary:focus-visible { outline-color: var(--gold-bright); outline-offset: 3px; }
+  @media (forced-colors: active) { .btn, .alt-btn, .opt-card { border: 1px solid ButtonText; } }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+  /* onboarding progress (research: show step count up front) */
+  .steps { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.1rem; }
+  .steps .dot { width: 7px; height: 7px; border-radius: 980px; background: var(--line); transition: all 0.25s; }
+  .steps .dot.on { width: 22px; background: linear-gradient(90deg,var(--gold-deep),var(--gold-bright)); }
+  .steps .dot.past { background: var(--gold-deep); }
+  .steps .lbl { font-size: 0.82rem; color: var(--mute); margin-left: 0.3rem; font-weight: 600; }
+
+  /* password requirement checklist (NIST-aligned, live) */
+  .req-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 0.9rem; margin: 0.6rem 0 0; padding: 0; list-style: none; }
+  .req-list li { display: flex; align-items: center; gap: 0.4rem; font-size: 0.86rem; color: var(--mute); }
+  .req-list li svg { color: rgba(255,255,255,0.22); flex-shrink: 0; transition: color 0.15s; }
+  .req-list li.met { color: var(--up); }
+  .req-list li.met svg { color: var(--up); }
+
+  /* remember me — Unera product parity: visible at all widths (remember-forgot row) */
+  .remember-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.2rem; font-size: 0.85rem; color: var(--dim); cursor: pointer; }
+  .remember-row input { width: 1.05rem; height: 1.05rem; accent-color: var(--gold); flex-shrink: 0; }
+  .remember-row .hint { border-bottom: 1px dotted var(--line); cursor: help; }
+
+  /* security prompt option cards */
+  .opt-card { width: 100%; text-align: left; display: flex; gap: 0.9rem; align-items: flex-start; background: var(--panel2); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; cursor: pointer; font-family: var(--font-body); transition: all 0.2s ease; margin-bottom: 0.8rem; }
+  .opt-card:hover { border-color: rgba(236,214,160,0.45); transform: translateY(-2px); box-shadow: 0 14px 34px -14px rgba(0,0,0,0.6); }
+  .opt-card .ic { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .opt-card .t { display: block; font-size: 0.95rem; font-weight: 700; color: var(--txt); }
+  .opt-card .d { display: block; font-size: 0.86rem; color: var(--mute); margin-top: 0.15rem; line-height: 1.45; }
+  .opt-card .chev { margin-left: auto; align-self: center; color: var(--mute); flex-shrink: 0; }
+
+  /* idle-warning modal (Session PRD: warn 1 min before auto logout) */
+  .idle-overlay { position: fixed; inset: 0; background: rgba(4,6,7,0.65); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 10010; }
+  .idle-overlay.open { display: flex; }
+  .idle-card { background: var(--panel2); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 24px 50px -12px rgba(0,0,0,0.7); max-width: 400px; width: calc(100% - 2rem); padding: 1.8rem; text-align: center; }
+  .idle-card h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--txt); margin-bottom: 0.4rem; }
+  .idle-card p { font-size: 0.9rem; color: var(--dim); line-height: 1.55; }
+  .idle-count { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--warning); }
+  .idle-bar { height: 6px; border-radius: 980px; background: var(--ink2); margin: 1.1rem 0 1.3rem; overflow: hidden; }
+  .idle-bar span { display: block; height: 100%; background: linear-gradient(90deg,var(--gold-deep),var(--gold-bright)); border-radius: 980px; transition: width 1s linear; }
+
+  /* signed-out cause box */
+  .cause-box { text-align: left; background: var(--surface-warning-soft); border: 1px solid var(--line); border-radius: 12px; padding: 0.9rem 1rem; font-size: 0.9rem; color: var(--dim); line-height: 1.5; margin: 0.2rem 0 1.4rem; }
+  .cause-box strong { color: var(--txt); }
+  .cause-box.security { background: var(--surface-error-soft); }
+
+  /* 2FA backup codes (SAD-3: 10 single-use codes, XXXX-XXXX-XXXX) */
+  .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 1.2rem 0; }
+  .backup-item { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em; color: var(--gold-bright); background: var(--ink2); border: 1px solid var(--line); border-radius: 10px; padding: 0.55rem 0.4rem; text-align: center; }
+  .backup-note { display: flex; gap: 0.7rem; align-items: flex-start; text-align: left; background: var(--surface-warning-soft); border: 1px solid var(--line); border-radius: 12px; padding: 0.8rem 0.95rem; font-size: 0.86rem; color: var(--dim); line-height: 1.5; }
+  .backup-note svg { color: var(--warning); flex-shrink: 0; margin-top: 1px; }
+
+  /* country combobox (dropdown + type-to-filter autosuggest) */
+  .combo { position: relative; }
+  .combo input { width: 100%; padding-right: 2.6rem; }
+  .combo-caret { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--mute); cursor: pointer; padding: 6px; display: flex; transition: transform 0.2s, color 0.15s; }
+  .combo-caret:hover { color: var(--gold); }
+  .combo.open .combo-caret { transform: translateY(-50%) rotate(180deg); color: var(--gold); }
+  .combo-pop { display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; max-height: 232px; overflow-y: auto; background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 24px 50px -12px rgba(0,0,0,0.7); z-index: 40; padding: 0.3rem; }
+  .combo.open .combo-pop { display: block; }
+  .combo-opt { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.65rem; border-radius: 8px; font-size: 0.9rem; color: var(--dim); cursor: pointer; }
+  .combo-opt:hover, .combo-opt.active { background: rgba(236,214,160,0.12); color: var(--txt); }
+  .combo-opt .flag { font-size: 1.05rem; line-height: 1; }
+  .combo-opt.sel { color: var(--gold); font-weight: 600; }
+  .combo-empty { padding: 0.7rem 0.65rem; font-size: 0.86rem; color: var(--mute); }
+
+  /* inline errors + generic failure banner (early-UNERA parity; anti-enumeration copy) */
+  .field input.invalid, .otp input.invalid { border-color: var(--down); box-shadow: 0 0 0 3px rgba(223,126,152,0.12); }
+  .err-msg { display: none; font-size: 0.86rem; color: var(--down); margin-top: 0.4rem; text-align: left; }
+  .err-msg.show { display: block; }
+  .otp + .err-msg { text-align: center; margin: -0.8rem 0 1rem; }
+  .err-banner { display: none; gap: 0.6rem; align-items: flex-start; text-align: left; background: var(--surface-error-soft); border: 1px solid rgba(223,126,152,0.3); border-radius: 12px; padding: 0.8rem 0.95rem; font-size: 0.85rem; color: var(--dim); line-height: 1.5; margin-bottom: 1.1rem; }
+  .err-banner.show { display: flex; }
+  .err-banner svg { color: var(--down); flex-shrink: 0; margin-top: 1px; }
+  .err-banner strong { color: var(--txt); }
+  .eye-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--mute); cursor: pointer; padding: 4px; display: flex; }
+  .eye-btn:hover { color: var(--gold); }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  @media (max-width: 820px) { body { grid-template-columns: 1fr; } .brand-panel { display: none; } .remember-row { display: flex; } }
+  @media (max-width: 520px) {
+    .form-side { padding: 1.5rem 1rem; align-items: flex-start; }
+    .auth-card { padding: 1.6rem 1.25rem 1.4rem; border-radius: 14px; }
+    .auth-card h1 { font-size: 1.5rem; }
+    /* OTP: fixed 50px boxes overflow narrow phones — let them share the row */
+    .otp { gap: 0.45rem; }
+    .otp input { flex: 1; min-width: 0; width: auto; height: 54px; font-size: 1.35rem; padding: 0; }
+    .req-list { grid-template-columns: 1fr; }
+    .backup-grid { gap: 0.5rem; }
+    .backup-item { font-size: 0.78rem; letter-spacing: 0.02em; padding: 0.5rem 0.25rem; }
+  }
+  @media (max-width: 360px) { .backup-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <aside class="brand-panel">
+    <div class="logo"><img src="../../assets/logos/unera-white-text-nav.svg" alt="UNERA"><span class="pill">hUSD</span></div>
+    <div class="brand-mid">
+      <div class="eyebrow">Live · reserve data updated 14s ago</div>
+      <h2>Every hUSD is <span class="goldgrad">backed 1:1</span> — and you can verify it.</h2>
+      <p>Issue and redeem fiat-backed hUSD, with reserves you can audit in real time.</p>
+      <div class="brand-trust">
+        <span class="item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> 1:1 backed</span>
+        <span class="item"><svg width="15" height="15" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg> Attested daily</span>
+        <span class="item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg> Independently audited</span>
+      </div>
+    </div>
+    <div class="coin"><div class="coin-face"><span class="coin-sym">$</span><span class="coin-sub">BACKED 1:1</span></div></div>
+    <div class="blob"></div>
+    <div class="blob teal"></div>
+  </aside>
+
+  <main class="form-side">
+    <!-- LOGIN -->
+    <div class="auth-card pane active" id="p-login">
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to issue, redeem, and track your hUSD.</p>
+      <div class="err-banner" id="loginBanner" role="alert"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg><span id="loginBannerText"></span></div>
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" value="jane@example.com" oninput="clearErr(this,'loginEmailErr')"><div class="err-msg" id="loginEmailErr"></div></div>
+      <div class="field">
+        <label>Password</label>
+        <div style="position:relative"><input type="password" id="loginPw" value="••••••••••" style="padding-right:2.6rem" oninput="clearErr(this,'loginPwErr')"><button type="button" class="eye-btn" onclick="toggleEye('loginPw')" aria-label="Show or hide password"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+        <div class="err-msg" id="loginPwErr"></div>
+      </div>
+      <button class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:.35rem" onclick="loginSubmit()">Sign in</button>
+      <div class="row-between" style="margin-top:.9rem">
+        <label class="remember-row" style="margin:0"><input type="checkbox"> <span class="hint" title="Keep me signed in for 7 days on this device.">Remember me</span></label>
+        <button class="link" onclick="show('forgot')">Forgot password?</button>
+      </div>
+      <div class="divider" role="separator">Or continue with wallet</div>
+      <button class="alt-btn" onclick="openWalletAuth('login')"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M200-160q-33 0-56.5-23.5T120-240v-480q0-33 23.5-56.5T200-800h560q33 0 56.5 23.5T840-720v480q0 33-23.5 56.5T760-160H200Zm0-80h560v-480H200v480Zm360-120q25 0 42.5-17.5T620-420q0-25-17.5-42.5T560-480q-25 0-42.5 17.5T500-420q0 25 17.5 42.5T560-360Z"/></svg> Continue with wallet</button>
+      <div class="foot">New to UNERA? <button class="link" onclick="show('signup')">Create an account</button></div>
+      <div class="foot" style="margin-top:.5rem;font-size:.82rem;opacity:.75">Demo: sign in with password <span style="font-family:ui-monospace,Menlo,monospace">wrong</span> to preview failure &amp; lockout states</div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div class="auth-card pane" id="p-signup">
+      <div class="steps" aria-label="Step 1 of 4"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lbl">Step 1 of 4</span></div>
+      <h1>Create your account</h1>
+      <p class="sub">Just an email and password to start — you'll hold &amp; view hUSD at Level 1. Your name comes after email verification; identity verification unlocks Level 2.</p>
+      <div class="field"><label>Email</label><input type="email" id="suEmail" placeholder="you@unera.io" oninput="clearErr(this,'suEmailErr')"><div class="err-msg" id="suEmailErr"></div></div>
+      <div class="field" style="margin-bottom:.55rem"><label>Password</label><input type="password" id="suPw" placeholder="At least 8 characters" oninput="clearErr(this,'suPwErr');checkPw(this,'req-signup')"><div class="err-msg" id="suPwErr"></div></div>
+      <ul class="req-list" id="req-signup" style="margin-bottom:1.05rem">
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> At least 8 characters</li>
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> Upper &amp; lower case</li>
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> A number or symbol</li>
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> Not a common password</li>
+      </ul>
+      <label style="display:flex;gap:.6rem;align-items:center;font-size:.85rem;color:var(--text-secondary);margin:.3rem 0 .3rem;cursor:pointer">
+        <input type="checkbox" id="suTos" style="accent-color:var(--gold);flex-shrink:0" onchange="document.getElementById('suTosErr').classList.remove('show')"> <span>I accept the Terms of Service and Privacy Policy.</span>
+      </label>
+      <div class="err-msg" id="suTosErr" style="margin:0 0 .9rem">Please accept the Terms of Service and Privacy Policy to continue.</div>
+      <button class="btn btn-primary" style="width:100%;margin-top:.6rem" onclick="signupSubmit()">Create account</button>
+      <div class="divider" role="separator">Or continue with wallet</div>
+      <button class="alt-btn" onclick="openWalletAuth('signup')"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M200-160q-33 0-56.5-23.5T120-240v-480q0-33 23.5-56.5T200-800h560q33 0 56.5 23.5T840-720v480q0 33-23.5 56.5T760-160H200Zm0-80h560v-480H200v480Zm360-120q25 0 42.5-17.5T620-420q0-25-17.5-42.5T560-480q-25 0-42.5 17.5T500-420q0 25 17.5 42.5T560-360Z"/></svg> Continue with wallet</button>
+      <div class="foot">Already have an account? <button class="link" onclick="show('login')">Sign in</button></div>
+    </div>
+
+    <!-- VERIFY EMAIL -->
+    <div class="auth-card pane" id="p-verifyemail" style="text-align:center">
+      <div class="steps" style="justify-content:center" aria-label="Step 2 of 4"><span class="dot past"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="lbl">Step 2 of 4</span></div>
+      <div class="sent-ic" style="background:var(--surface-verify);color:var(--verify-teal)"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280 320-200v-80L480-520 160-720v80l320 200Z"/></svg></div>
+      <h1>Verify your email</h1>
+      <p class="sub">Enter the 6-digit code we sent to confirm your address — or open the activation link in the same email. Both work once and expire in 24 hours.</p>
+      <div class="otp" id="otp-ve" oninput="hop(event)"><input maxlength="1" value="4"><input maxlength="1" value="9"><input maxlength="1" value="2"><input maxlength="1"><input maxlength="1"><input maxlength="1"></div>
+      <div class="err-msg" id="err-ve"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="otpSubmit('ve','profile')">Verify</button>
+      <div class="foot">Didn't get it? <button class="link" onclick="resend(this)">Resend code</button></div>
+    </div>
+
+    <!-- PROFILE (Auth/KYC §4.1 step 5 — collected after email verification) -->
+    <div class="auth-card pane" id="p-profile">
+      <div class="steps" aria-label="Step 3 of 4"><span class="dot past"></span><span class="dot past"></span><span class="dot on"></span><span class="dot"></span><span class="lbl">Step 3 of 4</span></div>
+      <h1>About you</h1>
+      <p class="sub">Your email is verified. Add your name and country of residence to finish setting up your account.</p>
+      <div class="field" style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:0">
+        <div style="margin-bottom:1.05rem"><label>First name</label><input type="text" placeholder="Jane"></div>
+        <div style="margin-bottom:1.05rem"><label>Last name</label><input type="text" placeholder="Smith"></div>
+      </div>
+      <div class="field">
+        <label>Country of residence</label>
+        <div class="combo" id="countryCombo">
+          <input type="text" id="countryInput" value="United States" placeholder="Start typing or open the list…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="countryPop" aria-autocomplete="list" onfocus="comboOpen()" oninput="comboFilter()" onkeydown="comboKey(event)">
+          <button type="button" class="combo-caret" aria-label="Toggle country list" onclick="comboToggle()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="combo-pop" id="countryPop" role="listbox" aria-label="Countries"></div>
+        </div>
+        <div style="font-size:.82rem;color:var(--text-secondary);margin-top:.4rem">Suggested from your location — open the list or type to search.</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="show('secure')">Continue</button>
+    </div>
+
+    <!-- SECURE YOUR ACCOUNT (Auth/KYC §4.1 step 6 — 2FA + KYC prompt hub; returns here after each step) -->
+    <div class="auth-card pane" id="p-secure">
+      <div class="steps" aria-label="Step 4 of 4"><span class="dot past"></span><span class="dot past"></span><span class="dot past"></span><span class="dot on"></span><span class="lbl">Step 4 of 4</span></div>
+      <h1>Protect your account</h1>
+      <p class="sub">Two optional ways to strengthen your account. <strong style="color:var(--gold);font-weight:700">Verifying your identity</strong> unlocks Level 2 — issuing and redeeming hUSD; email 2FA adds extra sign-in security. Do either now, or any time from Account → Security.</p>
+      <button class="opt-card" id="card-twofa" onclick="show('setup2fa')" style="border:1.5px solid var(--gold);background:linear-gradient(180deg,rgba(236,214,160,0.10),rgba(236,214,160,0.03))">
+        <span class="ic" style="background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep));color:#3a2c08"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12.5V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9"/><path d="m3 7 9 6 9-6"/><path d="m15.5 19 2 2 4-4"/></svg></span>
+        <span><span class="t">Enable email-based 2FA</span><span class="d">A one-time code by email confirms it's you at sign-in and before sensitive actions.</span></span>
+        <span class="chev" id="chev-twofa" style="color:var(--gold)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </button>
+      <button class="opt-card" id="card-kyc" onclick="show('kycstart')" style="border:1.5px solid var(--gold);background:linear-gradient(180deg,rgba(236,214,160,0.10),rgba(236,214,160,0.03))">
+        <span class="ic" style="background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep));color:#3a2c08"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4.5" width="20" height="15" rx="2.5"/><circle cx="8" cy="11" r="2.2"/><path d="M4.5 16.2c.5-1.7 1.9-2.7 3.5-2.7s3 1 3.5 2.7"/><path d="M14.5 9.5h4"/><path d="M14.5 13h4"/></svg></span>
+        <span><span class="t">Verify your identity</span><span class="d">Unlock <strong style="color:var(--gold)">Level 2</strong> — issue and redeem hUSD. A short guided identity check.</span></span>
+        <span class="chev" id="chev-kyc" style="color:var(--gold)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </button>
+      <a class="btn btn-primary" id="secureCta" style="width:100%;margin-top:.4rem;display:none" href="../../UNERA hUSD Portal.dc.html">Go to dashboard</a>
+      <div class="foot" id="secureSkip"><button class="link" onclick="show('done')">Skip for now — go to my dashboard (Level 1)</button></div>
+    </div>
+
+    <!-- 2FA SETUP (Auth/KYC §4.4 — email one-time setup verification; entry: Account → Security) -->
+    <div class="auth-card pane" id="p-setup2fa" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-reserve);color:var(--reserve-gold-deep)"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg></div>
+      <h1>Enable email-based 2FA</h1>
+      <p class="sub">We sent a one-time setup code to <strong style="color:var(--text-primary)">jane@example.com</strong>. It expires in 5 minutes and works once.</p>
+      <div class="otp" id="otp-setup" oninput="hop(event)"><input maxlength="1" value="8"><input maxlength="1" value="3"><input maxlength="1" value="1"><input maxlength="1"><input maxlength="1"><input maxlength="1"></div>
+      <div class="err-msg" id="err-setup"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="otpSubmit('setup','backupcodes')">Verify &amp; continue</button>
+      <div class="foot">Didn't get it? <button class="link" onclick="resend(this)">Resend code</button> · <button class="link" onclick="show('secure')">Cancel</button></div>
+    </div>
+
+    <!-- BACKUP CODES (SAD-3 three-phase commit: codes must be saved before 2FA activates) -->
+    <div class="auth-card pane" id="p-backupcodes">
+      <h1>Save your backup codes</h1>
+      <p class="sub">If you ever lose access to your email, one of these signs you in. Each code works once.</p>
+      <div class="backup-note"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg><span><strong style="color:var(--text-primary)">Store these somewhere safe.</strong> We can't show them again — you can regenerate a new set any time from Account → Security.</span></div>
+      <div class="backup-grid" id="backupGrid">
+        <div class="backup-item">7KQ2-M9XD-4PLH</div>
+        <div class="backup-item">R8WN-3TJC-XV6B</div>
+        <div class="backup-item">M4YH-Q7ZP-2KDW</div>
+        <div class="backup-item">T9BX-5NRF-8JQM</div>
+        <div class="backup-item">W6PD-K2VH-7XCN</div>
+        <div class="backup-item">B3JF-9WQT-5MRZ</div>
+        <div class="backup-item">N7XK-4DPB-6THW</div>
+        <div class="backup-item">Q2MV-8RJN-3FYC</div>
+        <div class="backup-item">H5TW-6BXQ-9PKD</div>
+        <div class="backup-item">F8CN-2MHV-4WJT</div>
+      </div>
+      <div style="display:flex;gap:.7rem;margin-bottom:1.1rem">
+        <button class="alt-btn" style="flex:1" onclick="downloadCodes()">Download</button>
+        <button class="alt-btn" style="flex:1" onclick="copyCodes()">Copy all</button>
+      </div>
+      <label class="remember-row" style="display:flex;margin-bottom:1.1rem"><input type="checkbox" onchange="toggleComplete(this)"> I've saved my backup codes in a secure place</label>
+      <button class="btn btn-primary" id="completeBtn" style="width:100%" disabled onclick="show('setup2fadone')">Finish — turn on 2FA</button>
+    </div>
+
+    <!-- 2FA ENABLED -->
+    <div class="auth-card pane" id="p-setup2fadone" style="text-align:center">
+      <div class="sent-ic" style="background:var(--fin-up-bg);color:var(--fin-up)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h1>Email 2FA is on</h1>
+      <p class="sub">From now on we'll ask for a one-time email code at sign-in and before sensitive actions. Your 10 backup codes are the fallback if you lose email access. A confirmation email is on its way — manage 2FA any time in Account → Security.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="markSecure('twofa');show('secure')">Continue</button>
+    </div>
+
+    <!-- MAGIC LINK removed — not in PRD (Ducke 07-24); resend-code flows retained -->
+
+    <!-- FORGOT -->
+    <div class="auth-card pane" id="p-forgot">
+      <h1>Reset your password</h1>
+      <p class="sub">Enter your email. If an account exists, we'll send a reset link — valid for 15 minutes, single use.</p>
+      <div class="field"><label>Email</label><input type="email" value="jane@example.com"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="show('resetsent')">Send reset link</button>
+      <div class="foot"><button class="link" onclick="show('login')">← Back to sign in</button></div>
+    </div>
+
+    <!-- RESET LINK SENT (anti-enumeration confirmation, §4.3) -->
+    <div class="auth-card pane" id="p-resetsent" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-verify);color:var(--verify-teal)"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280 320-200v-80L480-520 160-720v80l320 200Z"/></svg></div>
+      <h1>Check your email</h1>
+      <p class="sub">If an account exists for <strong style="color:var(--text-primary)">jane@example.com</strong>, a reset link is on its way. It's valid for <strong style="color:var(--text-primary)">15 minutes</strong> and works once.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="show('newpass')">I opened the link</button>
+      <div class="foot">Nothing arrived? Check spam, or <button class="link" onclick="show('forgot')">resend</button> · <button class="link" onclick="show('login')">Back to sign in</button> · <button class="link" onclick="show('resetexpired')">Preview expired-link state</button></div>
+    </div>
+
+    <!-- RESET LINK EXPIRED / ALREADY USED (§4.3: single-use, 15-min expiry — early-UNERA password-reset error screen) -->
+    <div class="auth-card pane" id="p-resetexpired" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-error-soft);color:var(--down)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg></div>
+      <h1>Link expired or invalid</h1>
+      <p class="sub">This reset link has expired or was already used. Links are valid for <strong style="color:var(--text-primary)">15 minutes</strong> and work once. Request a new one to continue.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="show('forgot')">Request a new link</button>
+      <div class="foot"><button class="link" onclick="show('login')">← Back to sign in</button></div>
+    </div>
+
+    <!-- SET NEW PASSWORD (§4.3 steps 3–5) -->
+    <div class="auth-card pane" id="p-newpass">
+      <h1>Set a new password</h1>
+      <p class="sub">For your security, saving a new password signs you out on all devices.</p>
+      <div class="field" style="margin-bottom:.55rem"><label>New password</label><input type="password" id="npPw" oninput="clearErr(this,'npPwErr');checkPw(this,'req-reset');checkMatch()"><div class="err-msg" id="npPwErr"></div></div>
+      <ul class="req-list" id="req-reset" style="margin-bottom:1.05rem">
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> At least 8 characters</li>
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> Upper &amp; lower case</li>
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> A number or symbol</li>
+        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> Not a common password</li>
+      </ul>
+      <div class="field"><label>Confirm new password</label><input type="password" id="npConfirm" oninput="checkMatch()"><div class="err-msg" id="npConfirmErr"></div></div>
+      <button class="btn btn-primary" style="width:100%" onclick="saveNewPass()">Save new password</button>
+      <div class="foot"><button class="link" onclick="show('login')">← Back to sign in</button></div>
+    </div>
+
+    <!-- PASSWORD UPDATED (§4.3 outcome — sessions revoked; sign in again) -->
+    <div class="auth-card pane" id="p-resetdone" style="text-align:center">
+      <div class="sent-ic" style="background:var(--fin-up-bg);color:var(--fin-up)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h1>Password updated</h1>
+      <p class="sub">All other sessions were signed out and we've emailed you a confirmation. Sign in with your new password to continue.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="show('login')">Sign in</button>
+    </div>
+
+    <!-- 2FA (email one-time code — SAD-3: SMS/TOTP out of scope in v1; backup codes are the recovery path) -->
+    <div class="auth-card pane" id="p-twofa" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-reserve);color:var(--reserve-gold-deep)"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg></div>
+      <h1>Two-factor authentication</h1>
+      <p class="sub">Enter the 6-digit code we emailed to <strong style="color:var(--text-primary)">jane@example.com</strong>. It expires in 5 minutes.</p>
+      <div class="otp" id="otp-2fa" oninput="hop(event)"><input maxlength="1" value="1"><input maxlength="1" value="2"><input maxlength="1" value="3"><input maxlength="1"><input maxlength="1"><input maxlength="1"></div>
+      <div class="err-msg" id="err-2fa"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="otpSubmit('2fa','done')">Verify &amp; continue</button>
+      <div class="foot"><button class="link" onclick="resend(this)">Resend email code</button> · <button class="link" onclick="show('backupverify')">Use a backup code</button></div>
+    </div>
+
+    <!-- BACKUP CODE SIGN-IN (SAD-3 recovery path) -->
+    <div class="auth-card pane" id="p-backupverify" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-reserve);color:var(--reserve-gold-deep)"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Z"/></svg></div>
+      <h1>Use a backup code</h1>
+      <p class="sub">Enter one of the 10 backup codes you saved when enabling 2FA. Each code works once.</p>
+      <div class="field" style="text-align:left"><label>Backup code</label><input type="text" placeholder="XXXX-XXXX-XXXX" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;text-align:center"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="show('done')">Verify &amp; continue</button>
+      <div class="foot"><button class="link" onclick="show('twofa')">← Back to email code</button></div>
+    </div>
+
+    <!-- ═══ KYC (Auth/KYC §4.6 — identity verification handoff) ═══ -->
+    <!-- KYC START: initiate from dashboard; explains the verification process, requirements, data handling -->
+    <div class="auth-card pane" id="p-kycstart">
+      <div class="sent-ic" style="background:var(--surface-verify);color:var(--verify-teal);margin-bottom:1rem"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm-40-206 226-226-56-58-170 170-84-84-58 56 142 172Z"/></svg></div>
+      <h1>Verify your identity</h1>
+      <p class="sub">To unlock <strong style="color:var(--gold);font-weight:700">Level 2</strong> — issuing and redeeming hUSD — we'll verify your identity through our regulated verification partner. It usually takes 2–3 minutes.</p>
+      <div style="display:flex;flex-direction:column;gap:0.7rem;margin:0 0 1.3rem">
+        <div style="display:flex;gap:0.7rem;align-items:center;font-size:0.88rem;color:var(--dim)"><span class="ic" style="width:32px;height:32px;border-radius:9px;background:var(--surface-verify);color:var(--verify-teal);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-120q-33 0-56.5-23.5T80-200v-560q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v560q0 33-23.5 56.5T800-120H160Zm40-160h560v-40H200v40Zm0-120h280v-200H200v200Zm360-80h200v-40H560v40Zm0 80h200v-40H560v40Z"/></svg></span> A government-issued photo ID (passport, driver's licence, or ID card)</div>
+        <div style="display:flex;gap:0.7rem;align-items:center;font-size:0.88rem;color:var(--dim)"><span class="ic" style="width:32px;height:32px;border-radius:9px;background:var(--surface-verify);color:var(--verify-teal);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg></span> A quick selfie to match your ID</div>
+      </div>
+      <div class="backup-note" style="background:var(--surface-verify);margin-bottom:1.3rem"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" style="color:var(--verify-teal)"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg><span>UNERA never stores your raw documents — our verification partner handles them securely and shares only your verification status with us.</span></div>
+      <button class="btn btn-primary" style="width:100%" onclick="startKyc()">Continue to verification</button>
+      <div class="foot"><button class="link" onclick="show('done')">I'll verify later — go to dashboard</button></div>
+    </div>
+
+    <!-- KYC SESSION: UNERA creates a verification session (handoff spinner) -->
+    <div class="auth-card pane" id="p-kycsession" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-verify);color:var(--verify-teal)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="animation:uSpin 0.9s linear infinite"><path d="M21 12a9 9 0 1 1-6.2-8.5"/></svg></div>
+      <h1>Connecting to secure verification…</h1>
+      <p class="sub">Creating your secure verification session. You'll continue inside our secure verification flow — don't close this window.</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;font-size:0.82rem;color:var(--mute);margin-top:0.5rem"><svg width="14" height="14" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Z"/></svg> Encrypted end-to-end</div>
+    </div>
+
+    <!-- KYC FLOW: hosted verification interface (mocked) — document + selfie capture -->
+    <div class="auth-card pane" id="p-kycflow">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+        <span style="font-size:0.82rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mute)">Secure verification</span>
+        <span class="lvl-chip" style="background:var(--surface-verify);border-color:rgba(67,192,173,0.3);color:var(--verify-teal)">Secure</span>
+      </div>
+      <h1 style="font-size:1.4rem">Upload your ID</h1>
+      <p class="sub" id="kycDocSub" style="margin-bottom:0.4rem">Step 1 of 2 · Choose your document type, then capture the photo page.</p>
+      <p style="font-size:0.78rem;color:var(--mute);margin:0 0 1.1rem">You're inside our verification partner's secure flow — documents go straight to them, never to UNERA.</p>
+      <div class="method-seg" style="margin-bottom:1rem"><button class="active" onclick="pickDoc(this,'passport')">Passport</button><button onclick="pickDoc(this,'licence')">Driver's licence</button><button onclick="pickDoc(this,'id')">ID card</button></div>
+      <div id="kycSlots" style="display:grid;grid-template-columns:1fr;gap:0.7rem;margin-bottom:1.2rem">
+        <div data-slot="a" style="aspect-ratio:1.9;border:1.5px dashed var(--line);border-radius:12px;background:var(--ink2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.4rem;color:var(--mute);font-size:0.8rem"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-440ZM120-120q-33 0-56.5-23.5T40-200v-480q0-33 23.5-56.5T120-760h126l74-80h240v80H355l-73 80H120v480h640v-360h80v360q0 33-23.5 56.5T760-120H120Zm640-560v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80ZM440-260q75 0 127.5-52.5T620-440q0-75-52.5-127.5T440-620q-75 0-127.5 52.5T260-440q0 75 52.5 127.5T440-260Z"/></svg> <span data-slot-label>Photo page</span></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="show('kycselfie')">Continue</button>
+      <div class="foot"><button class="link" onclick="show('kycstart')">← Cancel verification</button></div>
+    </div>
+
+    <!-- KYC SELFIE: step 2 -->
+    <div class="auth-card pane" id="p-kycselfie">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+        <span style="font-size:0.82rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--mute)">Secure verification</span>
+        <span class="lvl-chip" style="background:var(--surface-verify);border-color:rgba(67,192,173,0.3);color:var(--verify-teal)">Secure</span>
+      </div>
+      <h1 style="font-size:1.4rem">Take a selfie</h1>
+      <p class="sub" style="margin-bottom:0.4rem">Step 2 of 2 · Center your face in the frame. We'll match it to your ID.</p>
+      <p style="font-size:0.78rem;color:var(--mute);margin:0 0 1.1rem">Captured inside our verification partner's secure flow — UNERA only receives the result.</p>
+      <div style="width:170px;height:170px;border-radius:50%;border:2px dashed var(--line);background:var(--ink2);display:flex;align-items:center;justify-content:center;margin:0 auto 1.3rem;color:var(--mute)"><svg width="46" height="46" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg></div>
+      <button class="btn btn-primary" style="width:100%" onclick="submitKyc()">Submit for verification</button>
+      <div class="foot"><button class="link" onclick="show('kycflow')">← Back</button></div>
+    </div>
+
+    <!-- KYC IN REVIEW (§4.6: In Review → Level 2 Restricted, no regulated actions yet) -->
+    <div class="auth-card pane" id="p-kycreview" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-warning-soft);color:var(--warning)"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Z"/></svg></div>
+      <h1>Verification submitted</h1>
+      <p class="sub">Your documents are being reviewed — this usually takes a few minutes, sometimes up to a day. You're at <strong style="color:var(--warning);font-weight:700">Level 2 · In review</strong>: you can hold and view hUSD, and we'll email you the moment issuing and redeeming unlock.</p>
+      <a class="btn btn-primary" style="width:100%" href="../../UNERA hUSD Portal.dc.html">Go to dashboard</a>
+      <div class="foot"><button class="link" onclick="markSecure('kyc');show('secure')">← Finish account setup</button></div>
+      <div class="foot" style="margin-top:.5rem;font-size:.82rem;opacity:.75">Demo: preview the <button class="link" onclick="show('kycapproved')">approved</button> or <button class="link" onclick="show('kycrejected')">rejected</button> outcome</div>
+    </div>
+
+    <!-- KYC APPROVED (§4.6: Approved → Level 2, full regulated access — user returns via email link / next sign-in) -->
+    <div class="auth-card pane" id="p-kycapproved" style="text-align:center">
+      <div class="sent-ic" style="background:var(--fin-up-bg);color:var(--fin-up)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h1>You're verified</h1>
+      <p class="sub">Welcome to <span class="lvl-chip" style="vertical-align:baseline">Level 2 · Verified</span> — issuing and redeeming hUSD are now unlocked, along with receipts and tax documents. A confirmation email is on its way.</p>
+      <a class="btn btn-primary" style="width:100%" href="../../UNERA hUSD Portal.dc.html">Go to dashboard</a>
+      <div class="foot"><button class="link" onclick="markSecure('kyc');show('secure')">← Finish account setup</button></div>
+    </div>
+
+    <!-- KYC REJECTED (§4.6: Rejected → Restricted, access limited) -->
+    <div class="auth-card pane" id="p-kycrejected" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-error-soft);color:var(--down)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div>
+      <h1>We couldn't verify your identity</h1>
+      <p class="sub">Your account is now <strong style="color:var(--down);font-weight:700">Restricted</strong> — you can view your existing balance, but issuing, redeeming and receiving are paused. The most common causes are a blurry document photo or details that don't match your profile.</p>
+      <div class="backup-note" style="margin-bottom:1.3rem;text-align:left"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg><span>We emailed you the specific reason. You can resubmit with corrected documents, or contact support if you believe this is a mistake.</span></div>
+      <button class="btn btn-primary" style="width:100%" onclick="show('kycstart')">Resubmit documents</button>
+      <div class="foot"><button class="link">Contact support</button> · <a class="link" href="../../UNERA hUSD Portal.dc.html" style="text-decoration:none">Go to dashboard</a></div>
+    </div>
+
+    <!-- DONE -->
+    <div class="auth-card pane" id="p-done" style="text-align:center">
+      <div class="sent-ic" style="background:var(--fin-up-bg);color:var(--fin-up)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h1>You're in</h1>
+      <p class="sub">Signed in securely at <strong style="color:var(--gold);font-weight:700">Level 1</strong> — you can hold and view hUSD. Verify your identity to issue and redeem.</p>
+      <a class="btn btn-primary" style="width:100%" href="../../UNERA hUSD Portal.dc.html">Go to dashboard</a>
+      <div class="foot"><button class="link" onclick="show('setup2fa')">Enable email 2FA</button> · <button class="link" onclick="show('login')">Sign out</button></div>
+      <div class="divider">session previews</div>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="link" onclick="openIdle()">Idle warning</button>
+        <button class="link" onclick="setCause('idle');show('signedout')">Inactivity sign-out</button>
+        <button class="link" onclick="setCause('security');show('signedout')">Security sign-out</button>
+      </div>
+    </div>
+
+    <!-- SIGNED OUT (Session PRD: post-logout page explains cause) -->
+    <div class="auth-card pane" id="p-signedout" style="text-align:center">
+      <div class="sent-ic" style="background:var(--surface-warning-soft);color:var(--warning)"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Z"/></svg></div>
+      <h1>You've been signed out</h1>
+      <div class="method-seg" style="max-width:300px;margin:1rem auto .9rem">
+        <button id="c-idle" class="active" onclick="setCause('idle')">Inactivity</button>
+        <button id="c-sec" onclick="setCause('security')">Security</button>
+      </div>
+      <div class="cause-box" id="causeBox"><strong>Signed out after 30 minutes of inactivity.</strong> Nothing was lost — sign back in to pick up where you left off.</div>
+      <button class="btn btn-primary" style="width:100%" onclick="show('login')">Sign back in</button>
+    </div>
+  </main>
+
+  <!-- Idle-warning modal (Session PRD: appears 1 minute before automatic logout) -->
+  <div class="idle-overlay" id="idleOverlay" role="alertdialog" aria-modal="true" aria-labelledby="idleTitle">
+    <div class="idle-card">
+      <div class="sent-ic" style="background:var(--surface-warning-soft);color:var(--warning);margin-bottom:1rem"><svg width="28" height="28" viewBox="0 -960 960 960" fill="currentColor"><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Z"/></svg></div>
+      <h2 id="idleTitle">Still there?</h2>
+      <p>You've been inactive for a while. For your security we'll sign you out in <span class="idle-count" id="idleCount">1:00</span>.</p>
+      <div class="idle-bar"><span id="idleBarFill" style="width:100%"></span></div>
+      <div style="display:flex;gap:.7rem">
+        <button class="btn btn-primary" style="flex:1" onclick="closeIdle()">Stay signed in</button>
+        <button class="alt-btn" style="flex:1;width:auto" onclick="idleSignOut()">Sign out now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wallet auth modal (Unera product parity — login_2/signup_2 wallet-auth flow) -->
+  <div class="idle-overlay" id="walletOverlay" role="dialog" aria-modal="true" aria-labelledby="walletAuthTitle">
+    <div class="idle-card" style="text-align:left">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.35rem">
+        <h2 id="walletAuthTitle" style="margin:0">Continue with wallet</h2>
+        <button class="link" onclick="closeWalletAuth()" aria-label="Close" style="font-size:1.1rem;line-height:1">✕</button>
+      </div>
+      <div id="walletStepPicker">
+        <p style="margin:0 0 .9rem;font-size:.9rem;color:var(--dim)">Connect a wallet to sign in or create your account. You'll sign a message to prove ownership — no transaction, no gas.</p>
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem" role="group" aria-label="Test scenario selector">
+          <span style="font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)">Demo · scenario</span>
+          <button class="link" id="ws-happy" style="font-size:.78rem" onclick="setWalletScenario('happy',this)">Happy path</button>
+          <button class="link" id="ws-wrong" style="font-size:.78rem;opacity:.6" onclick="setWalletScenario('wrong-network',this)">Wrong network</button>
+          <button class="link" id="ws-missing" style="font-size:.78rem;opacity:.6" onclick="setWalletScenario('not-installed',this)">Not installed</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.9rem">
+          <button class="alt-btn" style="justify-content:flex-start;display:flex;align-items:center;gap:.7rem" onclick="walletConnect('MetaMask')"><span style="width:26px;height:26px;border-radius:7px;background:#f6851b;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff">M</span> MetaMask</button>
+          <button class="alt-btn" style="justify-content:flex-start;display:flex;align-items:center;gap:.7rem" onclick="walletConnect('WalletConnect')"><span style="width:26px;height:26px;border-radius:7px;background:#3b99fc;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff">W</span> WalletConnect</button>
+          <button class="alt-btn" style="justify-content:flex-start;display:flex;align-items:center;gap:.7rem" onclick="walletConnect('Coinbase Wallet')"><span style="width:26px;height:26px;border-radius:7px;background:#2c5ff6;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff">C</span> Coinbase Wallet</button>
+        </div>
+        <p style="margin:0;font-size:.78rem;color:var(--mute)">A wallet-created account starts at Level 1 (hold &amp; view). Identity verification still unlocks Level 2 — issuing and redeeming hUSD.</p>
+      </div>
+      <div id="walletStepConnecting" style="display:none;text-align:center;padding:.6rem 0 .2rem">
+        <div class="sent-ic" style="background:var(--surface-verify);color:var(--verify-teal);margin:0 auto 1rem"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="animation:uSpin 1s linear infinite"><path d="M21 12a9 9 0 11-6.2-8.56"/></svg></div>
+        <p id="walletConnMsg" style="margin:0 0 .4rem;font-weight:700;color:var(--txt,#fff)">Waiting for MetaMask…</p>
+        <p style="margin:0;font-size:.85rem;color:var(--dim)">Approve the connection, then sign the verification message in your wallet.</p>
+      </div>
+      <div id="walletStepError" style="display:none;text-align:center;padding:.6rem 0 .2rem">
+        <div class="sent-ic" style="background:var(--surface-error-soft);color:var(--down);margin:0 auto 1rem"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg></div>
+        <p id="walletErrTitle" style="margin:0 0 .4rem;font-weight:700;color:var(--txt,#fff)">Wrong network</p>
+        <p id="walletErrMsg" style="margin:0 0 1.1rem;font-size:.85rem;color:var(--dim)">Your wallet is on an unsupported network. Switch to Ethereum, Base, or Sepolia and try again.</p>
+        <div style="display:flex;gap:.7rem">
+          <button class="btn btn-primary" id="walletErrCta" style="flex:1" onclick="walletErrAction()">Switch network</button>
+          <button class="alt-btn" style="flex:1;width:auto" onclick="backToWalletPicker()">Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+
+  // V6 08-06 (Kevin): every pane names itself in the browser tab
+  var PANE_TITLES = {
+    login: 'Sign in', signup: 'Create your account', verifyemail: 'Verify your email', profile: 'About you',
+    secure: 'Protect your account', setup2fa: 'Enable 2FA', backupcodes: 'Backup codes', setup2fadone: '2FA enabled',
+    forgot: 'Reset your password', resetsent: 'Check your email', resetexpired: 'Link expired', newpass: 'Set a new password',
+    resetdone: 'Password updated', twofa: 'Two-factor authentication', backupverify: 'Use a backup code',
+    kycstart: 'Verify your identity', kycsession: 'Verifying\u2026', kycflow: 'Identity document', kycselfie: 'Selfie check',
+    kycreview: 'Verification submitted', kycapproved: 'You\u2019re verified', kycrejected: 'Verification failed',
+    done: 'You\u2019re in', signedout: 'Signed out'
+  };
+  function setPaneTitle(p){ document.title = (PANE_TITLES[p] || 'Sign in') + ' \u00b7 UNERA hUSD'; }
+  function show(p){ setPaneTitle(p); document.querySelectorAll('.pane').forEach(function(el){el.classList.remove('active');}); var pane = document.getElementById('p-'+p); pane.classList.add('active'); var h = pane.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.style.outline='none'; h.focus({preventScroll:true}); } window.scrollTo(0,0); }
+  function hop(e){ e.target.classList.remove('invalid'); if(e.target.value && e.target.nextElementSibling) e.target.nextElementSibling.focus(); }
+
+  // ── inline validation + error states (early-UNERA parity) ──
+  function clearErr(input, errId){ input.classList.remove('invalid'); var e = document.getElementById(errId); if (e) e.classList.remove('show'); }
+  function fieldErr(input, errId, msg){ input.classList.add('invalid'); var e = document.getElementById(errId); e.textContent = msg; e.classList.add('show'); }
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+  function toggleEye(id){ var f = document.getElementById(id); f.type = f.type === 'password' ? 'text' : 'password'; }
+
+  // login: generic failure (anti-enumeration) + lockout after 5 attempts (SAD-3 throttling)
+  var loginFails = 0;
+  function loginSubmit(){
+    var email = document.getElementById('loginEmail'), pw = document.getElementById('loginPw');
+    var banner = document.getElementById('loginBanner'), btxt = document.getElementById('loginBannerText');
+    var ok = true;
+    if (!email.value.trim()) { fieldErr(email, 'loginEmailErr', 'Email is required.'); ok = false; }
+    else if (!validEmail(email.value)) { fieldErr(email, 'loginEmailErr', 'Enter a valid email address.'); ok = false; }
+    if (!pw.value) { fieldErr(pw, 'loginPwErr', 'Password is required.'); ok = false; }
+    if (!ok) return;
+    if (pw.value === 'wrong') { // demo hook for the failure path
+      loginFails++;
+      if (loginFails >= 5) {
+        btxt.innerHTML = '<strong>Too many failed attempts.</strong> For your security, sign-in is locked for 15 minutes. You can still reset your password.';
+        document.getElementById('loginBtn').disabled = true;
+        setTimeout(function(){ document.getElementById('loginBtn').disabled = false; loginFails = 0; banner.classList.remove('show'); }, 8000); // demo: lock lifts after 8s
+      } else {
+        btxt.innerHTML = '<strong>That email or password doesn\u2019t look right.</strong> Check both and try again \u2014 or reset your password.';
+      }
+      banner.classList.add('show'); return;
+    }
+    banner.classList.remove('show'); loginFails = 0;
+    show('twofa');
+  }
+
+  // signup: inline validation + required consent (§4.1)
+  function signupSubmit(){
+    var email = document.getElementById('suEmail'), pw = document.getElementById('suPw'), tos = document.getElementById('suTos');
+    var ok = true;
+    if (!email.value.trim()) { fieldErr(email, 'suEmailErr', 'Email is required.'); ok = false; }
+    else if (!validEmail(email.value)) { fieldErr(email, 'suEmailErr', 'Enter a valid email address.'); ok = false; }
+    if (pw.value.length < 8) { fieldErr(pw, 'suPwErr', 'Password must be at least 8 characters.'); ok = false; }
+    if (!tos.checked) { document.getElementById('suTosErr').classList.add('show'); ok = false; }
+    if (!ok) return;
+    show('verifyemail'); // anti-enumeration: an existing email would still land here ("check your inbox")
+  }
+
+  // OTP: completeness check, wrong-code error, 3-attempt invalidation (SAD-3: max 3 · demo wrong code 000000)
+  var otpFails = {};
+  function otpSubmit(key, next){
+    var wrap = document.getElementById('otp-' + key), err = document.getElementById('err-' + key);
+    var inputs = wrap.querySelectorAll('input'), code = '';
+    inputs.forEach(function(i){ code += i.value; });
+    if (code.length < 6) {
+      inputs.forEach(function(i){ i.classList.toggle('invalid', !i.value); });
+      err.textContent = 'Enter the full 6-digit code.'; err.classList.add('show'); return;
+    }
+    if (code === '000000') { // demo hook for the wrong-code path
+      otpFails[key] = (otpFails[key] || 0) + 1;
+      if (otpFails[key] >= 3) {
+        err.textContent = 'Too many attempts — that code is now invalid. We\u2019ve emailed you a new one.';
+        inputs.forEach(function(i){ i.value = ''; i.classList.remove('invalid'); });
+        otpFails[key] = 0;
+      } else {
+        err.textContent = 'That code isn\u2019t right. ' + (3 - otpFails[key]) + (3 - otpFails[key] === 1 ? ' attempt' : ' attempts') + ' left.';
+        inputs.forEach(function(i){ i.classList.add('invalid'); });
+      }
+      err.classList.add('show'); return;
+    }
+    err.classList.remove('show'); inputs.forEach(function(i){ i.classList.remove('invalid'); });
+    show(next);
+  }
+
+  // set-new-password: live confirm-match + submit guard (§4.3)
+  function checkMatch(){
+    var a = document.getElementById('npPw'), b = document.getElementById('npConfirm'), e = document.getElementById('npConfirmErr');
+    if (b.value && a.value !== b.value) { b.classList.add('invalid'); e.textContent = 'Passwords don\u2019t match.'; e.classList.add('show'); }
+    else { b.classList.remove('invalid'); e.classList.remove('show'); }
+  }
+  function saveNewPass(){
+    var a = document.getElementById('npPw'), b = document.getElementById('npConfirm');
+    if (a.value.length < 8) { fieldErr(a, 'npPwErr', 'Password must be at least 8 characters.'); return; }
+    if (a.value !== b.value) { fieldErr(b, 'npConfirmErr', 'Passwords don\u2019t match.'); return; }
+    show('resetdone');
+  }
+  function setMethod(m){} // retired — SAD-3 removes the authenticator option (email 2FA + backup codes only)
+
+  // 2FA backup codes (SAD-3: 10 single-use codes, regenerable from Account → Security)
+  function toggleComplete(cb){ document.getElementById('completeBtn').disabled = !cb.checked; }
+  function codesText(){
+    var out = [];
+    document.querySelectorAll('#backupGrid .backup-item').forEach(function(el){ out.push(el.textContent); });
+    return out.join('\n');
+  }
+  function copyCodes(){ if (navigator.clipboard) navigator.clipboard.writeText(codesText()); }
+  function downloadCodes(){
+    var blob = new Blob(['UNERA Stablecoin Portal \u2014 2FA backup codes\n\nEach code works once. Store them somewhere safe.\n\n' + codesText()], { type: 'text/plain' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'unera-2fa-backup-codes.txt'; a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  // live password-requirement checklist (NIST-aligned: length first)
+  function checkPw(input, listId){
+    var v = input.value;
+    var common = ['password','123456','qwerty','letmein','unera','husd'];
+    var tests = [
+      v.length >= 8,
+      /[a-z]/.test(v) && /[A-Z]/.test(v),
+      /[\d\W]/.test(v),
+      v.length > 0 && !common.some(function(c){ return v.toLowerCase().indexOf(c) !== -1; })
+    ];
+    var items = document.getElementById(listId).querySelectorAll('li');
+    for (var i = 0; i < items.length; i++) items[i].classList.toggle('met', !!tests[i]);
+  }
+
+  // idle-warning modal (Session PRD)
+  var idleT = null, idleLeft = 60;
+  function renderIdle(){
+    document.getElementById('idleCount').textContent = Math.floor(idleLeft/60) + ':' + String(idleLeft%60).padStart(2,'0');
+    document.getElementById('idleBarFill').style.width = (idleLeft/60*100) + '%';
+  }
+  function openIdle(){
+    idleLeft = 60; renderIdle();
+    document.getElementById('idleOverlay').classList.add('open');
+    clearInterval(idleT);
+    idleT = setInterval(function(){ idleLeft--; if (idleLeft <= 0) { idleSignOut(); return; } renderIdle(); }, 1000);
+  }
+  function closeIdle(){ clearInterval(idleT); document.getElementById('idleOverlay').classList.remove('open'); }
+  function idleSignOut(){ closeIdle(); setCause('idle'); show('signedout'); }
+
+  // signed-out cause (Session PRD: inactivity vs security)
+  function setCause(c){
+    var box = document.getElementById('causeBox');
+    document.getElementById('c-idle').classList.toggle('active', c === 'idle');
+    document.getElementById('c-sec').classList.toggle('active', c === 'security');
+    box.classList.toggle('security', c === 'security');
+    box.innerHTML = c === 'idle'
+      ? '<strong>Signed out after 30 minutes of inactivity.</strong> Nothing was lost — sign back in to pick up where you left off.'
+      : '<strong>Signed out to protect your account.</strong> We ended all sessions after a security event (for example a password change or unusual activity). If this wasn\u2019t you, reset your password now.';
+  }
+  // ── accessibility init (WCAG 2.2): labels, live regions, toggle state ──
+  (function a11y(){
+    document.querySelectorAll('.otp').forEach(function(grp){
+      grp.setAttribute('role','group'); grp.setAttribute('aria-label','Enter the 6-digit code');
+      grp.querySelectorAll('input').forEach(function(inp,i){
+        inp.setAttribute('inputmode','numeric');
+        inp.setAttribute('autocomplete', i===0 ? 'one-time-code' : 'off');
+        inp.setAttribute('aria-label','Digit '+(i+1)+' of 6');
+      });
+    });
+    document.querySelectorAll('.err-msg').forEach(function(e){ e.setAttribute('role','alert'); e.setAttribute('aria-live','assertive'); });
+    document.querySelectorAll('.eye-btn').forEach(function(b){
+      b.setAttribute('aria-pressed','false');
+      b.addEventListener('click', function(){ b.setAttribute('aria-pressed', b.getAttribute('aria-pressed')==='true' ? 'false':'true'); });
+    });
+    document.querySelectorAll('.req-list').forEach(function(l){ l.setAttribute('aria-live','polite'); });
+  })();
+
+  // resend confirmation (NNG #1 visibility of system status) — brief inline feedback, then re-enable
+  function resend(btn){
+    if (btn.dataset.busy) return;
+    var orig = btn.textContent; btn.dataset.busy = '1';
+    btn.textContent = 'Code sent ✓'; btn.style.color = 'var(--fin-up)';
+    setTimeout(function(){ btn.textContent = orig; btn.style.color = ''; delete btn.dataset.busy; }, 2200);
+  }
+
+  // ── secure-hub completion tracking (§4.1 step 6: prompt BOTH 2FA + KYC; both → dashboard) ──
+  var secureDone = { twofa: false, kyc: false };
+  function markSecure(step){
+    secureDone[step] = true;
+    [['twofa','On','var(--fin-up)'], ['kyc','In review','var(--warning)']].forEach(function(row){
+      if (!secureDone[row[0]]) return;
+      var card = document.getElementById('card-' + row[0]);
+      card.onclick = null; card.style.cursor = 'default'; card.style.opacity = '0.75';
+      document.getElementById('chev-' + row[0]).innerHTML = '<span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:700;color:' + row[2] + '"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>' + row[1] + '</span>';
+    });
+    var cta = document.getElementById('secureCta'), skip = document.getElementById('secureSkip');
+    cta.style.display = 'flex';
+    if (secureDone.twofa && secureDone.kyc) {
+      cta.className = 'btn btn-primary'; cta.style.marginTop = '.4rem';
+      cta.textContent = 'Go to dashboard'; skip.style.display = 'none';
+    } else {
+      cta.className = 'alt-btn'; cta.style.marginTop = '.4rem';
+      cta.textContent = 'Finish later — go to dashboard';
+      var msg = secureDone.kyc
+        ? 'Identity submitted. Enable email 2FA too — it\u2019s required to issue and redeem at Level 2. Or finish any time from Account → Security.'
+        : 'Verify your identity to unlock Level 2. You can finish either step any time from Account → Security.';
+      skip.innerHTML = '<span style="color:var(--mute)">' + msg + '</span>';
+    }
+  }
+
+  // ── KYC (§4.6 verification handoff) ──
+  // document-type picker: passport = single photo page; licence / ID card = front + back
+  var kycDocSlotSvg = '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-440ZM120-120q-33 0-56.5-23.5T40-200v-480q0-33 23.5-56.5T120-760h126l74-80h240v80H355l-73 80H120v480h640v-360h80v360q0 33-23.5 56.5T760-120H120Zm640-560v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80ZM440-260q75 0 127.5-52.5T620-440q0-75-52.5-127.5T440-620q-75 0-127.5 52.5T260-440q0 75 52.5 127.5T440-260Z"/></svg>';
+  function kycSlot(label){
+    return '<div style="aspect-ratio:1.9;border:1.5px dashed var(--line);border-radius:12px;background:var(--ink2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.4rem;color:var(--mute);font-size:0.8rem">' + kycDocSlotSvg + ' <span>' + label + '</span></div>';
+  }
+  function pickDoc(btn, type){
+    btn.parentNode.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var slots = document.getElementById('kycSlots'), sub = document.getElementById('kycDocSub');
+    if (type === 'passport') {
+      slots.style.gridTemplateColumns = '1fr';
+      slots.innerHTML = kycSlot('Photo page');
+      sub.textContent = 'Step 1 of 2 \u00b7 Capture the photo page of your passport.';
+    } else {
+      slots.style.gridTemplateColumns = '1fr 1fr';
+      slots.innerHTML = kycSlot('Front') + kycSlot('Back');
+      sub.textContent = 'Step 1 of 2 \u00b7 Capture the front and back of your ' + (type === 'licence' ? "driver's licence" : 'ID card') + '.';
+    }
+  }
+  function startKyc(){ show('kycsession'); setTimeout(function(){ show('kycflow'); }, 1600); }
+  function submitKyc(){ show('kycsession'); setTimeout(function(){ show('kycreview'); }, 1600); }
+
+  // country combobox — dropdown + type-to-filter autosuggest, keyboard-navigable
+  (function(){
+    var data = [["United States","🇺🇸"],["United Kingdom","🇬🇧"],["Canada","🇨🇦"],["Australia","🇦🇺"],["Germany","🇩🇪"],["France","🇫🇷"],["Netherlands","🇳🇱"],["Ireland","🇮🇪"],["Singapore","🇸🇬"],["Switzerland","🇨🇭"],["Spain","🇪🇸"],["Italy","🇮🇹"],["Portugal","🇵🇹"],["Sweden","🇸🇪"],["Norway","🇳🇴"],["Denmark","🇩🇰"],["Finland","🇫🇮"],["Belgium","🇧🇪"],["Austria","🇦🇹"],["Poland","🇵🇱"],["Czechia","🇨🇿"],["Japan","🇯🇵"],["South Korea","🇰🇷"],["Hong Kong","🇭🇰"],["United Arab Emirates","🇦🇪"],["Brazil","🇧🇷"],["Mexico","🇲🇽"],["Argentina","🇦🇷"],["Chile","🇨🇱"],["India","🇮🇳"],["Indonesia","🇮🇩"],["Malaysia","🇲🇾"],["Philippines","🇵🇭"],["Thailand","🇹🇭"],["Vietnam","🇻🇳"],["South Africa","🇿🇦"],["Nigeria","🇳🇬"],["Kenya","🇰🇪"],["New Zealand","🇳🇿"],["Israel","🇮🇱"],["Turkey","🇹🇷"],["Saudi Arabia","🇸🇦"]];
+    var combo = document.getElementById('countryCombo');
+    if (!combo) return;
+    var input = document.getElementById('countryInput'), pop = document.getElementById('countryPop');
+    var activeIdx = -1, visible = [];
+    function render(filter){
+      var q = (filter || '').trim().toLowerCase();
+      visible = data.filter(function(c){ return !q || c[0].toLowerCase().indexOf(q) !== -1; });
+      activeIdx = -1;
+      if (!visible.length) { pop.innerHTML = '<div class="combo-empty">No match — check spelling.</div>'; return; }
+      pop.innerHTML = visible.map(function(c){
+        var sel = c[0] === input.value ? ' sel' : '';
+        return '<div class="combo-opt' + sel + '" role="option" data-v="' + c[0] + '"><span class="flag">' + c[1] + '</span>' + c[0] + '</div>';
+      }).join('');
+      pop.querySelectorAll('.combo-opt').forEach(function(el){ el.onmousedown = function(e){ e.preventDefault(); pick(el.dataset.v); }; });
+    }
+    function pick(v){ input.value = v; window.comboClose(); }
+    function setActive(i){
+      var opts = pop.querySelectorAll('.combo-opt'); if (!opts.length) return;
+      activeIdx = (i + opts.length) % opts.length;
+      opts.forEach(function(o,k){ o.classList.toggle('active', k === activeIdx); });
+      opts[activeIdx].scrollIntoView({ block: 'nearest' });
+    }
+    window.comboOpen = function(){ render(''); combo.classList.add('open'); input.setAttribute('aria-expanded','true'); };
+    window.comboClose = function(){ combo.classList.remove('open'); input.setAttribute('aria-expanded','false'); };
+    window.comboToggle = function(){ combo.classList.contains('open') ? window.comboClose() : (input.focus(), window.comboOpen()); };
+    window.comboFilter = function(){ combo.classList.add('open'); input.setAttribute('aria-expanded','true'); render(input.value); };
+    window.comboKey = function(e){
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (!combo.classList.contains('open')) window.comboOpen(); setActive(activeIdx + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIdx - 1); }
+      else if (e.key === 'Enter') { if (combo.classList.contains('open') && activeIdx >= 0) { e.preventDefault(); pick(visible[activeIdx][0]); } }
+      else if (e.key === 'Escape') { window.comboClose(); }
+    };
+    document.addEventListener('mousedown', function(e){ if (!combo.contains(e.target)) window.comboClose(); });
+  })();
+
+  // deep link: index.html#signup, #forgot, #twofa … opens that pane directly (used by the Portal's Sign up links)
+  (function(){ var h = location.hash.replace('#',''); if (h && document.getElementById('p-'+h)) show(h); })();
+</script>
+<script>
+  // ── Wallet auth (Unera product parity: picker + scenarios — wrong-network / not-installed) ──
+  var walletIntent = 'login';
+  var walletScenario = 'happy';
+  var walletLastName = 'MetaMask';
+  function setWalletScenario(s, btn){ walletScenario = s; ['ws-happy','ws-wrong','ws-missing'].forEach(function(id){ document.getElementById(id).style.opacity = '0.6'; }); btn.style.opacity = '1'; }
+  function backToWalletPicker(){ document.getElementById('walletStepPicker').style.display=''; document.getElementById('walletStepConnecting').style.display='none'; document.getElementById('walletStepError').style.display='none'; }
+  function openWalletAuth(intent){ walletIntent = intent; walletScenario = 'happy'; setWalletScenario('happy', document.getElementById('ws-happy') || {style:{}}); backToWalletPicker(); document.getElementById('walletOverlay').classList.add('open'); }
+  function closeWalletAuth(){ document.getElementById('walletOverlay').classList.remove('open'); }
+  function walletErrAction(){
+    if (walletScenario === 'not-installed') { closeWalletAuth(); return; } // "Get MetaMask" would open the store
+    walletScenario = 'happy'; walletConnect(walletLastName); // switched network → retry happy
+  }
+  function walletConnect(name){
+    walletLastName = name;
+    document.getElementById('walletStepPicker').style.display='none';
+    document.getElementById('walletStepError').style.display='none';
+    var c = document.getElementById('walletStepConnecting'); c.style.display='';
+    document.getElementById('walletConnMsg').textContent = 'Waiting for ' + name + '…';
+    setTimeout(function(){
+      if (walletScenario === 'wrong-network') {
+        document.getElementById('walletStepConnecting').style.display='none';
+        document.getElementById('walletErrTitle').textContent = 'Wrong network';
+        document.getElementById('walletErrMsg').textContent = 'Your wallet is on an unsupported network. Switch to Ethereum, Base, or Sepolia and try again.';
+        document.getElementById('walletErrCta').textContent = 'Switch network';
+        document.getElementById('walletStepError').style.display='';
+      } else if (walletScenario === 'not-installed') {
+        document.getElementById('walletStepConnecting').style.display='none';
+        document.getElementById('walletErrTitle').textContent = name + ' not detected';
+        document.getElementById('walletErrMsg').textContent = 'We couldn\u2019t find ' + name + ' in this browser. Install the extension or use another wallet.';
+        document.getElementById('walletErrCta').textContent = 'Get ' + name;
+        document.getElementById('walletStepError').style.display='';
+      } else {
+        closeWalletAuth();
+        if (walletIntent === 'signup') { show('profile'); } else { show('done'); }
+      }
+    }, 1600);
+  }
+</script>
+</body>
+</html>
