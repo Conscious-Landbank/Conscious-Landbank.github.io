@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payees &amp; Methods - Huma</title>
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Light.otf") format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-LightItalic.otf") format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Regular.otf") format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-RegularItalic.otf") format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Medium.otf") format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-MediumItalic.otf") format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Semibold.otf") format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-SemiboldItalic.otf") format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Bold.otf") format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-BoldItalic.otf") format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --brand-deep-blue: #173d47;
+            --brand-yellow: #ffffab;
+            --brand-cloud-blue: #ebfcf5;
+            --brand-earth: #cec4b8;
+            --brand-black: #000000;
+            --brand-white: #ffffff;
+            --brand-red: #ab5770;
+            --brand-purple: #6a5770;
+            --brand-light-blue: #90c2b8;
+            --neutral-900: #173d47;
+            --neutral-800: #1e4e5a;
+            --neutral-700: #2e6374;
+            --neutral-600: #3d6b78;
+            --neutral-500: #90c2b8;
+            --neutral-400: #b8d1d6;
+            --neutral-300: #d8ecee;
+            --neutral-200: #e8f5f6;
+            --neutral-100: #f3fafb;
+            --neutral-50: #ffffff;
+            --gradient-primary: var(--brand-deep-blue);
+            --gradient-ink: var(--brand-deep-blue);
+            --fin-up: #1a7a5e;
+            --fin-up-bg: color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --success: var(--fin-up);
+            --warning: #b8a030;
+            --error: var(--brand-red);
+            --error-bg: rgba(171, 87, 112, 0.10);
+            --surface-error-tint: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
+            --text-primary: #173d47;
+            --text-secondary: #3d6b78;
+            --border-subtle: rgba(23, 61, 71, 0.13);
+            --shadow-card: 0 2px 12px rgba(23, 61, 71, 0.07);
+            --surface-scatter: color-mix(in srgb, var(--neutral-200) 38%, var(--brand-white));
+            --font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --overlay-bg: rgba(23, 61, 71, 0.4);
+            --surface-warning-soft: color-mix(in srgb, var(--warning) 18%, var(--brand-white));
+            --surface-info-soft:   color-mix(in srgb, var(--brand-light-blue) 12%, var(--brand-white));
+            --surface-purple-soft: color-mix(in srgb, var(--brand-purple) 12%, var(--brand-white));
+            --surface-error-soft:  color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
+        }
+        .skip-link {
+            position: absolute; top: -40px; left: 0;
+            background: var(--brand-deep-blue); color: var(--brand-white);
+            padding: 8px 16px; text-decoration: none;
+            z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600;
+            font-family: var(--font-body);
+        }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-yellow); }
+        body {
+            font-family: var(--font-body);
+            background: var(--brand-cloud-blue);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Navigation (simplified) */
+        .nav {
+            background: var(--gradient-ink);
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            text-transform: uppercase;
+        }
+
+        .nav-link:hover {
+            color: var(--brand-yellow);
+        }
+
+        .nav-link:focus {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        .nav-link.active {
+            color: var(--brand-yellow);
+            font-weight: 600;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-brand:focus {
+            outline: 3px solid var(--brand-yellow);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-img {
+            height: 24px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+
+        .nav-logo-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .logo {
+            display: none;
+        }
+
+        .back-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--brand-yellow);
+        }
+        .back-link:focus {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        /* Nav wallet pill + network dropdown: consumer-app-nav.css */
+
+        /* User Profile in Nav (dropdown trigger wrapper) */
+        .user-profile-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .user-profile-nav:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .user-avatar-nav {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 600;
+            font-size: 0.813rem;
+            cursor: pointer;
+        }
+
+        .nav-wallet-display .user-avatar-nav {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+        }
+
+        .user-name-nav {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* User Dropdown in Nav */
+        .user-dropdown-nav {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            width: 280px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+
+        .user-dropdown-nav.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .user-dropdown-nav:not(.show) {
+            pointer-events: none;
+        }
+
+        #navWalletDisplay > #userDropdown.user-dropdown-nav {
+            right: 0;
+            left: auto;
+        }
+
+        .dropdown-header-nav {
+            padding: 1.25rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white));
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .dropdown-user-info-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .dropdown-avatar-nav {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .dropdown-user-details-nav {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-user-name-nav {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--neutral-900);
+            margin-bottom: 0.125rem;
+        }
+
+        .dropdown-user-email-nav {
+            font-size: 0.813rem;
+            color: var(--neutral-600);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dropdown-wallet-badge-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(23, 61, 71, 0.1);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-family: var(--font-body);
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+        }
+
+        .dropdown-wallet-badge-nav svg {
+            stroke: var(--brand-deep-blue);
+        }
+
+        .dropdown-menu-nav {
+            padding: 0.5rem;
+        }
+
+        .dropdown-section-nav {
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-section-title-nav {
+            font-size: 0.688rem;
+            font-weight: 700;
+            color: var(--neutral-600);
+            letter-spacing: 0.05em;
+            padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .dropdown-item-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item-nav:hover {
+            background: rgba(23, 61, 71, 0.08);
+            color: var(--brand-deep-blue);
+        }
+
+        .dropdown-item-nav svg {
+            stroke: currentColor;
+            flex-shrink: 0;
+        }
+
+        .dropdown-divider-nav {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.06);
+            margin: 0.5rem 0;
+        }
+
+        /* Notification Bell */
+        .notification-bell-wrapper {
+            position: relative;
+        }
+
+        .notification-bell-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .notification-bell-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .notification-bell-btn:hover .notif-bell-icon {
+            color: var(--brand-yellow);
+        }
+
+        .notification-bell-btn:focus {
+            outline: none;
+        }
+
+        .notification-bell-btn:focus-visible {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        .notification-bell-btn .notif-bell-icon {
+            width: 20px;
+            height: 20px;
+            color: rgba(255, 255, 255, 0.85);
+            transition: color 0.2s;
+        }
+
+        .notification-bell-btn.ring .notif-bell-icon {
+            animation: notifRing 0.5s ease-in-out;
+        }
+
+        @keyframes notifRing {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-13deg); }
+            60% { transform: rotate(10deg); }
+            80% { transform: rotate(-8deg); }
+        }
+
+        .notif-badge {
+            min-width: 18px;
+            height: 18px;
+            padding: 0 3px;
+            border-radius: 9px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--brand-yellow);
+            color: var(--brand-deep-blue);
+            font-size: 0.625rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--brand-deep-blue);
+        }
+
+        .notif-badge[data-count="0"] {
+            display: none;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Notification Panel - extends .user-dropdown-nav */
+        .user-dropdown-nav.notification-panel {
+            width: 360px;
+            max-height: min(520px, 85vh);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .notif-panel-header {
+            padding: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .notif-panel-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notif-panel-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .notif-unread-label {
+            font-size: 0.75rem;
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+        }
+
+        .notif-panel-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notif-action-link {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0;
+        }
+
+        .notif-action-link:hover {
+            text-decoration: underline;
+        }
+
+        .notif-action-link.view-all-link {
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+        }
+
+        .notif-close-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--neutral-600);
+            transition: background 0.2s;
+        }
+
+        .notif-close-btn:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .notif-list-wrapper {
+            padding: 0.5rem;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .notif-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.625rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: all 0.15s;
+            cursor: default;
+            font-size: 0.875rem;
+        }
+
+        .notif-item:hover {
+            background: rgba(23, 61, 71, 0.08);
+        }
+
+        .notif-item:hover .notif-item-dismiss {
+            opacity: 1;
+        }
+
+        .notif-item-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notif-item-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .notif-type-transaction {
+            background: rgba(23, 61, 71, 0.1);
+            color: var(--brand-deep-blue);
+        }
+
+        .notif-type-pending {
+            background: var(--surface-warning-soft);
+            color: var(--warning);
+        }
+
+        .notif-type-error {
+            background: var(--surface-error-soft);
+            color: var(--error);
+        }
+
+        .notif-type-system {
+            background: var(--surface-info-soft);
+            color: var(--brand-deep-blue);
+        }
+
+        .notif-type-listing {
+            background: var(--surface-purple-soft);
+            color: var(--brand-purple);
+        }
+
+        .notif-type-donation {
+            background: var(--surface-purple-soft);
+            color: var(--brand-purple);
+        }
+
+        .notif-type-remittance {
+            background: rgba(23, 61, 71, 0.1);
+            color: var(--brand-deep-blue);
+        }
+
+        .notif-type-verification {
+            background: var(--surface-info-soft);
+            color: var(--brand-deep-blue);
+        }
+
+        .notif-item-body {
+            flex: 1;
+            min-width: 0;
+            cursor: pointer;
+        }
+
+        .notif-item-cta {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            margin-top: 0.25rem;
+            display: inline-block;
+        }
+
+        .notif-item-cta:hover {
+            text-decoration: underline;
+        }
+
+        .notif-item-cta:focus {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .notif-item-title {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .notif-item.read .notif-item-title {
+            font-weight: 400;
+            color: var(--neutral-600);
+        }
+
+        .notif-item-msg {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0.125rem 0 0;
+        }
+
+        .notif-item-time {
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            display: block;
+            margin-top: 0.125rem;
+        }
+
+        .notif-unread-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        .notif-item.read .notif-unread-dot {
+            display: none;
+        }
+
+        .notif-item-dismiss {
+            opacity: 0;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: opacity 0.2s;
+        }
+
+        .notif-item-dismiss:hover {
+            color: var(--error);
+        }
+
+        .notif-panel-footer {
+            padding: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .notif-panel-footer .notif-footer-btn {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.938rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notif-panel-footer .notif-footer-btn[hidden],
+        .notif-panel-footer[hidden],
+        .notif-panel-divider[hidden] {
+            display: none !important;
+        }
+
+        .notification-panel .dropdown-divider-nav {
+            flex-shrink: 0;
+        }
+
+        .notif-mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notif-badge-mobile {
+            position: static;
+            border: none;
+        }
+
+        /* Hamburger Menu Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .hamburger:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .hamburger:focus {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--brand-white);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(23, 61, 71, 0.55);
+            z-index: 10002;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--brand-white);
+            z-index: 10003;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: block;
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-menu-close:focus {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            list-style: none;
+        }
+
+        .mobile-nav-links .nav-link {
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .mobile-nav-links .nav-link:hover {
+            background: var(--neutral-200);
+        }
+
+        .mobile-nav-links .nav-link.active {
+            background: rgba(23, 61, 71, 0.1);
+            color: var(--brand-deep-blue);
+        }
+
+        /* Tier 2: <=768px - address-only pill, no balance/network */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+            .nav-wallet-balance,
+            .nav-network-badge {
+                display: none;
+            }
+            .user-dropdown-nav.notification-panel {
+                width: 320px;
+            }
+        }
+
+        /* Tier 3: <=480px - avatar-only circle, hamburger, fixed dropdown sheet */
+        @media (max-width: 480px) {
+            .back-link-text {
+                display: none;
+            }
+            .nav-wallet-address { display: none; }
+            .nav-wallet-info { display: none; }
+            .nav-wallet-display {
+                padding: 0.25rem;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                justify-content: center;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .user-dropdown-nav {
+                position: fixed;
+                top: 44px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                border-radius: 0 0 0.75rem 0.75rem;
+            }
+            #notificationPanel.show {
+                position: fixed;
+                top: 44px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                max-height: 70vh;
+                border-radius: 0 0 0.75rem 0.75rem;
+            }
+            .network-dropdown-nav {
+                position: fixed;
+                top: 44px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                border-radius: 0 0 0.75rem 0.75rem;
+            }
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        .page-header { margin-bottom: 1.5rem; }
+        .page-title {
+            font-family: var(--font-display); font-size: 2.5rem; font-weight: 700;
+            color: var(--brand-deep-blue); line-height: 1.1; margin-bottom: 0.75rem;
+        }
+        .page-subtitle { font-size: 1.125rem; color: var(--text-secondary); line-height: 1.6; }
+        .tab-bar {
+            display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle);
+            margin-bottom: 2rem; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .tab-bar::-webkit-scrollbar { display: none; }
+        .tab-bar [role="tab"] {
+            min-height: 44px; padding: 0 1.5rem; border: none; background: transparent;
+            font-family: var(--font-body); font-size: 0.938rem; font-weight: 500;
+            color: var(--text-secondary); cursor: pointer; border-bottom: 3px solid transparent;
+            margin-bottom: -2px; white-space: nowrap; transition: color 0.2s, background 0.2s;
+        }
+        .tab-bar [role="tab"]:hover { color: var(--brand-deep-blue); }
+        .tab-bar [role="tab"][aria-selected="true"] {
+            color: var(--brand-deep-blue); font-weight: 600;
+            border-bottom-color: var(--brand-deep-blue);
+            background: color-mix(in srgb, var(--brand-deep-blue) 8%, var(--brand-white));
+        }
+        .tab-bar [role="tab"]:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        [role="tabpanel"][hidden] { display: none !important; }
+        .mgmt-section {
+            background: var(--brand-white); border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem; padding: 1.5rem; margin-bottom: 1.5rem;
+            scroll-margin-top: 60px;
+        }
+        .mgmt-section-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+        }
+        .mgmt-section-header h2 {
+            font-family: var(--font-display); font-size: 1.25rem; font-weight: 600;
+            color: var(--text-primary);
+        }
+        .mgmt-section-context {
+            font-size: 0.813rem; color: var(--text-secondary); margin-top: 0.25rem; width: 100%;
+        }
+        .btn-add {
+            display: inline-flex; align-items: center; gap: 0.375rem;
+            padding: 0.5rem 1rem; min-height: 44px;
+            background: var(--brand-yellow); color: var(--brand-deep-blue);
+            border: none; border-radius: 0.75rem; font-family: var(--font-body);
+            font-size: 0.875rem; font-weight: 600; cursor: pointer; flex-shrink: 0;
+        }
+        .btn-add:hover { filter: brightness(0.96); }
+        .btn-add:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .search-input {
+            width: 100%; padding: 0.75rem 1rem; margin-bottom: 1rem;
+            border: 1px solid var(--border-subtle); border-radius: 0.75rem;
+            font-family: var(--font-body); font-size: 1rem; color: var(--text-primary);
+            background: var(--brand-white);
+        }
+        .search-input:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-color: var(--brand-deep-blue); }
+        .network-filter-bar {
+            display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
+        }
+        .network-pill {
+            min-height: 36px; padding: 0.375rem 0.875rem; border-radius: 980px;
+            border: 1.5px solid var(--border-subtle); background: var(--brand-white);
+            font-family: var(--font-body); font-size: 0.813rem; font-weight: 500;
+            color: var(--text-secondary); cursor: pointer;
+        }
+        .network-pill[aria-checked="true"] {
+            background: var(--brand-deep-blue); color: var(--brand-white); border-color: var(--brand-deep-blue);
+        }
+        .network-pill:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mgmt-list { list-style: none; display: grid; gap: 0.75rem; }
+        .mgmt-list-wrap { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+        .mgmt-list-wrap::-webkit-scrollbar { display: none; }
+        .mgmt-item {
+            display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+            padding: 1rem 1.25rem; border: 1px solid var(--border-subtle);
+            border-radius: 1rem; background: var(--brand-white);
+        }
+        .contact-avatar, .item-icon-well {
+            width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.875rem;
+        }
+        .contact-avatar { background: var(--brand-deep-blue); color: var(--brand-white); }
+        .item-icon-well {
+            background: color-mix(in srgb, var(--brand-light-blue) 30%, var(--brand-white));
+            color: var(--brand-deep-blue);
+        }
+        .item-icon-well svg { width: 20px; height: 20px; fill: currentColor; }
+        .item-info { flex: 1; min-width: 180px; }
+        .item-name { display: block; font-weight: 600; color: var(--text-primary); font-size: 0.938rem; }
+        .item-detail { display: block; font-size: 0.813rem; color: var(--text-secondary); margin-top: 0.125rem; word-break: break-all; }
+        .item-meta { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.375rem; }
+        .currency-badge, .network-pill-sm, .verified-badge {
+            font-size: 0.688rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 980px;
+        }
+        .currency-badge { background: color-mix(in srgb, var(--brand-cloud-blue) 80%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .network-pill-sm { background: color-mix(in srgb, var(--brand-light-blue) 30%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .verified-badge { background: var(--fin-up-bg); color: var(--fin-up); }
+        .item-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-left: auto; }
+        .btn-action {
+            min-height: 44px; padding: 0.5rem 0.875rem; border-radius: 0.5rem;
+            font-family: var(--font-body); font-size: 0.813rem; font-weight: 600;
+            cursor: pointer; background: transparent; transition: all 0.2s;
+        }
+        .btn-action:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-edit { color: var(--brand-deep-blue); border: 1.5px solid var(--border-subtle); }
+        .btn-edit:hover { border-color: var(--brand-deep-blue); background: color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white)); }
+        .btn-delete { color: var(--brand-red); border: 1.5px solid transparent; }
+        .btn-delete:hover { background: var(--error-bg); }
+        .btn-send { color: var(--brand-deep-blue); border: 1.5px solid var(--brand-deep-blue); text-decoration: none; display: inline-flex; align-items: center; }
+        .btn-send:hover { background: color-mix(in srgb, var(--brand-deep-blue) 6%, var(--brand-white)); }
+        .btn-icon {
+            min-width: 44px; min-height: 44px; padding: 0; display: inline-flex;
+            align-items: center; justify-content: center; border: 1.5px solid var(--border-subtle);
+            border-radius: 0.5rem; background: transparent; color: var(--text-secondary); cursor: pointer;
+        }
+        .btn-icon svg { width: 18px; height: 18px; fill: currentColor; }
+        .btn-icon:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .empty-state {
+            text-align: center; padding: 2rem 1rem; color: var(--text-secondary);
+            font-size: 0.938rem; border: 1px dashed var(--border-subtle); border-radius: 1rem;
+        }
+        .empty-state[hidden] { display: none !important; }
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 10010;
+            background: var(--overlay-bg); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; padding: 1rem;
+            box-sizing: border-box;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: var(--brand-white); border-radius: 0.75rem;
+            max-width: 480px; width: 100%;
+            box-shadow: 0 24px 64px rgba(23, 61, 71, 0.22);
+        }
+        .modal-box:not(.modal-sheet) {
+            padding: 2rem; max-height: 90vh; overflow-y: auto;
+        }
+        .modal-box:not(.modal-sheet) h2 {
+            font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;
+            margin-bottom: 1.25rem; color: var(--text-primary);
+        }
+        .modal-box.modal-sheet {
+            display: flex; flex-direction: column; padding: 0;
+            max-height: min(90vh, 720px); overflow: hidden;
+        }
+        .modal-handle {
+            display: none; width: 36px; height: 4px; margin: 0.75rem auto 0;
+            background: var(--neutral-300); border-radius: 999px; flex-shrink: 0;
+        }
+        .modal-header {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0;
+        }
+        .modal-header-text { flex: 1; min-width: 0; }
+        .modal-title {
+            font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;
+            color: var(--text-primary); margin: 0; line-height: 1.3;
+        }
+        .modal-desc {
+            font-size: 0.875rem; color: var(--text-secondary); margin: 0.375rem 0 0; line-height: 1.5;
+        }
+        .modal-close {
+            flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+            border: none; background: var(--neutral-100); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-secondary); transition: background 0.15s;
+        }
+        .modal-close:hover { background: var(--neutral-200); color: var(--text-primary); }
+        .modal-close:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .modal-close svg { width: 20px; height: 20px; fill: currentColor; }
+        .modal-body {
+            padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1; min-height: 0;
+        }
+        .modal-box.modal-sheet .modal-body {
+            padding-bottom: 2rem;
+        }
+        .modal-body .form-group:last-child { margin-bottom: 0; }
+        .modal-footer {
+            padding: 1rem 1.5rem 1.25rem; border-top: 1px solid var(--border-subtle);
+            flex-shrink: 0; background: var(--brand-white);
+        }
+        .modal-callout {
+            display: flex; align-items: flex-start; gap: 0.625rem;
+            background: var(--surface-scatter); border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1.25rem;
+            font-size: 0.813rem; color: var(--text-secondary); line-height: 1.5;
+        }
+        .modal-callout svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 0.1rem; fill: var(--brand-deep-blue); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .form-hint {
+            font-size: 0.813rem; color: var(--text-secondary); margin: 0.375rem 0 0; line-height: 1.45;
+        }
+        .form-hint-inline { font-weight: 400; color: var(--text-secondary); }
+        .item-detail--secondary {
+            display: block; font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 0.125rem;
+        }
+        .form-error {
+            font-size: 0.813rem; color: var(--error); margin: 0.5rem 0 0; line-height: 1.45;
+        }
+        .form-error[hidden] { display: none !important; }
+        .form-input, .form-select {
+            width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem; font-family: var(--font-body); font-size: 1rem;
+            color: var(--text-primary); background: var(--brand-white);
+        }
+        .form-static {
+            display: flex; align-items: center; gap: 0.75rem;
+            min-height: 52px; padding: 0 1rem;
+            background: var(--neutral-50); border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem; color: var(--text-primary);
+        }
+        .form-static .currency-info { flex: 1; min-width: 0; }
+        .form-input:focus, .form-select:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-color: var(--brand-deep-blue); }
+        .form-input[aria-invalid="true"] { border-color: var(--error); }
+        .checkbox-group {
+            display: flex; flex-direction: column; gap: 0.75rem;
+        }
+        .checkbox-group > .form-label { margin-bottom: 0; }
+        .checkbox-label {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.875rem 1rem; background: var(--neutral-50);
+            border: 2px solid var(--border-subtle); border-radius: 0.75rem;
+            cursor: pointer; transition: border-color 0.2s, background 0.2s;
+            font-size: 0.938rem; min-height: 48px;
+        }
+        .checkbox-label:hover {
+            border-color: var(--brand-deep-blue);
+            background: color-mix(in srgb, var(--brand-deep-blue) 2%, var(--brand-white));
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 20px; height: 20px; min-width: 20px; min-height: 20px;
+            cursor: pointer; accent-color: var(--brand-deep-blue); flex-shrink: 0;
+        }
+        .checkbox-label input[type="checkbox"]:checked + span {
+            font-weight: 700; color: var(--brand-deep-blue);
+        }
+        .checkbox-label input[type="checkbox"]:focus-visible {
+            outline: 3px solid var(--brand-deep-blue); outline-offset: 2px;
+        }
+        .modal-body .dropdown {
+            position: relative; width: 100%; max-width: none; margin-bottom: 0;
+            z-index: 1;
+        }
+        .modal-body .dropdown.is-open {
+            z-index: 40;
+        }
+        .dropdown-toggle {
+            width: 100%; height: 52px; padding: 0 1rem;
+            background: var(--brand-white); border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem; display: flex; align-items: center;
+            justify-content: space-between; cursor: pointer; font-family: var(--font-body);
+            font-size: 1rem; color: var(--text-primary); transition: border-color 0.2s;
+        }
+        .dropdown-toggle:hover { border-color: color-mix(in srgb, var(--brand-deep-blue) 35%, var(--border-subtle)); }
+        .dropdown-toggle:focus-visible {
+            border-color: var(--brand-deep-blue); outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 1px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-deep-blue) 8%, transparent);
+        }
+        .dropdown-toggle svg {
+            color: var(--neutral-600); flex-shrink: 0;
+            transition: transform 0.2s, color 0.2s;
+        }
+        .dropdown-toggle:hover svg { color: var(--brand-deep-blue); }
+        .dropdown-toggle[aria-expanded="true"] svg {
+            transform: rotate(180deg); color: var(--brand-deep-blue);
+        }
+        .selected-currency {
+            display: flex; align-items: center; gap: 0.75rem; min-width: 0; text-align: left;
+        }
+        .currency-flag {
+            font-size: 1.5rem; line-height: 1; flex-shrink: 0;
+            width: 1.5rem; min-width: 1.5rem; max-width: 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; overflow: hidden;
+        }
+        .currency-code {
+            font-family: var(--font-display); font-weight: 600;
+            color: var(--text-primary); line-height: 1.3;
+        }
+        .currency-name {
+            color: var(--text-secondary); font-size: 0.875rem; line-height: 1.3;
+        }
+        .currency-info {
+            flex: 1; min-width: 0;
+            display: flex; flex-direction: column; align-items: flex-start;
+        }
+        .dropdown-menu {
+            display: none; position: absolute; top: calc(100% + 0.5rem);
+            left: 0; right: 0; background: var(--brand-white);
+            border: 1px solid var(--border-subtle); border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(23, 61, 71, 0.12); z-index: 5;
+            max-height: 280px; overflow-y: auto;
+        }
+        .dropdown-menu.is-floating {
+            position: fixed; right: auto;
+            z-index: 10015;
+            max-height: min(280px, calc(100dvh - 120px));
+        }
+        .dropdown-menu.active { display: block; }
+        .dropdown-list { padding: 0.5rem; }
+        .dropdown-item {
+            padding: 0.75rem;
+            display: grid;
+            grid-template-columns: 1.5rem 1fr;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer; border-radius: 0.5rem; transition: background 0.15s;
+        }
+        .dropdown-item:hover { background: var(--neutral-100); }
+        .dropdown-item:focus-visible {
+            outline: 2px solid var(--brand-deep-blue); outline-offset: -2px;
+        }
+        .dropdown-item.selected {
+            background: color-mix(in srgb, var(--brand-deep-blue) 8%, var(--brand-white));
+        }
+        .address-input-group { display: flex; gap: 0.5rem; align-items: stretch; }
+        .address-input-group .form-input { flex: 1; min-width: 0; }
+        .address-action-btn {
+            min-height: 46px; padding: 0 1rem; border-radius: 0.75rem;
+            border: 1px solid var(--border-subtle); background: var(--brand-white);
+            cursor: pointer; font-size: 0.875rem; font-weight: 600; font-family: var(--font-body);
+            color: var(--text-primary); white-space: nowrap; transition: border-color 0.15s, color 0.15s;
+        }
+        .address-action-btn:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .address-action-btn:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .field-validation {
+            font-size: 0.813rem; margin-top: 0.375rem; line-height: 1.45; min-height: 1.25rem;
+        }
+        .field-validation:empty { min-height: 0; margin-top: 0; }
+        .field-validation--success { color: var(--fin-up); }
+        .field-validation--error { color: var(--error); }
+        .form-error { background: var(--surface-error-soft, color-mix(in srgb, var(--error) 12%, var(--brand-white))); color: var(--error); border-radius: 0.5rem; padding: 0.625rem 0.75rem; font-size: 0.8125rem; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+        .form-error[hidden] { display: none; }
+        .form-error-retry { flex-shrink: 0; background: var(--error); color: #fff; border: none; border-radius: 0.4rem; padding: 0.3rem 0.75rem; font-family: var(--font-body); font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+        .form-error-retry:hover { filter: brightness(0.92); }
+        .demo-toggle { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.8125rem; color: var(--text-secondary); cursor: pointer; user-select: none; }
+        .demo-toggle input { width: 16px; height: 16px; accent-color: var(--brand-deep-blue); cursor: pointer; }
+        .demo-toggle em { font-style: normal; opacity: 0.7; }
+        .ab-demo-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--border-subtle); }
+        .ab-demo-label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-right: 0.25rem; }
+        .ab-demo-btn { padding: 0.4rem 0.875rem; border-radius: 0.5rem; border: 1.5px solid var(--border-subtle); background: var(--brand-white); color: var(--text-secondary); font-family: var(--font-body); font-size: 0.8125rem; font-weight: 600; cursor: pointer; min-height: 36px; }
+        .ab-demo-btn:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .ab-demo-btn:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap; margin-top: 0; }
+        .modal-box:not(.modal-sheet) .modal-actions { margin-top: 1.5rem; }
+        .modal-footer .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .btn {
+            padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 0.938rem; font-weight: 600;
+            border: none; cursor: pointer; font-family: var(--font-body);
+            display: inline-flex; align-items: center; justify-content: center; min-height: 46px;
+        }
+        .btn:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-primary { background: var(--brand-deep-blue); color: var(--brand-white); }
+        .btn-primary:hover { background: var(--neutral-800); }
+        .btn-secondary { background: transparent; color: var(--text-secondary); border: 2px solid var(--border-subtle); }
+        .btn-secondary:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .btn-danger { background: var(--brand-red); color: var(--brand-white); }
+        .btn-danger:hover { filter: brightness(0.92); }
+        .toast {
+            position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+            background: var(--brand-deep-blue); color: var(--brand-white);
+            padding: 0.875rem 1.5rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.875rem;
+            z-index: 10020; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            max-width: calc(100% - 2rem); text-align: center;
+        }
+        .toast.show { opacity: 1; }
+        .toast.error { background: var(--brand-red); }
+        /* ===== Address Book ===== */
+        .ab-toolbar { display:flex; gap:0.75rem; align-items:center; margin-bottom:1rem; flex-wrap:wrap; position:sticky; top:44px; background:var(--neutral-50); z-index:5; padding:0.5rem 0; }
+        .ab-search-wrap { position:relative; flex:1; min-width:220px; }
+        .ab-search-icon { position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); width:18px; height:18px; color:var(--text-secondary); pointer-events:none; }
+        .ab-search { margin-bottom:0 !important; padding-left:2.5rem !important; }
+        .ab-add-btn { display:inline-flex; align-items:center; gap:0.4rem; white-space:nowrap; width:auto; }
+        .ab-count { font-size:0.8125rem; color:var(--text-secondary); margin:0 0 1rem; }
+        .ab-list { list-style:none; display:flex; flex-direction:column; gap:0.625rem; padding:0; margin:0; }
+        .ab-card { display:flex; align-items:flex-start; gap:1rem; padding:1rem 1.25rem; background:var(--brand-white); border:1px solid var(--border-subtle); border-radius:1rem; transition:border-color .2s, box-shadow .2s; }
+        .ab-card:hover { border-color:var(--brand-deep-blue); box-shadow:0 4px 16px rgba(23,61,71,.08); }
+        .ab-avatar { width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:1rem;background:color-mix(in srgb,var(--brand-deep-blue) 10%,var(--brand-white));color:var(--brand-deep-blue); }
+        .ab-main { flex:1; min-width:0; }
+        .ab-label-row { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+        .ab-label { font-weight:700; color:var(--text-primary); font-size:0.9375rem; }
+        .ab-ens { font-size:0.8125rem; font-weight:600; color:var(--brand-deep-blue); background:color-mix(in srgb,var(--brand-deep-blue) 8%,var(--brand-white)); border-radius:0.375rem; padding:0.0625rem 0.4rem; display:inline-flex; align-items:center; gap:0.25rem; }
+        .ab-addr { font-family:ui-monospace,monospace; font-size:0.8125rem; color:var(--text-secondary); margin-top:0.25rem; word-break:break-all; }
+        .ab-desc { font-size:0.8125rem; color:var(--text-secondary); margin-top:0.25rem; }
+        .ab-actions { display:flex; gap:0.375rem; flex-shrink:0; }
+        .ab-icon-btn { width:38px;height:38px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;background:none;border:1.5px solid var(--border-subtle);cursor:pointer;color:var(--text-secondary); }
+        .ab-icon-btn svg { width:18px;height:18px;fill:currentColor; }
+        .ab-icon-btn:hover { border-color:var(--brand-deep-blue); color:var(--brand-deep-blue); }
+        .ab-icon-btn.danger:hover { border-color:var(--brand-red); color:var(--brand-red); background:var(--error-bg); }
+        .ens-row { display:flex; align-items:center; gap:0.4rem; margin-top:0.5rem; font-size:0.8125rem; color:var(--brand-deep-blue); font-weight:600; }
+        .ens-row[hidden]{display:none;}
+        .ens-row svg{width:16px;height:16px;fill:var(--brand-deep-blue);flex-shrink:0;}
+        .ens-tag{font-size:0.625rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;background:color-mix(in srgb,var(--brand-deep-blue) 12%,var(--brand-white));color:var(--brand-deep-blue);border-radius:0.25rem;padding:0.0625rem 0.3rem;}
+        .ab-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:3rem 1rem;gap:0.4rem;}
+        .ab-empty[hidden]{display:none;}
+        .ab-empty-illus{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--brand-deep-blue) 8%,var(--brand-white));color:var(--brand-deep-blue);margin-bottom:0.5rem;}
+        .ab-empty-illus svg{width:38px;height:38px;}
+        .ab-empty-title{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--text-primary);}
+        .ab-empty-sub{font-size:0.9375rem;color:var(--text-secondary);margin-bottom:0.75rem;}
+        .ab-empty .btn{width:auto;}
+        /* No-results search state (designed, not a plain text line) */
+        .ab-noresult{display:flex;flex-direction:column;align-items:center;text-align:center;padding:2.75rem 1rem;gap:0.4rem;}
+        .ab-noresult[hidden]{display:none;}
+        .ab-noresult-illus{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--neutral-100);color:var(--text-secondary);margin-bottom:0.5rem;}
+        .ab-noresult-illus svg{width:32px;height:32px;fill:currentColor;}
+        .ab-noresult-title{font-family:var(--font-display);font-size:1.0625rem;font-weight:700;color:var(--text-primary);}
+        .ab-noresult-sub{font-size:0.875rem;color:var(--text-secondary);}
+        .ab-noresult-sub strong{color:var(--text-primary);font-weight:600;}
+        .ab-noresult-clear{margin-top:0.5rem;background:none;border:1.5px solid var(--border-subtle);border-radius:0.625rem;padding:0.5rem 1rem;font-family:var(--font-body);font-size:0.875rem;font-weight:600;color:var(--brand-deep-blue);cursor:pointer;}
+        .ab-noresult-clear:hover{border-color:var(--brand-deep-blue);background:rgba(23,61,71,0.05);}
+        /* Saved-address issue state (amber warning on the card) */
+        .ab-card.ab-card--warn{border-color:color-mix(in srgb,var(--warning) 45%,var(--border-subtle));background:color-mix(in srgb,var(--warning) 5%,var(--brand-white));}
+        .ab-warn-chip{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.6875rem;font-weight:700;letter-spacing:0.02em;text-transform:uppercase;background:var(--surface-warning-soft,color-mix(in srgb,var(--warning) 16%,var(--brand-white)));color:var(--warning);border-radius:0.25rem;padding:0.0625rem 0.4rem;}
+        .ab-warn-chip svg{width:13px;height:13px;fill:currentColor;}
+        .ab-warn-note{display:flex;align-items:flex-start;gap:0.35rem;font-size:0.8125rem;color:var(--warning);margin-top:0.375rem;}
+        .ab-warn-note svg{width:15px;height:15px;fill:currentColor;flex-shrink:0;margin-top:0.1em;}
+        @media (max-width: 768px) {
+            .container { padding: 1.25rem; }
+            .page-title { font-size: 2rem; }
+            .mgmt-item { flex-wrap: wrap; }
+            .item-actions { width: 100%; margin-left: 0; justify-content: flex-start; }
+            .modal-overlay { align-items: flex-end; padding: 0; }
+            .modal-box.modal-sheet {
+                max-width: none; width: 100%;
+                border-radius: 0.75rem 0.75rem 0 0;
+                max-height: min(92vh, 100dvh);
+            }
+            .modal-handle { display: block; }
+            .modal-footer {
+                position: sticky; bottom: 0; z-index: 2;
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+            .modal-box.modal-sheet .modal-body {
+                padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+            }
+            .modal-footer .modal-actions { flex-direction: column-reverse; }
+            .modal-footer .modal-actions .btn { width: 100%; flex: none; }
+            .address-input-group { flex-wrap: wrap; }
+            .address-action-btn { flex: 1; min-width: calc(50% - 0.25rem); }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 1rem; }
+            .contact-avatar, .item-icon-well { width: 32px; height: 32px; font-size: 0.75rem; }
+            .modal-header, .modal-body, .modal-footer { padding-left: 1rem; padding-right: 1rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+    <link rel="stylesheet" href="consumer-app-nav.css">
+    <style id="notif-level-css">
+      .notif-type-completed{background:var(--fin-up-bg);color:var(--fin-up);}
+      .notif-type-progressing{background:rgba(23,61,71,0.10);color:var(--brand-deep-blue);}
+      .notif-type-info{background:var(--fin-neutral-bg);color:var(--text-secondary);}
+      .notif-type-warning{background:rgba(184,160,48,0.14);color:var(--warning);}
+      .notif-type-error{background:var(--error-bg);color:var(--error);}
+      .notif-item.notif-lvl-completed{--nlvl:var(--fin-up);}
+      .notif-item.notif-lvl-progressing{--nlvl:var(--brand-deep-blue);}
+      .notif-item.notif-lvl-info{--nlvl:var(--fin-neutral);}
+      .notif-item.notif-lvl-warning{--nlvl:var(--warning);}
+      .notif-item.notif-lvl-error{--nlvl:var(--error);}
+      .notif-item:not(.read){box-shadow:none;}
+    </style>
+    <script src="notifications-bell.js"></script>
+</head>
+<body data-user-menu-active="address-book">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma White Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <ul class="nav-links" role="list">
+                <li><a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DASHBOARD</a></li>
+                <li id="walletNavItem">
+                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
+                </li>
+                <li class="nav-dropdown-item" id="navDdTransact">
+                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
+                        TRANSACT
+                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu" aria-label="Transact options">
+                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Buy</a></li>
+                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send</a></li>
+                        <li><a href="exchange.html" class="nav-dd-item" role="menuitem">Swap</a></li>
+                        <li><a href="donate.html" class="nav-dd-item" role="menuitem">Donate</a></li>
+                    </ul>
+                </li>
+                <li><a href="explore-centres.html" class="nav-link" id="navLinkCentres">CENTERS</a></li>
+                <li id="navAuthLinks" style="display: none;">
+                    <a href="login_2.html" class="nav-link btn-nav-secondary">LOG IN</a>
+                    <a href="signup_2.html" class="nav-link btn-nav-primary">SIGN UP</a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <!-- Notification Bell -->
+            <div class="notification-bell-wrapper" id="notificationBellWrapper">
+                <button
+                    type="button"
+                    id="notificationBell"
+                    class="notification-bell-btn"
+                    aria-label="Notifications, 3 unread"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    onclick="toggleNotificationPanel()"
+                >
+                    <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
+                    </svg>
+                    <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
+                </button>
+
+                <!-- Desktop notification panel - mirrors #userDropdown structure -->
+                <div class="user-dropdown-nav notification-panel" id="notificationPanel"
+                     role="dialog" aria-label="Notifications" aria-modal="false"
+                     onclick="event.stopPropagation()">
+
+                    <!-- Header - mirrors .dropdown-header-nav -->
+                    <div class="dropdown-header-nav notif-panel-header">
+                        <div class="notif-panel-title-row">
+                            <span class="notif-panel-title">Notifications</span>
+                            <span class="notif-unread-label" id="notifUnreadLabel">3 unread</span>
+                        </div>
+                        <div class="notif-panel-actions">
+                            <a href="notifications.html" class="notif-action-link view-all-link">View all</a>
+                            <button type="button" class="notif-action-link"
+                                    onclick="markAllNotificationsRead()">Mark all read</button>
+                            <button type="button" class="notif-close-btn"
+                                    onclick="closeNotificationPanel()" aria-label="Close notifications">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notification list - items rendered by renderNotificationPanel() -->
+                    <div class="dropdown-menu-nav notif-list-wrapper">
+                        <div class="dropdown-section-title-nav">NEW</div>
+                        <ul class="notif-list" id="notificationList" role="list" aria-live="polite">
+                            <!-- items injected by renderNotificationPanel('desktop') -->
+                        </ul>
+                    </div>
+
+                    <!-- Footer - mirrors dropdown-divider + item pattern -->
+                    <div class="dropdown-divider-nav notif-panel-divider" id="notifPanelDivider"></div>
+                    <div class="dropdown-menu-nav notif-panel-footer" id="notifPanelFooter">
+                        <button type="button" class="btn btn-secondary notif-footer-btn" id="clearAllNotificationsBtn"
+                                onclick="clearAllNotifications()">Clear all notifications</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-wallet-display" id="navWalletDisplay"
+                 style="display: none; position: relative;"
+                 data-wallet-session="disconnected"
+                 aria-label="Account menu, wallet not connected">
+
+                    <div class="nav-wallet-session-connected" hidden>
+                    <div class="nav-wallet-avatar">
+                        <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+                    </div>
+                    <div class="nav-wallet-info nav-wallet-trigger"
+                         role="button" tabindex="0"
+                         aria-haspopup="true" aria-expanded="false"
+                         aria-label="Open account menu"
+                         onclick="toggleUserDropdown(event)"
+                         onkeydown="handleUserMenuTriggerKey(event)">
+                        <span class="nav-wallet-address-row">
+                            <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
+                            <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-wallet-balance" id="navWalletBalance">2,500.00 hUSD</span>
+                    </div>
+                    <div class="nav-network-badge"
+                         role="button"
+                         tabindex="0"
+                         aria-haspopup="listbox"
+                         aria-expanded="false"
+                         aria-label="Switch network, currently Ethereum"
+                         onclick="toggleNetworkDropdown(event)"
+                         onkeydown="handleNetworkBadgeKey(event)">
+                        <svg class="nav-network-icon" id="navNetworkIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+                        </svg>
+                        <span id="navNetworkLabel">Ethereum</span>
+                        <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- Network Switcher Dropdown -->
+                    <div class="network-dropdown-nav" id="networkDropdown"
+                         role="listbox"
+                         aria-label="Select blockchain network"
+                         onclick="event.stopPropagation()">
+                        <div class="network-dropdown-header-nav">Mainnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav active"
+                                 role="option" aria-selected="true" tabindex="0"
+                                 data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Ethereum</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base','Base','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                        <div class="network-dropdown-header-nav" style="margin-top:0.25rem;">Testnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="sepolia" data-chain-label="Sepolia" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('sepolia','Sepolia','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA" opacity="0.5"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base-sepolia" data-chain-label="Base Sepolia" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base-sepolia','Base Sepolia','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF" opacity="0.5"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Network Switcher Dropdown -->
+                    </div>
+
+                    <div class="nav-wallet-session-disconnected" hidden>
+                        <div class="nav-wallet-avatar">
+                            <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        </div>
+                    </div>
+
+                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                            <div class="dropdown-header-nav">
+                                <div class="dropdown-user-info-nav">
+                                    <div class="dropdown-avatar-nav">JS</div>
+                                    <div class="dropdown-user-details-nav">
+                                        <div class="dropdown-user-name-nav">Jane Smith</div>
+                                        <div class="dropdown-user-email-nav">jane@example.com</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-wallet-badge-nav dropdown-wallet-status-nav"
+                                     id="dropdownWalletStatusChip"
+                                     data-state="disconnected"
+                                     role="status"
+                                     aria-live="polite">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                         viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                        <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
+                                    </svg>
+                                    <span id="dropdownWalletStatusText">No wallet connected</span>
+                                </div>
+                                <span id="dropdownWalletAddress" class="visually-hidden" aria-hidden="true"></span>
+                            </div>
+                            <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
+                        </div>
+</div>
+
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma Black Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+                <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
+            <a href="login_2.html" class="mobile-drawer-auth-login">LOG IN</a>
+            <a href="signup_2.html" class="mobile-drawer-auth-signup">SIGN UP</a>
+        </div>
+        <div id="drawerWalletRow" class="mobile-drawer-wallet-row" style="display: none;">
+            <span aria-hidden="true">🦊</span>
+            <div class="drawer-wallet-info">
+                <div id="drawerWalletAddress">0x742d...3a8f</div>
+                <div class="drawer-wallet-meta-row">
+                    <span id="drawerWalletBalance">2,500.00 hUSD</span>
+                    <span id="drawerWalletNetwork">Base</span>
+                </div>
+            </div>
+        </div>
+        <div id="drawerConnectRow" hidden aria-hidden="true"></div>
+        <ul class="mobile-nav-links" role="list">
+            <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
+            <li class="mobile-nav-section-label">TRANSACT</li>
+            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Buy</a></li>
+            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send</a></li>
+            <li><a href="exchange.html" class="nav-link mobile-nav-sub">Swap</a></li>
+            <li><a href="donate.html" class="nav-link mobile-nav-sub">Donate</a></li>
+            </ul>
+        <div id="mobileUserMenu"></div>
+                <div id="mobileNotificationsSection"></div>
+    </div>
+
+
+    <main id="main-content" class="container">
+        <div class="ab-demo-bar" role="group" aria-label="Prototype state preview">
+            <span class="ab-demo-label">Prototype: preview states</span>
+            <button type="button" class="ab-demo-btn" id="demoEmptyState">Empty (no addresses)</button>
+            <button type="button" class="ab-demo-btn" id="demoRestoreSamples">Restore 5 samples</button>
+        </div>
+
+        <div class="page-header">
+            <h1 class="page-title">Address Book</h1>
+            <p class="page-subtitle">Save and manage recipient wallet addresses for faster, safer transfers.</p>
+        </div>
+
+        <div class="ab-toolbar" style="opacity: 1; background-color: rgba(255, 255, 255, 0)">
+            <div class="ab-search-wrap">
+                <svg class="ab-search-icon" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                <input type="search" id="payeeSearch" class="search-input ab-search" placeholder="Search by name or address" aria-label="Search address book">
+            </div>
+            <button type="button" class="btn btn-primary ab-add-btn" id="btn-add-payee">
+                <svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" width="20" height="20"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+                <span>Add Payee</span>
+            </button>
+        </div>
+
+        <p class="ab-count" id="abCount" aria-live="polite"></p>
+
+        <div class="mgmt-list-wrap"><ul id="payeeList" class="mgmt-list ab-list" role="list"></ul></div>
+        <div id="abSentinel" aria-hidden="true" style="height:1px;"></div>
+
+        <div id="payeesEmpty" class="ab-empty" role="status" hidden>
+            <div class="ab-empty-illus" aria-hidden="true">
+                <svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0 0v-560 560Z"/></svg>
+            </div>
+            <p class="ab-empty-title">No saved addresses</p>
+            <p class="ab-empty-sub">Add your first payee to send faster next time.</p>
+            <button type="button" class="btn btn-primary" id="btn-add-payee-empty">
+                <svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" width="20" height="20"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+                <span>Add Payee</span>
+            </button>
+        </div>
+
+        <div id="payeesNoMatch" class="ab-noresult" role="status" hidden>
+            <div class="ab-noresult-illus" aria-hidden="true">
+                <svg viewBox="0 -960 960 960"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+            </div>
+            <p class="ab-noresult-title">No matching addresses found</p>
+            <p class="ab-noresult-sub" id="payeesNoMatchSub">Nothing matches your search.</p>
+            <button type="button" class="ab-noresult-clear" id="payeesClearSearch">Clear search</button>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay" aria-hidden="true"></div>
+
+    <div class="modal-overlay" id="modalWalletEdit" role="dialog" aria-modal="true" aria-labelledby="modalWalletEditTitle" aria-describedby="modalWalletEditDesc" aria-hidden="true">
+        <div class="modal-box modal-sheet" role="document">
+            <div class="modal-handle" aria-hidden="true"></div>
+            <header class="modal-header">
+                <div class="modal-header-text">
+                    <h2 class="modal-title" id="modalWalletEditTitle">Add Wallet</h2>
+                    <p class="modal-desc" id="modalWalletEditDesc">Label this address so you can recognize it when sending. Double-check the network before saving.</p>
+                </div>
+                <button type="button" class="modal-close" data-modal-close aria-label="Close dialog">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                </button>
+            </header>
+            <div class="modal-body">
+                <form id="walletForm">
+                    <input type="hidden" id="walletEditId" value="">
+                    <p id="walletFormError" class="form-error" role="alert" hidden></p>
+                    <div class="form-group">
+                        <label class="form-label" for="walletLabel">Label</label>
+                        <input type="text" id="walletLabel" class="form-input" required maxlength="50" autocomplete="off" aria-describedby="walletLabelHint">
+                        <p class="form-hint" id="walletLabelHint">A name you will recognize, such as Alice or Exchange wallet. Max 50 characters.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="walletAddress">Wallet address</label>
+                        <div class="address-input-group">
+                            <input type="text" id="walletAddress" class="form-input wallet-address-input" required spellcheck="false" autocomplete="off" placeholder="0x…" inputmode="text" aria-describedby="walletAddressHint walletAddressValidation">
+                            <button type="button" class="address-action-btn" id="walletPasteBtn">Paste</button>
+                        </div>
+                        <p class="form-hint" id="walletAddressHint">A valid EVM address (0x, 42 characters). The address cannot be changed after saving.</p>
+                        <div id="walletAddressValidation" class="field-validation" role="status" aria-live="polite"></div>
+                        <div id="walletEnsRow" class="ens-row" hidden><svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-82q117-91 178.5-189T720-544q0-106-67.5-173T480-784q-105 0-172.5 67T240-544q0 75 61.5 173T480-162Zm0-358q33 0 56.5-23.5T560-600q0-33-23.5-56.5T480-680q-33 0-56.5 23.5T400-600q0 33 23.5 56.5T480-520Z"/></svg><span id="walletEnsName"></span><span class="ens-tag">ENS</span></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="walletDescription">Description <span class="form-hint-inline">(optional)</span></label>
+                        <textarea id="walletDescription" class="form-input" maxlength="120" rows="2" placeholder="e.g. Cold storage, exchange deposit wallet"></textarea>
+                    </div>
+                    <label class="demo-toggle"><input type="checkbox" id="abSimSaveError"> <span>Simulate server error <em>(prototype)</em></span></label>
+                </form>
+            </div>
+            <footer class="modal-footer">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="walletSubmitBtn" form="walletForm" disabled>Save Wallet</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalDeleteConfirm" role="dialog" aria-modal="true" aria-labelledby="modalDeleteConfirmTitle" aria-hidden="true">
+        <div class="modal-box">
+            <h2 id="modalDeleteConfirmTitle">Delete payee?</h2>
+            <p id="deleteConfirmMsg" style="color:var(--text-secondary);margin-bottom:1.5rem;">Remove this address from your address book?</p>
+            <p id="deleteError" class="form-error" role="alert" hidden></p>
+            <label class="demo-toggle"><input type="checkbox" id="abSimDeleteError"> <span>Simulate server error <em>(prototype)</em></span></label>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+(function () {
+    'use strict';
+    // ===== Address Book (Huma - Payee Address Management, spec v7) =====
+    var BOOK_KEY = 'unera_addressBook_v1';   // single source of truth (spec ADDR-08)
+    var MAX_PAYEES = 100;                      // ADDR-09 / AC-05
+    var BATCH = 20;                            // 6.2 infinite scroll
+    var ENS_STUB = {                           // simulated reverse resolver (prototype)
+        '0x742d351c6266fb6421d84f7b674faab7f9b3a8f0': 'alice.eth',
+        '0xd8da6bf26964af9d7eed9e03e53415d37aa96045': 'vitalik.eth'
+    };
+    var activeModal = null, lastFocus = null, deleteId = null, renderedCount = 0, currentList = [];
+
+    function $(id){ return document.getElementById(id); }
+    function load(){ try { return JSON.parse(localStorage.getItem(BOOK_KEY) || '[]'); } catch(e){ return []; } }
+    function save(list){ localStorage.setItem(BOOK_KEY, JSON.stringify(list)); }
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+    function truncate(a){ if(!a) return ''; if(a.length < 18) return a; var m = Math.floor(a.length/2); /* middle-out (first\u00b7middle\u00b7last) \u2014 address-poisoning defense */ return a.slice(0,6) + '\u2026' + a.slice(m-2, m+2) + '\u2026' + a.slice(-4); }
+    function isValidEvm(a){ return /^0x[0-9a-fA-F]{40}$/.test((a||'').trim()); }
+    function initials(label){ var p=(label||'?').trim().split(/\s+/); return ((p[0]||'?')[0] + (p[1]?p[1][0]:'')).toUpperCase(); }
+
+    // ENS reverse lookup (non-blocking, ADDR-10/11). Real impl must forward-verify the
+    // resolved name points back to the address before display (ENS docs); stub omits that.
+    function resolveEns(address){
+        return new Promise(function(res){ setTimeout(function(){ res(ENS_STUB[(address||'').toLowerCase()] || null); }, 350); });
+    }
+    function reresolveAll(){ // ADDR-13 / AC-24: re-resolve on each load
+        var list = load(), pending = 0, changed = false;
+        list.forEach(function(p){
+            pending++;
+            resolveEns(p.address).then(function(name){
+                if ((p.ens_name || null) !== (name || null)) { p.ens_name = name || null; changed = true; }
+                if (--pending === 0 && changed) { save(list); applyFilter(); }
+            });
+        });
+    }
+
+    // ---------- Seed (demo only) ----------
+    if (localStorage.getItem(BOOK_KEY) == null) {
+        var t = new Date().toISOString();
+        save([
+            { id:'addr_1', label:'Alice', address:'0x742d351C6266fB6421D84f7b674faAb7f9B3a8f0', description:'Friend \u2014 monthly split', ens_name:null, address_type:'EVM', created_at:t, updated_at:t },
+            { id:'addr_2', label:'Ledger \u2014 personal', address:'0x71C7656EC7ab88b098deb1d33e2f4C4E5C5C5C5C', description:'Hardware wallet', ens_name:null, address_type:'EVM', created_at:t, updated_at:t },
+            { id:'addr_3', label:'Exchange hot wallet', address:'0x8ba1f109551bD432803012645Ac136ddd64DBA72', description:'', ens_name:null, address_type:'EVM', created_at:t, updated_at:t },
+            { id:'addr_4', label:'Vitalik', address:'0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', description:'Donations', ens_name:null, address_type:'EVM', created_at:t, updated_at:t },
+            { id:'addr_5', label:'Base vault', address:'0x4E83362442B8d1beC281594ceA3050c8EB01311C', description:'Cold storage', ens_name:null, address_type:'EVM', created_at:t, updated_at:t }
+        ]);
+    }
+
+    // ---------- Render ----------
+    var listEl = $('payeeList'), emptyEl = $('payeesEmpty'), noMatchEl = $('payeesNoMatch'), countEl = $('abCount'), sentinel = $('abSentinel');
+
+    function applyFilter(){
+        var q = ($('payeeSearch').value || '').trim().toLowerCase();
+        var all = load().slice().sort(function(a,b){ return (a.label||'').localeCompare(b.label||''); });
+        currentList = q ? all.filter(function(p){
+            return (p.label||'').toLowerCase().indexOf(q) >= 0
+                || (p.address||'').toLowerCase().indexOf(q) >= 0
+                || (p.ens_name||'').toLowerCase().indexOf(q) >= 0;
+        }) : all;
+        renderedCount = 0; listEl.innerHTML = '';
+        // States
+        emptyEl.hidden = !(all.length === 0);
+        noMatchEl.hidden = !(all.length > 0 && currentList.length === 0);
+        var sub = $('payeesNoMatchSub');
+        if (sub && !noMatchEl.hidden) sub.innerHTML = 'Nothing matches \u201c<strong>' + esc(($('payeeSearch').value || '').trim()) + '</strong>\u201d.';
+        countEl.textContent = all.length === 0 ? '' : (all.length + (all.length === 1 ? ' saved address' : ' saved addresses') + (q ? ' \u00b7 ' + currentList.length + ' shown' : ''));
+        renderMore();
+    }
+    function renderMore(){
+        var slice = currentList.slice(renderedCount, renderedCount + BATCH);
+        slice.forEach(function(p){ listEl.appendChild(cardEl(p)); });
+        renderedCount += slice.length;
+    }
+    function cardEl(p){
+        var li = document.createElement('li');
+        li.className = 'ab-card' + (p.issue ? ' ab-card--warn' : ''); li.setAttribute('role','listitem');
+        var ens = p.ens_name ? '<span class="ab-ens" title="ENS name (auto-resolved)">' + esc(p.ens_name) + '<span class="ens-tag">ENS</span></span>' : '';
+        var warnChip = p.issue ? '<span class="ab-warn-chip" title="' + esc(p.issue) + '"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="m40-120 440-760 440 760H40Zm440-120q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg>Check</span>' : '';
+        var desc = p.description ? '<div class="ab-desc">' + esc(p.description) + '</div>' : '';
+        var warnNote = p.issue ? '<div class="ab-warn-note"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="m40-120 440-760 440 760H40Zm440-120q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg><span>' + esc(p.issue) + '</span></div>' : '';
+        li.innerHTML =
+            '<div class="ab-avatar" aria-hidden="true">' + esc(initials(p.label)) + '</div>' +
+            '<div class="ab-main">' +
+                '<div class="ab-label-row"><span class="ab-label">' + esc(p.label) + '</span>' + ens + warnChip + '</div>' +
+                '<div class="ab-addr" title="' + esc(p.address) + '">' + esc(truncate(p.address)) + '</div>' + desc + warnNote +
+            '</div>' +
+            '<div class="ab-actions">' +
+                '<button type="button" class="ab-icon-btn" aria-label="Copy address for ' + esc(p.label) + '" data-copy="' + esc(p.address) + '"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-520h80v520h440v80H200Zm160-240v-480 480Z"/></svg></button>' +
+                '<button type="button" class="ab-icon-btn" aria-label="Edit ' + esc(p.label) + '" data-edit="' + p.id + '"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T846-647L319-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg></button>' +
+                '<button type="button" class="ab-icon-btn danger" aria-label="Delete ' + esc(p.label) + '" data-del="' + p.id + '"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>' +
+            '</div>';
+        return li;
+    }
+
+    if (sentinel && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function(entries){
+            if (entries[0].isIntersecting && renderedCount < currentList.length) renderMore();
+        }).observe(sentinel);
+    }
+
+    listEl.addEventListener('click', function(e){
+        var cp = e.target.closest('[data-copy]'), ed = e.target.closest('[data-edit]'), dl = e.target.closest('[data-del]');
+        if (cp) {
+            var addr = cp.getAttribute('data-copy');
+            if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(addr).then(function(){ toast('Address copied.'); }).catch(function(){ toast('Address copied.'); }); }
+            else { toast('Address copied.'); }
+        }
+        else if (ed) openForm(ed.getAttribute('data-edit'));
+        else if (dl) openDelete(dl.getAttribute('data-del'));
+    });
+
+    // ---------- Modal plumbing ----------
+    function openModal(el){
+        lastFocus = document.activeElement;
+        el.classList.add('active'); el.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden'; activeModal = el;
+    }
+    function closeModal(){
+        if (!activeModal) return;
+        activeModal.classList.remove('active'); activeModal.setAttribute('aria-hidden','true');
+        document.body.style.overflow = ''; activeModal = null;
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    document.addEventListener('click', function(e){
+        if (e.target.closest('[data-modal-close]') || e.target.closest('.modal-cancel')) closeModal();
+        else if (e.target.classList && e.target.classList.contains('modal-overlay') && e.target.classList.contains('active')) closeModal();
+    });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && activeModal) closeModal(); });
+
+    function toast(msg, isErr){
+        var t = $('toast'); if (!t) return;
+        t.textContent = msg; t.className = 'toast show' + (isErr ? ' error' : '');
+        clearTimeout(toast._t); toast._t = setTimeout(function(){ t.className = 'toast'; }, 2600);
+    }
+
+    // ---------- Add / Edit ----------
+    var modal = $('modalWalletEdit'), form = $('walletForm');
+    var fLabel = $('walletLabel'), fAddr = $('walletAddress'), fDesc = $('walletDescription');
+    var fErr = $('walletFormError'), fEditId = $('walletEditId'), fSubmit = $('walletSubmitBtn');
+    var addrVal = $('walletAddressValidation'), ensRow = $('walletEnsRow'), ensName = $('walletEnsName');
+
+    function openForm(id){
+        form.reset(); fErr.hidden = true; addrVal.textContent = ''; addrVal.className = 'field-validation';
+        ensRow.hidden = true; fEditId.value = id || '';
+        var editing = !!id, rec = null;
+        if (editing) { rec = load().find(function(p){ return p.id === id; }); if (!rec){ return; } }
+        else if (load().length >= MAX_PAYEES) { toast('Address book is full (' + MAX_PAYEES + ' payees). Remove an entry to add a new one.', true); return; }
+
+        $('modalWalletEditTitle').textContent = editing ? 'Edit payee' : 'Add payee';
+        $('modalWalletEditDesc').textContent = editing
+            ? 'Update the label or description. The wallet address can\u2019t be changed \u2014 delete and re-add to change it.'
+            : 'Save a recipient address with a label you\u2019ll recognize.';
+        fSubmit.textContent = editing ? 'Save changes' : 'Save payee';
+        if (editing) {
+            fLabel.value = rec.label; fAddr.value = rec.address; fDesc.value = rec.description || '';
+            fAddr.readOnly = true; fAddr.classList.add('is-readonly'); $('walletPasteBtn').style.display = 'none'; // ADDR-03 / AC-07
+            if (rec.ens_name) { ensName.textContent = rec.ens_name; ensRow.hidden = false; }
+        } else {
+            fAddr.readOnly = false; fAddr.classList.remove('is-readonly'); $('walletPasteBtn').style.display = '';
+        }
+        openModal(modal); validate();
+        setTimeout(function(){ fLabel.focus(); }, 60);
+    }
+
+    function dupAddress(addr, exceptId){
+        return load().find(function(p){ return p.id !== exceptId && (p.address||'').toLowerCase() === addr.toLowerCase(); });
+    }
+    function dupLabel(label, exceptId){
+        return load().find(function(p){ return p.id !== exceptId && (p.label||'').trim().toLowerCase() === label.trim().toLowerCase(); });
+    }
+    function validate(){
+        var id = fEditId.value, editing = !!id;
+        var label = fLabel.value.trim(), addr = fAddr.value.trim(), desc = fDesc.value;
+        var ok = true; fErr.hidden = true;
+        // address (skip format re-check when editing read-only)
+        if (!editing) {
+            if (!addr) { ok = false; addrVal.textContent = ''; addrVal.className = 'field-validation'; }
+            else if (!isValidEvm(addr)) { ok = false; addrVal.textContent = 'Invalid wallet address format.'; addrVal.className = 'field-validation field-validation--error'; }
+            else { addrVal.textContent = 'Valid EVM address.'; addrVal.className = 'field-validation field-validation--success'; }
+        }
+        if (!label) ok = false;
+        if (label.length > 50) { ok = false; }
+        if (desc.length > 120) ok = false;
+        fSubmit.disabled = !ok;
+        return ok;
+    }
+    fLabel.addEventListener('input', validate);
+    fAddr.addEventListener('input', validate);
+    fDesc.addEventListener('input', validate);
+
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var id = fEditId.value, editing = !!id;
+        var label = fLabel.value.trim(), addr = fAddr.value.trim(), desc = fDesc.value.trim();
+        // Errors (spec 7)
+        if (label.length > 50) { return showErr('Label must be 50 characters or fewer.'); }
+        if (desc.length > 120) { return showErr('Description must be 120 characters or fewer.'); }
+        if (!editing && !isValidEvm(addr)) { return showErr('Invalid wallet address format.'); }
+        var dl = dupLabel(label, id); if (dl) { return showErr('A payee with this label already exists. Please use a different name.'); }
+        if (!editing) {
+            var da = dupAddress(addr, id); if (da) { return showErr('This address is already saved as \u2018' + da.label + '\u2019.'); }
+            if (load().length >= MAX_PAYEES) { return showErr('Address book is full (' + MAX_PAYEES + ' payees). Please remove an entry before adding a new one.'); }
+        }
+        var list = load(), now = new Date().toISOString();
+        attemptSave(editing, id, label, addr, desc);
+    });
+    function attemptSave(editing, id, label, addr, desc){
+        // §7 server-error simulation (prototype, in-memory - never persisted)
+        var sim = document.getElementById('abSimSaveError');
+        if (sim && sim.checked) {
+            showServerErr(fErr, 'Unable to save. Please try again.', function(){ attemptSave(editing, id, label, addr, desc); });
+            return;
+        }
+        var list = load(), now = new Date().toISOString();
+        if (editing) {
+            var rec = list.find(function(p){ return p.id === id; });
+            if (rec) { rec.label = label; rec.description = desc; rec.updated_at = now; }
+            save(list); toast('Payee updated.'); finishSave(rec);
+        } else {
+            var entry = { id:'addr_' + Date.now(), label:label, address:addr, description:desc, ens_name:null, address_type:'EVM', created_at:now, updated_at:now };
+            list.push(entry); save(list); toast('Payee saved.'); finishSave(entry);
+            // ENS resolve in background (ADDR-10/11)
+            resolveEns(addr).then(function(name){
+                if (!name) return;
+                var l = load(), r = l.find(function(p){ return p.id === entry.id; });
+                if (r) { r.ens_name = name; save(l); applyFilter(); }
+            });
+        }
+    }
+    function showErr(msg){ fErr.innerHTML = ''; fErr.textContent = msg; fErr.hidden = false; return false; }
+    function showServerErr(el, msg, retryFn){
+        el.hidden = false; el.innerHTML = '';
+        var span = document.createElement('span'); span.textContent = msg; el.appendChild(span);
+        var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'form-error-retry'; btn.textContent = 'Retry';
+        btn.addEventListener('click', function(){ el.hidden = true; el.innerHTML = ''; retryFn(); });
+        el.appendChild(btn);
+    }
+    function finishSave(){ closeModal(); applyFilter(); }
+
+    // ---------- Delete ----------
+    function openDelete(id){
+        var rec = load().find(function(p){ return p.id === id; }); if (!rec) return;
+        deleteId = id;
+        var de = $('deleteError'); if (de) { de.hidden = true; de.innerHTML = ''; }
+        $('deleteConfirmMsg').innerHTML = 'Remove <strong>' + esc(rec.label) + '</strong> from your address book?';
+        openModal($('modalDeleteConfirm'));
+    }
+    $('confirmDeleteBtn').addEventListener('click', function(){
+        if (!deleteId) return;
+        attemptDelete();
+    });
+    function attemptDelete(){
+        var sim = document.getElementById('abSimDeleteError');
+        if (sim && sim.checked) {
+            showServerErr($('deleteError'), 'Unable to delete. Please try again.', function(){ attemptDelete(); });
+            return;
+        }
+        save(load().filter(function(p){ return p.id !== deleteId; }));
+        deleteId = null; closeModal(); applyFilter(); toast('Payee removed.');
+    }
+
+    // ---------- Wire toolbar ----------
+    $('btn-add-payee').addEventListener('click', function(){ openForm(null); });
+    $('btn-add-payee-empty').addEventListener('click', function(){ openForm(null); });
+    var st; $('payeeSearch').addEventListener('input', function(){ clearTimeout(st); st = setTimeout(applyFilter, 180); });
+    (function(){ var cs = $('payeesClearSearch'); if (cs) cs.addEventListener('click', function(){ $('payeeSearch').value = ''; applyFilter(); $('payeeSearch').focus(); }); })();
+    (function(){
+        var t = new Date().toISOString();
+        var SAMPLES = [
+            { id:'addr_1', label:'Alice', address:'0x742d351C6266fB6421D84f7b674faAb7f9B3a8f0', description:'Friend, monthly split', ens_name:null, address_type:'EVM', network:'Ethereum', created_at:t, updated_at:t },
+            { id:'addr_2', label:'Ledger (personal)', address:'0x71C7656EC7ab88b098deb1d33e2f4C4E5C5C5C5C', description:'Hardware wallet', ens_name:null, address_type:'EVM', network:'Ethereum', created_at:t, updated_at:t },
+            { id:'addr_3', label:'Exchange hot wallet', address:'0x8ba1f109551bD432803012645Ac136ddd64DBA72', description:'', ens_name:null, address_type:'EVM', network:'Base', created_at:t, updated_at:t },
+            { id:'addr_4', label:'Vitalik', address:'0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', description:'Donations', ens_name:null, address_type:'EVM', network:'Ethereum', created_at:t, updated_at:t },
+            { id:'addr_5', label:'Base vault', address:'0x4E83362442B8d1beC281594ceA3050c8EB01311C', description:'Cold storage', ens_name:null, address_type:'EVM', network:'Base', created_at:t, updated_at:t }
+        ];
+        var emptyBtn = $('demoEmptyState'), restoreBtn = $('demoRestoreSamples');
+        if (emptyBtn) emptyBtn.addEventListener('click', function(){ save([]); $('payeeSearch').value=''; applyFilter(); toast('Showing empty state.'); });
+        if (restoreBtn) restoreBtn.addEventListener('click', function(){ save(SAMPLES.slice()); $('payeeSearch').value=''; applyFilter(); reresolveAll(); toast('Restored 5 sample addresses.'); });
+    })();
+    $('walletPasteBtn').addEventListener('click', function(){
+        if (navigator.clipboard && navigator.clipboard.readText) {
+            navigator.clipboard.readText().then(function(txt){ fAddr.value = (txt||'').trim(); validate(); fAddr.focus(); }).catch(function(){ fAddr.focus(); });
+        } else { fAddr.focus(); }
+    });
+
+    // ---------- Init ----------
+    applyFilter();
+    reresolveAll();
+})();
+</script>
+    <script>
+        // Notification bell + panel: behavior, feed & rendering come from the shared
+        // notifications-bell.js module loaded in <head> (single source of truth across pages).
+
+        /* ── Network Switcher ─────────────────────────────────────── */
+
+        function closeNetworkDropdown() {
+            const dropdown = document.getElementById('networkDropdown');
+            const badge = document.querySelector('.nav-network-badge');
+            if (dropdown) dropdown.classList.remove('show');
+            if (badge) {
+                badge.classList.remove('open');
+                badge.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function toggleNetworkDropdown(event) {
+            event.stopPropagation();
+            closeNotificationPanel();
+            const userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) userDropdown.classList.remove('show');
+
+            const badge = event.currentTarget;
+            const dropdown = document.getElementById('networkDropdown');
+            if (!dropdown) return;
+            const isOpen = dropdown.classList.toggle('show');
+            badge.classList.toggle('open', isOpen);
+            badge.setAttribute('aria-expanded', String(isOpen));
+
+            if (isOpen) {
+                const firstOption = dropdown.querySelector('.network-option-nav');
+                if (firstOption) firstOption.focus();
+            }
+        }
+
+        const CHAIN_NAV_ICON_PATHS = {
+            ethereum:     { path: 'M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z', viewBox: '0 0 24 24', fill: 'currentColor' },
+            base:         { path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.18 0 9.44-3.93 9.95-9H12v-2h11.95c-.5-5.5-5.1-9.99-11.95-9.99V2z', viewBox: '0 0 24 24', fill: 'currentColor' },
+            sepolia:      { path: 'M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z', viewBox: '0 0 24 24', fill: 'currentColor' },
+            'base-sepolia': { path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.18 0 9.44-3.93 9.95-9H12v-2h11.95c-.5-5.5-5.1-9.99-11.95-9.99V2z', viewBox: '0 0 24 24', fill: 'currentColor' }
+        };
+
+        const NAV_SUPPORTED_NETWORK_IDS = ['ethereum', 'base', 'sepolia', 'base-sepolia'];
+
+        function switchNetwork(chainId, label, chainColor, optionEl) {
+            document.querySelectorAll('.network-option-nav').forEach(function(el) {
+                el.classList.remove('active');
+                el.setAttribute('aria-selected', 'false');
+            });
+            const desktopMatch = document.querySelector('.network-option-nav[data-chain-id="' + chainId + '"]');
+            if (desktopMatch) {
+                desktopMatch.classList.add('active');
+                desktopMatch.setAttribute('aria-selected', 'true');
+            }
+
+            document.querySelectorAll('.mobile-network-option').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            const mobileMatch = document.querySelector('.mobile-network-option[data-chain-id="' + chainId + '"]');
+            if (mobileMatch) mobileMatch.classList.add('active');
+
+            const navLabel = document.getElementById('navNetworkLabel');
+            if (navLabel) navLabel.textContent = label;
+
+            const navIcon = document.getElementById('navNetworkIcon');
+            if (navIcon) navIcon.style.color = chainColor;
+
+            const badge = document.querySelector('.nav-network-badge');
+            if (badge) badge.setAttribute('aria-label', 'Switch network, currently ' + label);
+
+            closeNetworkDropdown();
+
+            try { localStorage.setItem('selectedNetwork', JSON.stringify({ id: chainId, label: label, color: chainColor })); } catch(e) {}
+        }
+
+        function handleNetworkBadgeKey(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleNetworkDropdown(event);
+            } else if (event.key === 'Escape') {
+                closeNetworkDropdown();
+                event.currentTarget.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                const dropdown = document.getElementById('networkDropdown');
+                if (!dropdown) return;
+                if (!dropdown.classList.contains('show')) {
+                    const badge = event.currentTarget;
+                    badge.classList.add('open');
+                    badge.setAttribute('aria-expanded', 'true');
+                    dropdown.classList.add('show');
+                }
+                const firstOption = dropdown.querySelector('.network-option-nav');
+                if (firstOption) firstOption.focus();
+            }
+        }
+
+        function handleNetworkOptionKey(event) {
+            const options = Array.from(document.querySelectorAll('#networkDropdown .network-option-nav'));
+            const idx = options.indexOf(event.currentTarget);
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                event.currentTarget.click();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                closeNetworkDropdown();
+                const badge = document.querySelector('.nav-network-badge');
+                if (badge) badge.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                const next = options[idx + 1];
+                if (next) next.focus();
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (idx === 0) {
+                    const badge = document.querySelector('.nav-network-badge');
+                    if (badge) badge.focus();
+                } else {
+                    const prev = options[idx - 1];
+                    if (prev) prev.focus();
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        function disconnectWallet() {
+            localStorage.removeItem('walletConnected');
+            localStorage.removeItem('walletAddress');
+            if (typeof syncNavAuthState === 'function') syncNavAuthState();
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const notificationBellWrapper = document.getElementById('notificationBellWrapper');
+            const notificationPanel = document.getElementById('notificationPanel');
+            const networkDropdown = document.getElementById('networkDropdown');
+            const navWalletDisplay = document.getElementById('navWalletDisplay');
+
+            if (dropdown && dropdown.classList.contains('show')) {
+                if (!navWalletDisplay || !navWalletDisplay.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            }
+            if (notificationPanel && notificationPanel.classList.contains('show')) {
+                if (!notificationBellWrapper || !notificationBellWrapper.contains(event.target)) {
+                    notificationPanel.classList.remove('show');
+                    const bell = document.getElementById('notificationBell');
+                    if (bell) bell.setAttribute('aria-expanded', 'false');
+                }
+            }
+            if (networkDropdown && networkDropdown.classList.contains('show')) {
+                if (!navWalletDisplay || !navWalletDisplay.contains(event.target)) {
+                    closeNetworkDropdown();
+                }
+            }
+        });
+
+        /* Initial feed seeded by notifications-bell.js (shared platform feed). */
+        renderNotificationPanel('desktop');
+
+        (function restoreSelectedNetwork() {
+            try {
+                const saved = localStorage.getItem('selectedNetwork');
+                if (!saved) return;
+                let net = JSON.parse(saved);
+                if (!net || !net.id || !net.label) return;
+                if (!NAV_SUPPORTED_NETWORK_IDS.includes(net.id)) {
+                    net = { id: 'ethereum', label: 'Ethereum', color: '#627EEA' };
+                    localStorage.setItem('selectedNetwork', JSON.stringify(net));
+                }
+                const match = document.querySelector('.network-option-nav[data-chain-id="' + net.id + '"]');
+                if (match) {
+                    switchNetwork(net.id, net.label, net.color || '#627EEA', match);
+                    return;
+                }
+                const navLabel = document.getElementById('navNetworkLabel');
+                if (navLabel) navLabel.textContent = net.label;
+                const navIcon = document.getElementById('navNetworkIcon');
+                if (navIcon && net.color) navIcon.style.color = net.color;
+                const badge = document.querySelector('.nav-network-badge');
+                if (badge) badge.setAttribute('aria-label', 'Switch network, currently ' + net.label);
+            } catch(e) {}
+        })();
+    </script>
+    <!-- Hamburger Menu Script -->
+    <script>
+        (function() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            const body = document.body;
+
+            function openMenu() {
+                if (hamburger) hamburger.classList.add('active');
+                if (mobileMenu) mobileMenu.classList.add('active');
+                if (mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.add('active');
+                    mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                }
+                if (hamburger) hamburger.setAttribute('aria-expanded', 'true');
+                body.style.overflow = 'hidden';
+            }
+
+            function closeMenu() {
+                if (hamburger) hamburger.classList.remove('active');
+                if (mobileMenu) mobileMenu.classList.remove('active');
+                if (mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.remove('active');
+                    mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                }
+                if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
+                body.style.overflow = '';
+            }
+
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    if (mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+                    else openMenu();
+                });
+            }
+            if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeMenu);
+            if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', closeMenu);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const networkDropdown = document.getElementById('networkDropdown');
+                    if (networkDropdown && networkDropdown.classList.contains('show')) {
+                        closeNetworkDropdown();
+                        const badge = document.querySelector('.nav-network-badge');
+                        if (badge) badge.focus();
+                        return;
+                    }
+                    const notificationPanel = document.getElementById('notificationPanel');
+                    if (notificationPanel && notificationPanel.classList.contains('show')) {
+                        closeNotificationPanel();
+                        return;
+                    }
+                    if (mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+                }
+            });
+
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-links .nav-link');
+            mobileNavLinks.forEach(link => link.addEventListener('click', closeMenu));
+        })();
+    </script>
+    <script src="consumer-app-nav.js"></script>
+</body>
+</html>

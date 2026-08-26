@@ -1,0 +1,147 @@
+<link rel="stylesheet" href="shared/wallet-auth-modal.css">
+
+<!-- Outcome notifier -->
+<div class="wallet-auth-modal-overlay" id="walletAuthOutcomeModal" role="dialog" aria-modal="true" aria-labelledby="walletAuthOutcomeTitle" aria-hidden="true">
+    <div class="wallet-auth-modal" onclick="event.stopPropagation()">
+        <div class="wallet-auth-modal-header">
+            <h2 class="wallet-auth-modal-title" id="walletAuthOutcomeTitle">Notification</h2>
+            <button type="button" class="wallet-auth-modal-close" onclick="closeWalletAuthOutcomeModal()" aria-label="Close notification">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <div class="wallet-auth-modal-body">
+            <div class="wallet-auth-outcome-icon" id="walletAuthOutcomeIcon" aria-hidden="true"></div>
+            <p class="wallet-auth-outcome-message" id="walletAuthOutcomeMessage" role="status"></p>
+        </div>
+        <div class="wallet-auth-modal-footer" id="walletAuthOutcomeFooter">
+            <button type="button" class="btn-primary" onclick="closeWalletAuthOutcomeModal()">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Main wallet auth picker -->
+<div class="wallet-auth-modal-overlay wallet-auth-modal--production" id="walletAuthModal" role="dialog" aria-modal="true" aria-labelledby="walletAuthTitle" aria-describedby="walletAuthDesc" aria-hidden="true">
+    <div class="wallet-auth-modal" onclick="event.stopPropagation()">
+        <div class="wallet-auth-modal-header">
+            <h2 class="wallet-auth-modal-title" id="walletAuthTitle">Connect. Contribute. Change lives.</h2>
+            <button type="button" class="wallet-auth-modal-close" id="walletAuthCloseBtn" aria-label="Close modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <div class="wallet-auth-modal-body" id="walletAuthModalBody">
+            <!-- Picker step -->
+            <div class="wallet-auth-step" id="walletAuthStepPicker" data-step="picker">
+                <div class="connect-test-scenarios" id="walletAuthTestScenarios" role="group" aria-label="Test scenario selector">
+                    <span class="test-scenarios-label">DEV · Simulate scenario</span>
+                    <div class="scenario-pills">
+                        <button type="button" class="scenario-pill active" data-scenario="happy" onclick="setWalletAuthScenario('happy', this)">Happy Path</button>
+                        <button type="button" class="scenario-pill" data-scenario="wrong-network" onclick="setWalletAuthScenario('wrong-network', this)">Wrong Network</button>
+                        <button type="button" class="scenario-pill" data-scenario="not-installed" onclick="setWalletAuthScenario('not-installed', this)">Not Installed</button>
+                        <button type="button" class="scenario-pill" data-scenario="user-rejected" onclick="setWalletAuthScenario('user-rejected', this)">User Rejected</button>
+                    </div>
+                </div>
+                <p class="wallet-auth-modal-desc" id="walletAuthDesc">Huma is your gateway to impact. Select a supported wallet to authenticate and continue.</p>
+                <p class="auth-security-note" role="note">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280Z"/></svg>
+                    <span>Huma will never ask for your seed phrase or private key.</span>
+                </p>
+                <div class="wallet-grid" role="list" id="walletAuthGrid">
+                    <button type="button" class="wallet-option-card recommended" role="listitem" data-provider="metamask" onclick="handleWalletAuth('metamask')">
+                        <div class="wallet-icon" aria-hidden="true">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M20.3 5.1L13.5 9.9l1.3-3L20.3 5.1z" fill="#E17726"/><path d="M3.7 5.1l6.7 4.9-1.2-3.1L3.7 5.1zM17.6 15.9l-1.8 2.8 3.9 1.1 1.1-3.8-3.2-.1zM3.3 16l1.1 3.8 3.9-1.1-1.8-2.8-3.2.1z" fill="#E27625"/><path d="M8.1 11.1l-1.1 1.6 3.8.2-.1-4.1-2.6 2.3zM15.9 11.1l-2.6-2.4-.2 4.2 3.9-.2-1.1-1.6z" fill="#E27625"/></svg>
+                        </div>
+                        <span class="wallet-name">MetaMask</span>
+                    </button>
+                    <button type="button" class="wallet-option-card" role="listitem" data-provider="walletconnect" onclick="handleWalletAuth('walletconnect')">
+                        <div class="wallet-icon" aria-hidden="true">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5.5 9.5c3.5-3.5 9.2-3.5 12.7 0l.4.4c.2.2.2.5 0 .7l-1.4 1.4c-.1.1-.3.1-.4 0l-.6-.6c-2.4-2.4-6.4-2.4-8.8 0l-.6.6c-.1.1-.3.1-.4 0L4.9 10.6c-.2-.2-.2-.5 0-.7l.6-.4zm15.7 2.9l1.3 1.3c.2.2.2.5 0 .7l-5.7 5.7c-.2.2-.5.2-.7 0l-4.1-4.1c-.1-.1-.2-.1-.2 0l-4.1 4.1c-.2.2-.5.2-.7 0l-5.7-5.7c-.2-.2-.2-.5 0-.7l1.3-1.3c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0z" fill="#3B99FC"/></svg>
+                        </div>
+                        <span class="wallet-name">WalletConnect</span>
+                    </button>
+                    <button type="button" class="wallet-option-card" role="listitem" data-provider="coinbase" onclick="handleWalletAuth('coinbase')">
+                        <div class="wallet-icon" aria-hidden="true">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#0052FF"/><path d="M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+                        </div>
+                        <span class="wallet-name">Coinbase</span>
+                    </button>
+                    <button type="button" class="wallet-option-card" role="listitem" data-provider="brave" onclick="handleWalletAuth('brave')">
+                        <div class="wallet-icon" aria-hidden="true">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l2 9 8 6 8-6 2-9-10-5z" fill="#FB542B"/></svg>
+                        </div>
+                        <span class="wallet-name">Brave</span>
+                    </button>
+                </div>
+                <p class="wallet-note">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/></svg>
+                    <small>Supports MetaMask, WalletConnect, and Coinbase Wallet</small>
+                </p>
+            </div>
+
+            <!-- Extension provider steps -->
+            <div class="wallet-auth-step wallet-extension-steps" id="walletAuthStepExtension" data-step="extension" hidden>
+                <div class="wallet-extension-provider-row">
+                    <div class="wallet-extension-provider-icon" id="walletExtensionIcon" aria-hidden="true"></div>
+                    <h3 class="wallet-extension-provider-name" id="walletExtensionName">MetaMask</h3>
+                </div>
+                <ol class="wallet-extension-ol" id="walletExtensionStepsList">
+                    <li>Click Connect to open your wallet extension.</li>
+                    <li>Select the account(s) you want to link with Huma.</li>
+                    <li>Approve the connection request in your wallet.</li>
+                    <li>Your wallet will be connected automatically.</li>
+                </ol>
+                <p class="wallet-extension-sign-note" id="walletExtensionSignNote" hidden>Approve the sign-in request in your wallet to verify ownership of your address.</p>
+                <button type="button" class="btn-secondary wallet-auth-back-btn" onclick="showWalletAuthPickerStep()">Back to wallets</button>
+            </div>
+
+            <!-- Loading -->
+            <div class="wallet-auth-step" id="walletAuthStepLoading" data-step="loading" hidden aria-live="polite">
+                <div class="wallet-auth-loading">
+                    <div class="wallet-auth-spinner" aria-hidden="true"></div>
+                    <p id="walletAuthLoadingText">Connecting…</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WalletConnect QR sub-modal -->
+<div class="wallet-auth-modal-overlay" id="walletConnectQrModal" role="dialog" aria-modal="true" aria-labelledby="walletConnectQrTitle" aria-hidden="true">
+    <div class="wallet-auth-modal" onclick="event.stopPropagation()">
+        <div class="wallet-auth-modal-header">
+            <h2 class="wallet-auth-modal-title" id="walletConnectQrTitle">WalletConnect</h2>
+            <button type="button" class="wallet-auth-modal-close" onclick="closeWalletConnectQrModal()" aria-label="Close WalletConnect modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <div class="wallet-auth-modal-body wc-qr-modal-body">
+            <div class="wc-qr-frame" aria-label="QR code to scan with your mobile wallet">
+                <div class="wc-qr-placeholder" aria-hidden="true">Scan to connect</div>
+            </div>
+            <p class="wc-qr-instruction">Scan this QR code with your phone</p>
+            <div class="wc-qr-actions">
+                <button type="button" class="wc-copy-link-btn" onclick="copyWalletConnectDemoLink()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Z"/></svg>
+                    Copy link
+                </button>
+                <button type="button" class="wc-browse-wallets-btn" onclick="toggleWalletConnectBrowseList()" aria-expanded="false" id="wcBrowseWalletsBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                    130+ wallets
+                </button>
+            </div>
+            <div class="wc-wallet-list" id="wcWalletBrowseList" hidden role="list" aria-label="Supported wallets">
+                <div class="wc-wallet-list-item" role="listitem">MetaMask Mobile</div>
+                <div class="wc-wallet-list-item" role="listitem">Trust Wallet</div>
+                <div class="wc-wallet-list-item" role="listitem">Rainbow</div>
+                <div class="wc-wallet-list-item" role="listitem">Argent</div>
+                <div class="wc-wallet-list-item" role="listitem">Coinbase Wallet</div>
+                <div class="wc-wallet-list-item" role="listitem">Ledger Live</div>
+            </div>
+            <button type="button" class="btn-secondary wallet-auth-back-btn" onclick="closeWalletConnectQrModal()">Back to wallets</button>
+            <button type="button" class="btn-primary wallet-auth-back-btn" style="margin-top:0.5rem;background:var(--brand-deep-blue);color:var(--brand-white);border:none;min-height:46px;border-radius:0.75rem;font-weight:600;font-family:var(--font-body);cursor:pointer;width:100%" onclick="simulateWalletConnectQrSuccess()">Simulate scan (demo)</button>
+        </div>
+    </div>
+</div>
+
+<div class="wallet-auth-toast" id="walletAuthToast" role="status" aria-live="polite"></div>
+
+<script src="shared/wallet-auth.js" defer></script>
