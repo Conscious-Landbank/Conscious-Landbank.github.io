@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Receipt - Huma</title>
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Light.otf") format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-LightItalic.otf") format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Regular.otf") format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-RegularItalic.otf") format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Medium.otf") format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-MediumItalic.otf") format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Semibold.otf") format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-SemiboldItalic.otf") format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Bold.otf") format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-BoldItalic.otf") format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+            --primary-green:     #173d47;
+            --primary-blue:      #90c2b8;
+            --accent-pink:       #ffffab;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+            --neutral-50:        #ffffff;
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-dusk:     var(--brand-deep-blue);
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --fin-neutral:       #6b9090;
+            --fin-neutral-bg:    rgba(107, 144, 144, 0.10);
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+            --error-bg:          rgba(171, 87, 112, 0.10);
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
+            --font-stat-size: 1.5rem;
+            --font-stat-size-compact: 1.25rem;
+            --surface-scatter: color-mix(in srgb, var(--neutral-200) 38%, var(--brand-white));
+            --surface-sky: color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+        }
+
+        @keyframes receiptPulse {
+            0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-deep-blue) 35%, transparent); }
+            50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand-deep-blue) 0%, transparent); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--brand-cloud-blue);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-yellow); }
+
+        .nav {
+            background: var(--gradient-ink);
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .nav-left { display: flex; align-items: center; gap: 2.75rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .nav-brand:focus { outline: 3px solid var(--brand-yellow); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-img { height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block; }
+        .nav-links { display: flex; align-items: center; gap: 1.375rem; list-style: none; }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--brand-yellow); }
+        .nav-link:focus { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .nav-link.active { color: var(--brand-yellow); font-weight: 600; }
+        .user-profile-nav { display: flex; align-items: center; gap: 0.5rem; }
+        .user-avatar-nav {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-deep-blue); font-weight: 600; font-size: 0.813rem;
+        }
+        .user-name-nav {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            min-height: 44px;
+            min-width: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.1); }
+        .hamburger:focus { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--brand-white); transition: all 0.3s ease; border-radius: 2px; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(23, 61, 71, 0.55);
+            z-index: 10010;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--brand-white);
+            z-index: 10011;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); }
+        .mobile-menu-header .nav-logo-img { height: 24px; }
+        .mobile-menu-close { background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; color: var(--text-primary); }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; }
+        .mobile-nav-links .nav-link {
+            color: var(--text-primary);
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        .mobile-nav-links .nav-link:hover { background: rgba(23, 61, 71, 0.06); color: var(--brand-deep-blue); }
+        .mobile-nav-links .nav-link.active { background: rgba(23, 61, 71, 0.08); color: var(--brand-deep-blue); font-weight: 600; }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.938rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 46px;
+            font-family: var(--font-body);
+        }
+        .back-btn:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .back-btn:focus { outline: 3px solid rgba(23, 61, 71, 0.30); outline-offset: 2px; }
+
+        .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.938rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 46px;
+            text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn:focus { outline: 3px solid rgba(23, 61, 71, 0.30); outline-offset: 2px; }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-subtle);
+        }
+        .btn-secondary:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .btn-primary {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+        }
+        .btn-primary:hover { filter: brightness(0.92); box-shadow: 0 4px 12px rgba(23, 61, 71, 0.3); }
+
+        .copy-toast {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(120%);
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 10020;
+            box-shadow: 0 8px 24px rgba(23, 61, 71, 0.25);
+            transition: transform 0.25s ease;
+            pointer-events: none;
+        }
+        .copy-toast.show { transform: translateX(-50%) translateY(0); }
+
+        .receipt-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2rem 2rem 2.25rem;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .receipt-print-logo {
+            display: none;
+        }
+
+        .receipt-card-title {
+            font-family: var(--font-display);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--brand-deep-blue);
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+        .receipt-title-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+
+        .receipt-duration {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1.125rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .receipt-duration:empty { display: none; }
+        .receipt-duration-check {
+            width: 14px;
+            height: 14px;
+            color: var(--fin-up);
+        }
+        .receipt-duration--done {
+            color: var(--fin-up);
+        }
+
+        .delivery-track {
+            display: none;
+            position: relative;
+            padding: 0 0 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .delivery-track-line {
+            position: absolute;
+            top: 16px;
+            left: calc(100% / 8);
+            right: calc(100% / 8);
+            height: 2px;
+            background: var(--neutral-200);
+            z-index: 0;
+        }
+        .delivery-track-progress {
+            position: absolute;
+            top: 16px;
+            left: calc(100% / 8);
+            width: calc(75% * var(--track-ratio, 1));
+            height: 2px;
+            background: var(--fin-up);
+            z-index: 1;
+            transition: width 0.3s ease;
+        }
+        .delivery-track-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        .delivery-track-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 0;
+        }
+        .delivery-track-step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-bottom: 0.5rem;
+        }
+        .delivery-track-step--pending .delivery-track-step-icon {
+            background: var(--neutral-200);
+            border: 2px solid var(--neutral-300);
+            color: var(--text-secondary);
+        }
+        .delivery-track-step--current .delivery-track-step-icon {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            animation: receiptPulse 1.5s ease infinite;
+        }
+        .delivery-track-step--done .delivery-track-step-icon {
+            background: var(--fin-up);
+            color: var(--brand-white);
+        }
+        .delivery-track-step--failed .delivery-track-step-icon {
+            background: var(--fin-down);
+            color: var(--brand-white);
+        }
+        .delivery-track-step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            line-height: 1.25;
+        }
+        .delivery-track-step--done .delivery-track-step-label { color: var(--fin-up); }
+        .delivery-track-step--current .delivery-track-step-label { color: var(--text-primary); }
+        .delivery-track-step--failed .delivery-track-step-label { color: var(--fin-down); }
+        .delivery-track-step-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.125rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .receipt-section { margin-bottom: 2rem; }
+        .receipt-section:last-of-type { margin-bottom: 0; }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+        #delivery-title {
+            text-align: left;
+        }
+
+        .receipt-dl { margin: 0; }
+        .receipt-dl-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.625rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+        }
+        .receipt-dl-row:last-child { border-bottom: none; }
+        .receipt-section--details .receipt-dl-row {
+            padding: 0.75rem 0;
+        }
+        .receipt-dl dt {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            font-weight: 500;
+            flex-shrink: 0;
+            margin: 0;
+        }
+        .receipt-dl dd {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: right;
+            margin: 0;
+            max-width: 60%;
+            word-break: break-all;
+            font-variant-numeric: tabular-nums;
+        }
+        .receipt-dl dd.good { color: var(--fin-up); }
+        .receipt-dl dd.warn { color: var(--warning); }
+        .receipt-dl dd.danger { color: var(--fin-down); }
+        .receipt-dl-row--total {
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: none;
+        }
+        .receipt-dl-row--total + .receipt-dl-row--total {
+            margin-top: 0;
+            padding-top: 0.5rem;
+            border-top: none;
+        }
+        .receipt-dl-row--receive dd {
+            font-size: var(--text-lg);
+            font-weight: 700;
+        }
+        .receipt-dl-row--receive dt {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .details-accordion {
+            margin-top: 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.875rem;
+            overflow: hidden;
+        }
+        .details-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.875rem 1.125rem;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            transition: background 0.15s;
+            font-size: 0.938rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: var(--font-display);
+        }
+        .details-summary::-webkit-details-marker { display: none; }
+        .details-summary:hover { background: var(--neutral-100); }
+        .details-summary:focus, .details-summary:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: -2px;
+        }
+        .details-accordion[open] .details-summary {
+            background: var(--neutral-100);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .details-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .details-chevron {
+            width: 13px;
+            height: 13px;
+            fill: currentColor;
+            transition: transform 0.2s;
+        }
+        .details-accordion[open] .details-chevron { transform: rotate(180deg); }
+        .receipt-chain-accordion { margin-bottom: 1.75rem; }
+        .details-body { padding: 0.5rem 1.125rem 1rem; }
+
+        .receipt-action-strip {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.75rem;
+            padding-top: 1.75rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .receipt-action-strip .btn { width: 100%; min-height: 46px; }
+        .receipt-action-strip .btn-primary { grid-column: 1 / -1; }
+        .receipt-action-strip .btn[hidden] { display: none; }
+
+        .chain-verify-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .verify-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            min-height: 44px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid var(--border-subtle);
+            background: var(--brand-white);
+            color: var(--brand-deep-blue);
+        }
+        .verify-link:hover { border-color: var(--brand-deep-blue); }
+        .verify-link:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .verify-link--primary {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            border-color: var(--brand-deep-blue);
+        }
+        .verify-link--primary:hover { filter: brightness(0.92); }
+
+        .delivery-timeline {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .delivery-step {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 0 1rem;
+            position: relative;
+            padding-bottom: 1.25rem;
+        }
+        .delivery-step:last-child { padding-bottom: 0; }
+        .delivery-step:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: var(--neutral-200);
+        }
+        .delivery-step--done:not(:last-child)::before { background: var(--fin-up); }
+
+        .delivery-step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .delivery-step--pending .delivery-step-icon {
+            background: var(--neutral-200);
+            color: var(--text-secondary);
+            border: 2px solid var(--neutral-300);
+        }
+        .delivery-step--current .delivery-step-icon {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            animation: receiptPulse 1.5s ease infinite;
+        }
+        .delivery-step--done .delivery-step-icon {
+            background: var(--fin-up);
+            color: var(--brand-white);
+        }
+        .delivery-step--failed .delivery-step-icon {
+            background: var(--fin-down);
+            color: var(--brand-white);
+        }
+        .unera-checkmark {
+            display: block;
+            flex-shrink: 0;
+            fill: none;
+            width: 18px;
+            height: 18px;
+        }
+
+        .delivery-step-body { padding-top: 0.375rem; min-width: 0; }
+        .delivery-step-label {
+            font-size: 0.938rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .delivery-step--done .delivery-step-label { color: var(--fin-up); font-weight: 600; }
+        .delivery-step--current .delivery-step-label { color: var(--text-primary); font-weight: 600; }
+        .delivery-step--failed .delivery-step-label { color: var(--fin-down); font-weight: 600; }
+        .delivery-step-time {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            margin-top: 0.125rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .receipt-section--scatter {
+            background: var(--surface-scatter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.875rem;
+            padding: 1.125rem 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .confirm-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.625rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+        }
+        .confirm-detail:last-child { border-bottom: none; }
+        .cd-label { color: var(--text-secondary); font-weight: 500; flex-shrink: 0; }
+        .cd-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: right;
+            word-break: break-all;
+            font-variant-numeric: tabular-nums;
+        }
+        .cd-value.good { color: var(--fin-up); }
+        .cd-value.warn { color: var(--warning); }
+        .cd-value.danger { color: var(--fin-down); }
+
+        .tx-hash-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(11.5rem, max-content);
+            gap: 0.75rem;
+            align-items: start;
+            flex: 1;
+            min-width: 0;
+        }
+        .tx-hash-text { min-width: 0; text-align: left; }
+        .tx-hash-text code {
+            font-family: ui-monospace, monospace;
+            font-weight: 500;
+            font-size: 0.813rem;
+            word-break: break-all;
+        }
+        .tx-hash-actions {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .tx-copy-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--neutral-100);
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .tx-copy-icon-btn:hover { color: var(--brand-deep-blue); background: var(--neutral-200); }
+        .tx-copy-icon-btn:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-ghost--explorer {
+            font-size: 0.813rem;
+            font-weight: 600;
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            padding: 0.25rem 0.35rem;
+        }
+        .btn-ghost--explorer:hover { text-decoration: underline; }
+        .btn-ghost--explorer:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 2px; }
+
+        .receipt-foot {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .receipt-foot p + p { margin-top: 0.5rem; }
+
+        @media print {
+            body { background: white; color: var(--text-primary); }
+            .skip-link, .nav, .actions-bar, .receipt-action-strip,
+            .mobile-menu-overlay, .mobile-menu, .copy-toast { display: none !important; }
+            .container { padding: 0; max-width: 100%; }
+            .receipt-card { box-shadow: none; border: 1px solid var(--border-subtle); padding: 1.5rem; }
+            .receipt-print-logo { display: flex; justify-content: center; margin-bottom: 1rem; }
+            .receipt-print-logo img { height: 28px; width: auto; }
+            .delivery-track { display: none !important; }
+            .delivery-timeline { display: block !important; }
+            .details-accordion { break-inside: avoid; }
+            .details-accordion[open] .details-body,
+            .receipt-chain-accordion .details-body { display: block !important; }
+            .receipt-chain-accordion { border: 1px solid var(--border-subtle); }
+            .receipt-chain-accordion .details-summary { display: none; }
+            .tx-copy-icon-btn { display: none; }
+        }
+
+        @media (min-width: 640px) {
+            .delivery-track { display: block; }
+            .delivery-timeline { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 0 1rem; }
+            .nav-links,
+            .user-profile-nav { display: none; }
+            .hamburger { display: flex; }
+            .container { padding: 1rem; }
+            .receipt-card { padding: 1.5rem; }
+            .actions-bar { flex-direction: column; gap: 1rem; align-items: stretch; }
+            .actions { justify-content: stretch; }
+            .actions .btn { flex: 1; }
+            .receipt-dl-row { flex-direction: column; align-items: stretch; gap: 0.375rem; }
+            .receipt-dl dd { text-align: left; max-width: 100%; }
+            .confirm-detail { flex-direction: column; align-items: stretch; gap: 0.375rem; }
+            .cd-value { text-align: left; }
+            .tx-hash-row { grid-template-columns: 1fr; }
+            .tx-hash-actions { justify-content: flex-start; flex-wrap: wrap; }
+            .receipt-action-strip { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .receipt-card-title { font-size: var(--text-xl); }
+        }
+
+
+    </style>
+    <link rel="stylesheet" href="consumer-app-nav.css">
+<style>
+/* Prototype edge-case bar + shared banner (in-memory only; stripped for production) */
+.flow-demo-bar { margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1.5px dashed var(--border-subtle, rgba(23,61,71,0.15)); }
+.demo-label { font-size: 0.688rem; font-weight: 600; color: var(--text-secondary, #5b6b70); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; text-align: left; }
+.demo-btns { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.demo-btn { padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1.5px solid var(--border-subtle, rgba(23,61,71,0.15)); background: var(--brand-white, #fff); cursor: pointer; transition: all 0.15s; font-family: var(--font-body, inherit); color: var(--text-secondary, #5b6b70); min-height: 34px; }
+.demo-btn:hover { border-color: var(--brand-deep-blue, #173d47); color: var(--brand-deep-blue, #173d47); }
+.demo-btn:focus-visible { outline: 2px solid var(--brand-deep-blue, #173d47); outline-offset: 2px; }
+.demo-btn.active { border-color: var(--brand-deep-blue, #173d47); background: var(--brand-deep-blue, #173d47); color: var(--brand-white, #fff); }
+@media (max-width: 768px) { .demo-btn { min-height: 44px; } }
+.edge-case-banner { display: flex; align-items: flex-start; gap: 0.625rem; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; background: color-mix(in srgb, var(--brand-deep-blue, #173d47) 6%, #fff); border: 1.5px solid color-mix(in srgb, var(--brand-deep-blue, #173d47) 20%, transparent); }
+.edge-case-banner[hidden] { display: none !important; }
+.edge-case-banner svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; fill: var(--brand-deep-blue, #173d47); }
+.edge-case-banner.is-error { background: var(--surface-error-soft, color-mix(in srgb, #b3261e 8%, #fff)); border-color: color-mix(in srgb, #b3261e 28%, transparent); }
+.edge-case-banner.is-error svg { fill: var(--error, #b3261e); }
+.edge-case-banner.is-warning { background: var(--surface-warning-soft, color-mix(in srgb, #f5c518 16%, #fff)); border-color: color-mix(in srgb, #b8860b 32%, transparent); }
+.edge-case-banner.is-warning svg { fill: color-mix(in srgb, var(--brand-deep-blue, #173d47) 55%, #b8860b); }
+.edge-banner-text { flex: 1; min-width: 200px; }
+.edge-banner-title { font-weight: 700; font-size: 0.9375rem; margin: 0 0 0.2rem; color: var(--text-primary, #173d47); }
+.edge-banner-body { font-size: 0.8125rem; color: var(--text-secondary, #5b6b70); line-height: 1.45; margin: 0; }
+.edge-banner-btn { width: auto; min-height: 40px; padding: 0 1.1rem; font-size: 0.813rem; font-weight: 600; font-family: var(--font-body, inherit); border-radius: 0.5rem; border: 1.5px solid var(--brand-deep-blue, #173d47); background: var(--brand-white, #fff); color: var(--brand-deep-blue, #173d47); cursor: pointer; align-self: center; white-space: nowrap; }
+.edge-banner-btn:hover { background: color-mix(in srgb, var(--brand-deep-blue, #173d47) 8%, #fff); }
+.edge-banner-btn:focus-visible { outline: 2px solid var(--brand-deep-blue, #173d47); outline-offset: 2px; }
+@media (max-width: 560px) { .edge-banner-btn { width: 100%; flex: 1 1 100%; } }
+[data-edge-disabled] { opacity: 0.45 !important; pointer-events: none !important; }
+</style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma White Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <ul class="nav-links" role="list">
+                <li><a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DONATION</a></li>
+                <li id="walletNavItem">
+                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
+                </li>
+                <li><a href="portfolio.html" class="nav-link" id="portfolioNavLink" style="display: none;">PORTFOLIO</a></li>
+                <li class="nav-dropdown-item" id="navDdTransact">
+                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
+                        TRANSACT
+                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu" aria-label="Transact options">
+                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Tokens</a></li>
+                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send Tokens</a></li>
+                        <li><a href="stake.html" class="nav-dd-item" role="menuitem">Stake</a></li>
+                        <li><a href="exchange.html" class="nav-dd-item" role="menuitem">Exchange</a></li>
+                    </ul>
+                </li>
+                <li id="navAuthLinks" style="display: none;">
+                    <a href="login_2.html" class="nav-link btn-nav-secondary">LOG IN</a>
+                    <a href="signup_2.html" class="nav-link btn-nav-primary">SIGN UP</a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <!-- Notification Bell -->
+            <div class="notification-bell-wrapper" id="notificationBellWrapper">
+                <button
+                    type="button"
+                    id="notificationBell"
+                    class="notification-bell-btn"
+                    aria-label="Notifications, 3 unread"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    onclick="toggleNotificationPanel()"
+                >
+                    <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
+                    </svg>
+                    <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
+                </button>
+
+                <!-- Desktop notification panel - mirrors #userDropdown structure -->
+                <div class="user-dropdown-nav notification-panel" id="notificationPanel"
+                     role="dialog" aria-label="Notifications" aria-modal="false"
+                     onclick="event.stopPropagation()">
+
+                    <!-- Header - mirrors .dropdown-header-nav -->
+                    <div class="dropdown-header-nav notif-panel-header">
+                        <div class="notif-panel-title-row">
+                            <span class="notif-panel-title">Notifications</span>
+                            <span class="notif-unread-label" id="notifUnreadLabel">3 unread</span>
+                        </div>
+                        <div class="notif-panel-actions">
+                            <a href="notifications.html" class="notif-action-link view-all-link">View all</a>
+                            <button type="button" class="notif-action-link"
+                                    onclick="markAllNotificationsRead()">Mark all read</button>
+                            <button type="button" class="notif-close-btn"
+                                    onclick="closeNotificationPanel()" aria-label="Close notifications">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notification list - items rendered by renderNotificationPanel() -->
+                    <div class="dropdown-menu-nav notif-list-wrapper">
+                        <div class="dropdown-section-title-nav">NEW</div>
+                        <ul class="notif-list" id="notificationList" role="list" aria-live="polite">
+                            <!-- items injected by renderNotificationPanel('desktop') -->
+                        </ul>
+                    </div>
+
+                    <!-- Footer - mirrors dropdown-divider + item pattern -->
+                    <div class="dropdown-divider-nav notif-panel-divider" id="notifPanelDivider"></div>
+                    <div class="dropdown-menu-nav notif-panel-footer" id="notifPanelFooter">
+                        <button type="button" class="btn btn-secondary notif-footer-btn" id="clearAllNotificationsBtn"
+                                onclick="clearAllNotifications()">Clear all notifications</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-wallet-display" id="navWalletDisplay"
+                 style="display: none; position: relative;"
+                 data-wallet-session="disconnected"
+                 aria-label="Account menu, wallet not connected">
+
+                    <div class="nav-wallet-session-connected" hidden>
+                    <div class="nav-wallet-avatar">
+                        <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+                    </div>
+                    <div class="nav-wallet-info nav-wallet-trigger"
+                         role="button" tabindex="0"
+                         aria-haspopup="true" aria-expanded="false"
+                         aria-label="Open account menu"
+                         onclick="toggleUserDropdown(event)"
+                         onkeydown="handleUserMenuTriggerKey(event)">
+                        <span class="nav-wallet-address-row">
+                            <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
+                            <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-wallet-balance" id="navWalletBalance">2,500.00 hUSD</span>
+                    </div>
+                    <div class="nav-network-badge"
+                         role="button"
+                         tabindex="0"
+                         aria-haspopup="listbox"
+                         aria-expanded="false"
+                         aria-label="Switch network, currently Ethereum"
+                         onclick="toggleNetworkDropdown(event)"
+                         onkeydown="handleNetworkBadgeKey(event)">
+                        <svg class="nav-network-icon" id="navNetworkIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+                        </svg>
+                        <span id="navNetworkLabel">Ethereum</span>
+                        <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- Network Switcher Dropdown -->
+                    <div class="network-dropdown-nav" id="networkDropdown"
+                         role="listbox"
+                         aria-label="Select blockchain network"
+                         onclick="event.stopPropagation()">
+                        <div class="network-dropdown-header-nav">Mainnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav active"
+                                 role="option" aria-selected="true" tabindex="0"
+                                 data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Ethereum</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base','Base','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                        <div class="network-dropdown-header-nav" style="margin-top:0.25rem;">Testnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="sepolia" data-chain-label="Sepolia" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('sepolia','Sepolia','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA" opacity="0.5"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base-sepolia" data-chain-label="Base Sepolia" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base-sepolia','Base Sepolia','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF" opacity="0.5"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Network Switcher Dropdown -->
+                    </div>
+
+                    <div class="nav-wallet-session-disconnected" hidden>
+                        <div class="nav-wallet-avatar">
+                            <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        </div>
+                    </div>
+
+                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                            <div class="dropdown-header-nav">
+                                <div class="dropdown-user-info-nav">
+                                    <div class="dropdown-avatar-nav">JS</div>
+                                    <div class="dropdown-user-details-nav">
+                                        <div class="dropdown-user-name-nav">Jane Smith</div>
+                                        <div class="dropdown-user-email-nav">jane@example.com</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-wallet-badge-nav dropdown-wallet-status-nav"
+                                     id="dropdownWalletStatusChip"
+                                     data-state="disconnected"
+                                     role="status"
+                                     aria-live="polite">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                         viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                        <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
+                                    </svg>
+                                    <span id="dropdownWalletStatusText">No wallet connected</span>
+                                </div>
+                                <span id="dropdownWalletAddress" class="visually-hidden" aria-hidden="true"></span>
+                            </div>
+                            <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
+                        </div>
+</div>
+
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma Black Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+                <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
+            <a href="login_2.html" class="mobile-drawer-auth-login">LOG IN</a>
+            <a href="signup_2.html" class="mobile-drawer-auth-signup">SIGN UP</a>
+        </div>
+        <div id="drawerWalletRow" class="mobile-drawer-wallet-row" style="display: none;">
+            <span aria-hidden="true">🦊</span>
+            <div class="drawer-wallet-info">
+                <div id="drawerWalletAddress">0x742d...3a8f</div>
+                <div class="drawer-wallet-meta-row">
+                    <span id="drawerWalletBalance">2,500.00 hUSD</span>
+                    <span id="drawerWalletNetwork">Base</span>
+                </div>
+            </div>
+        </div>
+        <div id="drawerConnectRow" hidden aria-hidden="true"></div>
+        <ul class="mobile-nav-links" role="list">
+            <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
+            <li class="mobile-nav-section-label">TRANSACT</li>
+            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Tokens</a></li>
+            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send Tokens</a></li>
+            <li><a href="stake.html" class="nav-link mobile-nav-sub">Stake</a></li>
+            <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
+            </ul>
+        <div id="mobileUserMenu"></div>
+                <div id="mobileNotificationsSection"></div>
+    </div>
+
+    <main id="main-content" class="container">
+        <!-- Prototype demo bar (CLAUDE.md edge-bar rule): first child of the page main, above the title. -->
+        <div class="flow-demo-bar" id="edgeDemoBar" data-edge-keep>
+            <p class="demo-label">Prototype: simulate a receipt state</p>
+            <div class="demo-btns" id="edgeCasePills" role="group" aria-label="Edge case selector"></div>
+        </div>
+        <div class="edge-case-banner" id="edgeCaseBanner" data-edge-keep role="status" hidden>
+            <span id="edgeBannerIcon" aria-hidden="true" style="display:flex;"></span>
+            <div class="edge-banner-text">
+                <p class="edge-banner-title" id="edgeBannerTitle"></p>
+                <p class="edge-banner-body" id="edgeBannerBody"></p>
+            </div>
+            <button type="button" class="edge-banner-btn" id="edgeBannerRetry" onclick="setEdgeCase('happy')" hidden>Try again</button>
+        </div>
+        <div class="actions-bar">
+            <a href="wallet-enhanced.html" class="back-btn" id="backLink">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>
+                <span id="backLinkText">Back to Wallet</span>
+            </a>
+            <div class="actions">
+                <button class="btn btn-secondary" type="button" onclick="window.print()" aria-label="Print receipt">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-120q-33 0-56.5-23.5T160-200v-440q0-33 23.5-56.5T240-720h120v-120h240v120h120q33 0 56.5 23.5T800-640v440q0 33-23.5 56.5T720-120H240Zm0-80h480v-360H240v360Zm120-440h240v-40H360v40Z"/></svg>
+                    Print
+                </button>
+                <button class="btn btn-secondary" type="button" onclick="shareReceipt()" aria-label="Share receipt">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L276-423q-16 15-37 24t-43 9q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 9t37 24l382-315q-2-9-3-18.5t-1-19.5q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-9t-37-24L310-680q2 9 3 18.5t1 19.5q0 11-1 20t-3 19l382 314q16-15 37-24t45-9q50 0 85 35t35 85q0 50-35 85t-85 35Z"/></svg>
+                    Share
+                </button>
+                <button class="btn btn-primary" type="button" onclick="downloadPDF()" aria-label="Download receipt as PDF">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+                    Download PDF
+                </button>
+            </div>
+        </div>
+
+        <div class="receipt-card" role="region" aria-labelledby="receipt-card-title">
+            <div class="receipt-print-logo" aria-hidden="true">
+                <img src="NewLogo/Huma Black Text.svg" alt="" width="200" height="32">
+            </div>
+
+            <h1 class="receipt-card-title" id="receipt-card-title">
+                <svg class="receipt-title-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M320-120q-33 0-56.5-23.5T240-200v-560q0-33 23.5-56.5T320-840h480q33 0 56.5 23.5T880-760v560q0 33-23.5 56.5T800-120H320Zm0-80h480v-560H320v560Zm80-400h320v80H400v-80Zm0 160h320v80H400v-80Zm0 160h240v80H400v-80Z"/></svg>
+                Transaction receipt
+            </h1>
+
+            <section class="receipt-section receipt-section--scatter" aria-labelledby="delivery-title">
+                <h2 class="section-title" id="delivery-title">Delivery status</h2>
+                <p class="receipt-duration receipt-duration--done" id="receiptDuration">
+                    <svg class="unera-checkmark receipt-duration-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                    Completed in 2 minutes
+                </p>
+
+                <div class="delivery-track" id="deliveryTrack">
+                    <div class="delivery-track-line" aria-hidden="true"></div>
+                    <div class="delivery-track-progress" id="deliveryTrackProgress" aria-hidden="true"></div>
+                    <div class="delivery-track-steps">
+                        <div class="delivery-track-step delivery-track-step--done" data-step="0">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Submitted</div>
+                            <div class="delivery-track-step-time">2:30 PM</div>
+                        </div>
+                        <div class="delivery-track-step delivery-track-step--done" data-step="1">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Payment received</div>
+                            <div class="delivery-track-step-time">2:30 PM</div>
+                        </div>
+                        <div class="delivery-track-step delivery-track-step--done" data-step="2">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Minting</div>
+                            <div class="delivery-track-step-time">2:31 PM</div>
+                        </div>
+                        <div class="delivery-track-step delivery-track-step--done" data-step="3">
+                            <div class="delivery-track-step-icon" aria-hidden="true">
+                                <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="delivery-track-step-label">Delivered</div>
+                            <div class="delivery-track-step-time">2:32 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <ol class="delivery-timeline" id="deliveryTimeline" aria-live="polite" aria-label="Delivery status">
+                    <li class="delivery-step delivery-step--done" data-step="0">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Submitted</div>
+                            <div class="delivery-step-time">2:30 PM</div>
+                        </div>
+                    </li>
+                    <li class="delivery-step delivery-step--done" data-step="1">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Payment received</div>
+                            <div class="delivery-step-time">2:30 PM</div>
+                        </div>
+                    </li>
+                    <li class="delivery-step delivery-step--done" data-step="2">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Minting</div>
+                            <div class="delivery-step-time">2:31 PM</div>
+                        </div>
+                    </li>
+                    <li class="delivery-step delivery-step--done" data-step="3">
+                        <div class="delivery-step-icon" aria-hidden="true">
+                            <svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div class="delivery-step-body">
+                            <div class="delivery-step-label">Delivered</div>
+                            <div class="delivery-step-time">2:32 PM</div>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+
+            <section class="receipt-section receipt-section--details" aria-labelledby="tx-details-title">
+                <h2 class="section-title" id="tx-details-title">Transaction details</h2>
+                <dl class="receipt-dl">
+                    <div class="receipt-dl-row">
+                        <dt>Receipt ID</dt>
+                        <dd>RCP-2026-02-11-7f2a9c4d</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Date &amp; time</dt>
+                        <dd>February 11, 2026 · 2:30 PM</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Type</dt>
+                        <dd>Mint Unera CAD</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Payment method</dt>
+                        <dd>Bank transfer</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Reference ID</dt>
+                        <dd>WIRE-2026-88421</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Destination wallet</dt>
+                        <dd id="destWallet">0x742d…8F3a</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Exchange rate</dt>
+                        <dd>1.0000 (locked 2:30 PM)</dd>
+                    </div>
+                    <div class="receipt-dl-row">
+                        <dt>Transaction fee</dt>
+                        <dd>$0.00</dd>
+                    </div>
+                    <div class="receipt-dl-row receipt-dl-row--total">
+                        <dt>Total debited</dt>
+                        <dd>$250.00 CAD</dd>
+                    </div>
+                    <div class="receipt-dl-row receipt-dl-row--total receipt-dl-row--receive">
+                        <dt>Total received</dt>
+                        <dd class="good">250.00 Unera CAD</dd>
+                    </div>
+                </dl>
+            </section>
+
+            <details class="details-accordion receipt-chain-accordion" id="chainAccordion">
+                <summary class="details-summary">
+                    <span id="chainAccordionSummary">On-chain proof</span>
+                    <span class="details-toggle-row">
+                        <span class="details-toggle-text">Details</span>
+                        <svg class="details-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </span>
+                </summary>
+                <div class="details-body">
+                    <div class="confirm-detail">
+                        <span class="cd-label">Transaction hash</span>
+                        <div class="cd-value tx-hash-row">
+                            <div class="tx-hash-text"><code id="txHash">0x7f2a9c4d8e1b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7</code></div>
+                            <div class="tx-hash-actions">
+                                <button type="button" class="tx-copy-icon-btn" id="txHashCopy" aria-label="Copy transaction hash">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="confirm-detail"><span class="cd-label">Network</span><span class="cd-value">Ethereum Mainnet</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Block</span><span class="cd-value">19,842,103</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Confirmations</span><span class="cd-value">32</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Network fee</span><span class="cd-value">$0.00</span></div>
+                    <div class="confirm-detail"><span class="cd-label">Status</span><span class="cd-value good" id="chainStatus">Completed</span></div>
+                    <div class="chain-verify-actions">
+                        <a class="verify-link verify-link--primary" id="verifyExplorerLink" href="https://etherscan.io/tx/0x7f2a9c4d8e1b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7" target="_blank" rel="noopener noreferrer">View on explorer ↗</a>
+                        <a class="verify-link" href="Stablecoin/proof-of-reserve-public.html">View Proof of Reserve</a>
+                    </div>
+                </div>
+            </details>
+
+            <div class="receipt-action-strip" id="receiptActionStrip">
+                <a href="Stablecoin/get-unera-cad.html" class="btn btn-primary" id="actionMintAgain">Mint again</a>
+                <a href="wallet-enhanced.html" class="btn btn-secondary" id="actionViewWallet">View wallet</a>
+                <a href="Stablecoin/mint-history.html" class="btn btn-secondary" id="actionMintHistory">View mint history</a>
+                <a href="mailto:support@unera.io" class="btn btn-secondary" id="actionContactSupport" hidden>Contact support</a>
+            </div>
+
+            <div class="receipt-foot">
+                <p>Thank you for using Huma</p>
+                <p>This receipt is for your records. Unera CAD is backed 1:1 by CAD reserves.</p>
+                <p>Questions? <a href="mailto:support@unera.io" style="color: var(--brand-deep-blue); font-weight: 600;">support@unera.io</a></p>
+            </div>
+        </div>
+    </main>
+
+    <div class="copy-toast" id="copyToast" role="status" aria-live="polite"></div>
+    <script>
+        (function() {
+            var TX_HASH = '0x7f2a9c4d8e1b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7';
+
+            var toastTimer;
+            function showToast(msg) {
+                var el = document.getElementById('copyToast');
+                if (!el) return;
+                el.textContent = msg;
+                el.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2800);
+            }
+
+            function copyWithToast(text, label) {
+                var fallback = function() { showToast(label + ': ' + text); };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        showToast(label);
+                    }).catch(fallback);
+                } else {
+                    fallback();
+                }
+            }
+
+            window.shareReceipt = function() {
+                var shareData = {
+                    title: 'Huma Transaction Receipt',
+                    text: 'Receipt RCP-2026-02-11-7f2a9c4d · $250.00 CAD → 250.00 Unera CAD',
+                    url: window.location.href
+                };
+                if (navigator.share) {
+                    navigator.share(shareData).catch(function() {});
+                } else {
+                    copyWithToast(window.location.href, 'Link copied. Share this receipt');
+                }
+            };
+
+            window.downloadPDF = function() {
+                showToast('Choose Save as PDF in the print dialog');
+                setTimeout(function() { window.print(); }, 400);
+            };
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var from = new URLSearchParams(window.location.search).get('from');
+                var back = document.getElementById('backLink');
+                var backText = document.getElementById('backLinkText');
+                if (back && backText && from === 'mint') {
+                    back.href = 'Stablecoin/mint-history.html';
+                    backText.textContent = 'Back to Mint history';
+                } else if (back && backText && from === 'swap') {
+                    back.href = 'Stablecoin/swap-history.html';
+                    backText.textContent = 'Back to Swap history';
+                }
+
+                var txHashCopy = document.getElementById('txHashCopy');
+                if (txHashCopy) {
+                    txHashCopy.addEventListener('click', function() {
+                        copyWithToast(TX_HASH, 'Transaction hash copied');
+                    });
+                }
+            });
+        })();
+    </script>
+
+    <script>
+        (function() {
+            var hamburger = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            var mobileMenuClose = document.querySelector('.mobile-menu-close');
+            if (hamburger && mobileMenu && mobileMenuOverlay && mobileMenuClose) {
+                function openMenu() {
+                    hamburger.classList.add('active');
+                    mobileMenu.classList.add('active');
+                    mobileMenuOverlay.classList.add('active');
+                    hamburger.setAttribute('aria-expanded', 'true');
+                    mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                }
+                function closeMenu() {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
+                    hamburger.setAttribute('aria-expanded', 'false');
+                    mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                }
+                hamburger.addEventListener('click', function() {
+                    if (mobileMenu.classList.contains('active')) closeMenu();
+                    else openMenu();
+                });
+                mobileMenuClose.addEventListener('click', closeMenu);
+                mobileMenuOverlay.addEventListener('click', closeMenu);
+            }
+        })();
+    </script>
+    <script src="consumer-app-nav.js"></script>
+<script>/* FE-208 §2.4: PORTFOLIO nav link follows the WALLET link's logged-in visibility */(function(){var w=document.getElementById('walletNavLink'),p=document.getElementById('portfolioNavLink');if(!w||!p)return;var s=function(){p.style.display=w.style.display;if(p.parentElement&&p.parentElement.tagName==='LI'){p.parentElement.style.display=(w.style.display==='none')?'none':'';}};new MutationObserver(s).observe(w,{attributes:true,attributeFilter:['style']});s();})();</script>
+
+    <script>
+    /* Prototype edge-case simulator (in-memory only, never persisted; stripped for production). */
+    (function () {
+        var CASES = [{"id":"happy","label":"Happy path (default)"},{"id":"notfound","label":"Receipt not found","tone":"error","blocking":true,"hideContent":true,"title":"Receipt not found","body":"This link may have expired or the receipt ID is wrong. Open your wallet to find the transaction."}];
+        var ICONS = {"error":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -960 960 960\" aria-hidden=\"true\"><path d=\"M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z\"/></svg>","warning":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -960 960 960\" aria-hidden=\"true\"><path d=\"m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z\"/></svg>","info":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -960 960 960\" aria-hidden=\"true\"><path d=\"M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z\"/></svg>"};
+        var current = 'happy';
+        var hiddenSnapshot = null;
+        function ctas() { return document.querySelectorAll("main .btn-primary, main button[type='submit']"); }
+        function contentEls() {
+            var main = document.getElementById('main-content') || document.querySelector('main');
+            return Array.prototype.filter.call(main.children, function (el) { return !el.hasAttribute('data-edge-keep'); });
+        }
+        function sync() {
+            document.querySelectorAll('#edgeCasePills .demo-btn').forEach(function (b) {
+                b.classList.toggle('active', b.getAttribute('data-case') === current);
+            });
+        }
+        window.setEdgeCase = function (id) {
+            current = id;
+            var c = null;
+            for (var i = 0; i < CASES.length; i++) if (CASES[i].id === id) c = CASES[i];
+            sync();
+            var banner = document.getElementById('edgeCaseBanner');
+            ctas().forEach(function (b) { if (b.hasAttribute('data-edge-disabled')) { b.removeAttribute('data-edge-disabled'); b.disabled = false; b.removeAttribute('aria-disabled'); } });
+            if (hiddenSnapshot) { contentEls().forEach(function (el) { if (hiddenSnapshot.has(el)) el.hidden = hiddenSnapshot.get(el); }); hiddenSnapshot = null; }
+            if (!c || id === 'happy') { banner.hidden = true; return; }
+            banner.hidden = false;
+            banner.className = 'edge-case-banner is-' + (c.tone || 'info');
+            banner.setAttribute('role', c.tone === 'error' ? 'alert' : 'status');
+            document.getElementById('edgeBannerIcon').innerHTML = ICONS[c.tone] || ICONS.info;
+            document.getElementById('edgeBannerTitle').textContent = c.title;
+            document.getElementById('edgeBannerBody').textContent = c.body;
+            document.getElementById('edgeBannerRetry').hidden = !c.retry;
+            if (c.blocking) ctas().forEach(function (b) { b.setAttribute('data-edge-disabled', ''); b.disabled = true; b.setAttribute('aria-disabled', 'true'); });
+            if (c.hideContent) {
+                hiddenSnapshot = new Map();
+                contentEls().forEach(function (el) { hiddenSnapshot.set(el, el.hidden); el.hidden = true; });
+            }
+        };
+        function init() {
+            document.getElementById('edgeCasePills').innerHTML = CASES.map(function (c) {
+                return '<button type="button" class="demo-btn" data-case="' + c.id + '" onclick="setEdgeCase(\'' + c.id + '\')">' + c.label + '</button>';
+            }).join('');
+            sync();
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    })();
+    </script>
+</body>
+</html>
