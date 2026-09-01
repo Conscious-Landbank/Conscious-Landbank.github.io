@@ -530,7 +530,6 @@
                     <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
                     <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
                 </li>
-                <li><a href="portfolio.html" class="nav-link" id="portfolioNavLink" style="display: none;">PORTFOLIO</a></li>
                 <li class="nav-dropdown-item" id="navDdTransact">
                     <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
                         TRANSACT
@@ -831,19 +830,21 @@
 <p class="don-banner-text">We can't take donations right now. Nothing has been charged. Please try again in a few minutes.</p>
 </div>
 </div>
-<div class="stepper" role="progressbar" aria-label="Donation progress" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" id="stepper">
+<!-- Eric, 1 Sep - payment moved AFTER review: review the order, process payment, done. Failed payments retry at the Payment step. -->
+<div class="stepper" role="progressbar" aria-label="Donation progress" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" id="stepper">
 <div class="stepper-progress" id="stepperProgress" style="width:0%;"></div>
 <div class="step active" data-step="1"><div class="step-circle">1</div><div class="step-label">Center</div></div>
 <div class="step" data-step="2"><div class="step-circle">2</div><div class="step-label">Amount</div></div>
 <div class="step" data-step="3"><div class="step-circle">3</div><div class="step-label">Review</div></div>
-<div class="step" data-step="4"><div class="step-circle">4</div><div class="step-label">Complete</div></div>
+<div class="step" data-step="4"><div class="step-circle">4</div><div class="step-label">Payment</div></div>
+<div class="step" data-step="5"><div class="step-circle">5</div><div class="step-label">Done</div></div>
 </div>
 <div class="mobile-stepper-compact">
 <div class="mobile-step-current">
 <div class="mobile-step-circle" id="mStepNum" aria-hidden="true">1</div>
-<div class="mobile-step-info"><span class="mobile-step-label" id="mStepLabel">Step 1 of 4</span><span class="mobile-step-title" id="mStepTitle">Center</span></div>
+<div class="mobile-step-info"><span class="mobile-step-label" id="mStepLabel">Step 1 of 5</span><span class="mobile-step-title" id="mStepTitle">Center</span></div>
 </div>
-<span class="mobile-step-counter" id="mStepCounter" aria-hidden="true">1 / 4</span>
+<span class="mobile-step-counter" id="mStepCounter" aria-hidden="true">1 / 5</span>
 </div>
 <div class="flow-context" id="flowContext" hidden></div>
 <!-- Eligibility gates (PRD §5.6): safe messages, in-session only -->
@@ -927,16 +928,14 @@
 <label class="form-label">Payment method</label>
 <div class="token-select" id="railSelect" role="radiogroup" aria-label="Fiat payment method"></div>
 <div id="railCardWrap">
-<label class="form-label" id="cardBlockLabel" style="margin-top:1rem;">Pay with</label>
-<div class="token-select" id="cardSelect" role="radiogroup" aria-label="Saved card"></div>
-<p class="input-hint" id="cardEmptyHint" hidden style="margin-top:0.25rem;">No saved cards yet. Add one to donate by card.</p>
-<p class="tbd-note" style="margin:0.5rem 0;">Any card currency is accepted. Your card issuer converts to USD at its own rate, so the exchange rate is only known at settlement.</p>
+<!-- Eric, 1 Sep - card selection and payment moved to the Payment step, after review, so a failed payment can be retried without redoing the order. -->
+<p class="tbd-note" style="margin:0.5rem 0 0;">Any card currency is accepted. Your card issuer converts to USD at its own rate. You pick or enter your card at the payment step, after you review the donation.</p>
 </div>
 <div id="railBankWrap" hidden>
 <!-- DON-FIAT-04 - non-USD fiat is converted to USD by the rail; original currency, amount and rate are kept. -->
 <label class="form-label" for="ccySelect" style="margin-top:1rem;">Transfer currency</label>
 <div class="ccy-select" id="ccySelect" role="radiogroup" aria-label="Transfer currency"></div>
-<p class="tbd-note" style="margin:-0.35rem 0 0.5rem;">More currencies are on the way. Non-USD transfers are converted to USD at the shown rate. The receiving account is shown at review.</p>
+<p class="tbd-note" style="margin:-0.35rem 0 0.5rem;">More currencies are on the way. Non-USD transfers are converted to USD at the shown rate. The receiving account is shown at the payment step, after review.</p>
 </div>
 </div>
 <div id="amountBlock">
@@ -1007,6 +1006,31 @@
 <button type="button" class="btn btn-primary" id="confirmBtn">Confirm donation</button>
 </div>
 </div>
+<!-- STEP 4 - Payment (Eric, 1 Sep: review first, then pay; failed payments retry here) -->
+<div class="step-content" id="stepPay">
+<div class="amount-section">
+<h2 class="section-title" id="payTitle">Complete your payment</h2>
+<div class="don-banner don-banner-error" id="payErrBanner" hidden role="alert">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+<div class="don-banner-body"><p class="don-banner-title" id="payErrTitle"></p><p class="don-banner-text" id="payErrText"></p></div>
+</div>
+<div id="payCardWrap" hidden>
+<label class="form-label">Pay with</label>
+<div class="token-select" id="cardSelect" role="radiogroup" aria-label="Saved card"></div>
+<p class="input-hint" id="cardEmptyHint" hidden style="margin-top:0.25rem;">No saved cards yet. Add one to donate by card.</p>
+<p class="tbd-note" style="margin:0.5rem 0;">Any card currency is accepted. Your card issuer converts to USD at its own rate, so the exchange rate is only known at settlement.</p>
+<div class="summary-rows" id="payCardSummary" style="margin-top:1rem;"></div>
+</div>
+<div id="payBankWrap" hidden>
+<p class="tbd-note" style="margin:0 0 0.75rem;">Transfer the exact amount below and include the reference so we can match your transfer. Your donation completes when it arrives.</p>
+<div class="summary-rows" id="payBankRows"></div>
+</div>
+</div>
+<div class="btn-actions">
+<button type="button" class="btn btn-secondary" id="backTo3">Back</button>
+<button type="button" class="btn btn-primary" id="payNowBtn">Pay now</button>
+</div>
+</div>
 <!-- Processing - Transaction Tracker (FE-207 §B) -->
 <div class="step-content" id="stepProcessing">
 <div class="amount-section" style="padding:1.75rem 1.5rem;">
@@ -1059,6 +1083,5 @@ var ndd = document.getElementById('networkDropdown');
         })();
     </script>
     <script src="consumer-app-nav.js"></script>
-<script>/* FE-208 §2.4: PORTFOLIO nav link follows the WALLET link's logged-in visibility */(function(){var w=document.getElementById('walletNavLink'),p=document.getElementById('portfolioNavLink');if(!w||!p)return;var s=function(){p.style.display=w.style.display;if(p.parentElement&&p.parentElement.tagName==='LI'){p.parentElement.style.display=(w.style.display==='none')?'none':'';}};new MutationObserver(s).observe(w,{attributes:true,attributeFilter:['style']});s();})();</script>
 </body>
 </html>

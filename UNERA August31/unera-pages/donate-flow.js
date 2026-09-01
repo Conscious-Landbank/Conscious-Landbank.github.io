@@ -192,8 +192,9 @@ function goToStep(n, opts) {
   opts = opts || {};
   hideHcPreview();
   currentStep = n;
-  ['step1', 'step2', 'step3', 'stepProcessing', 'step4'].forEach(function (id) { $(id).classList.remove('active'); });
-  $(opts.processing ? 'stepProcessing' : 'step' + n).classList.add('active');
+  ['step1', 'step2', 'step3', 'stepPay', 'stepProcessing', 'step4'].forEach(function (id) { $(id).classList.remove('active'); });
+  var elId = opts.processing ? 'stepProcessing' : (n === 4 ? 'stepPay' : (n === 5 ? 'step4' : 'step' + n));
+  $(elId).classList.add('active');
   document.querySelectorAll('#stepper .step').forEach(function (s) {
     var k = parseInt(s.getAttribute('data-step'), 10);
     s.classList.toggle('active', k === n && !opts.allDone);
@@ -203,24 +204,24 @@ function goToStep(n, opts) {
     else circle.textContent = k;
   });
   $('stepper').setAttribute('aria-valuenow', n);
-  $('stepperProgress').style.width = ((n - 1) / 3 * 100) + '%';
-  var TITLES = ['Center', 'Amount', 'Review', 'Complete'];
+  $('stepperProgress').style.width = ((n - 1) / 4 * 100) + '%';
+  var TITLES = ['Center', 'Amount', 'Review', 'Payment', 'Done'];
   $('mStepNum').textContent = n;
-  $('mStepLabel').textContent = 'Step ' + n + ' of 4';
+  $('mStepLabel').textContent = 'Step ' + n + ' of 5';
   $('mStepTitle').textContent = opts.processing ? 'Processing' : TITLES[n - 1];
-  $('mStepCounter').textContent = n + ' / 4';
+  $('mStepCounter').textContent = n + ' / 5';
   renderFlowContext(n, opts);
   window.scrollTo({ top: 0, behavior: 'smooth' });
   // Move focus to the active step's heading on user-initiated navigation (steps 1-3).
   // Processing announces via its own live region; the terminal manages its own focus.
-  if (!opts.processing && !opts.allDone && !opts.fail && n >= 1 && n <= 3) {
-    var head = $('step' + n).querySelector('h2');
+  if (!opts.processing && !opts.allDone && !opts.fail && n >= 1 && n <= 4) {
+    var head = $(elId).querySelector('h2');
     if (head) { head.setAttribute('tabindex', '-1'); head.focus({ preventScroll: true }); }
   }
 }
 function renderFlowContext(n, opts) {
   var fc = $('flowContext');
-  var show = (n === 2 || n === 3) && !opts.processing && selected.length > 0;
+  var show = (n >= 2 && n <= 4) && !opts.processing && selected.length > 0;
   fc.hidden = !show;
   if (!show) return;
   var c = D.getCentre(selected[0]);
@@ -405,7 +406,6 @@ function renderAmountUI() {
   $('gateWallet').hidden = !(crypto && !walletOk);
   $('cryptoTokenBlock').hidden = !(crypto && walletOk);
   $('fiatCardBlock').hidden = crypto;
-  if (!crypto) renderCards();
   $('amountBlock').hidden = crypto && !walletOk;
   $('amountHint').classList.remove('error');
   $('amountWrap').classList.remove('input-error');
@@ -486,7 +486,6 @@ function validateAmount() {
   if (blocker === 'unavailable') return fail(D.ERR.provider);
   if (!amt || amt <= 0 || isNaN(amt)) return fail(D.ERR.invalidAmount);
   if (usd < MIN_USD || usd > MAX_USD) return fail(D.ERR.outOfRange(MAX_USD));
-  if (method === 'fiat' && rail === 'card' && !cardId) return fail('Add a payment card to donate by card.');
   if (method === 'crypto') {
     if (blocker === 'balance' || amt > tok().amount) return fail(D.ERR.insufficient(token));
     if (multi && selected.some(function (id) { return (parseFloat(alloc[id]) || 0) * quoteRate < MIN_USD; })) return fail('Each center allocation must be at least ' + D.fmtUSD(MIN_USD) + '.');
@@ -566,24 +565,14 @@ function renderReview() {
   orderRows += row('Method', method === 'fiat' ? 'Donate by Fiat · ' + (rail === 'card' ? 'card' : 'bank transfer') : 'Donate by Crypto · ' + token);
   var amt = totalTokenAmount(), usd = totalUSD();
   if (method === 'fiat') {
-    if (rail === 'card') {
-      var sc = getCard(cardId);
-      if (sc) orderRows += row('Card', D.esc(cardLabel(sc)));
-      /* Kevin, 28 Aug - no "Card currency" row: one card can hold multiple currencies. */
-    } else {
+    /* Eric, 1 Sep - payment happens AFTER this review. Card choice and the receiving account
+       live on the Payment step, so a failed payment can be retried without redoing the order. */
+    if (rail !== 'card' && ccy !== 'USD') {
       /* DON-FIAT-04 - non-USD keeps original currency, amount and rate on the record (bank transfer only). */
-      if (ccy !== 'USD') {
-        orderRows += row('You donate', D.fmtCcy(ccy, amt) + ' ' + ccy);
-        orderRows += row('Exchange rate', '1 ' + ccy + ' = ' + D.fmtUSD(ccyInfo().rate, 4) + ', applied by the payment rail');
-      }
-      /* FE-208 (Eric, 24 Aug) - bank transfer shows the receiving account the user sends money to. */
-      var bk = D.SETTLEMENT.bank;
-      orderRows += row('Transfer to', D.esc(bk.holder) + '<span class="summary-row-note">' + D.esc(bk.bankName) + '</span>');
-      orderRows += row('IBAN', bk.iban, { mono: true });
-      orderRows += row('BIC', bk.bic, { mono: true });
-      orderRows += row('Reference', 'Shown after you confirm<span class="summary-row-note">Include it so we can match your transfer.</span>');
-      orderRows += row('Transfer window', bk.expiryHours + ' hours<span class="summary-row-note">The order expires if the transfer has not arrived by then.</span>');
+      orderRows += row('You donate', D.fmtCcy(ccy, amt) + ' ' + ccy);
+      orderRows += row('Exchange rate', '1 ' + ccy + ' = ' + D.fmtUSD(ccyInfo().rate, 4) + ', applied by the payment rail');
     }
+    orderRows += row(rail === 'card' ? 'Card details' : 'Receiving account', 'Next step, after this review');
     orderRows += row('Donation amount (USD)', D.fmtUSD(usd, 2), { total: true });
     /* Kevin, 28 Aug - no "Destination" row: users assume it reaches the right account for the center. */
   } else {
@@ -623,12 +612,14 @@ function renderReview() {
   if (method === 'crypto') startRateLock();
   var n = promptCount();
   $('promptCountText').innerHTML = n === 0
-    ? 'No wallet confirmations needed. This is a ' + (rail === 'card' ? 'card payment' : 'bank transfer') + '.'
+    ? 'No wallet confirmations needed. You complete the ' + (rail === 'card' ? 'card payment' : 'bank transfer') + ' in the next step.'
     : (n === 1
       ? 'This needs <strong>1 wallet confirmation</strong>: the donation itself.'
       : 'This needs <strong>2 wallet confirmations</strong>: approve, then ' + (multi ? 'donateMulti' : 'donate') + '.');
   $('promptCountLine').querySelector('.fee-info-btn').style.display = n >= 1 ? '' : 'none';
   $('promptTooltip').classList.remove('is-open');
+  /* Eric, 1 Sep - fiat continues to the Payment step; crypto pays by signing right after confirm. */
+  $('confirmBtn').textContent = method === 'fiat' ? 'Continue to payment' : 'Confirm donation';
 
   var block = null;
   /* AC-DON-12 - HC went inactive mid-flow: block submission with a safe message. */
@@ -813,7 +804,7 @@ function trackerConfig(donationId, c, refLabel) {
 
 function confirmDonation() {
   clearInterval(rateTimer);
-  if (blocker === 'server' && !serverErrShown) {
+  if (method === 'crypto' && blocker === 'server' && !serverErrShown) {
     serverErrShown = true;
     $('reviewBlockBanner').hidden = false;
     /* §6.3 verbatim */
@@ -829,13 +820,6 @@ function confirmDonation() {
   var origin = method === 'fiat'
     ? (ccy === 'USD' ? D.fmtUSD(totalUSD(), 2) : D.fmtCcy(ccy, totalTokenAmount()) + ' ' + ccy + ' (≈ ' + D.fmtUSD(totalUSD(), 2) + ')')
     : totalTokenAmount() + ' ' + token + ' (≈ ' + D.fmtUSD(totalUSD(), 2) + ')';
-  /* FE-208 (Eric, 24 Aug) - bank transfer: no charge happens here. Show the receiving account, the
-     reference and the expiry (Kevin: pending orders carry an expiration date). */
-  if (method === 'fiat' && rail === 'bank') {
-    D.notifyDonation('info', 'Donation submitted', 'Your bank-transfer donation of ' + origin + ' to ' + refLabel + ' was created. Transfer within ' + D.SETTLEMENT.bank.expiryHours + ' hours to complete it.', 'Ref ' + donationId);
-    terminal('bank_pending', donationId);
-    return;
-  }
   /* §4.3 notification events - submitted, then awaiting confirmation. */
   D.notifyDonation('info', 'Donation submitted', 'Your donation of ' + origin + ' to ' + refLabel + ' was submitted. Total charged ' + D.fmtUSD(totalChargedUSD(), 2) + ' including the processing fee.', 'Ref ' + donationId);
   setTimeout(function () {
@@ -990,12 +974,25 @@ function terminal(kind, donationId) {
   };
   var f = fails[kind];
   if (f.notify) D.notifyDonation('error', 'Donation failed', f.x, 'Ref ' + donationId, 'donate.html', 'Try again');
+  /* Eric, 1 Sep - failed fiat payments retry at the Payment step; the reviewed order is kept. */
+  var canRetryPay = method === 'fiat' && (kind === 'pay_failed' || kind === 'expired');
+  var failActions = '<a href="explore-centres.html" class="btn btn-secondary">Back to centers</a>'
+    + (canRetryPay
+      ? '<button type="button" class="btn btn-primary" id="payAgainBtn">Try payment again</button>'
+      : '<button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button>');
   html = terminalShell(kind === 'rejected' ? 'pending' : 'fail', f.t, f.x + ' ' + f.extra + (f.notify ? ' If this keeps happening, contact support.' : ''),
     detailRow('Donation ID', donationId)
     + detailRow('Status', D.statusChip(kind === 'expired' ? 'expired' : (kind === 'rejected' ? 'rejected' : 'failed')))
     + detailRow(multi ? 'Humanity Centers' : 'Humanity Center', centreLabel),
-    '<a href="explore-centres.html" class="btn btn-secondary">Back to centers</a><button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button>');
+    failActions);
   renderTerminal(html, { fail: true });
+  var pab = $('payAgainBtn');
+  if (pab) pab.addEventListener('click', function () {
+    serverErrShown = false;
+    renderPay();
+    showPayErr(f.t, f.x + ' ' + f.extra);
+    goToStep(4);
+  });
 }
 function terminalShell(icon, title, sub, rows, actions) {
   var iconHtml = icon === 'fail'
@@ -1009,9 +1006,58 @@ function terminalShell(icon, title, sub, rows, actions) {
 }
 function renderTerminal(html, opts) {
   $('step4').innerHTML = html;
-  goToStep(4, { allDone: !!opts.allDone });
+  goToStep(5, { allDone: !!opts.allDone, fail: !!opts.fail });
   var h = $('terminalHeading');
   if (h) h.focus();
+}
+
+/* ── STEP 4: payment (Eric, 1 Sep - review the order, process payment, done) ── */
+var payDonationId = null;
+function showPayErr(title, text) { $('payErrTitle').textContent = title; $('payErrText').textContent = text; $('payErrBanner').hidden = false; }
+function renderPay() {
+  $('payErrBanner').hidden = true;
+  var isCard = rail === 'card';
+  $('payCardWrap').hidden = !isCard;
+  $('payBankWrap').hidden = isCard;
+  $('payTitle').textContent = isCard ? 'Pay by card' : 'Make your bank transfer';
+  $('payNowBtn').textContent = isCard ? 'Pay ' + D.fmtUSD(totalChargedUSD(), 2) : "I've started the transfer";
+  if (isCard) {
+    renderCards();
+    $('payCardSummary').innerHTML = row('Donation amount (USD)', D.fmtUSD(totalUSD(), 2))
+      + row('Processing fee<span class="summary-row-note">Added on top of your donation</span>', '+ ' + D.fmtUSD(feeUSD(), 2))
+      + row('Total charged', D.fmtUSD(totalChargedUSD(), 2), { total: true });
+  } else {
+    var bk = D.SETTLEMENT.bank;
+    var xfer = ccy === 'USD' ? D.fmtUSD(totalChargedUSD(), 2) : D.fmtCcy(ccy, totalChargedUSD() / ccyInfo().rate) + ' ' + ccy;
+    var expires = new Date(Date.now() + bk.expiryHours * 36e5);
+    $('payBankRows').innerHTML = row('You transfer', xfer, { total: true })
+      + row('Account holder', D.esc(bk.holder))
+      + row('Bank', D.esc(bk.bankName))
+      + row('IBAN', bk.iban, { mono: true })
+      + row('BIC', bk.bic, { mono: true })
+      + row('Reference', payDonationId + '<span class="summary-row-note">Include it so we can match your transfer.</span>', { mono: true })
+      + row('Expires', D.fmtDate(expires.toISOString()) + '<span class="summary-row-note">The order expires if the transfer has not arrived by then.</span>');
+  }
+}
+function payNow() {
+  if (method !== 'fiat') return;
+  var c = D.getCentre(selected[0]);
+  var refLabel = multi ? selected.length + ' centers' : c.name;
+  if (rail === 'card') {
+    if (!cardId) { showPayErr('Add a payment card', 'You need a saved card to donate by card. Add one under Payment methods, then come back to this step.'); return; }
+    if (blocker === 'server' && !serverErrShown) {
+      serverErrShown = true;
+      showPayErr(D.ERR.reverted, 'Nothing was charged. You can retry the payment.');
+      $('payNowBtn').textContent = 'Retry payment';
+      return;
+    }
+    confirmDonation();
+  } else {
+    var origin = ccy === 'USD' ? D.fmtUSD(totalUSD(), 2) : D.fmtCcy(ccy, totalTokenAmount()) + ' ' + ccy + ' (\u2248 ' + D.fmtUSD(totalUSD(), 2) + ')';
+    /* FE-208 (Eric, 24 Aug) - bank transfer: no charge happens here; the order waits for the transfer. */
+    D.notifyDonation('info', 'Donation submitted', 'Your bank-transfer donation of ' + origin + ' to ' + refLabel + ' was created. Transfer within ' + D.SETTLEMENT.bank.expiryHours + ' hours to complete it.', 'Ref ' + payDonationId);
+    terminal('bank_pending', payDonationId);
+  }
 }
 
 /* ── Wire steps ── */
@@ -1023,8 +1069,17 @@ $('toStep3').addEventListener('click', function () {
   renderReview();
   goToStep(3);
 });
-$('backTo2').addEventListener('click', function () { clearInterval(rateTimer); serverErrShown = false; $('confirmBtn').textContent = 'Confirm donation'; goToStep(2); });
-$('confirmBtn').addEventListener('click', confirmDonation);
+$('backTo2').addEventListener('click', function () { clearInterval(rateTimer); serverErrShown = false; goToStep(2); });
+$('confirmBtn').addEventListener('click', function () {
+  if (method === 'crypto') { confirmDonation(); return; }
+  clearInterval(rateTimer);
+  serverErrShown = false;
+  payDonationId = 'DON-' + Math.floor(100000 + Math.random() * 899999);
+  renderPay();
+  goToStep(4);
+});
+$('backTo3').addEventListener('click', function () { renderReview(); goToStep(3); });
+$('payNowBtn').addEventListener('click', payNow);
 $('amountInput').addEventListener('input', updateAmountLive);
 
 /* ── Init ── */
@@ -1038,6 +1093,7 @@ pillGroup('blockerPills', BLOCKERS, function () { return blocker; }, function (v
   $('toStep3').disabled = v === 'unavailable';
   if (currentStep === 2) renderAmountUI();
   if (currentStep === 3) renderReview();
+  if (currentStep === 4 && method === 'fiat') renderPay();
 });
 renderGates();
 renderCurrencies();

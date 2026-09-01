@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Donate flow functional test</title>
+<style>body{font-family:ui-monospace,monospace;font-size:12px;padding:12px}#log{white-space:pre-wrap}</style></head>
+<body>
+<div id="log">running…</div>
+<div id="stage"></div>
+<script>
+const out = [];
+function say(s){ out.push(s); console.log('[FLOW] ' + s); document.getElementById('log').textContent = out.join('\n'); }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function overflow(f, w){
+  const d = f.contentDocument, de = d.documentElement;
+  const sw = Math.max(de.scrollWidth, d.body.scrollWidth);
+  return sw > w + 2 ? sw : 0;
+}
+function active(f){
+  const el = f.contentDocument.querySelector('.step-content.active');
+  return el ? el.id : 'none';
+}
+async function drive(rail){
+  const w = 360;
+  const stage = document.getElementById('stage');
+  const f = document.createElement('iframe');
+  f.width = w; f.height = 900; f.src = 'donate.html';
+  stage.innerHTML = ''; stage.appendChild(f);
+  await new Promise(res => { f.onload = () => setTimeout(res, 900); setTimeout(res, 9000); });
+  const W = f.contentWindow, D = W.UNERA_DON, doc = f.contentDocument;
+  if (!D) { say('FAIL: UNERA_DON missing'); return; }
+  D.setUserState('wallet');
+  await sleep(300);
+  const chk = (label) => { const o = overflow(f, w); say((o ? 'OVERFLOW sw=' + o : 'ok') + ' · ' + label + ' · active=' + active(f)); };
+  chk('step1 (' + rail + ')');
+  const row = doc.querySelector('.centre-pick-row');
+  if (!row) { say('FAIL: no centre rows'); return; }
+  row.click(); await sleep(300);
+  chk('step2 after centre pick');
+  if (rail === 'bank') {
+    const bankChip = doc.querySelector('#railSelect [data-r="bank"]');
+    if (bankChip) { bankChip.click(); await sleep(200); } else say('FAIL: bank chip missing');
+    const eur = doc.querySelector('#ccySelect [data-c="EUR"]');
+    if (eur) { eur.click(); await sleep(200); }
+  }
+  if (rail === 'crypto') {
+    doc.getElementById('methodCrypto').click(); await sleep(300);
+  }
+  doc.getElementById('amountInput').value = '150';
+  doc.getElementById('amountInput').dispatchEvent(new W.Event('input', {bubbles:true}));
+  await sleep(200);
+  chk('step2 amount entered');
+  doc.getElementById('toStep3').click(); await sleep(400);
+  chk('step3 review');
+  const btnTxt = doc.getElementById('confirmBtn').textContent.trim();
+  say('confirmBtn label: "' + btnTxt + '"');
+  doc.getElementById('confirmBtn').click(); await sleep(500);
+  chk('after confirm');
+  if (rail === 'crypto') {
+    say(doc.getElementById('txTrackerMount').children.length ? 'tracker mounted' : 'FAIL: tracker not mounted');
+    return;
+  }
+  // fiat: should be on stepPay
+  if (active(f) !== 'stepPay') { say('FAIL: expected stepPay, got ' + active(f)); return; }
+  const payBtn = doc.getElementById('payNowBtn');
+  say('payNowBtn label: "' + payBtn.textContent.trim() + '"');
+  if (rail === 'card') {
+    say('cards rendered: ' + doc.querySelectorAll('#cardSelect .card-chip').length + ' · summary rows: ' + doc.querySelectorAll('#payCardSummary .summary-row').length);
+    payBtn.click(); await sleep(600);
+    chk('after Pay (card)');
+    say(active(f) === 'stepProcessing' ? 'processing tracker running' : (doc.getElementById('payErrBanner').hidden ? 'FAIL: not processing, no error shown' : 'error banner shown (no saved card?): ' + doc.getElementById('payErrTitle').textContent));
+  } else {
+    say('bank rows: ' + doc.querySelectorAll('#payBankRows .summary-row').length + ' · ref shown: ' + (/DON-\d{6}/.test(doc.getElementById('payBankRows').textContent) ? 'yes' : 'NO'));
+    payBtn.click(); await sleep(600);
+    chk('after I\'ve started the transfer');
+    say(/Waiting for your bank transfer/i.test(doc.getElementById('step4').textContent) ? 'bank_pending terminal ok' : 'FAIL: bank terminal missing');
+  }
+  const stepEls = doc.querySelectorAll('#stepper .step').length;
+  say('stepper steps: ' + stepEls);
+}
+(async () => {
+  say('— card flow —'); await drive('card');
+  say('— bank flow —'); await drive('bank');
+  say('— crypto flow —'); await drive('crypto');
+  say('— failed card payment retry —'); await driveFail();
+  say('TEST COMPLETE');
+})();
+async function driveFail(){
+  const w = 360, stage = document.getElementById('stage');
+  const f = document.createElement('iframe');
+  f.width = w; f.height = 900; f.src = 'donate.html';
+  stage.innerHTML = ''; stage.appendChild(f);
+  await new Promise(res => { f.onload = () => setTimeout(res, 900); setTimeout(res, 9000); });
+  const W = f.contentWindow, D = W.UNERA_DON, doc = f.contentDocument;
+  D.setUserState('wallet'); await sleep(300);
+  const pill = doc.querySelector('#outcomePills [data-v="pay_failed"]');
+  if (!pill) { say('FAIL: pay_failed pill missing'); return; }
+  pill.click(); await sleep(200);
+  doc.querySelector('.centre-pick-row').click(); await sleep(300);
+  doc.getElementById('amountInput').value = '50';
+  doc.getElementById('amountInput').dispatchEvent(new W.Event('input', {bubbles:true})); await sleep(200);
+  doc.getElementById('toStep3').click(); await sleep(300);
+  doc.getElementById('confirmBtn').click(); await sleep(300);
+  doc.getElementById('payNowBtn').click(); await sleep(500);
+  say('processing… waiting for failure');
+  let btn = null;
+  for (let i = 0; i < 30; i++) { await sleep(1000); btn = doc.getElementById('payAgainBtn'); if (btn) break; }
+  if (!btn) { say('FAIL: payAgainBtn never appeared · active=' + active(f) + ' · step4: ' + doc.getElementById('step4').textContent.slice(0,120)); return; }
+  say('fail terminal shows "' + btn.textContent.trim() + '"');
+  btn.click(); await sleep(400);
+  const banner = doc.getElementById('payErrBanner');
+  say('after retry click: active=' + active(f) + ' · error banner ' + (banner.hidden ? 'HIDDEN (FAIL)' : 'shown: ' + doc.getElementById('payErrTitle').textContent.trim()));
+  const o = overflow(f, w); say(o ? 'OVERFLOW sw=' + o : 'ok · retry step layout');
+}
+</script>
+</body>
+</html>
