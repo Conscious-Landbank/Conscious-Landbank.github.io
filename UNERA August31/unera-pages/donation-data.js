@@ -341,7 +341,7 @@
      The spec mandates the fee but sets no rate. These are PROTOTYPE placeholders - TBD Finance.
      Processing fee is always applied ON TOP: total charged = donation amount + processing fee. */
   var FEES = {
-    note: 'Fees are shown before you confirm. Rates may vary by payment method.',
+    note: 'The platform fee is free for now. Any cost is shown before you confirm.',
     fiatPct: 0.029, fiatFixed: 0.30,   /* card rail */
     bankPct: 0.008, bankFixed: 0,      /* bank transfer - prototype rate, TBD Finance */
     cryptoPct: 0.010,                   /* platform processing fee on crypto donations */

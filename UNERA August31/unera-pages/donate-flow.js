@@ -125,7 +125,8 @@ function totalUSD() {
   return quote ? quote.usd : Math.round(amt * quoteRate * 100) / 100;
 }
 /* DON-DASH-08 / AC-DON-07 - processing fee is ON TOP: total charged = donation + processing fee. */
-function feeUSD() { return D.processingFee(method, totalUSD(), rail); }
+/* Eric, 2 Sep - the platform fee is FREE for now; keep the hook for when Finance sets a rate. */
+function feeUSD() { return 0; }
 function convFeeUSD() { return (method === 'crypto' && quote && quote.converted) ? D.conversionFee(totalUSD()) : 0; }
 function totalChargedUSD() { return Math.round((totalUSD() + feeUSD()) * 100) / 100; }
 function refreshQuote() {
@@ -421,7 +422,7 @@ function renderAmountUI() {
     /* §1.7 - USDC/USDT need no swap; BTC/ETH are converted to USDC or USDT, never to fiat. */
     $('conversionTipText').innerHTML = t.settles === 'direct'
       ? '<strong>' + token + ' goes straight to the ' + D.SETTLEMENT.multisigLabel + '</strong>. No conversion needed. Its USD value is what we report and receipt.'
-      : '<strong>' + token + ' is converted to USDC or USDT</strong> before it reaches the ' + D.SETTLEMENT.multisigLabel + '. We take whichever route returns more USD value.';
+      : '<strong>' + token + ' is converted to USDC or USDT</strong> before it reaches the ' + D.SETTLEMENT.multisigLabel + '. The conversion is handled automatically at the best available rate.';
     $('gasWarnBanner').hidden = blocker !== 'gas';
     $('amountWrap').style.display = multi ? 'none' : '';
     $('amountLabel').style.display = multi ? 'none' : '';
@@ -511,7 +512,8 @@ function updateAmountLive() {
   if (ql) {
     if (method === 'crypto' && quote) {
       ql.hidden = false;
-      ql.innerHTML = '<strong>≈ ' + D.fmtUSD(quote.usd, 2) + '</strong> USD value · quoted via <strong>Uniswap</strong>, best of the USDC and USDT routes'
+      /* Eric, 2 Sep - no venue name in user copy; the conversion is our BE handler. */
+      ql.innerHTML = '<strong>≈ ' + D.fmtUSD(quote.usd, 2) + '</strong> USD value'
         + (quote.converted ? ' · settles as <strong>' + quote.settlementAsset + '</strong>' : ' · settles as <strong>' + quote.settlementAsset + '</strong> (no swap)');
     } else { ql.hidden = true; }
   }
@@ -519,7 +521,7 @@ function updateAmountLive() {
   if (method === 'crypto') rows += '<div class="summary-row"><span class="summary-row-label">You donate</span><span class="summary-row-value">' + amt.toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' ' + token + '</span></div>';
   else if (ccy !== 'USD') rows += '<div class="summary-row"><span class="summary-row-label">You donate</span><span class="summary-row-value">' + D.fmtCcy(ccy, amt) + '</span></div>';
   rows += '<div class="summary-row"><span class="summary-row-label">Donation amount (USD)</span><span class="summary-row-value">' + D.fmtUSD(usd, 2) + '</span></div>';
-  rows += '<div class="summary-row is-fee"><span class="summary-row-label">Processing fee<span class="summary-row-note">Added on top of your donation</span></span><span class="summary-row-value">+ ' + D.fmtUSD(fee, 2) + '</span></div>';
+  rows += '<div class="summary-row is-fee"><span class="summary-row-label">Platform fee</span><span class="summary-row-value"><span style="color:var(--fin-up);font-weight:700;letter-spacing:0.04em;">FREE</span></span></div>';
   if (conv) rows += '<div class="summary-row is-fee"><span class="summary-row-label">Conversion fee<span class="summary-row-note">' + token + ' → ' + quote.settlementAsset + '</span></span><span class="summary-row-value">' + D.fmtUSD(conv, 2) + '</span></div>';
   rows += '<div class="summary-row summary-row--total"><span class="summary-row-label">Total charged</span><span class="summary-row-value">' + D.fmtUSD(totalChargedUSD(), 2) + '</span></div>';
   var hc = D.getCentre(selected[0]);
@@ -560,7 +562,9 @@ function renderReview() {
     orderRows += row('Routing', 'DonationRouter · donateMulti', {});
   } else {
     var c = D.getCentre(selected[0]);
-    orderRows += row('Humanity Center', D.esc(c.name) + ' · ' + D.esc(c.location));
+    /* Eric, 2 Sep - quick-view eye before the center name, same preview as step 1. */
+    orderRows += row('Humanity Center',
+      '<button type="button" class="cp-eye review-eye" id="reviewEyeBtn" aria-label="Preview ' + D.esc(c.name) + '" aria-expanded="false" aria-haspopup="dialog"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Z"/></svg></button>' + D.esc(c.name) + ' · ' + D.esc(c.location));
   }
   orderRows += row('Method', method === 'fiat' ? 'Donate by Fiat · ' + (rail === 'card' ? 'card' : 'bank transfer') : 'Donate by Crypto · ' + token);
   var amt = totalTokenAmount(), usd = totalUSD();
@@ -579,31 +583,39 @@ function renderReview() {
     /* DON-CRYPTO-03 - asset, original amount, USD quote, destination type.
        FE-208 (Eric, 24 Aug) - the multisig wallet address is NOT shown; settlement is handled by the BE. */
     orderRows += row('You donate', amt.toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' ' + token);
-    orderRows += row('USD quote', D.fmtUSD(usd, 2) + '<span class="summary-row-note">via Uniswap, best of the USDC and USDT routes</span>', { total: true });
+    orderRows += row('USD quote', D.fmtUSD(usd, 2), { total: true });
     orderRows += row('Settlement asset', quote.settlementAsset + (quote.converted ? '<span class="summary-row-note">' + token + ' is converted before it is routed</span>' : '<span class="summary-row-note">No conversion needed</span>'));
     /* Kevin, 28 Aug - no "Destination" row here either; same reasoning as fiat. */
     orderRows += row('Network', D.SETTLEMENT.network + '<span class="summary-row-note">More networks are being added.</span>');
   }
   /* Kevin, 28 Aug - no "Tax receipt" row: we don't issue tax receipts for now. */
   $('reviewOrderRows').innerHTML = orderRows;
+  var reye = $('reviewEyeBtn');
+  if (reye) reye.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var id = selected[0];
+    if (pinnedPreviewId === id) { hideHcPreview(); return; }
+    hideHcPreview();
+    showHcPreview(reye.closest('.summary-row'), id);
+    pinnedPreviewId = id;
+    reye.setAttribute('aria-expanded', 'true');
+  });
 
   /* DON-DASH-08 / DON-CRYPTO-03 / AC-DON-07 - every fee before confirmation, processing fee ON TOP. */
   var fee = feeUSD(), conv = convFeeUSD();
   var costRows = row('Donation amount', D.fmtUSD(usd, 2));
-  costRows += row('Processing fee<span class="summary-row-note">Applied on top of your donation</span>', '+ ' + D.fmtUSD(fee, 2));
+  /* Eric, 2 Sep - "Platform fee", FREE for now. */
+  costRows += row('Platform fee', '<span style="color:var(--fin-up);font-weight:700;letter-spacing:0.04em;">FREE</span>');
   if (method === 'fiat') {
     costRows += row('Total charged' + (ccy !== 'USD' ? ' (USD)' : ''), D.fmtUSD(totalChargedUSD(), 2), { total: true });
     if (ccy !== 'USD') costRows += row(rail === 'card' ? 'Charged to your card' : 'You transfer', D.fmtCcy(ccy, totalChargedUSD() / ccyInfo().rate) + ' ' + ccy);
   } else {
     if (conv) costRows += row('Conversion fee<span class="summary-row-note">' + token + ' → ' + quote.settlementAsset + ', via the Crypto Swap Worker</span>', D.fmtUSD(conv, 2));
-    var ga = D.GAS.approveETH, gd = D.GAS.donateETH;
-    if (token === 'ETH' || token === 'BTC') {
-      costRows += row('Estimated network fee', gd.toFixed(5) + ' ETH · ≈ ' + D.fmtUSD(gasUSD(gd), 2));
-    } else {
-      costRows += row('Estimated network fee · approve', ga.toFixed(5) + ' ETH · ≈ ' + D.fmtUSD(gasUSD(ga), 2));
-      costRows += row('Estimated network fee · donate', gd.toFixed(5) + ' ETH · ≈ ' + D.fmtUSD(gasUSD(gd), 2));
-    }
-    costRows += row('Total charged<span class="summary-row-note">Donation + processing fee. Network fees are paid separately from your wallet.</span>', D.fmtUSD(totalChargedUSD(), 2), { total: true });
+    /* Eric, 2 Sep - the approval is an off-chain signature and costs nothing; only the donation
+       transaction pays gas, so there is exactly one network-fee row. */
+    var gd = D.GAS.donateETH;
+    costRows += row('Estimated network fee<span class="summary-row-note">The exact fee is shown in your wallet when you sign the transaction.</span>', gd.toFixed(5) + ' ETH · ≈ ' + D.fmtUSD(gasUSD(gd), 2));
+    costRows += row('Total charged<span class="summary-row-note">The network fee is paid separately from your wallet.</span>', D.fmtUSD(totalChargedUSD(), 2), { total: true });
   }
   costRows += '<p class="tbd-note">' + D.esc(D.FEES.note) + '</p>';
   $('reviewCostRows').innerHTML = costRows;
@@ -615,7 +627,7 @@ function renderReview() {
     ? 'No wallet confirmations needed. You complete the ' + (rail === 'card' ? 'card payment' : 'bank transfer') + ' in the next step.'
     : (n === 1
       ? 'This needs <strong>1 wallet confirmation</strong>: the donation itself.'
-      : 'This needs <strong>2 wallet confirmations</strong>: approve, then ' + (multi ? 'donateMulti' : 'donate') + '.');
+      : 'This needs <strong>2 wallet signatures</strong>: an approval that costs nothing, then the donation itself.');
   $('promptCountLine').querySelector('.fee-info-btn').style.display = n >= 1 ? '' : 'none';
   $('promptTooltip').classList.remove('is-open');
   /* Eric, 1 Sep - fiat continues to the Payment step; crypto pays by signing right after confirm. */
@@ -743,7 +755,7 @@ function trackerConfig(donationId, c, refLabel) {
       frames: crypto ? [
         { art: TRK_ART.blocks, title: 'The network is countersigning your donation', body: 'Each confirmation is one more block that agrees it happened. Twelve make it final. Busy networks just take longer.' }
       ].concat(converts ? [
-        { art: TRK_ART.pair, title: 'Then it becomes ' + settleAs, body: 'A background worker converts your ' + token + ' at whichever Uniswap route returns more USD value. Automatic.' }
+        { art: TRK_ART.pair, title: 'Then it becomes ' + settleAs, body: 'Our system converts your ' + token + ' at the best available rate. Automatic.' }
       ] : []).concat([
         { art: TRK_ART.heart, title: 'Then it reaches ' + D.esc(c.name), body: 'Delivered to the ' + D.SETTLEMENT.multisigLabel + '. Your receipt is issued and tied to the transaction id.' }
       ]) : [
@@ -761,7 +773,7 @@ function trackerConfig(donationId, c, refLabel) {
     explain: crypto
       ? ['You sent your donation to the ' + D.SETTLEMENT.multisigLabel + '. The blockchain now has to agree that it happened, a bit like several banks countersigning the same transfer.',
          converts
-           ? 'Because you gave ' + token + ', a background worker then converts it to ' + settleAs + ' using whichever Uniswap route returns more USD value. That conversion step is why you may see a "conversion pending" status.'
+           ? 'Because you gave ' + token + ', our system then converts it to ' + settleAs + ' automatically at the best available rate. That conversion step is why you may see a "conversion pending" status.'
            : 'You gave ' + token + ', so no conversion is needed. It goes straight through. Its US dollar value is what we report and what your receipt shows.',
          'You do not need to sign anything else, refresh, or resend. If the network is busy it takes a few minutes longer.']
       : ['Your card payment has been taken by the payment rail and is being routed to the account configured for donations. Fiat is never converted to crypto.',
@@ -769,7 +781,7 @@ function trackerConfig(donationId, c, refLabel) {
          'Once it clears, the donation is settled in US dollars and your digital receipt is issued.'],
     facts: [
       'Donations start at $1. Small, regular giving adds up fastest.',
-      'Fees are added on top, never taken out of your gift.',
+      'The platform fee is free, so your whole gift goes to the center.',
       'Every donation is tied to a transaction id, so you can check where it went.',
       'Recurring giving earns 3× Huma Points, the highest multiplier on the platform.'
     ],
@@ -821,7 +833,7 @@ function confirmDonation() {
     ? (ccy === 'USD' ? D.fmtUSD(totalUSD(), 2) : D.fmtCcy(ccy, totalTokenAmount()) + ' ' + ccy + ' (≈ ' + D.fmtUSD(totalUSD(), 2) + ')')
     : totalTokenAmount() + ' ' + token + ' (≈ ' + D.fmtUSD(totalUSD(), 2) + ')';
   /* §4.3 notification events - submitted, then awaiting confirmation. */
-  D.notifyDonation('info', 'Donation submitted', 'Your donation of ' + origin + ' to ' + refLabel + ' was submitted. Total charged ' + D.fmtUSD(totalChargedUSD(), 2) + ' including the processing fee.', 'Ref ' + donationId);
+  D.notifyDonation('info', 'Donation submitted', 'Your donation of ' + origin + ' to ' + refLabel + ' was submitted. Total charged ' + D.fmtUSD(totalChargedUSD(), 2) + '.', 'Ref ' + donationId);
   setTimeout(function () {
     D.notifyDonation('progressing', 'Donation awaiting confirmation', 'We are waiting for final confirmation of your donation to ' + refLabel + '. Nothing is needed from you.', 'Ref ' + donationId, 'donate.html', 'View status');
   }, 1400);
@@ -872,7 +884,7 @@ function terminal(kind, donationId) {
       + detailRow('Status', D.statusChip('pending_payment'))
       + detailRow(multi ? 'Humanity Centers' : 'Humanity Center', centreLabel)
       + detailRow('Donation amount (USD)', D.fmtUSD(usd, 2))
-      + detailRow('Processing fee', '+ ' + D.fmtUSD(feeUSD(), 2))
+      + detailRow('Platform fee', '<span style="color:var(--fin-up);font-weight:700;letter-spacing:0.04em;">FREE</span>')
       + detailRow('Total to transfer', xfer)
       + detailRow('Account holder', D.esc(bk.holder))
       + detailRow('Bank', D.esc(bk.bankName))
@@ -892,7 +904,7 @@ function terminal(kind, donationId) {
       + detailRow('Status', D.statusChip('conversion_pending'))
       + detailRow(multi ? 'Humanity Centers' : 'Humanity Center', centreLabel)
       + detailRow('You donated', amt.toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' ' + token)
-      + detailRow('USD quote', D.fmtUSD(usd, 2) + ' <span class="summary-row-note">via Uniswap, best of the USDC and USDT routes</span>')
+      + detailRow('USD quote', D.fmtUSD(usd, 2))
       + detailRow('Converting to', settleAsset + ' <span class="summary-row-note">Crypto Swap Worker</span>')
       /* Kevin, 28 Aug - no Destination row on terminals either. */
       + (hash ? detailRow('Transaction', '<span class="success-detail-value mono">' + explorerLink(hash) + '</span>') : '')
@@ -928,7 +940,7 @@ function terminal(kind, donationId) {
       + (method === 'fiat' && ccy !== 'USD' ? detailRow('Original amount', D.fmtCcy(ccy, amt) + ' ' + ccy + ' · rate 1 ' + ccy + ' = ' + D.fmtUSD(ccyInfo().rate, 4)) : '')
       + (method === 'crypto' ? detailRow('You donated', amt.toLocaleString('en-US', { maximumFractionDigits: 6 }) + ' ' + token) : '')
       + detailRow('Donation amount (USD)', '<span style="color:var(--fin-up);font-weight:700;">' + D.fmtUSD(usd, 2) + '</span>')
-      + detailRow('Processing fee', '+ ' + D.fmtUSD(feeUSD(), 2))
+      + detailRow('Platform fee', '<span style="color:var(--fin-up);font-weight:700;letter-spacing:0.04em;">FREE</span>')
       + (convFeeUSD() ? detailRow('Conversion fee', D.fmtUSD(convFeeUSD(), 2)) : '')
       + detailRow('Total charged', D.fmtUSD(totalChargedUSD(), 2))
       + detailRow('Settlement asset', settleAsset)
@@ -1024,7 +1036,7 @@ function renderPay() {
   if (isCard) {
     renderCards();
     $('payCardSummary').innerHTML = row('Donation amount (USD)', D.fmtUSD(totalUSD(), 2))
-      + row('Processing fee<span class="summary-row-note">Added on top of your donation</span>', '+ ' + D.fmtUSD(feeUSD(), 2))
+      + row('Platform fee', '<span style="color:var(--fin-up);font-weight:700;letter-spacing:0.04em;">FREE</span>')
       + row('Total charged', D.fmtUSD(totalChargedUSD(), 2), { total: true });
   } else {
     var bk = D.SETTLEMENT.bank;
