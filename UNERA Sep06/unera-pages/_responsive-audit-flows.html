@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Responsive audit · action-flow steps</title>
+<style>body{font-family:ui-monospace,monospace;font-size:12px;padding:12px}iframe{border:1px solid #ccc;display:block;margin-bottom:8px}#log{white-space:pre-wrap}</style>
+</head>
+<body>
+<div id="log">running…</div>
+<div id="stage"></div>
+<script>
+/* Walks every .step-content of each action flow (forced active one at a time) and audits
+   horizontal overflow per skills/responsive-mobile.md. Static walk only: JS-rendered
+   summaries stay empty here; _donate-flow-test.html covers donate with real values. */
+const PAGES = ['donate.html','add-money.html','exchange.html','send-enhanced.html'];
+const WIDTHS = [360, 390, 414];
+const logEl = document.getElementById('log');
+const out = [];
+function say(s){ out.push(s); console.log('[AUDIT] ' + s); logEl.textContent = out.join('\n'); }
+function path(el){
+  let p = el.tagName.toLowerCase();
+  if (el.id) p += '#' + el.id;
+  else if (el.classList.length) p += '.' + [...el.classList].slice(0,2).join('.');
+  const par = el.parentElement;
+  if (par && par !== el.ownerDocument.body) {
+    let pp = par.tagName.toLowerCase();
+    if (par.id) pp += '#' + par.id; else if (par.classList.length) pp += '.' + par.classList[0];
+    p = pp + '>' + p;
+  }
+  return p;
+}
+function audit(iframe, w){
+  try {
+    const d = iframe.contentDocument;
+    const de = d.documentElement;
+    const sw = Math.max(de.scrollWidth, d.body ? d.body.scrollWidth : 0);
+    if (sw <= w + 2) return null;
+    const offenders = [];
+    d.querySelectorAll('body *').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.right > w + 2 && r.width > 8 && el.children.length < 30) {
+        const cs = iframe.contentWindow.getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden') return;
+        offenders.push({ p: path(el), right: Math.round(r.right), w: Math.round(r.width) });
+      }
+    });
+    offenders.sort((a,b) => b.right - a.right);
+    const seen = new Set(); const top = [];
+    for (const o of offenders) { if (seen.has(o.p)) continue; seen.add(o.p); top.push(o.p + ' right=' + o.right + ' w=' + o.w); if (top.length >= 4) break; }
+    return { sw, top };
+  } catch(e){ return { sw: -1, top: ['ERR ' + e.message] }; }
+}
+async function run(){
+  const stage = document.getElementById('stage');
+  for (const pg of PAGES) {
+    for (const w of WIDTHS) {
+      const f = document.createElement('iframe');
+      f.width = w; f.height = 1400; f.src = pg;
+      stage.innerHTML = ''; stage.appendChild(f);
+      await new Promise(res => { let done=false; f.onload=()=>{ if(!done){done=true; setTimeout(res, 900);} }; setTimeout(()=>{ if(!done){done=true; res();} }, 12000); });
+      if (!f.contentDocument) { say('NULLDOC ' + pg + ' @' + w); continue; }
+      const d = f.contentDocument;
+      const steps = [...d.querySelectorAll('.step-content')];
+      const active = steps.filter(s => s.classList.contains('active'));
+      const r0 = audit(f, w);
+      if (r0) say('OVERFLOW ' + pg + ' @' + w + ' [default] sw=' + r0.sw + ' :: ' + r0.top.join(' | '));
+      for (const s of steps) {
+        steps.forEach(x => x.classList.toggle('active', x === s));
+        s.querySelectorAll('[hidden]').forEach(h => { if (h.classList.contains('method-sub-panel') || h.id === 'bankCurrencyWrap') h.hidden = false; });
+        await new Promise(res => setTimeout(res, 150));
+        const r = audit(f, w);
+        if (r) say('OVERFLOW ' + pg + ' @' + w + ' [' + (s.id || 'step?') + '] sw=' + r.sw + ' :: ' + r.top.join(' | '));
+      }
+      steps.forEach(x => x.classList.toggle('active', active.includes(x)));
+    }
+    say('done ' + pg);
+  }
+  say('FLOW AUDIT COMPLETE');
+}
+run();
+</script>
+</body>
+</html>
