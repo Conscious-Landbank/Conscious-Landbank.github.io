@@ -1,0 +1,1676 @@
+<!-- @dsCard group="Stablecoin App" viewport="1280x920" subtitle="hUSD issuance, redemption, status, transparency, history — PRD-aligned" -->
+<!-- @startingPoint section="Stablecoin App" subtitle="Full Unera Stablecoin Portal click-through (hUSD)" viewport="1280x920" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Unera Stablecoin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f10'/%3E%3Ccircle cx='32' cy='32' r='21' fill='%23ecd6a0'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='31' font-weight='700' text-anchor='middle' fill='%235a4212'%3Eh%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f10'/%3E%3Ccircle cx='32' cy='32' r='21' fill='%23ecd6a0'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='31' font-weight='700' text-anchor='middle' fill='%235a4212'%3Eh%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#07090a">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { background: var(--surface-page); }
+  a { color: inherit; }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* ── Nav spine ─────────────────────────────────────── */
+  .nav { background: var(--brand-deep-blue); position: sticky; top: 0; z-index: 10001; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .nav-inner { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; }
+  .nav-left { display: flex; align-items: center; gap: 2.25rem; }
+  .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+  .nav-brand img { height: 22px; }
+  .app-pill { background: var(--brand-cloud-blue); color: var(--brand-deep-blue); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.125rem 0.5rem; border-radius: 980px; }
+  .nav-links { list-style: none; display: flex; gap: 1.2rem; }
+  .nav-link { color: rgba(255,255,255,0.85); background: none; border: none; cursor: pointer; font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.5rem 0.2rem; transition: color 0.2s; }
+  .nav-link:hover { color: var(--reserve-gold); }
+  .nav-link.active { color: var(--reserve-gold); font-weight: 600; }
+  .nav-right { display: flex; align-items: center; gap: 0.85rem; }
+  .nav-toggle { display: none; background: none; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; width: 38px; height: 38px; align-items: center; justify-content: center; color: #fff; cursor: pointer; flex-shrink: 0; }
+  .nav-drawer { display: none; flex-direction: column; gap: 0.1rem; background: var(--brand-deep-blue); border-top: 1px solid rgba(255,255,255,0.08); padding: 0.4rem 16px 0.7rem; }
+  .nav-drawer.open { display: flex; }
+  .nav-drawer button { text-align: left; background: none; border: none; color: rgba(255,255,255,0.9); font-family: var(--font-body); font-size: 0.95rem; font-weight: 600; padding: 0 0.4rem; min-height: 44px; cursor: pointer; border-radius: 8px; }
+  .nav-drawer button:hover, .nav-drawer button.active { color: var(--reserve-gold); background: rgba(255,255,255,0.05); }
+  .nav-bell { width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; }
+  .nav-bell:hover { background: rgba(255,255,255,0.1); color: var(--reserve-gold); }
+  .nav-bell .dot { position: absolute; top: 4px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--reserve-gold); border: 2px solid var(--brand-deep-blue); }
+  .nav-av { width: 30px; height: 30px; border-radius: 50%; background: var(--brand-cloud-blue); color: var(--brand-deep-blue); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+  .connect-pill { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--brand-cloud-blue); color: var(--brand-deep-blue); border: none; border-radius: 980px; padding: 0.4rem 0.9rem; font-weight: 700; font-size: 0.78rem; font-family: var(--font-body); cursor: pointer; white-space: nowrap; }
+  .connect-pill:hover { background: color-mix(in srgb, var(--brand-cloud-blue) 80%, var(--brand-white)); }
+  .wallet-pill { display: none; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.10); color: #fff; border: 1px solid rgba(255,255,255,0.18); border-radius: 980px; padding: 0.3rem 0.6rem 0.3rem 0.4rem; cursor: pointer; font-family: var(--font-body); }
+  .wallet-pill .blockie { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg,#3a8891,#7a5bd0); }
+  .wallet-pill .wp-bal { font-size: 0.76rem; font-weight: 700; }
+  .wallet-pill .wp-meta { font-size: 0.62rem; opacity: 0.7; }
+  body.connected .connect-pill { display: none; }
+  body.connected .wallet-pill { display: inline-flex; }
+
+  /* ── Screens / layout ──────────────────────────────── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
+  .flow { max-width: 720px; margin: 0 auto; }
+
+  .page-head { margin-bottom: 1.6rem; }
+  .page-head h1 { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; color: var(--brand-deep-blue); line-height: 1.15; }
+  .page-head p { font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+  .card { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); }
+  .pad { padding: 1.5rem 1.6rem; }
+
+  /* Level banner */
+  .lvl-banner { background: var(--surface-warning-soft); border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent); border-radius: var(--radius-2xl); padding: 1.25rem 1.5rem; margin-bottom: 1.6rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .lvl-banner svg { color: var(--warning); flex-shrink: 0; }
+  .lvl-banner .t { flex: 1; min-width: 0; font-size: 0.938rem; font-weight: 500; color: var(--text-primary); }
+  .lvl-banner .cta { background: var(--brand-deep-blue); color: #fff; border: none; padding: 0.625rem 1.25rem; border-radius: 980px; font-size: 0.875rem; font-weight: 600; font-family: var(--font-body); cursor: pointer; white-space: nowrap; min-height: 40px; display: inline-flex; align-items: center; }
+  .lvl-banner .cta:hover { background: var(--neutral-800); }
+  body[data-level="L2"] .lvl-banner { display: none; }
+
+  /* KPI strip */
+  .kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-bottom: 1.6rem; }
+  .stat { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-card); transition: all 0.2s var(--ease-brand); }
+  .stat.link { cursor: pointer; }
+  .stat.link:hover { border-color: var(--brand-deep-blue); box-shadow: var(--shadow-hover); transform: translateY(var(--lift)); }
+  .stat .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
+  .stat .ic { width: 38px; height: 38px; border-radius: var(--radius-lg); background: color-mix(in srgb, var(--brand-teal) 12%, #fff); color: var(--brand-teal-deep); display: flex; align-items: center; justify-content: center; }
+  .stat .lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 0.4rem; }
+  .stat .val { font-family: var(--font-display); font-size: 2.1rem; font-weight: 700; color: var(--text-primary); line-height: 1.05; }
+  .stat .cur { font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
+  .stat .muted { font-size: 0.88rem; font-weight: 400; color: var(--text-secondary); }
+
+  .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.6rem; border-radius: 980px; font-size: 0.72rem; font-weight: 700; }
+  .badge--reserve { background: var(--reserve-gold-bg); color: var(--reserve-gold-deep); }
+  .badge--verify { background: var(--verify-teal-bg); color: var(--verify-teal); }
+  .badge--up { background: var(--fin-up-bg); color: var(--fin-up); }
+
+  .two-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.1rem; margin-bottom: 1.6rem; }
+
+  /* KYC tier card */
+  .tier-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .tier-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+  .limit-row { display: flex; justify-content: space-between; font-size: 0.88rem; padding: 0.5rem 0; border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent); }
+  .limit-row:last-child { border: none; }
+  .limit-row .k { color: var(--text-secondary); }
+  .limit-row .v { font-weight: 600; }
+  .meter { height: 6px; border-radius: 980px; background: var(--neutral-200); overflow: hidden; margin-top: 0.3rem; }
+  .meter > span { display: block; height: 100%; background: var(--brand-teal); border-radius: 980px; }
+
+  .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .sec-head h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--text-primary); }
+  .view-all { color: var(--brand-deep-blue); background:none;border:none;cursor:pointer;font-family:var(--font-body); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+
+  /* action cards */
+  .actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.6rem; }
+  .action { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); padding: 1.4rem; display: flex; gap: 1rem; align-items: flex-start; box-shadow: var(--shadow-card); cursor: pointer; transition: all 0.2s var(--ease-brand); text-align: left; font-family: var(--font-body); width: 100%; }
+  .action:hover { border-color: var(--brand-deep-blue); box-shadow: var(--shadow-hover); transform: translateY(var(--lift)); }
+  .action.primary { background: var(--brand-deep-blue); border-color: var(--brand-deep-blue); }
+  .action .ic { width: 46px; height: 46px; border-radius: var(--radius-lg); flex-shrink: 0; background: color-mix(in srgb, var(--brand-teal) 12%, #fff); color: var(--brand-teal-deep); display: flex; align-items: center; justify-content: center; }
+  .action.primary .ic { background: var(--reserve-gold); color: var(--brand-deep-blue); }
+  .action h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.2rem; }
+  .action p { font-size: 0.84rem; color: var(--text-secondary); }
+  .action.primary h3 { color: #fff; }
+  .action.primary p { color: rgba(255,255,255,0.78); }
+  .action .lock { margin-left: auto; color: var(--text-secondary); }
+  body[data-level="L2"] .action .lock { display: none; }
+
+  /* tables */
+  table.tx { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  table.tx th { text-align: left; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--border-subtle); }
+  table.tx td { padding: 0.85rem; border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 50%, transparent); }
+  table.tx tr:last-child td { border-bottom: none; }
+  table.tx time { color: var(--text-secondary); }
+  .ex-link { color: var(--verify-teal); text-decoration: none; font-weight: 600; }
+  .ex-link:hover { text-decoration: underline; }
+
+  .status-pill { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 980px; font-size: 0.72rem; font-weight: 600; }
+  .sp-completed { background: var(--fin-up-bg); color: var(--fin-up); }
+  .sp-pending { background: var(--warning-bg); color: var(--warning); }
+  .sp-processing { background: color-mix(in srgb, var(--brand-light-blue) 22%, #fff); color: var(--brand-deep-blue); }
+  .sp-failed { background: var(--error-bg); color: var(--error); }
+
+  /* stepper */
+  /* Stepper — matched to Unera Stablecoin (48px circles, inset rail, scale on active, checkmark when done) */
+  .stepper { position: relative; display: flex; justify-content: space-between; align-items: flex-start; max-width: 700px; margin: 0 auto 2.5rem; padding: 0 1rem; }
+  .stepper::before { content:''; position:absolute; top:24px; left:24px; right:24px; height:2px; background: var(--neutral-300); z-index:0; }
+  .stepper-progress { position:absolute; top:24px; left:24px; height:2px; max-width: calc(100% - 48px); background: var(--brand-deep-blue); transition: width 0.5s var(--ease-brand); z-index:1; }
+  .step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; flex: 1; transition: opacity .3s; }
+  .step-circle { width: 48px; height: 48px; border-radius: 50%; background: #fff; border: 2px solid var(--neutral-300); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; transition: all 0.2s var(--ease-brand); }
+  .step-label { font-size: 0.875rem; font-weight: 500; color: var(--neutral-600); text-align: center; }
+  .step.active .step-circle { background: var(--brand-deep-blue); border-color: transparent; color: #fff; transform: scale(1.1); }
+  .step.completed .step-circle { background: var(--brand-deep-blue); border-color: transparent; color: #fff; }
+  .step.active .step-label { color: var(--brand-deep-blue); font-weight: 600; }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+  /* Prerequisites step — matched to Unera Stablecoin "Before you start" */
+  .flow .section-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--brand-deep-blue); margin-bottom: .4rem; }
+  .flow .section-desc { color: var(--text-secondary); font-size: .95rem; margin-bottom: 1.5rem; }
+  .prereq-grid { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
+  .prereq-card { background: var(--neutral-100); border: 2px solid var(--border-subtle); border-radius: var(--radius-2xl); padding: 1.4rem; display: flex; align-items: flex-start; gap: 1rem; transition: all .2s var(--ease-brand); }
+  .prereq-card:hover { border-color: var(--brand-deep-blue); background: #fff; }
+  .prereq-card.done { border-color: var(--fin-up); background: var(--fin-up-bg); }
+  .prereq-icon { flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%; background: var(--brand-deep-blue); color: #fff; display: flex; align-items: center; justify-content: center; }
+  .prereq-content { flex: 1; min-width: 0; }
+  .prereq-title { font-weight: 700; color: var(--text-primary); margin-bottom: .25rem; font-size: 1rem; }
+  .prereq-desc { font-size: .85rem; color: var(--text-secondary); margin-bottom: .75rem; line-height: 1.5; }
+  .prereq-action { background: #fff; border: 2px solid var(--border-subtle); border-radius: var(--radius-md); padding: .5rem 1rem; font-size: .82rem; font-weight: 600; font-family: var(--font-body); cursor: pointer; color: var(--text-primary); display: inline-flex; align-items: center; gap: .4rem; }
+  .prereq-action:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+  .prereq-action.completed { background: var(--fin-up-bg); border-color: var(--fin-up); color: var(--fin-up); pointer-events: none; }
+
+  /* flow widgets */
+  .field-label { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.45rem; display: block; }
+  .seg-tabs { display: inline-flex; background: var(--neutral-100); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 3px; margin-bottom: 1.25rem; }
+  .seg-tabs button { border: none; background: none; padding: 0.5rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; font-family: var(--font-body); display:flex; align-items:center; gap:.4rem; }
+  .seg-tabs button.active { background: #fff; color: var(--brand-deep-blue); box-shadow: var(--shadow-card); }
+  .amount-box { display: flex; align-items: center; gap: 0.5rem; border: 1.5px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.4rem 1rem; background: #fff; }
+  .amount-box:focus-within { border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.12); }
+  .amount-box .pfx { font-size: 1.3rem; font-weight: 600; color: var(--text-secondary); }
+  .amount-box input { flex: 1; border: none; outline: none; font-size: 1.7rem; font-weight: 700; font-family: var(--font-display); color: var(--text-primary); min-width: 0; padding: 0.45rem 0; }
+  .amount-box .suf { font-weight: 600; color: var(--text-secondary); }
+  .quick-amts { display: flex; gap: 0.5rem; margin-top: 0.7rem; flex-wrap: wrap; }
+  .chip { border: 1.5px solid var(--border-subtle); background: #fff; border-radius: 980px; padding: 0.32rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); color: var(--text-secondary); }
+  .chip:hover, .chip.active { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+
+  .preview { background: var(--surface-action-green); border: 1px solid color-mix(in srgb, var(--fin-up) 18%, transparent); border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; margin-top: 1.1rem; }
+  .preview .rate-line { display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.6rem; }
+  .rate-fresh { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .rate-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--verify-teal); }
+  .preview .recv-lbl { font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; }
+  .preview .recv { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--fin-up); }
+  .preview .brk { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.3rem; }
+
+  .deposit { border: 1.5px dashed var(--brand-teal); background: var(--surface-cad-hub); border-radius: var(--radius-lg); padding: 1rem 1.1rem; margin-top: 1rem; }
+  .deposit .addr { display: flex; align-items: center; gap: 0.5rem; background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.55rem 0.7rem; margin-top: 0.4rem; }
+  .deposit .addr code { flex: 1; font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .copy-btn { border: none; background: var(--brand-deep-blue); color: #fff; border-radius: var(--radius-sm); padding: 0.3rem 0.6rem; font-size: 0.72rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); }
+  .conf-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.7rem; font-size: 0.8rem; color: var(--text-secondary); }
+  .conf-track { flex: 1; height: 6px; border-radius: 980px; background: var(--neutral-200); overflow: hidden; }
+  .conf-fill { height: 100%; width: 33%; background: var(--brand-teal); border-radius: 980px; }
+
+  .review-row { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent); font-size: 0.92rem; }
+  .review-row:last-child { border: none; }
+  .review-row .k { color: var(--text-secondary); }
+  .review-row .v { font-weight: 600; }
+  .flow-actions { display: flex; gap: 0.7rem; margin-top: 1.6rem; }
+
+  .btn { padding: 0.75rem 1.5rem; border-radius: var(--radius-md); font-size: 0.92rem; font-weight: 600; border: none; cursor: pointer; font-family: var(--font-body); display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 46px; text-decoration: none; transition: all 0.2s var(--ease-brand); }
+  .btn-primary { background: var(--brand-deep-blue); color: #fff; }
+  .btn-primary:hover { background: var(--neutral-800); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border: 2px solid var(--border-subtle); }
+  .btn-secondary:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+
+  /* status timeline */
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .tl-item { display: grid; grid-template-columns: 28px 1fr; gap: 0.85rem; }
+  .tl-rail { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 2px solid var(--neutral-300); background: #fff; color: var(--text-secondary); }
+  .tl-dot.done { background: var(--fin-up); border-color: var(--fin-up); color: #fff; }
+  .tl-dot.current { background: var(--brand-deep-blue); border-color: var(--brand-deep-blue); color: #fff; }
+  .tl-dot.queued { background: var(--warning); border-color: var(--warning); color: #fff; }
+  .tl-line { flex: 1; width: 2px; min-height: 20px; background: var(--neutral-200); margin-top: 2px; }
+  .tl-line.done { background: var(--fin-up); }
+  .tl-body { padding-bottom: 1rem; }
+  .tl-title { font-size: 0.9rem; font-weight: 600; }
+  .tl-title.pending { color: var(--text-secondary); font-weight: 500; }
+  .tl-meta { font-size: 0.78rem; color: var(--text-secondary); margin-top: 1px; }
+
+  /* ── PoR dashboard ─────────────────────────────────── */
+  .por-hero { background: var(--brand-deep-blue); border-radius: var(--radius-2xl); padding: 2rem 2.25rem; color: #fff; margin-bottom: 1.6rem; display: grid; grid-template-columns: 1.25fr 0.9fr; gap: 2rem; align-items: center; }
+  .por-hero .eyebrow { color: var(--reserve-gold); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.7rem; }
+  .por-hero h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 700; line-height: 1.1; margin-bottom: 0.7rem; }
+  .por-hero p { color: rgba(255,255,255,0.78); font-size: 0.93rem; max-width: 46ch; }
+  .por-hero .totals { display: flex; gap: 1.75rem; margin-top: 1.5rem; }
+  .por-hero .totals .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.6); }
+  .por-hero .totals .v { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+  .por-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-bottom: 1.1rem; }
+  .chart-cap { font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.9rem; display: flex; align-items: center; gap: 0.4rem; }
+  .chart-cap .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--verify-teal); }
+  .donut-wrap { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+  .legend { display: flex; flex-direction: column; gap: 0.5rem; }
+  .legend .it { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; }
+  .legend .key { width: 12px; height: 12px; border-radius: 3px; }
+  .bars { display: flex; flex-direction: column; gap: 0.7rem; }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 64px; align-items: center; gap: 0.7rem; font-size: 0.82rem; }
+  .bar-track { height: 16px; border-radius: var(--radius-sm); background: var(--neutral-200); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: var(--radius-sm); }
+  .bar-val { text-align: right; font-weight: 600; color: var(--text-primary); }
+  .yield-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+  .yield-cell { background: var(--surface-deep); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1rem; }
+  .yield-cell .v { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; }
+  .yield-cell .k { font-size: 0.78rem; color: var(--text-secondary); }
+  .contract { display: flex; align-items: center; gap: 0.6rem; background: var(--surface-verify); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.7rem 0.9rem; }
+  .contract code { flex: 1; font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; }
+  .attest-row { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent); }
+  .attest-row:last-child { border: none; }
+  .attest-row .dl { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--brand-deep-blue); font-weight: 600; font-size: 0.82rem; text-decoration: none; }
+  .op-badge { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--verify-teal-bg); color: var(--verify-teal); border-radius: 980px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 700; }
+  .op-badge .d { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* filters */
+  .filters { display: flex; gap: 0.6rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+  .seg { display: inline-flex; background: #fff; border: 1px solid var(--border-subtle); border-radius: 980px; padding: 3px; }
+  .seg button { border: none; background: none; padding: 0.4rem 0.95rem; border-radius: 980px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; font-family: var(--font-body); }
+  .seg button.active { background: var(--brand-deep-blue); color: #fff; }
+  .select-wrap { position: relative; display: inline-flex; align-items: center; }
+  .select-chev { position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-secondary); }
+  .date-sel { -webkit-appearance: none; -moz-appearance: none; appearance: none; border: 1px solid var(--border-subtle); border-radius: 980px; padding: 0.45rem 2.1rem 0.45rem 1rem; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); background: #fff; font-family: var(--font-body); cursor: pointer; line-height: 1.4; }
+  .date-sel:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 1px; }
+
+  /* connect modal */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 10010; }
+  .overlay.active { display: flex; }
+  .modal { background: #fff; border-radius: var(--radius-xl); max-width: 440px; width: 90%; box-shadow: var(--shadow-modal); overflow: hidden; }
+  .modal-h { padding: 1.3rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+  .modal-h h2 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; }
+  .modal-x { background: none; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-secondary); display:flex;align-items:center;justify-content:center; }
+  .modal-x:hover { background: var(--neutral-100); }
+  .modal-b { padding: 1.4rem 1.5rem; }
+  .modal-b > p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.1rem; }
+  .connect-test-scenarios { background: var(--brand-cloud-blue); border: 1.5px dashed var(--brand-teal); border-radius: var(--radius-lg); padding: 0.625rem 0.875rem; margin-bottom: 1.1rem; }
+  .test-scenarios-label { display: block; font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; }
+  .scenario-pills { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+  .scenario-pill { padding: 0.25rem 0.625rem; border-radius: 999px; border: 1.5px solid var(--border-subtle); background: #fff; color: var(--text-secondary); font-size: 0.72rem; font-weight: 600; font-family: var(--font-body); cursor: pointer; transition: all 0.15s; }
+  .scenario-pill:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+  .scenario-pill.active { background: var(--brand-deep-blue); border-color: var(--brand-deep-blue); color: var(--accent); }
+  .wc-outcome { display: none; margin-bottom: 1rem; padding: 0.7rem 0.9rem; border-radius: var(--radius-lg); font-size: 0.82rem; font-weight: 500; }
+  .wc-outcome.show { display: block; }
+  .wc-outcome.err { background: var(--error-bg); color: var(--error); }
+  .modal-desc { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.1rem; }
+  .wallet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .wallet-option-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 1rem 0.5rem; border: 1.5px solid var(--border-subtle); border-radius: var(--radius-lg); background: #fff; cursor: pointer; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; gap: 0.45rem; font-family: var(--font-body); }
+  .wallet-option-card:hover { border-color: var(--brand-deep-blue); background: rgba(23,61,71,0.02); transform: translateY(-2px); box-shadow: var(--shadow-card); }
+  .wallet-option-card.recommended { background: var(--surface-action); border-color: var(--brand-deep-blue); }
+  .wallet-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+  .wallet-name { font-weight: 600; font-size: 0.875rem; color: var(--text-primary); }
+  .wallet-rec-tag { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brand-deep-blue); }
+  .wallet-note { font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin: 1rem 0 0; padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
+
+  /* dev level toggle */
+  .dev { position: fixed; left: 14px; bottom: 14px; z-index: 9000; background: var(--brand-ink); color: #fff; border-radius: var(--radius-lg); padding: 0.5rem 0.6rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: var(--shadow-menu); font-size: 0.72rem; }
+  .dev span { opacity: 0.65; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+  .dev button { border: 1px solid rgba(255,255,255,0.25); background: transparent; color: #fff; border-radius: 980px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); }
+  .dev button.on { background: var(--reserve-gold); color: var(--brand-deep-blue); border-color: var(--reserve-gold); }
+
+  /* ── nav notifications + profile/wallet dropdown (Unera Stablecoin account-settings parity, adapted) ── */
+  .notification-bell-wrapper { position: relative; }
+  .notification-bell-btn { width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255,255,255,0.78); cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; }
+  .notification-bell-btn:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
+  .notif-bell-icon { width: 19px; height: 19px; }
+  .notif-badge { position: absolute; top: 2px; right: 3px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 9px; background: var(--accent); color: var(--brand-deep-blue); font-size: 0.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--brand-deep-blue); }
+  .notif-badge[data-count="0"] { display: none; }
+  .nav-dd { position: absolute; top: calc(100% + 8px); right: 0; background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); box-shadow: var(--shadow-menu); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.18s var(--ease-brand); z-index: 10002; }
+  .nav-dd.show { opacity: 1; visibility: visible; transform: translateY(0); }
+  .notification-panel { width: 340px; max-height: min(460px,80vh); display: flex; flex-direction: column; overflow: hidden; }
+  .notif-panel-header { padding: 1rem 1.1rem; border-bottom: 1px solid var(--border-subtle); }
+  .notif-panel-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: .4rem; }
+  .notif-panel-title { font-weight: 700; font-size: .95rem; }
+  .notif-unread-label { font-size: .72rem; font-weight: 600; color: var(--brand-deep-blue); }
+  .notif-panel-actions { display: flex; gap: .75rem; align-items: center; }
+  .notif-action-link { background: none; border: none; cursor: pointer; font-size: .75rem; color: var(--text-secondary); font-weight: 600; font-family: var(--font-body); padding: 0; }
+  .notif-action-link:hover { color: var(--brand-deep-blue); }
+  .notif-close-btn { margin-left: auto; width: 24px; height: 24px; border: none; background: none; border-radius: 50%; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; }
+  .notif-close-btn:hover { background: var(--neutral-100); }
+  .notif-list-wrapper { padding: .4rem; overflow-y: auto; }
+  .dropdown-section-title-nav { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary); padding: .5rem .6rem .25rem; }
+  .notif-list { list-style: none; margin: 0; padding: 0; }
+  .notif-item { display: flex; gap: .6rem; padding: .6rem; border-radius: var(--radius-md); align-items: flex-start; }
+  .notif-item:hover { background: var(--neutral-100); }
+  .notif-item-icon { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .notif-item-icon svg { width: 14px; height: 14px; fill: currentColor; }
+  .ni-mint { background: var(--fin-up-bg); color: var(--fin-up); }
+  .ni-redeem { background: var(--surface-action); color: var(--brand-deep-blue); }
+  .ni-verify { background: var(--verify-teal-bg); color: var(--verify-teal); }
+  .ni-reserve { background: var(--accent-bg); color: var(--accent-deep); }
+  .notif-item-body { flex: 1; min-width: 0; }
+  .notif-item-title { font-size: .8rem; font-weight: 600; margin: 0; }
+  .notif-item.read .notif-item-title { font-weight: 400; color: var(--neutral-600); }
+  .notif-item-msg { font-size: .74rem; color: var(--text-secondary); margin: .1rem 0 0; }
+  .notif-item-time { font-size: .68rem; color: var(--text-secondary); }
+  .notif-unread-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+  .notif-item.read .notif-unread-dot { visibility: hidden; }
+  .notif-panel-footer { padding: .5rem; border-top: 1px solid var(--border-subtle); }
+  .notif-panel-footer .btn { width: 100%; min-height: 40px; }
+
+  .nav-wallet-display { display: flex; align-items: center; gap: 0.3125rem; padding: 0.125rem 0.375rem 0.125rem 0.25rem; align-self: center; background: var(--brand-white); border: 1px solid var(--border-subtle); border-radius: 980px; box-shadow: 0 1px 4px rgba(23,61,71,0.08); color: var(--text-primary); position: relative; flex-shrink: 0; }
+  .user-avatar-nav { width: 28px; height: 28px; border-radius: 50%; background: var(--brand-deep-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+  .nav-wallet-info { display: flex; flex-direction: column; gap: 0; min-width: 0; cursor: pointer; border-radius: 0.375rem; padding: 0.0625rem 0.125rem; transition: background 0.15s; }
+  .nav-wallet-info:hover { background: var(--neutral-100); }
+  .nav-wallet-address-row { display: inline-flex; align-items: center; gap: 0.125rem; }
+  .nav-wallet-address { font-size: 0.75rem; font-weight: 600; line-height: 1.2; color: var(--text-primary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .nav-wallet-chevron { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.55; color: var(--text-secondary); }
+  .nav-wallet-balance { font-size: 0.6875rem; line-height: 1.2; color: var(--text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .nav-network-badge { display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; margin-left: 0.125rem; background: var(--neutral-200); border-radius: 0.5rem; cursor: pointer; border: none; font-family: var(--font-body); }
+  .nav-network-badge:hover { background: color-mix(in srgb, var(--neutral-300) 70%, var(--brand-white)); }
+  .nav-network-badge span { font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary); }
+  .net-dot { width: 8px; height: 8px; border-radius: 50%; background: #627EEA; flex-shrink: 0; }
+  .nav-network-chevron { width: 12px; height: 12px; color: var(--text-secondary); flex-shrink: 0; }
+  body:not(.connected) .nav-wallet-display { display: none; }
+  .network-dropdown-nav { right: 0; min-width: 184px; padding: .4rem; }
+  .network-dropdown-header-nav { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary); padding: .4rem .5rem .25rem; }
+  .network-option-nav { display: flex; align-items: center; gap: .5rem; padding: .5rem .55rem; border-radius: var(--radius-md); cursor: pointer; font-size: .84rem; font-weight: 500; }
+  .network-option-nav:hover { background: var(--neutral-100); }
+  .network-option-nav .net-dot { width: 10px; height: 10px; }
+  .network-option-check { width: 16px; height: 16px; margin-left: auto; color: var(--brand-deep-blue); opacity: 0; }
+  .network-option-nav.active .network-option-check { opacity: 1; }
+  .network-option-nav.active { color: var(--brand-deep-blue); font-weight: 600; }
+
+  .user-dropdown-nav { width: 282px; }
+  .dropdown-header-nav { padding: 1.1rem; background: var(--surface-action); border-bottom: 1px solid var(--border-subtle); }
+  .dropdown-user-info-nav { display: flex; align-items: center; gap: .75rem; margin-bottom: .7rem; }
+  .dropdown-avatar-nav { width: 44px; height: 44px; border-radius: 50%; background: var(--brand-deep-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+  .dropdown-user-name-nav { font-weight: 700; font-size: .95rem; }
+  .dropdown-user-email-nav { font-size: .78rem; color: var(--text-secondary); }
+  .dropdown-chips-nav { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .6rem; }
+  .dropdown-chip { display: inline-flex; align-items: center; gap: .25rem; font-size: .66rem; font-weight: 700; padding: .18rem .5rem; border-radius: var(--radius-sm); }
+  .dropdown-chip--level { background: var(--neutral-200); color: var(--text-secondary); text-transform: uppercase; letter-spacing: .03em; }
+  .dropdown-chip--verified { background: var(--fin-up-bg); color: var(--fin-up); }
+  .dropdown-chip--verified svg { width: 12px; height: 12px; fill: currentColor; }
+  .dropdown-wallet-addr-nav { display: flex; align-items: center; gap: .5rem; width: 100%; padding: .5rem .6rem; background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer; font-family: var(--font-body); text-align: left; }
+  .dropdown-wallet-addr-nav:hover { border-color: var(--brand-deep-blue); }
+  .dropdown-wallet-addr-text { flex: 1; min-width: 0; font-family: ui-monospace, monospace; font-size: .78rem; font-weight: 600; color: var(--brand-deep-blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dropdown-wallet-copy { width: 15px; height: 15px; fill: var(--text-secondary); flex-shrink: 0; }
+  .dropdown-menu-nav { padding: .5rem; }
+  .dropdown-item-nav { display: flex; align-items: center; gap: .7rem; padding: .6rem .65rem; border-radius: var(--radius-md); color: var(--text-primary); text-decoration: none; cursor: pointer; font-size: .85rem; background: none; border: none; width: 100%; text-align: left; font-family: var(--font-body); }
+  .dropdown-item-nav:hover { background: rgba(23,61,71,0.07); color: var(--brand-deep-blue); }
+  .dropdown-item-nav svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+  .dropdown-divider-nav { height: 1px; background: var(--border-subtle); margin: .35rem 0; }
+
+  /* ── History page (summaries + chart + toolbar) ── */
+  .hist-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .export-btn { display: inline-flex; align-items: center; gap: .4rem; background: #fff; border: 1.5px solid var(--border-subtle); border-radius: var(--radius-md); padding: .5rem 1rem; font-size: .85rem; font-weight: 600; font-family: var(--font-body); color: var(--text-primary); cursor: pointer; min-height: 40px; }
+  .export-btn:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+  .export-btn svg { fill: currentColor; }
+  .hist-summary { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.1rem; }
+  .hsum { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); padding: 1.1rem 1.25rem; box-shadow: var(--shadow-card); }
+  .hsum .k { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-secondary); margin-bottom: .4rem; }
+  .hsum .v { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.05; }
+  .hsum .sub { font-size: .72rem; color: var(--text-secondary); margin-top: .25rem; }
+  .flow-chart { display: flex; align-items: flex-end; gap: 1.2rem; height: 170px; padding-top: .5rem; }
+  .fc-month { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .5rem; height: 100%; justify-content: flex-end; }
+  .fc-bars { display: flex; align-items: flex-end; gap: 5px; height: 130px; }
+  .fc-bar { width: 16px; border-radius: 4px 4px 0 0; }
+  .fc-bar.issued { background: var(--fin-up); }
+  .fc-bar.redeemed { background: var(--fin-down); }
+  .fc-label { font-size: .72rem; color: var(--text-secondary); font-weight: 600; }
+  .chart-legend { display: flex; gap: 1.25rem; margin-top: .75rem; }
+  .cl-item { display: flex; align-items: center; gap: .4rem; font-size: .78rem; color: var(--text-secondary); }
+  .cl-dot { width: 10px; height: 10px; border-radius: 3px; }
+  .hist-toolbar { display: flex; gap: .6rem; margin-bottom: 1.1rem; flex-wrap: wrap; align-items: center; }
+  .hist-search { display: flex; align-items: center; gap: .5rem; background: #fff; border: 1px solid var(--border-subtle); border-radius: 980px; padding: .4rem .9rem; flex: 1; min-width: 200px; }
+  .hist-search input { border: none; outline: none; font-family: var(--font-body); font-size: .85rem; flex: 1; background: none; color: var(--text-primary); }
+  .hist-search svg { color: var(--text-secondary); flex-shrink: 0; }
+  @media (max-width: 760px) { .hist-summary { grid-template-columns: 1fr 1fr; } }
+
+  /* ── History hero (Apple-grade lead) ── */
+  .hist-hero { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 1.85rem 2rem 1.5rem; margin-bottom: 1.25rem; }
+  .hist-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+  .hist-eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); }
+  .verify-chip { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--verify-teal-bg); color: var(--verify-teal); border-radius: 980px; padding: 0.3rem 0.75rem; font-size: 0.75rem; font-weight: 600; }
+  .verify-chip svg { flex-shrink: 0; }
+  .hist-hero-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 2.25rem; align-items: center; }
+  .hist-hero-figure { font-family: var(--font-display); font-size: 2.7rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: var(--fin-up); display: flex; align-items: center; gap: 0.4rem; }
+  .hist-hero-figure .unit { font-size: 1.1rem; font-weight: 600; color: var(--text-secondary); }
+  .hist-hero-sub { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
+  .hist-spark { margin-top: 1.1rem; height: 72px; }
+  .hist-hero-stats { display: flex; flex-direction: column; border-left: 1px solid var(--border-subtle); padding-left: 1.85rem; }
+  .hhs { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 55%, transparent); }
+  .hhs:last-child { border-bottom: none; }
+  .hhs .k { font-size: 0.82rem; color: var(--text-secondary); }
+  .hhs .k small { display: block; font-size: 0.7rem; color: var(--neutral-500); margin-top: 1px; }
+  .hhs .v { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .hhs .v.up { color: var(--fin-up); }
+  .hhs .v.down { color: var(--fin-down); }
+  .hist-trust { display: flex; align-items: center; gap: 0.5rem; margin-top: 1.35rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-secondary); flex-wrap: wrap; }
+  .hist-trust svg { color: var(--verify-teal); flex-shrink: 0; }
+  .hist-trust .dot-sep { color: var(--neutral-400); }
+  .hist-trust a { color: var(--verify-teal); font-weight: 600; text-decoration: none; }
+  .hist-count { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.85rem; }
+  .tx-verified { display: inline-flex; align-items: center; gap: 0.25rem; color: var(--verify-teal); font-weight: 600; }
+  @media (max-width: 760px) { .hist-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .hist-hero-stats { border-left: none; padding-left: 0; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem; } }
+
+  /* ── History: grouped clickable rows + detail drawer ── */
+  .hist-group { margin-bottom: 1.25rem; }
+  .hist-group-label { font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); padding: 0 0.25rem 0.5rem; }
+  .tx-list { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); overflow: hidden; }
+  .tx-row { display: grid; grid-template-columns: 44px 1fr auto auto; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: none; border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 55%, transparent); background: #fff; width: 100%; cursor: pointer; font-family: var(--font-body); text-align: left; transition: background 0.15s; }
+  .tx-row:last-child { border-bottom: none; }
+  .tx-row:hover { background: var(--neutral-100); }
+  .tx-ico { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tx-ico.in { background: var(--fin-up-bg); color: var(--fin-up); }
+  .tx-ico.out { background: var(--fin-down-bg); color: var(--fin-down); }
+  .tx-main { min-width: 0; }
+  .tx-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+  .tx-sub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 1px; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  .tx-amounts { text-align: right; }
+  .tx-amt { font-size: 0.98rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .tx-amt.in { color: var(--fin-up); }
+  .tx-amt.out { color: var(--fin-down); }
+  .tx-amt-sub { font-size: 0.78rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; margin-top: 1px; }
+  .tx-chev { color: var(--neutral-400); flex-shrink: 0; }
+  .tx-empty { padding: 3rem 1.5rem; text-align: center; color: var(--text-secondary); }
+  .tx-empty svg { color: var(--neutral-300); margin-bottom: 0.75rem; }
+
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 10010; }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer { position: fixed; top: 0; right: 0; height: 100%; width: 440px; max-width: 92vw; background: #fff; box-shadow: var(--shadow-modal); transform: translateX(100%); transition: transform 0.3s var(--ease-brand); z-index: 10011; display: flex; flex-direction: column; }
+  .drawer.open { transform: translateX(0); }
+  .drawer-h { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+  .drawer-h h2 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+  .drawer-b { padding: 1.5rem; overflow-y: auto; flex: 1; }
+  .drawer-hero { text-align: center; padding: 0.5rem 0 1.5rem; }
+  .drawer-hero .tx-ico { margin: 0 auto 0.85rem; width: 56px; height: 56px; }
+  .drawer-hero .amt { font-family: var(--font-display); font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .drawer-hero .meta { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.35rem; }
+  .drawer-sec-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin: 1.4rem 0 0.6rem; }
+  .drawer-tl { list-style: none; margin: 0; padding: 0; }
+  .conf-pill { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--neutral-100); border-radius: 980px; padding: 0.1rem 0.5rem; font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+  /* ── FE-207 (Hierarchy): compact balance header — one row, ≤160px tall ── */
+  .bal-head { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 1.15rem 1.5rem; margin-bottom: 1rem; }
+  .bal-head .who { display: flex; align-items: center; gap: 1rem; flex: 1 1 20rem; min-width: 0; }
+  .bal-head .medal { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--reserve-gold); color: var(--brand-deep-blue); font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; }
+  .bal-head .lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+  .bal-head .val { font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; line-height: 1.12; color: var(--brand-deep-blue); }
+  .bal-head .cur { font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
+  .bal-head .meta { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-secondary); }
+  .bal-head .acts { display: flex; gap: 0.6rem; flex-shrink: 0; }
+  .quiet-stats { display: flex; gap: 1.6rem; flex-wrap: wrap; background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-2xl); padding: 0.9rem 1.5rem; margin-bottom: 1.6rem; }
+  .quiet-stats .qs { display: flex; flex-direction: column; gap: 0.1rem; }
+  .quiet-stats .qs .k { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+  .quiet-stats .qs .v { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+  .quiet-stats .qs.link { cursor: pointer; }
+  .quiet-stats .qs.link:hover .v { color: var(--brand-deep-blue); text-decoration: underline; }
+
+  /* ── FE-207 (Waiting UX): pending pill, attention card, Transaction Tracker ── */
+  .pending-pill { display: none; align-items: center; gap: 0.4rem; background: var(--reserve-gold); color: var(--brand-deep-blue); border: none; border-radius: 980px; padding: 0.32rem 0.75rem; font-family: var(--font-body); font-size: 0.76rem; font-weight: 700; cursor: pointer; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  body.tx-pending .pending-pill { display: inline-flex; }
+  .pending-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand-deep-blue); animation: pulseDot 1.8s ease-in-out infinite; }
+  @keyframes pulseDot { 0%, 100% { opacity: 0.4 } 50% { opacity: 1 } }
+  .attn-card { display: none; align-items: center; gap: 0.9rem; flex-wrap: wrap; background: var(--surface-cad-hub); border: 1px solid color-mix(in srgb, var(--brand-teal) 38%, transparent); border-radius: var(--radius-2xl); padding: 0.95rem 1.25rem; margin-bottom: 1rem; }
+  body.tx-pending .attn-card { display: flex; }
+  .attn-card .t { flex: 1; min-width: 0; }
+  .attn-card .t b { display: block; font-size: 0.94rem; }
+  .attn-card .t span { font-size: 0.84rem; color: var(--text-secondary); }
+  .track-head { text-align: center; }
+  .track-spin { width: 66px; height: 66px; border-radius: 50%; margin: 0.2rem auto 1rem; border: 3px solid var(--neutral-200); border-top-color: var(--brand-deep-blue); animation: trackSpin 1.4s linear infinite; }
+  @keyframes trackSpin { to { transform: rotate(360deg) } }
+  .track-badge { width: 66px; height: 66px; border-radius: 50%; margin: 0.2rem auto 1rem; display: flex; align-items: center; justify-content: center; }
+  .track-badge.ok { background: var(--fin-up-bg); color: var(--fin-up); }
+  .track-badge.bad { background: var(--error-bg); color: var(--error); }
+  .track-chips { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+  .track-chip { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--neutral-100); border-radius: 980px; padding: 0.25rem 0.7rem; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .track-travel { position: relative; height: 70px; margin-top: 1.2rem; background: var(--neutral-100); border-radius: var(--radius-lg); overflow: hidden; }
+  .track-travel .rail { position: absolute; left: 16%; right: 16%; top: 30px; height: 2px; background: color-mix(in srgb, var(--brand-teal) 45%, transparent); }
+  .track-travel .bead { position: absolute; top: 25px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--reserve-gold-deep); animation: travel 3.4s ease-in-out infinite; }
+  @keyframes travel { 0% { left: 16%; opacity: 0 } 10% { opacity: 1 } 90% { opacity: 1 } 100% { left: 84%; opacity: 0 } }
+  .track-travel .node { position: absolute; top: 17px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+  .track-travel .node i { width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid var(--brand-teal); display: block; }
+  .track-travel .node span { font-size: 0.7rem; color: var(--text-secondary); white-space: nowrap; }
+  .reassure { background: var(--surface-verify); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.9rem 1.1rem; margin-top: 1.1rem; }
+  .reassure li { list-style: none; display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.85rem; color: var(--text-secondary); padding: 0.18rem 0; line-height: 1.5; }
+  .reassure li b { color: var(--verify-teal); flex-shrink: 0; }
+  .wait-card { background: var(--neutral-100); border-radius: var(--radius-lg); padding: 0.95rem 1.1rem; margin-top: 0.85rem; }
+  .wait-card .k { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--reserve-gold-deep); }
+  .wait-card .t { font-size: 0.94rem; font-weight: 700; margin-top: 0.3rem; }
+  .wait-card .b { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.15rem; line-height: 1.5; }
+  .what-toggle { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; width: 100%; margin-top: 0.85rem; background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.75rem 1rem; cursor: pointer; font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+  .what-body { display: none; margin-top: 0.5rem; padding: 0.9rem 1.1rem; background: var(--neutral-100); border-radius: var(--radius-lg); font-size: 0.86rem; color: var(--text-secondary); line-height: 1.6; }
+  .what-body.open { display: block; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-top: 0.6rem; }
+  .facts .f { background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.7rem 0.85rem; }
+  .facts .f b { display: block; font-size: 0.83rem; }
+  .facts .f span { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45; }
+  .demo-row { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-subtle); }
+  .demo-row .k { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); }
+  .demo-row button { background: #fff; border: 1px solid var(--border-subtle); border-radius: 980px; padding: 0.25rem 0.7rem; font-family: var(--font-body); font-size: 0.76rem; font-weight: 700; cursor: pointer; color: var(--text-primary); }
+  .soon-chip { display: inline-flex; align-items: center; gap: 0.3rem; border: 1px dashed var(--neutral-300); border-radius: var(--radius-md); padding: 0.45rem 0.7rem; font-size: 0.84rem; font-weight: 600; color: var(--text-secondary); }
+  .wallet-opt { display: flex; align-items: center; gap: 0.7rem; width: 100%; text-align: left; background: #fff; border: 1.5px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.7rem 0.9rem; cursor: pointer; font-family: var(--font-body); margin-bottom: 0.5rem; }
+  .wallet-opt.sel { border-color: var(--brand-deep-blue); background: color-mix(in srgb, var(--brand-cloud-blue) 40%, #fff); }
+  .wallet-opt .r { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--neutral-400); flex-shrink: 0; }
+  .wallet-opt.sel .r { border-color: var(--brand-deep-blue); box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 9px var(--brand-deep-blue); }
+  .rules { margin-top: 1rem; background: var(--surface-verify); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.95rem 1.1rem; }
+  .rules .k { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--verify-teal); margin-bottom: 0.5rem; }
+  .rules li { list-style: none; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; padding: 0.2rem 0; }
+  .rules li b { color: var(--text-primary); }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+  @media (max-width: 920px) {
+    .kpi, .actions, .por-grid, .por-hero, .two-col, .yield-split { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .nav-toggle { display: inline-flex; }
+    .nav-left { gap: 0.75rem; }
+  }
+  /* F-02: sub-760 handling for phones (320–520) */
+  @media (max-width: 700px) {
+    .bal-head .val { font-size: 1.9rem; }
+    .bal-head .acts { width: 100%; }
+    .bal-head .acts .btn { flex: 1; }
+    .facts { grid-template-columns: 1fr; }
+    .pending-pill .txt { display: none; }
+  }
+  @media (max-width: 520px) {
+    .wrap { padding: 1.5rem 1.1rem 3rem; }
+    .flow { max-width: 100%; }
+    .page-head h1 { font-size: 1.5rem; }
+    .page-head p { font-size: 0.9rem; }
+    .nav-inner { padding: 0 14px; }
+    .connect-pill { padding: 0.4rem 0.7rem; font-size: 0.78rem; }
+    .nav-wallet-info, .nav-network-badge { display: none; }
+    .notification-panel { width: calc(100vw - 24px) !important; right: -8px; }
+  }
+  @media (max-width: 380px) {
+    .app-pill { display: none; }
+  }
+</style>
+</head>
+<body data-screen="dashboard" data-level="L1">
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="#" class="nav-brand" onclick="go('dashboard');return false;">
+          <img src="../../assets/logos/unera-white-text-nav.svg" alt="UNERA">
+          <span class="app-pill">Stablecoin</span>
+        </a>
+        <ul class="nav-links">
+          <li><button class="nav-link" data-nav="dashboard" onclick="go('dashboard')">Dashboard</button></li>
+          <li><button class="nav-link" data-nav="issue" onclick="go('issue')">Issue</button></li>
+          <li><button class="nav-link" data-nav="redeem" onclick="go('redeem')">Redeem</button></li>
+          <li><button class="nav-link" data-nav="por" onclick="go('por')">PoR</button></li>
+          <li><button class="nav-link" data-nav="history" onclick="go('history')">History</button></li>
+        </ul>
+      </div>
+      <div class="nav-right">
+        <button class="connect-pill" onclick="openConnect()">
+          <svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-160q-66 0-113-47T80-320v-320q0-66 47-113t113-47h480q66 0 113 47t47 113v320q0 66-47 113t-113 47H240Zm0-480h480q22 0 42 5t38 15v-40q0-33-23.5-56.5T720-740H240q-33 0-56.5 23.5T160-660v40q18-10 38-15t42-5Z"/></svg>
+          Connect wallet
+        </button>
+
+        <!-- FE-207 (Waiting UX): persistent pending pill — visible on every screen while a purchase is in flight -->
+        <button class="pending-pill" id="pendingPill" onclick="openTracker()" title="Purchase in progress — open the tracker">
+          <span class="dot"></span><span class="txt">hUSD pending ·</span> <span id="pendingPillTime">0:00</span>
+        </button>
+
+        <div class="notification-bell-wrapper">
+          <button id="notificationBell" class="notification-bell-btn" aria-label="Notifications, 3 unread" aria-haspopup="true" onclick="toggleNotificationPanel(event)">
+            <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.85 23.85 0 0 0 5.454-1.31A8.97 8.97 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.97 8.97 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.25 24.25 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>
+            <span class="notif-badge" id="notifBadge" data-count="3">3</span>
+          </button>
+          <div class="nav-dd notification-panel" id="notificationPanel" role="dialog" aria-label="Notifications" onclick="event.stopPropagation()">
+            <div class="notif-panel-header">
+              <div class="notif-panel-title-row"><span class="notif-panel-title">Notifications</span><span class="notif-unread-label" id="notifUnread">3 unread</span></div>
+              <div class="notif-panel-actions"><button class="notif-action-link" onclick="markAllNotificationsRead()">Mark all read</button><button class="notif-close-btn" onclick="closeNotificationPanel()" aria-label="Close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            </div>
+            <div class="notif-list-wrapper">
+              <div class="dropdown-section-title-nav">New</div>
+              <ul class="notif-list" id="notifList">
+                <li class="notif-item" id="notifPending" style="display:none" onclick="openTracker()"><span class="notif-item-icon ni-mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></span><div class="notif-item-body"><p class="notif-item-title" id="notifPendingTitle">Creating your hUSD</p><p class="notif-item-msg" id="notifPendingMsg">Nothing needed from you — we’ll tell you when it lands.</p><span class="notif-item-time">just now</span></div><span class="notif-unread-dot"></span></li>
+                <li class="notif-item"><span class="notif-item-icon ni-mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><div class="notif-item-body"><p class="notif-item-title">249.50 hUSD minted</p><p class="notif-item-msg">Your fiat issuance settled and minted on-chain.</p><span class="notif-item-time">2 min ago</span></div><span class="notif-unread-dot"></span></li>
+                <li class="notif-item"><span class="notif-item-icon ni-redeem"><svg viewBox="0 -960 960 960" fill="currentColor"><path d="M280-160 80-360l200-200 56 57-103 103h527v80H233l103 103-56 57Z"/></svg></span><div class="notif-item-body"><p class="notif-item-title">Redemption disbursed</p><p class="notif-item-msg">$99.50 is on its way to your bank account.</p><span class="notif-item-time">1 h ago</span></div><span class="notif-unread-dot"></span></li>
+                <li class="notif-item"><span class="notif-item-icon ni-verify"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><div class="notif-item-body"><p class="notif-item-title">Identity verified — Level 2</p><p class="notif-item-msg">You can now issue and redeem hUSD.</p><span class="notif-item-time">Yesterday</span></div><span class="notif-unread-dot"></span></li>
+                <li class="notif-item read"><span class="notif-item-icon ni-reserve"><svg viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg></span><div class="notif-item-body"><p class="notif-item-title">Q4 reserve attestation published</p><p class="notif-item-msg">Independent auditor confirmed 105.2% backing.</p><span class="notif-item-time">2 days ago</span></div><span class="notif-unread-dot"></span></li>
+              </ul>
+            </div>
+            <div class="notif-panel-footer"><button class="btn btn-secondary" onclick="clearAllNotifications()">Clear all notifications</button></div>
+          </div>
+        </div>
+
+        <div class="nav-wallet-display">
+          <span class="user-avatar-nav" onclick="toggleUserDropdown(event)" role="button" tabindex="0" aria-label="Account menu">JS</span>
+          <div class="nav-wallet-info" onclick="toggleUserDropdown(event)" role="button" tabindex="0" aria-haspopup="true" aria-label="Account menu">
+            <span class="nav-wallet-address-row"><span class="nav-wallet-address">0x742d…3a8f</span><svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+            <span class="nav-wallet-balance">1,250.00 hUSD</span>
+          </div>
+          <div class="nav-network-badge" onclick="toggleNetworkDropdown(event)" role="button" tabindex="0" aria-haspopup="listbox" aria-label="Switch network, currently Ethereum">
+            <span class="net-dot" style="background:#627EEA"></span><span id="navNetworkLabel">Ethereum</span><svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="nav-dd network-dropdown-nav" id="networkDropdown" role="listbox" onclick="event.stopPropagation()">
+            <div class="network-dropdown-header-nav">Network · crypto onramp</div>
+            <div class="network-option-nav active" role="option" onclick="switchNetwork('Ethereum','#627EEA',this)"><span class="net-dot" style="background:#627EEA"></span>Ethereum<svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="network-option-nav" role="option" onclick="switchNetwork('Arbitrum','#28a0f0',this)"><span class="net-dot" style="background:#28a0f0"></span>Arbitrum<svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="network-option-nav" role="option" onclick="switchNetwork('Base','#0052FF',this)"><span class="net-dot" style="background:#0052FF"></span>Base<svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+          <div class="nav-dd user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+            <div class="dropdown-header-nav">
+              <div class="dropdown-user-info-nav"><div class="dropdown-avatar-nav">JS</div><div><div class="dropdown-user-name-nav">Jane Smith</div><div class="dropdown-user-email-nav">jane@example.com</div></div></div>
+              <div class="dropdown-chips-nav">
+                <span class="dropdown-chip dropdown-chip--level" id="ddLevel">Level 2</span>
+                <span class="dropdown-chip dropdown-chip--verified" id="ddVerified"><svg viewBox="0 -960 960 960"><path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm94-278 226-226-56-58-170 170-86-84-56 56 142 142Z"/></svg>Verified</span>
+              </div>
+              <button class="dropdown-wallet-addr-nav" onclick="copyAddr(this)"><span aria-hidden="true">🦊</span><span class="dropdown-wallet-addr-text">0x742d35Cc6634C0532925a3b844Bc3a8f</span><svg class="dropdown-wallet-copy" viewBox="0 -960 960 960"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-520h80v520h440v80H200Z"/></svg></button>
+            </div>
+            <div class="dropdown-menu-nav">
+              <div class="dropdown-section-title-nav">Account</div>
+              <button class="dropdown-item-nav" onclick="closeAllNav();go('kyc')"><svg viewBox="0 -960 960 960"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg>Identity &amp; verification</button>
+              <a class="dropdown-item-nav" href="#" onclick="closeAllNav()"><svg viewBox="0 -960 960 960"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm110-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T440-480q0 58 40.5 99t99.5 41Z"/></svg>Security settings</a>
+              <button class="dropdown-item-nav" onclick="closeAllNav();go('history')"><svg viewBox="0 -960 960 960"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q150 0 255 105t105 255q0 150-105 255T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg>Transaction history</button>
+              <div class="dropdown-divider-nav"></div>
+              <button class="dropdown-item-nav" onclick="disconnectWallet()"><svg viewBox="0 -960 960 960"><path d="M240-160q-66 0-113-47T80-320v-320q0-66 47-113t113-47h480q66 0 113 47t47 113v40h-80v-40q0-33-23.5-56.5T720-680H240q-33 0-56.5 23.5T160-600v320q0 33 23.5 56.5T240-240h480q33 0 56.5-23.5T800-320v-40h80v40q0 66-47 113t-113 47H240Zm280-160-56-56 64-64H360v-80h168l-64-64 56-56 160 160-160 160Z"/></svg>Disconnect wallet</button>
+              <a class="dropdown-item-nav" href="../auth/index.html"><svg viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>Log out</a>
+            </div>
+          </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" onclick="toggleNavDrawer(event)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="nav-drawer" id="navDrawer">
+      <button data-nav="dashboard" onclick="go('dashboard')">Dashboard</button>
+      <button data-nav="issue" onclick="go('issue')">Issue</button>
+      <button data-nav="redeem" onclick="go('redeem')">Redeem</button>
+      <button data-nav="por" onclick="go('por')">PoR</button>
+      <button data-nav="history" onclick="go('history')">History</button>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <section class="screen active" data-screen-label="Dashboard" id="s-dashboard">
+    <div class="wrap">
+      <!-- FE-207 (Hierarchy): compact balance header first — label + balance + chip left, one primary action right -->
+      <div class="bal-head">
+        <div class="who">
+          <span class="medal" aria-hidden="true">h</span>
+          <div style="min-width:0">
+            <div class="lbl">My hUSD balance</div>
+            <div class="val tnum">1,250.00 <span class="cur">hUSD</span></div>
+            <div class="meta"><span class="net-dot" style="background:#627EEA;width:7px;height:7px;border-radius:50%;display:inline-block"></span>Ethereum<span aria-hidden="true">·</span><span class="mono">0x742d…3a8f</span><span aria-hidden="true">·</span><button class="view-all" style="font-size:0.8rem" onclick="go('por')">Proof of reserve</button></div>
+          </div>
+        </div>
+        <div class="acts">
+          <button class="btn btn-primary" onclick="gate('issue')">Issue hUSD</button>
+          <button class="btn btn-secondary" onclick="gate('redeem')">Redeem</button>
+        </div>
+      </div>
+
+      <!-- FE-207 (Hierarchy): what needs attention comes next — pending transaction, then verification -->
+      <div class="attn-card" role="status">
+        <span aria-hidden="true" style="width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;color:var(--verify-teal)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></span>
+        <div class="t"><b id="attnTitle">Creating your hUSD</b><span id="attnSub">249.50 hUSD · 0:00 elapsed · nothing needed from you</span></div>
+        <button class="btn btn-secondary" onclick="openTracker()">Track it</button>
+      </div>
+      <div class="lvl-banner">
+        <svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor"><path d="m40-120 440-760 440 760H40Zm440-120q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg>
+        <span class="t">You're at <strong>Level 1</strong> — you can hold and view hUSD. Verify your identity (Level 2) to issue and redeem.</span>
+        <button class="cta" onclick="go('kyc')">Verify Identity</button>
+      </div>
+
+      <!-- quiet secondary meta — no longer three competing hero cards -->
+      <div class="quiet-stats">
+        <div class="qs"><span class="k">Circulating supply</span><span class="v tnum">18,420,500 hUSD</span></div>
+        <div class="qs link" onclick="go('por')"><span class="k">Reserve ratio</span><span class="v">105.2% backed</span></div>
+        <div class="qs"><span class="k">Last attestation</span><span class="v">Q4 · independent</span></div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="sec-head"><h2>Quick actions</h2></div>
+          <div class="actions">
+            <button class="action primary" onclick="gate('issue')">
+              <div class="ic"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></div>
+              <div><h3>Issue hUSD</h3><p>Mint with fiat or USDC/USDT</p></div>
+              <span class="lock"><svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm120-480h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg></span>
+            </button>
+            <button class="action" onclick="gate('redeem')">
+              <div class="ic"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M280-160 80-360l200-200 56 57-103 103h527v80H233l103 103-56 57Zm400-240-56-57 103-103H200v-80h527L624-743l56-57 200 200-200 200Z"/></svg></div>
+              <div><h3>Redeem hUSD</h3><p>Burn back to fiat, 1:1</p></div>
+              <span class="lock"><svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm120-480h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg></span>
+            </button>
+            <button class="action" onclick="go('por')">
+              <div class="ic"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm-29-153 226-226-57-56-169 169-84-84-57 57 141 141Z"/></svg></div>
+              <div><h3>Proof of Reserve</h3><p>Real-time backing</p></div>
+            </button>
+            <button class="action" onclick="go('history')">
+              <div class="ic"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q150 0 255 105t105 255q0 150-105 255T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg></div>
+              <div><h3>Transaction history</h3><p>Mint &amp; burn records</p></div>
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="sec-head"><h2>Verification</h2></div>
+          <div class="card pad">
+            <div class="tier-head">
+              <div><div class="tier-name" id="tierName">Level 1</div><div style="font-size:.8rem;color:var(--text-secondary)" id="tierSub">Email verified · KYC required</div></div>
+              <span class="op-badge" id="tierBadge" style="background:var(--warning-bg);color:var(--warning)"><span class="d"></span>Action needed</span>
+            </div>
+            <div class="limit-row"><span class="k">Issue / 24h</span><span class="v tnum" id="lim24">$0 of $0</span></div>
+            <div class="meter"><span id="meter24" style="width:0%"></span></div>
+            <div class="limit-row" style="margin-top:.6rem"><span class="k">Issue / 30d</span><span class="v tnum" id="lim30">$0 of $0</span></div>
+            <div class="meter"><span id="meter30" style="width:0%"></span></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:1.1rem" id="tierCta" onclick="go('kyc')">Verify identity (Level 2)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad">
+        <div class="sec-head"><h2>Recent transactions</h2><button class="view-all" onclick="go('history')">View all →</button></div>
+        <table class="tx">
+          <thead><tr><th>Date</th><th>Type</th><th>In</th><th>Out</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><time>Feb 11, 2026</time></td><td>Issuance · Fiat</td><td class="tnum">$250.00</td><td class="tnum" style="color:var(--fin-up);font-weight:600">+249.50 hUSD</td><td><span class="status-pill sp-completed">Completed</span></td></tr>
+            <tr><td><time>Feb 10, 2026</time></td><td>Issuance · Crypto</td><td class="tnum">180.00 USDC</td><td class="tnum" style="color:var(--fin-up);font-weight:600">+179.50 hUSD</td><td><span class="status-pill sp-processing">Processing</span></td></tr>
+            <tr><td><time>Feb 9, 2026</time></td><td>Redemption · Fiat</td><td class="tnum">100.00 hUSD</td><td class="tnum" style="color:var(--fin-down);font-weight:600">−$99.50</td><td><span class="status-pill sp-completed">Completed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ISSUE FLOW -->
+  <section class="screen" data-screen-label="Issue" id="s-issue">
+    <div class="wrap"><div class="flow">
+      <div class="page-head" style="text-align:center"><h1>Issue hUSD</h1><p>Mint fiat-backed hUSD to your wallet — pay with fiat or whitelisted stablecoins.</p></div>
+      <div class="stepper" id="issueStepper"></div>
+
+      <!-- step 0: prerequisites (matched to Unera Stablecoin "Before you start") -->
+      <div class="card pad flow-step" data-step="0">
+        <h2 class="section-title">Before you start</h2>
+        <p class="section-desc">To issue hUSD we need to verify your identity and connect a wallet. It only takes a minute.</p>
+        <div class="prereq-grid">
+          <div class="prereq-card" id="kycPrereq">
+            <div class="prereq-icon"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="m438-338 226-226-57-56-169 170-85-85-57 57 142 140Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg></div>
+            <div class="prereq-content">
+              <div class="prereq-title">Identity verification (KYC &amp; AML)</div>
+              <div class="prereq-desc">Issuance and redemption are regulated and require Level 2 verification, handled securely by our regulated verification partner.</div>
+              <button class="prereq-action" id="kycAction" onclick="prereqKyc()">Verify now</button>
+            </div>
+          </div>
+          <div class="prereq-card" id="walletPrereq">
+            <div class="prereq-icon"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-160q-66 0-113-47T80-320v-320q0-66 47-113t113-47h480q66 0 113 47t47 113v320q0 66-47 113t-113 47H240Zm0-480h480q22 0 42 5t38 15v-40q0-33-23.5-56.5T720-740H240q-33 0-56.5 23.5T160-660v40q18-10 38-15t42-5Z"/></svg></div>
+            <div class="prereq-content">
+              <div class="prereq-title">Connect wallet</div>
+              <div class="prereq-desc">A wallet is needed to receive your hUSD.</div>
+              <button class="prereq-action" id="walletAction" onclick="prereqWallet()">Connect wallet</button>
+            </div>
+          </div>
+        </div>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="go('dashboard')">Back</button><button class="btn btn-primary" id="prereqContinue" style="flex:1" onclick="nextStep()" disabled>Continue</button></div>
+      </div>
+
+      <!-- step 1: amount + method -->
+      <div class="card pad flow-step" data-step="1" style="display:none">
+        <div class="seg-tabs">
+          <button id="tabFiat" class="active" onclick="setFund('fiat')">
+            <svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-160q-66 0-113-47T80-320v-320q0-66 47-113t113-47h480q66 0 113 47t47 113v320q0 66-47 113t-113 47H240Z"/></svg> Fiat</button>
+          <button id="tabCrypto" onclick="setFund('crypto')">
+            <svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-80v-86q-54-12-91.5-46T296-298l74-30q12 40 42.5 65t77.5 25q41 0 69.5-18.5T588-312q0-32-24-51.5T462-410q-70-23-104-57.5T324-554q0-50 32-86.5t84-47.5v-86h80v86q44 9 75.5 35.5T726-582l-74 30q-9-26-30-41t-52-15q-37 0-58 17t-21 43q0 26 23.5 42t91.5 38q72 24 105 60t33 92q0 56-35 93t-95 47v84h-80Z"/></svg> Crypto</button>
+        </div>
+
+        <div id="fundFiat">
+          <label class="field-label">You pay</label>
+          <div class="amount-box"><span class="pfx">$</span><input id="payAmt" type="text" inputmode="decimal" value="250.00" oninput="recalc()"><span class="suf">USD</span></div>
+          <div class="quick-amts">
+            <button class="chip" onclick="setAmt(100,this)">$100</button>
+            <button class="chip active" onclick="setAmt(250,this)">$250</button>
+            <button class="chip" onclick="setAmt(500,this)">$500</button>
+            <button class="chip" onclick="setAmt(1000,this)">$1,000</button>
+          </div>
+          <label class="field-label" style="margin-top:1.1rem">Payment method</label>
+          <div id="payMethods" style="display:flex;flex-direction:column;gap:.55rem"></div>
+        </div>
+
+        <div id="fundCrypto" style="display:none">
+          <!-- FE-207 (Eric 08-19): confirm the receiving wallet before anything else on the crypto path -->
+          <label class="field-label">Receiving wallet</label>
+          <button class="wallet-opt sel" id="wOpt1" onclick="pickWallet('w1',this)"><span class="r"></span><span style="flex:1"><span style="display:block;font-weight:700;font-size:.9rem">Trading Wallet <span class="badge badge--up" style="margin-left:.3rem">Connected</span></span><span class="mono" style="display:block;font-size:.8rem;color:var(--text-secondary)">0x742d…3a8f · Ethereum</span></span></button>
+          <button class="wallet-opt" id="wOpt2" onclick="pickWallet('w2',this)"><span class="r"></span><span style="flex:1"><span style="display:block;font-weight:700;font-size:.9rem">Account 2</span><span class="mono" style="display:block;font-size:.8rem;color:var(--text-secondary)">0x8765…4321 · Base</span></span></button>
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-bottom:1rem">hUSD is minted straight to the wallet you confirm here — on-chain transfers can't be undone.</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+            <div><label class="field-label">Source asset</label><div class="amount-box" style="padding:.7rem 1rem"><select id="srcAsset" style="border:none;outline:none;background:none;font-family:var(--font-body);font-size:1rem;font-weight:600;width:100%" onchange="recalc()"><option>USDC</option><option>USDT</option></select></div></div>
+            <div><label class="field-label">Network</label><div class="amount-box" style="padding:.7rem 1rem"><select id="srcNet" style="border:none;outline:none;background:none;font-family:var(--font-body);font-size:1rem;font-weight:600;width:100%"><option>Ethereum</option><option>Arbitrum</option><option>Base</option></select></div></div>
+          </div>
+          <!-- FE-207: USDC and USDT only for now — ETH and BTC come later -->
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem"><span class="soon-chip">ETH · Soon</span><span class="soon-chip">BTC · Soon</span></div>
+          <label class="field-label" style="margin-top:1rem">You send</label>
+          <div class="amount-box"><input id="cryptoAmt" type="text" inputmode="decimal" value="1000.00" oninput="recalc()" style="padding-left:.25rem"><span class="suf" id="cryptoSuf">USDC</span></div>
+          <div id="cryptoMinNote" style="font-size:.78rem;color:var(--text-secondary);margin-top:.4rem">Minimum 1,000 USDC/USDT per crypto purchase. Always exchanged 1:1 for hUSD.</div>
+          <div class="deposit">
+            <div style="font-size:.82rem;font-weight:600">Your personal deposit address — send USDC/USDT here any time</div>
+            <div class="addr"><code class="mono" id="depAddr">0x4F9a2C7e3B6d…D11baF09</code><button class="copy-btn" onclick="this.textContent='Copied'">Copy</button></div>
+            <div style="font-size:.76rem;color:var(--text-secondary);margin-top:.5rem">Same address every time · never expires · send only USDC or USDT on the selected network.</div>
+          </div>
+          <!-- FE-207 (Eric 08-19 / Kevin 08-20–22): estimate vs actual, auto-adjust, refund -->
+          <ul class="rules">
+            <li class="k" style="list-style:none">How this works</li>
+            <li><b>Always 1:1.</b> One USDC or USDT becomes one hUSD — no spread, no purchase fee.</li>
+            <li><b>This figure is an estimate.</b> The final amount is based on what we actually receive on-chain; exchanges often deduct their withdrawal fee first.</li>
+            <li><b>Small difference? We adjust it.</b> Within 5% of your order we update the order automatically — no new order needed.</li>
+            <li><b>Big difference? You choose.</b> We tell you, and you can trigger a refund to the sending address (you cover the network fee, authorised with a signed message).</li>
+          </ul>
+        </div>
+
+        <!-- conversion preview -->
+        <div class="preview">
+          <div class="rate-line">
+            <span class="rate-fresh"><span class="rate-dot"></span>Rate <strong id="rateVal" style="color:var(--text-primary)">1.0000</strong> <span id="ratePair">USD→hUSD</span> · forex</span>
+            <span id="rateAge">updated 0s ago · refreshes in <span id="rateCountdown">60</span>s</span>
+          </div>
+          <div class="recv-lbl">You receive</div>
+          <div class="recv tnum" id="getAmt">249.50 hUSD</div>
+          <div class="brk" id="getBrk">$250.00 · fee $0.50 · minted on-chain · backed 1:1</div>
+        </div>
+        <div class="flow-actions"><button class="btn btn-primary" style="flex:1" onclick="nextStep()">Continue</button></div>
+      </div>
+
+      <!-- step 2: review -->
+      <div class="card pad flow-step" data-step="2" style="display:none">
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:1.1rem">Review issuance</h2>
+        <div class="review-row"><span class="k">You pay</span><span class="v tnum" id="rPay">$250.00 USD</span></div>
+        <div class="review-row"><span class="k" id="rGetLbl">You receive</span><span class="v tnum" style="color:var(--fin-up)" id="rGet">249.50 hUSD</span></div>
+        <div class="review-row"><span class="k">Funding method</span><span class="v" id="rMethod">e-Transfer</span></div>
+        <div class="review-row"><span class="k">Confirmed wallet</span><span class="v mono">0x742d…3a8f</span></div>
+        <div class="review-row"><span class="k">Rate (locked at confirm)</span><span class="v tnum" id="rRate">1.0000 · fee $0.50</span></div>
+        <div style="background:var(--surface-verify);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:.8rem 1rem;margin-top:1.1rem;display:flex;gap:.6rem;align-items:flex-start">
+          <svg width="18" height="18" viewBox="0 -960 960 960" fill="var(--verify-teal)" style="flex-shrink:0"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg>
+          <span style="font-size:.82rem;color:var(--text-secondary)">Every hUSD is backed 1:1 by audited reserves. The rate and fee shown are stored with your receipt for audit.</span>
+        </div>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="prevStep()">Back</button><button class="btn btn-primary" style="flex:1" onclick="nextStep()">Confirm &amp; pay</button></div>
+      </div>
+
+      <!-- step 3: status — FE-207 Transaction Tracker (same pattern and copy as the main canvas) -->
+      <div class="card pad flow-step" data-step="3" style="display:none">
+        <div class="track-head" role="status" aria-live="polite" aria-atomic="true">
+          <div class="track-spin" id="trackSpin"></div>
+          <div class="track-badge ok" id="trackOk" style="display:none"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="track-badge bad" id="trackBad" style="display:none"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/></svg></div>
+          <h2 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700" id="trackHeadline">Creating your hUSD</h2>
+          <p style="font-size:.92rem;color:var(--text-secondary);margin-top:.3rem" id="trackSub">Nothing is needed from you. You can leave this page.</p>
+          <div class="track-chips">
+            <span class="track-chip" id="trackEta">Usually takes 1–2 minutes</span>
+            <span class="track-chip" id="trackElapsed">0:00 elapsed</span>
+          </div>
+        </div>
+
+        <!-- calm CSS-only illustration: value travelling you → network → hUSD -->
+        <div class="track-travel" id="trackTravel" aria-hidden="true">
+          <span class="rail"></span><span class="bead"></span>
+          <span class="node" style="left:16%"><i></i><span>You send</span></span>
+          <span class="node" style="left:50%"><i></i><span>Network</span></span>
+          <span class="node" style="left:84%"><i></i><span>Your hUSD</span></span>
+        </div>
+
+        <!-- amount-adjusted state (crypto on-ramp, within 5%) -->
+        <div id="trackAdjusted" role="alert" style="display:none;margin-top:1.1rem;background:var(--reserve-gold-bg);border:1px solid color-mix(in srgb,var(--reserve-gold-deep) 35%,transparent);border-radius:var(--radius-lg);padding:.85rem 1rem;font-size:.86rem;line-height:1.5">
+          <b>Amount adjusted.</b> We received 982.00 USDC instead of 1,000.00 — within 5%, so we adjusted the order and minted 982.00 hUSD. No new order needed.
+        </div>
+
+        <!-- confirmation depth as a friendly secondary bar -->
+        <div class="conf-row" id="trackConf" style="margin-top:1.1rem"><span>Network is double-checking</span><span class="conf-track"><span class="conf-fill" id="trackConfFill"></span></span><span class="tnum" id="trackConfLabel">4 of 12</span></div>
+
+        <ol class="timeline" id="trackTimeline" style="margin-top:1.3rem"></ol>
+
+        <ul class="reassure" id="trackReassure">
+          <li><b>✓</b><span>Your money is safe — the network is just slow, not your funds.</span></li>
+          <li><b>✓</b><span>You can leave this page. We'll email you and ring the bell when it's done.</span></li>
+          <li><b>✓</b><span>Nothing to do right now.</span></li>
+        </ul>
+
+        <div class="wait-card" id="trackWaitCard">
+          <div class="k">While you wait</div>
+          <div class="t" id="waitTitle">Send it anywhere, in seconds</div>
+          <div class="b" id="waitBody">hUSD moves on-chain like any token — to a friend, an exchange, or another wallet of yours.</div>
+        </div>
+
+        <button class="what-toggle" id="whatToggle" aria-expanded="false" onclick="toggleWhat()"><span>What is happening?</span><span style="color:var(--brand-deep-blue);font-size:.85rem" id="whatToggleLabel">Explain</span></button>
+        <div class="what-body" id="whatBody">Your payment is settling. When the money is definitely ours we run a quick compliance check, then create the matching hUSD and send it to the wallet you confirmed. Every hUSD we create is matched by a dollar held in reserve — that is why the swap is one for one.</div>
+
+        <div id="trackFacts">
+          <div class="k" style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary);margin-top:1rem">Learn while you wait</div>
+          <div class="facts">
+            <div class="f"><b>1 hUSD = 1 dollar</b><span>Every coin is matched by cash or short-dated Treasuries at a regulated custodian.</span></div>
+            <div class="f"><b>Confirmations, in plain English</b><span>Each one is another block stacked on top of yours, making it harder to undo.</span></div>
+            <div class="f"><b>Redeem any time</b><span>Send hUSD back and we pay out to your bank, 1:1, minus the network fee.</span></div>
+            <div class="f"><b>Proof, not promises</b><span>The reserve is published and attested quarterly on the Proof of Reserve page.</span></div>
+          </div>
+        </div>
+
+        <div id="trackFailBox" style="display:none;margin-top:1.1rem;background:var(--error-bg);border:1px solid color-mix(in srgb,var(--error) 30%,transparent);border-radius:var(--radius-lg);padding:.9rem 1.1rem;font-size:.86rem;line-height:1.55">
+          <b>What to do next</b><br>Nothing was minted and nothing was kept. Try again, or talk to us and we'll trace the payment with you.
+        </div>
+        <div id="trackDelayBox" style="display:none;margin-top:1.1rem;background:var(--neutral-100);border-radius:var(--radius-lg);padding:.85rem 1.1rem;font-size:.85rem;color:var(--text-secondary);line-height:1.55">
+          Still nothing after 30 minutes? Contact support with reference <b>HUSD-8F3K2A</b> and we'll trace it.
+        </div>
+
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="resetIssue();go('dashboard')">Back to dashboard</button><button class="btn btn-primary" style="flex:1" onclick="nextStep()">View receipt</button></div>
+
+        <div class="demo-row">
+          <span class="k">Demo</span>
+          <button onclick="setTrack('delayed')">Delayed</button>
+          <button onclick="setTrack('failed')">Failed</button>
+          <button onclick="setTrack('adjusted')">Amount adjusted</button>
+          <button onclick="setTrack('done')">Done</button>
+        </div>
+      </div>
+
+      <!-- step 4: done / receipt -->
+      <div class="card pad flow-step" data-step="4" style="display:none">
+        <div style="text-align:center">
+          <div style="width:68px;height:68px;border-radius:50%;background:var(--fin-up-bg);color:var(--fin-up);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <h2 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700">hUSD minted</h2>
+          <p style="color:var(--text-secondary);margin-top:.3rem">249.50 hUSD is in your wallet.</p>
+        </div>
+        <div style="background:var(--surface-deep);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:1.1rem;margin-top:1.3rem">
+          <div class="review-row"><span class="k">Amount</span><span class="v tnum" style="color:var(--fin-up)">+249.50 hUSD</span></div>
+          <div class="review-row"><span class="k">Tx hash</span><span class="v"><a class="ex-link mono" href="#">0x9f3a…b21c ↗</a></span></div>
+          <div class="review-row"><span class="k">Block</span><span class="v mono">#21,456,902</span></div>
+          <div class="review-row"><span class="k">Rate locked</span><span class="v tnum">1.0000 · fee $0.50</span></div>
+          <div class="review-row"><span class="k">Status</span><span class="v"><span class="status-pill sp-completed">Completed</span></span></div>
+        </div>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="resetIssue();go('history')">View history</button><button class="btn btn-primary" style="flex:1" onclick="resetIssue()">Issue more</button></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- REDEEM FLOW -->
+  <section class="screen" data-screen-label="Redeem" id="s-redeem">
+    <div class="wrap"><div class="flow">
+      <div class="page-head" style="text-align:center"><h1>Redeem hUSD</h1><p>Burn hUSD and receive USD fiat to your bank account, 1:1.</p></div>
+      <div class="stepper" id="redeemStepper"></div>
+
+      <div class="card pad flow-step-r" data-rstep="0">
+        <h2 class="section-title">Before you start</h2>
+        <p class="section-desc">To redeem hUSD we need to verify your identity and connect a wallet. It only takes a minute.</p>
+        <div class="prereq-grid">
+          <div class="prereq-card" id="kycPrereqR">
+            <div class="prereq-icon"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="m438-338 226-226-57-56-169 170-85-85-57 57 142 140Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg></div>
+            <div class="prereq-content">
+              <div class="prereq-title">Identity verification (KYC &amp; AML)</div>
+              <div class="prereq-desc">Issuance and redemption are regulated and require Level 2 verification, handled securely by our regulated verification partner.</div>
+              <button class="prereq-action" id="kycActionR" onclick="prereqKyc()">Verify now</button>
+            </div>
+          </div>
+          <div class="prereq-card" id="walletPrereqR">
+            <div class="prereq-icon"><svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-160q-66 0-113-47T80-320v-320q0-66 47-113t113-47h480q66 0 113 47t47 113v320q0 66-47 113t-113 47H240Zm0-480h480q22 0 42 5t38 15v-40q0-33-23.5-56.5T720-740H240q-33 0-56.5 23.5T160-660v40q18-10 38-15t42-5Z"/></svg></div>
+            <div class="prereq-content">
+              <div class="prereq-title">Connect wallet</div>
+              <div class="prereq-desc">A wallet is needed to burn hUSD and receive your payout.</div>
+              <button class="prereq-action" id="walletActionR" onclick="prereqWallet()">Connect wallet</button>
+            </div>
+          </div>
+        </div>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="go('dashboard')">Back</button><button class="btn btn-primary" id="prereqContinueR" style="flex:1" onclick="nextRedeem()" disabled>Continue</button></div>
+      </div>
+
+      <div class="card pad flow-step-r" data-rstep="1" style="display:none">
+        <label class="field-label">You redeem</label>
+        <div class="amount-box"><input id="redAmt" type="text" inputmode="decimal" value="100.00" oninput="recalcRedeem()" style="padding-left:.25rem"><span class="suf">hUSD</span></div>
+        <div class="preview" style="background:var(--surface-action);border-color:var(--border-subtle)">
+          <div class="recv-lbl">You receive</div>
+          <div class="recv tnum" id="redGet" style="color:var(--text-primary)">$99.50</div>
+          <div class="brk">Rate 1.0000 · fee $0.50 · target 1 business day</div>
+        </div>
+        <label class="field-label" style="margin-top:1.1rem">Payout destination</label>
+        <div style="border:1.5px solid var(--brand-deep-blue);background:color-mix(in srgb,var(--brand-cloud-blue) 45%,#fff);border-radius:var(--radius-lg);padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem">
+          <svg width="22" height="22" viewBox="0 -960 960 960" fill="var(--brand-deep-blue)"><path d="M240-160q-66 0-113-47T80-320v-320q0-66 47-113t113-47h480q66 0 113 47t47 113v320q0 66-47 113t-113 47H240Z"/></svg>
+          <div style="flex:1"><div style="font-weight:600;font-size:.9rem">Chase ••••4821</div><div style="font-size:.78rem;color:var(--text-secondary)">Bank account (USD) · unverified (Phase 1)</div></div>
+        </div>
+        <div class="flow-actions"><button class="btn btn-primary" style="flex:1" onclick="nextRedeem()">Review redemption</button></div>
+      </div>
+
+      <div class="card pad flow-step-r" data-rstep="2" style="display:none">
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:1.1rem">Review redemption</h2>
+        <div class="review-row"><span class="k">You burn</span><span class="v tnum">100.00 hUSD</span></div>
+        <div class="review-row"><span class="k">You receive</span><span class="v tnum" style="color:var(--fin-up)">$99.50 USD</span></div>
+        <div class="review-row"><span class="k">Destination</span><span class="v">Chase ••••4821</span></div>
+        <div class="review-row"><span class="k">Rate (locked)</span><span class="v tnum">1.0000 · fee $0.50</span></div>
+        <div style="background:var(--surface-warning-soft);border:1px solid color-mix(in srgb,var(--warning) 30%,transparent);border-radius:var(--radius-lg);padding:.8rem 1rem;margin-top:1.1rem;font-size:.82rem;color:var(--text-primary)">On-chain burn is irreversible and happens before fiat is disbursed. Redemption is not instant — target one business day.</div>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="prevRedeem()">Back</button><button class="btn btn-primary" style="flex:1" onclick="nextRedeem()">Approve burn</button></div>
+      </div>
+
+      <div class="card pad flow-step-r" data-rstep="3" style="display:none">
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:.4rem">Redemption in progress</h2>
+        <p style="font-size:.88rem;color:var(--text-secondary);margin-bottom:1.4rem">Burn confirmed on-chain, then a liquidity check before fiat disbursement.</p>
+        <ol class="timeline">
+          <li class="tl-item"><div class="tl-rail"><span class="tl-dot done"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><span class="tl-line done"></span></div><div class="tl-body"><div class="tl-title">Tokens burned</div><div class="tl-meta">Block #21,456,940 · <a class="ex-link mono" href="#">0x77be…1f3d ↗</a></div></div></li>
+          <li class="tl-item"><div class="tl-rail"><span class="tl-dot queued"><svg viewBox="0 -960 960 960" width="14" height="14" fill="currentColor"><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Z"/></svg></span><span class="tl-line"></span></div><div class="tl-body"><div class="tl-title">Liquidity check · queued</div><div class="tl-meta">Reserve liquidity confirmed · disbursement approved</div></div></li>
+          <li class="tl-item"><div class="tl-rail"><span class="tl-dot current"><span style="width:8px;height:8px;border-radius:50%;background:#fff"></span></span><span class="tl-line"></span></div><div class="tl-body"><div class="tl-title">Disbursement pending</div><div class="tl-meta">Bank transfer initiated · ETA ~1 business day</div></div></li>
+          <li class="tl-item"><div class="tl-rail"><span class="tl-dot"></span></div><div class="tl-body"><div class="tl-title pending">USD received</div></div></li>
+        </ol>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="resetRedeem();go('dashboard')">Back to dashboard</button><button class="btn btn-primary" style="flex:1" onclick="resetRedeem();go('history')">View history</button></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- PROOF OF RESERVE -->
+  <section class="screen" data-screen-label="Proof of Reserve" id="s-por">
+    <div class="wrap">
+      <div class="por-hero">
+        <div>
+          <div class="eyebrow">Proof of Reserve · Public</div>
+          <h1>Every hUSD is backed 1:1.</h1>
+          <p>Reserves held in regulated institutions and verified stablecoins, independently audited, recorded on-chain — updated continuously.</p>
+          <div class="totals">
+            <div><div class="lbl">Total reserves</div><div class="v tnum">$19,378,400</div></div>
+            <div><div class="lbl">Outstanding hUSD</div><div class="v tnum">18,420,500</div></div>
+          </div>
+        </div>
+        <div id="gaugeMount" style="display:flex;justify-content:center"></div>
+      </div>
+
+      <div class="por-grid">
+        <div class="card pad">
+          <div class="sec-head"><h2 style="font-size:1.15rem">Reserve composition</h2></div>
+          <div class="donut-wrap">
+            <div id="donutMount"></div>
+            <div class="legend">
+              <div class="it"><span class="key" style="background:var(--por-bank)"></span>Bank deposits · 60% · $11.6M</div>
+              <div class="it"><span class="key" style="background:var(--por-stable)"></span>Stablecoins (USDC) · 30% · $5.8M</div>
+              <div class="it"><span class="key" style="background:var(--por-treasury)"></span>Treasury bonds · 8% · $1.55M</div>
+              <div class="it"><span class="key" style="background:var(--por-cash)"></span>Cash equivalent · 2% · $0.39M</div>
+            </div>
+          </div>
+          <div class="chart-cap"><span class="dot"></span>Updated 2 min ago · source: reserve attestation pipeline</div>
+        </div>
+
+        <div class="card pad">
+          <div class="sec-head"><h2 style="font-size:1.15rem">Reserve by custodian</h2></div>
+          <div class="bars">
+            <div class="bar-row"><span>JPMorgan (cash)</span><span class="bar-track"><span class="bar-fill" style="width:38%;background:var(--por-bank)"></span></span><span class="bar-val tnum">$7.4M</span></div>
+            <div class="bar-row"><span>Circle (USDC)</span><span class="bar-track"><span class="bar-fill" style="width:30%;background:var(--por-stable)"></span></span><span class="bar-val tnum">$5.8M</span></div>
+            <div class="bar-row"><span>BNY Mellon (cash)</span><span class="bar-track"><span class="bar-fill" style="width:22%;background:var(--por-bank)"></span></span><span class="bar-val tnum">$4.2M</span></div>
+            <div class="bar-row"><span>US Treasury</span><span class="bar-track"><span class="bar-fill" style="width:10%;background:var(--por-treasury)"></span></span><span class="bar-val tnum">$1.9M</span></div>
+          </div>
+          <div class="chart-cap"><span class="dot"></span>Concentration risk view · updated 2 min ago</div>
+        </div>
+
+        <div class="card pad">
+          <div class="sec-head"><h2 style="font-size:1.15rem">Maturity ladder</h2></div>
+          <div class="bars">
+            <div class="bar-row"><span>≤ 7 days</span><span class="bar-track"><span class="bar-fill" style="width:62%;background:var(--brand-deep-blue)"></span></span><span class="bar-val tnum">62%</span></div>
+            <div class="bar-row"><span>8–30 days</span><span class="bar-track"><span class="bar-fill" style="width:21%;background:var(--brand-deep-blue)"></span></span><span class="bar-val tnum">21%</span></div>
+            <div class="bar-row"><span>31–90 days</span><span class="bar-track"><span class="bar-fill" style="width:11%;background:var(--brand-teal)"></span></span><span class="bar-val tnum">11%</span></div>
+            <div class="bar-row"><span>91–365 days</span><span class="bar-track"><span class="bar-fill" style="width:6%;background:var(--brand-teal)"></span></span><span class="bar-val tnum">6%</span></div>
+          </div>
+          <div class="chart-cap"><span class="dot"></span>Liquidity profile · source: HQLA holdings</div>
+        </div>
+
+        <div class="card pad">
+          <div class="sec-head"><h2 style="font-size:1.15rem">90-day reserve ratio</h2></div>
+          <div id="trendMount"></div>
+          <div class="chart-cap"><span class="dot"></span>Daily ratio vs 100% floor · updated 2 min ago</div>
+        </div>
+      </div>
+
+      <div class="por-grid">
+        <div class="card pad">
+          <div class="sec-head"><h2 style="font-size:1.15rem">Reserve yield → mission</h2></div>
+          <p style="font-size:.86rem;color:var(--text-secondary)">HQLA yield funds portal operations and Humanity Centers — never the Huma Platform layer.</p>
+          <div class="yield-split">
+            <div class="yield-cell"><div class="v tnum">$58,200</div><div class="k">Portal operations · Feb</div></div>
+            <div class="yield-cell"><div class="v tnum" style="color:var(--fin-up)">$96,800</div><div class="k">Humanity Centers · Feb</div></div>
+          </div>
+          <div class="chart-cap"><span class="dot"></span>Monthly aggregate · gross yield $155,000</div>
+        </div>
+        <div class="card pad">
+          <div class="sec-head"><h2 style="font-size:1.15rem">Attestations &amp; contract</h2></div>
+          <div style="margin-bottom:1rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:.4rem">On-chain hUSD contract</div>
+            <div class="contract"><code class="mono">0xA0b8…C9d2</code><a class="ex-link" href="#">Etherscan ↗</a><button class="copy-btn" onclick="this.textContent='Copied'">Copy</button></div>
+          </div>
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:.2rem">Quarterly attestations</div>
+          <div class="attest-row"><span style="font-size:.86rem;font-weight:600">Q4 2025 · Independent auditor<br><span style="font-weight:400;color:var(--text-secondary);font-size:.78rem">Reserve adequacy attested</span></span><a class="dl" href="#"><svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>PDF</a></div>
+          <div class="attest-row"><span style="font-size:.86rem;font-weight:600">Q3 2025 · Independent auditor<br><span style="font-weight:400;color:var(--text-secondary);font-size:.78rem">Reserve adequacy attested</span></span><a class="dl" href="#"><svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>PDF</a></div>
+          <div style="display:flex;gap:1.25rem;margin-top:1rem;flex-wrap:wrap">
+            <div><div style="font-size:.72rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Cumulative issued</div><div class="tnum" style="font-family:var(--font-display);font-weight:700;font-size:1.2rem">$214.6M</div></div>
+            <div><div style="font-size:.72rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Cumulative redeemed</div><div class="tnum" style="font-family:var(--font-display);font-weight:700;font-size:1.2rem">$196.2M</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <div class="card pad" style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:1rem"><div><div style="font-weight:700">PoR Recording Service</div><div style="font-size:.8rem;color:var(--text-secondary)">Daily on-chain recording · last block #21,456,789</div></div><span class="op-badge"><span class="d"></span>Operational</span></div>
+        <div class="card pad" style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:1rem"><div><div style="font-weight:700">PoR Display Service</div><div style="font-size:.8rem;color:var(--text-secondary)">Public, no login required · refreshed 2 min ago</div></div><span class="op-badge"><span class="d"></span>Operational</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="screen" data-screen-label="History" id="s-history">
+    <div class="wrap">
+      <div class="hist-hero">
+        <div class="hist-hero-top">
+          <span class="hist-eyebrow">Net change · last 90 days</span>
+          <span class="verify-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Reconciled on-chain · 2 min ago</span>
+        </div>
+        <div class="hist-hero-grid">
+          <div class="hist-hero-main">
+            <div class="hist-hero-figure"><svg width="26" height="26" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"/></svg>+7,550 <span class="unit">hUSD</span></div>
+            <div class="hist-hero-sub">Net minted across 25 transactions · backed 1:1 by reserves</div>
+            <div class="hist-spark" id="histSpark"></div>
+          </div>
+          <div class="hist-hero-stats">
+            <div class="hhs"><span class="k">Issued<small>18 mints</small></span><span class="v up">+12,480</span></div>
+            <div class="hhs"><span class="k">Redeemed<small>7 burns</small></span><span class="v down">−4,930</span></div>
+            <div class="hhs"><span class="k">In progress<small>2 processing · 1 pending</small></span><span class="v">3</span></div>
+          </div>
+        </div>
+        <div class="hist-trust">
+          <svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg>
+          Every record is reconciled against the on-chain ledger.
+          <span class="dot-sep">·</span> Rates were locked at confirmation.
+          <span class="dot-sep">·</span> <a href="#">View hUSD contract ↗</a>
+        </div>
+      </div>
+
+      <div class="hist-toolbar">
+        <div class="hist-search"><svg width="16" height="16" viewBox="0 -960 960 960" fill="currentColor"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg><input placeholder="Search by Tx hash or type…" oninput="histSearch(this.value)"></div>
+        <div class="seg"><button class="active" onclick="histFilter(this,'all')">All</button><button onclick="histFilter(this,'issue')">Issuance</button><button onclick="histFilter(this,'redeem')">Redemption</button></div>
+        <span class="select-wrap">
+          <select class="date-sel" aria-label="Date range"><option>Last 90 days</option><option>Last 30 days</option><option>Year to date</option><option>All time</option></select>
+          <svg class="select-chev" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+        </span>
+        <button class="export-btn" style="margin-left:auto" onclick="this.innerHTML='Exported \u2713'"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>Export CSV</button>
+      </div>
+      <div class="hist-count" id="histCount"></div>
+      <div class="card pad" id="histTableWrap" style="display:none">
+        <table class="tx">
+          <thead><tr><th>Initiated</th><th>Type</th><th>In</th><th>Out</th><th>Fee</th><th>Rate</th><th>Tx</th><th>Status</th></tr></thead>
+          <tbody id="histBody">
+            <tr data-t="issue"><td><time>Feb 11, 2026</time></td><td>Issuance · Fiat</td><td class="tnum">$250.00</td><td class="tnum" style="color:var(--fin-up);font-weight:600">+249.50 hUSD</td><td class="tnum">$0.50</td><td class="tnum">1.0000</td><td><a class="ex-link mono" href="#">0x9f3a…b21c ↗</a></td><td><span class="status-pill sp-completed">Completed</span></td></tr>
+            <tr data-t="issue"><td><time>Feb 10, 2026</time></td><td>Issuance · Crypto</td><td class="tnum">180.00 USDC</td><td class="tnum" style="color:var(--fin-up);font-weight:600">+179.50 hUSD</td><td class="tnum">$0.50</td><td class="tnum">1.0000</td><td><a class="ex-link mono" href="#">0x4c1e…9a02 ↗</a></td><td><span class="status-pill sp-processing">Processing</span></td></tr>
+            <tr data-t="redeem"><td><time>Feb 9, 2026</time></td><td>Redemption · Fiat</td><td class="tnum">100.00 hUSD</td><td class="tnum" style="color:var(--fin-down);font-weight:600">−$99.50</td><td class="tnum">$0.50</td><td class="tnum">1.0000</td><td><a class="ex-link mono" href="#">0x77be…1f3d ↗</a></td><td><span class="status-pill sp-completed">Completed</span></td></tr>
+            <tr data-t="issue"><td><time>Feb 7, 2026</time></td><td>Issuance · Fiat</td><td class="tnum">$500.00</td><td class="tnum" style="color:var(--fin-up);font-weight:600">+499.50 hUSD</td><td class="tnum">$0.50</td><td class="tnum">1.0000</td><td><a class="ex-link mono" href="#">0x02af…cc81 ↗</a></td><td><span class="status-pill sp-pending">Pending</span></td></tr>
+            <tr data-t="redeem"><td><time>Feb 4, 2026</time></td><td>Redemption · Fiat</td><td class="tnum">75.00 hUSD</td><td class="tnum" style="color:var(--fin-down);font-weight:600">−$74.50</td><td class="tnum">$0.50</td><td class="tnum">1.0000</td><td><a class="ex-link mono" href="#">0xa9d2…44e7 ↗</a></td><td><span class="status-pill sp-completed">Completed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="histList"></div>
+    </div>
+  </section>
+
+  <!-- TX DETAIL DRAWER -->
+  <div class="drawer-overlay" id="txDrawerOverlay" onclick="closeTxDrawer()"></div>
+  <aside class="drawer" id="txDrawer" aria-label="Transaction detail">
+    <div class="drawer-h"><h2>Transaction detail</h2><button class="modal-x" onclick="closeTxDrawer()"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button></div>
+    <div class="drawer-b" id="txDrawerBody"></div>
+  </aside>
+  <section class="screen" data-screen-label="KYC" id="s-kyc">
+    <div class="wrap"><div class="flow">
+      <div class="page-head" style="text-align:center"><h1>Verify your identity</h1><p>Required to reach Level 2 — issuing and redeeming hUSD. Verification is handled securely by our regulated verification partner.</p></div>
+      <div class="stepper" id="kycStepper"></div>
+      <div class="card pad" id="kycStart">
+        <div style="display:flex;flex-direction:column;gap:.7rem">
+          <div style="display:flex;gap:.7rem;align-items:flex-start"><span class="op-badge" style="background:var(--surface-deep);color:var(--brand-deep-blue)">1</span><div><div style="font-weight:600;font-size:.92rem">Identity document</div><div style="font-size:.82rem;color:var(--text-secondary)">Passport, driver's licence, or national ID</div></div></div>
+          <div style="display:flex;gap:.7rem;align-items:flex-start"><span class="op-badge" style="background:var(--surface-deep);color:var(--brand-deep-blue)">2</span><div><div style="font-weight:600;font-size:.92rem">Liveness check</div><div style="font-size:.82rem;color:var(--text-secondary)">A quick selfie to match your document</div></div></div>
+          <div style="display:flex;gap:.7rem;align-items:flex-start"><span class="op-badge" style="background:var(--surface-deep);color:var(--brand-deep-blue)">3</span><div><div style="font-weight:600;font-size:.92rem">Address</div><div style="font-size:.82rem;color:var(--text-secondary)">Proof of residence for your jurisdiction</div></div></div>
+        </div>
+        <div style="background:var(--surface-verify);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:.8rem 1rem;margin-top:1.1rem;font-size:.82rem;color:var(--text-secondary)">Unera Stablecoin never stores your raw documents — only your verification status, timestamps, and jurisdiction.</div>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="go('dashboard')">Cancel</button><button class="btn btn-primary" style="flex:1" onclick="kycReview()">Start verification</button></div>
+      </div>
+      <div class="card pad" id="kycReviewState" style="display:none;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--warning-bg);color:var(--warning);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem"><svg width="30" height="30" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-200h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Z"/></svg></div>
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:700">Verification in review</h2>
+        <p style="color:var(--text-secondary);margin-top:.4rem;font-size:.9rem">Your documents are being reviewed. This usually takes a few minutes; we'll notify you when your Level 2 access is approved.</p>
+        <div class="flow-actions"><button class="btn btn-secondary" onclick="go('dashboard')">Back to dashboard</button><button class="btn btn-primary" style="flex:1" onclick="kycApprove()">Simulate approval</button></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- CONNECT MODAL -->
+  <div class="overlay" id="connectModal" onclick="if(event.target===this)closeConnect()">
+    <div class="modal">
+      <div class="modal-h"><h2>Connect. Contribute. Change lives.</h2><button class="modal-x" onclick="closeConnect()"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button></div>
+      <div class="modal-b">
+        <div class="connect-test-scenarios" role="group" aria-label="Test scenario selector">
+          <span class="test-scenarios-label">Dev · Simulate scenario</span>
+          <div class="scenario-pills">
+            <button type="button" class="scenario-pill active" onclick="setConnectScenario('happy',this)">✓ Happy path</button>
+            <button type="button" class="scenario-pill" onclick="setConnectScenario('wrong-network',this)">Wrong network</button>
+            <button type="button" class="scenario-pill" onclick="setConnectScenario('not-installed',this)">Not installed</button>
+            <button type="button" class="scenario-pill" onclick="setConnectScenario('user-rejected',this)">User rejected</button>
+          </div>
+        </div>
+        <div class="wc-outcome" id="wcOutcome" role="status"></div>
+        <p class="modal-desc">Select a supported wallet to authenticate and continue. On-chain transfers are irreversible — double-check addresses.</p>
+        <div class="wallet-grid">
+          <button type="button" class="wallet-option-card recommended" onclick="handleWalletConnect('metamask')"><span class="wallet-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M20.3 5.1 13.5 9.9l1.3-3L20.3 5.1Z" fill="#E17726"/><path d="M3.7 5.1 10.4 10 9.2 6.9 3.7 5.1Z" fill="#E27625"/><path d="m17.6 15.9-1.8 2.8 3.9 1.1 1.1-3.8-3.2-.1ZM3.3 16l1.1 3.8 3.9-1.1-1.8-2.8-3.2.1Z" fill="#E27625"/></svg></span><span class="wallet-name">MetaMask</span></button>
+          <button type="button" class="wallet-option-card" onclick="handleWalletConnect('walletconnect')"><span class="wallet-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M5.5 9.5c3.5-3.5 9.2-3.5 12.7 0l.4.4c.2.2.2.5 0 .7l-1.4 1.4c-.1.1-.3.1-.4 0l-.6-.6c-2.4-2.4-6.4-2.4-8.8 0l-.6.6c-.1.1-.3.1-.4 0L4.9 10.6c-.2-.2-.2-.5 0-.7l.6-.4Z" fill="#3B99FC"/></svg></span><span class="wallet-name">WalletConnect</span></button>
+          <button type="button" class="wallet-option-card" onclick="handleWalletConnect('coinbase')"><span class="wallet-icon"><svg width="30" height="30" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0052FF"/><path d="M8 12h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span><span class="wallet-name">Coinbase</span></button>
+          <button type="button" class="wallet-option-card" onclick="handleWalletConnect('brave')"><span class="wallet-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 2 2 7l2 9 8 6 8-6 2-9-10-5Z" fill="#FB542B"/><path d="M12 2v20M22 7H2M20 16H4" stroke="#fff" stroke-width="1.5"/></svg></span><span class="wallet-name">Brave</span></button>
+          <button type="button" class="wallet-option-card" onclick="handleWalletConnect('ledger')"><span class="wallet-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" fill="#333"/><path d="M7 7h3v3H7V7ZM14 7h3v3h-3V7ZM7 14h3v3H7v-3ZM14 14h3v3h-3v-3Z" fill="#fff"/></svg></span><span class="wallet-name">Ledger</span></button>
+        </div>
+        <div class="wallet-note">Powered by MetaMask and WalletConnect-compatible wallets</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dev">
+    <span>Dev · Level</span>
+    <button id="devL1" class="on" onclick="setLevel('L1')">L1</button>
+    <button id="devL2" onclick="setLevel('L2')">L2</button>
+  </div>
+
+<script>
+  const RATE = 1.0, FEE = 0.5;
+  let fund = 'fiat';
+
+  // V6 08-06 (Kevin): every screen names itself in the browser tab
+  var SCREEN_TITLES = { dashboard: 'Dashboard', issue: 'Issue hUSD', redeem: 'Redeem hUSD', por: 'Proof of reserve', history: 'History', kyc: 'Verify your identity' };
+  function go(s){
+    document.title = (SCREEN_TITLES[s] || 'Dashboard') + ' \u00b7 Unera Stablecoin';
+    if(window.closeAllNav) closeAllNav();
+    closeNavDrawer();
+    document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+    var el=document.getElementById('s-'+s); if(el)el.classList.add('active');
+    document.body.dataset.screen=s;
+    document.querySelectorAll('.nav-link, .nav-drawer button').forEach(b=>b.classList.toggle('active', b.dataset.nav===s));
+    window.scrollTo(0,0);
+    if(s==='issue') enterIssue();
+    if(s==='redeem') enterRedeem();
+    if(s==='kyc'){ renderStepper('kycStepper',['Start','Verify','Review'], kycStep); }
+    if(s==='por') drawPor();
+    if(s==='history'){ renderHistory(); drawHistSpark(); }
+  }
+  function gate(s){ if(document.body.dataset.level==='L2'){ go(s); } else { go('kyc'); } }
+  function setLevel(l){
+    document.body.dataset.level=l;
+    document.getElementById('devL1').classList.toggle('on', l==='L1');
+    document.getElementById('devL2').classList.toggle('on', l==='L2');
+    var nm=document.getElementById('tierName'), sub=document.getElementById('tierSub'), bdg=document.getElementById('tierBadge'),
+        cta=document.getElementById('tierCta');
+    if(l==='L2'){
+      nm.textContent='Level 2 · Verified'; sub.textContent='Standard tier · issue & redeem enabled';
+      bdg.style.background='var(--verify-teal-bg)'; bdg.style.color='var(--verify-teal)'; bdg.innerHTML='<span class="d"></span>Approved';
+      document.getElementById('lim24').textContent='$2,400 of $25,000'; document.getElementById('meter24').style.width='10%';
+      document.getElementById('lim30').textContent='$18,200 of $250,000'; document.getElementById('meter30').style.width='7%';
+      cta.style.display='none';
+    } else {
+      nm.textContent='Level 1'; sub.textContent='Email verified · KYC required';
+      bdg.style.background='var(--warning-bg)'; bdg.style.color='var(--warning)'; bdg.innerHTML='<span class="d"></span>Action needed';
+      document.getElementById('lim24').textContent='$0 of $0'; document.getElementById('meter24').style.width='0%';
+      document.getElementById('lim30').textContent='$0 of $0'; document.getElementById('meter30').style.width='0%';
+      cta.style.display='';
+    }
+    if(window.syncAccountChips) syncAccountChips();
+  }
+
+  function openConnect(){var o=document.getElementById('wcOutcome');if(o)o.className='wc-outcome';document.getElementById('connectModal').classList.add('active');}
+  function closeConnect(){document.getElementById('connectModal').classList.remove('active');}
+  function connectWallet(){closeConnect();document.body.classList.add('connected');}
+  function closeAllNav(){ ['notificationPanel','userDropdown','networkDropdown'].forEach(function(id){var e=document.getElementById(id); if(e) e.classList.remove('show');}); }
+  function toggleNavDrawer(e){ if(e)e.stopPropagation(); var d=document.getElementById('navDrawer'); var t=document.getElementById('navToggle'); var open=d.classList.toggle('open'); if(t)t.setAttribute('aria-expanded', open?'true':'false'); }
+  function closeNavDrawer(){ var d=document.getElementById('navDrawer'); if(d)d.classList.remove('open'); var t=document.getElementById('navToggle'); if(t)t.setAttribute('aria-expanded','false'); }
+  function toggleNotificationPanel(e){ if(e)e.stopPropagation(); var p=document.getElementById('notificationPanel'); var open=p.classList.contains('show'); closeAllNav(); if(!open)p.classList.add('show'); }
+  function closeNotificationPanel(){ document.getElementById('notificationPanel').classList.remove('show'); }
+  function markAllNotificationsRead(){ document.querySelectorAll('#notifList .notif-item').forEach(function(i){i.classList.add('read');}); var b=document.getElementById('notifBadge'); b.dataset.count='0'; b.textContent='0'; var u=document.getElementById('notifUnread'); if(u)u.textContent='All read'; }
+  function clearAllNotifications(){ document.getElementById('notifList').innerHTML='<li style="padding:1.5rem;text-align:center;color:var(--text-secondary);font-size:.82rem">You\u2019re all caught up.</li>'; markAllNotificationsRead(); }
+  function syncAccountChips(){ var l=document.body.dataset.level; var lv=document.getElementById('ddLevel'); if(lv) lv.textContent=(l==='L2'?'Level 2':'Level 1'); var vc=document.getElementById('ddVerified'); if(vc) vc.style.display=(l==='L2'?'':'none'); }
+  function toggleUserDropdown(e){ if(e)e.stopPropagation(); syncAccountChips(); var p=document.getElementById('userDropdown'); var open=p.classList.contains('show'); closeAllNav(); if(!open)p.classList.add('show'); }
+  function toggleNetworkDropdown(e){ if(e)e.stopPropagation(); var p=document.getElementById('networkDropdown'); var open=p.classList.contains('show'); closeAllNav(); if(!open)p.classList.add('show'); }
+  function switchNetwork(name,color,el){ document.querySelectorAll('#networkDropdown .network-option-nav').forEach(function(o){o.classList.remove('active');}); el.classList.add('active'); document.getElementById('navNetworkLabel').textContent=name; var d=document.querySelector('.nav-network-badge .net-dot'); if(d)d.style.background=color; document.getElementById('networkDropdown').classList.remove('show'); }
+  function copyAddr(btn){ var t=btn.querySelector('.dropdown-wallet-addr-text'); var old=t.textContent; t.textContent='Copied to clipboard'; setTimeout(function(){t.textContent=old;},1200); }
+  function disconnectWallet(){ document.body.classList.remove('connected'); closeAllNav(); }
+  document.addEventListener('click', function(){ closeAllNav(); });
+  var connectScenario='happy';
+  function setConnectScenario(s,btn){connectScenario=s;document.querySelectorAll('.scenario-pill').forEach(function(p){p.classList.remove('active');});btn.classList.add('active');var o=document.getElementById('wcOutcome');if(o)o.className='wc-outcome';}
+  function handleWalletConnect(provider){
+    if(connectScenario==='happy'){connectWallet();return;}
+    var msg={'wrong-network':'Wrong network detected. Switch to Ethereum mainnet and try again.','not-installed':provider.charAt(0).toUpperCase()+provider.slice(1)+' is not installed. Install the extension, then retry.','user-rejected':'Connection request was rejected in your wallet.'}[connectScenario]||'Could not connect. Please try again.';
+    var o=document.getElementById('wcOutcome');o.textContent=msg;o.className='wc-outcome err show';
+  }
+
+  function renderStepper(id,labels,cur){
+    var total=labels.length, pct=total>1?(cur/(total-1))*100:0, h='<div class="stepper-progress" style="width:'+pct+'%"></div>';
+    labels.forEach(function(l,i){
+      var cls=i<cur?'completed':i===cur?'active':'';
+      var inner=i<cur?'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>':(i+1);
+      h+='<div class="step '+cls+'"><div class="step-circle">'+inner+'</div><span class="step-label">'+l+'</span></div>';
+    });
+    document.getElementById(id).innerHTML=h;
+  }
+
+  /* issue flow — prerequisites step drops out once completed (Unera Stablecoin parity) */
+  var issueStep=0, kycDone=false, walletDone=false, prereqHidden=false;
+  function issueLabels(){ return prereqHidden ? ['Amount','Review','Status','Done'] : ['Prerequisites','Amount','Review','Status','Done']; }
+  function showIssue(){
+    document.querySelectorAll('#s-issue .flow-step').forEach(function(el){el.style.display=el.dataset.step==issueStep?'block':'none';});
+    renderStepper('issueStepper', issueLabels(), prereqHidden ? issueStep-1 : issueStep);
+  }
+  function enterIssue(){
+    kycDone = document.body.dataset.level==='L2';
+    walletDone = document.body.classList.contains('connected');
+    setPrereqUI();
+    prereqHidden = kycDone && walletDone;          /* hidden once both prerequisites are met */
+    issueStep = prereqHidden ? 1 : 0;
+    checkPrereq(); showIssue(); window.scrollTo(0,0);
+  }
+  function nextStep(){
+    if(issueStep===0) prereqHidden=true;
+    if(issueStep<4){issueStep++;showIssue();window.scrollTo(0,0);}
+    if(issueStep===3) startTracker();       /* FE-207: entering the status step starts the Transaction Tracker */
+    if(issueStep===4) stopTracker(true);    /* receipt reached — the purchase is no longer pending */
+  }
+  function prevStep(){ var min=prereqHidden?1:0; if(issueStep>min){issueStep--;showIssue();window.scrollTo(0,0);} }
+  function resetIssue(){ issueStep=prereqHidden?1:0; showIssue(); }
+  function togglePrereq(cardId,btnId,doneText,todoText,done){
+    var c=document.getElementById(cardId), b=document.getElementById(btnId);
+    if(!c||!b) return;
+    if(done){ c.classList.add('done'); b.classList.add('completed'); b.textContent=doneText; }
+    else { c.classList.remove('done'); b.classList.remove('completed'); b.textContent=todoText; }
+  }
+  function setPrereqUI(){ togglePrereq('kycPrereq','kycAction','Verified','Verify now',kycDone); togglePrereq('walletPrereq','walletAction','Connected','Connect wallet',walletDone); togglePrereq('kycPrereqR','kycActionR','Verified','Verify now',kycDone); togglePrereq('walletPrereqR','walletActionR','Connected','Connect wallet',walletDone); }
+  function prereqKyc(){ kycDone=true; setLevel('L2'); setPrereqUI(); checkPrereq(); }
+  function prereqWallet(){ walletDone=true; document.body.classList.add('connected'); setPrereqUI(); checkPrereq(); }
+  function checkPrereq(){ ['prereqContinue','prereqContinueR'].forEach(function(id){var b=document.getElementById(id); if(b) b.disabled=!(kycDone&&walletDone);}); }
+  function setFund(f){fund=f;
+    document.getElementById('tabFiat').classList.toggle('active',f==='fiat');
+    document.getElementById('tabCrypto').classList.toggle('active',f==='crypto');
+    document.getElementById('fundFiat').style.display=f==='fiat'?'block':'none';
+    document.getElementById('fundCrypto').style.display=f==='crypto'?'block':'none';
+    /* FE-207: the crypto path quotes an estimate, never a locked amount */
+    var rl=document.querySelector('#s-issue .recv-lbl'); if(rl) rl.textContent = (f==='crypto') ? 'You’ll receive (estimated)' : 'You receive';
+    var rg=document.getElementById('rGetLbl'); if(rg) rg.textContent = (f==='crypto') ? 'You’ll receive (estimated)' : 'You receive';
+    recalc();
+  }
+  /* FE-207: confirm which linked wallet receives the hUSD (crypto path, first thing on the step) */
+  var recvWallet='0x742d…3a8f';
+  function pickWallet(id,el){
+    document.querySelectorAll('#fundCrypto .wallet-opt').forEach(function(w){w.classList.remove('sel');});
+    el.classList.add('sel');
+    recvWallet = el.querySelector('.mono').textContent.split(' · ')[0];
+    var rw=document.querySelector('#s-issue .review-row .mono'); if(rw) rw.textContent=recvWallet;
+    renderTimeline();
+  }
+  function setAmt(v,btn){document.getElementById('payAmt').value=v.toFixed(2);document.querySelectorAll('#fundFiat .chip').forEach(function(c){c.classList.remove('active');});if(btn)btn.classList.add('active');recalc();}
+  function recalc(){
+    var inAmt, pair, brkIn, suf;
+    /* FE-207: the crypto on-ramp is 1:1 with no purchase fee; the fiat rail keeps its fee */
+    var crypto = fund === 'crypto', fee = crypto ? 0 : FEE;
+    if(!crypto){ inAmt=parseFloat(document.getElementById('payAmt').value)||0; pair='USD→hUSD'; brkIn='$'+inAmt.toFixed(2); }
+    else { inAmt=parseFloat(document.getElementById('cryptoAmt').value)||0; suf=document.getElementById('srcAsset').value; document.getElementById('cryptoSuf').textContent=suf; pair=suf+'→hUSD (1:1)'; brkIn=inAmt.toFixed(2)+' '+suf; }
+    var get=Math.max(0,(inAmt-fee)*RATE);
+    document.getElementById('getAmt').textContent=get.toFixed(2)+' hUSD';
+    document.getElementById('ratePair').textContent=pair;
+    document.getElementById('getBrk').textContent = crypto
+      ? (brkIn + ' · no purchase fee · estimate — final amount is what we receive on-chain')
+      : (brkIn + ' · fee $' + fee.toFixed(2) + ' · minted on-chain · backed 1:1');
+    /* FE-207: minimum 1,000 USDC/USDT on the crypto path (Kevin 08-21) */
+    var mn=document.getElementById('cryptoMinNote');
+    if(mn){ var under = crypto && inAmt > 0 && inAmt < 1000;
+      mn.style.color = under ? 'var(--error)' : 'var(--text-secondary)';
+      mn.textContent = under ? 'Minimum is 1,000 USDC/USDT per crypto purchase.' : 'Minimum 1,000 USDC/USDT per crypto purchase. Always exchanged 1:1 for hUSD.'; }
+    document.getElementById('rPay').textContent=(!crypto?'$'+inAmt.toFixed(2)+' USD':inAmt.toFixed(2)+' '+(suf||'USDC'));
+    document.getElementById('rGet').textContent=get.toFixed(2)+' hUSD';
+    document.getElementById('rRate').textContent = crypto ? '1.0000 · 1:1 · no fee' : ('1.0000 · fee $' + fee.toFixed(2));
+    document.getElementById('rMethod').textContent=(!crypto?(window.__method||'e-Transfer'):((suf||'USDC')+' on '+document.getElementById('srcNet').value));
+  }
+  /* rate freshness countdown */
+  var rc=60;
+  setInterval(function(){
+    rc--; if(rc<=0){rc=60; var rv=document.getElementById('rateAge'); }
+    var cd=document.getElementById('rateCountdown'); if(cd) cd.textContent=rc;
+    var age=document.getElementById('rateAge'); if(age) age.innerHTML='updated '+(60-rc)+'s ago · refreshes in <span id="rateCountdown">'+rc+'</span>s';
+  },1000);
+
+  var METHODS=[['interac','e-Transfer','Free · instant'],['bank','Bank transfer','Free · 1 day'],['card','Debit / credit card','1.5% fee']];
+  function renderMethods(){
+    document.getElementById('payMethods').innerHTML=METHODS.map(function(m,i){return '<label onclick="pickMethod(this,\''+m[1]+'\')" class="pm-row" style="display:flex;align-items:center;gap:.7rem;min-height:46px;padding:.6rem .9rem;border-radius:var(--radius-lg);cursor:pointer;border:1.5px solid '+(i===0?'var(--brand-deep-blue)':'var(--border-subtle)')+';background:'+(i===0?'color-mix(in srgb,var(--brand-cloud-blue) 45%,#fff)':'#fff')+'"><span class="pm-radio" style="width:20px;height:20px;border-radius:50%;border:2px solid '+(i===0?'var(--brand-deep-blue)':'var(--neutral-400)')+';display:flex;align-items:center;justify-content:center">'+(i===0?'<span style=\"width:8px;height:8px;border-radius:50%;background:var(--brand-deep-blue)\"></span>':'')+'</span><span style="flex:1"><span style="display:block;font-weight:600;font-size:.88rem">'+m[1]+'</span><span style="display:block;font-size:.76rem;color:var(--text-secondary)">'+m[2]+'</span></span></label>';}).join('');
+  }
+  function pickMethod(row,name){
+    window.__method=name;
+    document.querySelectorAll('.pm-row').forEach(function(r){r.style.borderColor='var(--border-subtle)';r.style.background='#fff';r.querySelector('.pm-radio').style.borderColor='var(--neutral-400)';r.querySelector('.pm-radio').innerHTML='';});
+    row.style.borderColor='var(--brand-deep-blue)';row.style.background='color-mix(in srgb,var(--brand-cloud-blue) 45%,#fff)';
+    row.querySelector('.pm-radio').style.borderColor='var(--brand-deep-blue)';row.querySelector('.pm-radio').innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:var(--brand-deep-blue)"></span>';
+    recalc();
+  }
+
+  /* ── FE-207 Transaction Tracker ─────────────────────────────────────────
+     Plain-language headline + ETA + live elapsed timer, named stages with human
+     sub-copy, reassurance, engagement beyond text, and delayed / failed / adjusted
+     / done states. Demo controls jump straight to any state. */
+  var trackTimer=null, trackElapsed=0, trackStage=0, trackState='pending', trackWaitIdx=0;
+  var TRACK_ETA = { fiat: 'Usually takes 1–2 minutes', crypto: 'Usually takes 2–5 minutes' };
+  var TRACK_DELAY_AFTER = 300; /* seconds before the copy switches to "taking longer" */
+  var WAIT_CARDS = [
+    ['Send it anywhere, in seconds', 'hUSD moves on-chain like any token — to a friend, an exchange, or another wallet of yours.'],
+    ['Swap or spend without leaving crypto', 'Hold value in dollars without touching a bank, and move back into the market whenever you like.'],
+    ['Cash out 1:1, any time', 'Redeem straight to your bank account. The reserve exists so you never have to queue for it.'],
+  ];
+  function elapsedLabel(sec){ return sec < 60 ? ('0:' + String(sec).padStart(2,'0')) : (Math.floor(sec/60) + ' min'); }
+  function trackStages(){
+    return fund === 'crypto' ? [
+      ['Deposit seen', 'We spotted your ' + (document.getElementById('srcAsset')||{value:'USDC'}).value + ' arriving at your deposit address.'],
+      ['Network confirmations', 'The network is confirming the transfer. This is the slow part — nothing is needed from you.'],
+      ['Compliance checks', 'A quick automatic check of your limit, quota and sanctions screening.'],
+      ['hUSD minted to your confirmed wallet', 'Your hUSD goes straight to ' + recvWallet + '.'],
+    ] : [
+      ['Payment received', 'Your payment cleared with the payment rail.'],
+      ['Checks', 'A quick automatic check of your limit, quota and sanctions screening.'],
+      ['hUSD minted', 'We create the hUSD and send it to ' + recvWallet + '.'],
+    ];
+  }
+  function renderTimeline(){
+    var el=document.getElementById('trackTimeline'); if(!el) return;
+    var rows=trackStages(), done = (trackState==='done'||trackState==='adjusted');
+    el.innerHTML = rows.map(function(r,i){
+      var st = done || i < trackStage ? 'done' : (i === trackStage && trackState !== 'failed' ? 'current' : (i === trackStage ? 'queued' : ''));
+      var inner = st==='done' ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>'
+        : (st==='current'||st==='queued') ? '<span style="width:8px;height:8px;border-radius:50%;background:#fff"></span>' : '';
+      var line = i===rows.length-1 ? '' : '<span class="tl-line'+(st==='done'?' done':'')+'"></span>';
+      return '<li class="tl-item"><div class="tl-rail"><span class="tl-dot '+st+'">'+inner+'</span>'+line+'</div>'
+        + '<div class="tl-body"><div class="tl-title'+(st===''?' pending':'')+'">'+r[0]+'</div><div class="tl-meta">'+r[1]+'</div></div></li>';
+    }).join('');
+  }
+  function paintTracker(){
+    var done = trackState==='done' || trackState==='adjusted';
+    var failed = trackState==='failed';
+    var delayed = trackState==='delayed' || (!done && !failed && trackElapsed > TRACK_DELAY_AFTER);
+    var waiting = !done && !failed;
+    var set=function(id,fn){ var e=document.getElementById(id); if(e) fn(e); };
+    set('trackSpin', function(e){ e.style.display = waiting ? 'block' : 'none'; });
+    set('trackOk', function(e){ e.style.display = done ? 'flex' : 'none'; });
+    set('trackBad', function(e){ e.style.display = failed ? 'flex' : 'none'; });
+    set('trackHeadline', function(e){ e.textContent = failed ? 'We couldn’t finish this one'
+      : done ? 'Your hUSD is ready'
+      : delayed ? 'Taking a little longer than usual'
+      : 'Creating your hUSD'; });
+    set('trackSub', function(e){ e.textContent = failed ? 'Nothing was minted and nothing was taken.'
+      : done ? ('Now in your wallet ' + recvWallet + '.')
+      : delayed ? 'That’s normal when the network is busy. Nothing to do — we’ll keep going and tell you the moment it lands.'
+      : 'Nothing is needed from you. You can leave this page.'; });
+    set('trackEta', function(e){ e.style.display = waiting ? 'inline-flex' : 'none'; e.textContent = TRACK_ETA[fund==='crypto'?'crypto':'fiat']; });
+    set('trackElapsed', function(e){ e.textContent = done ? ('Took ' + elapsedLabel(trackElapsed)) : (elapsedLabel(trackElapsed) + ' elapsed'); });
+    set('trackTravel', function(e){ e.style.display = waiting ? 'block' : 'none'; });
+    set('trackReassure', function(e){ e.style.display = waiting ? 'block' : 'none'; });
+    set('trackWaitCard', function(e){ e.style.display = waiting ? 'block' : 'none'; });
+    set('whatToggle', function(e){ e.style.display = waiting ? 'flex' : 'none'; });
+    set('whatBody', function(e){ if(!waiting) e.classList.remove('open'); });
+    set('trackFacts', function(e){ e.style.display = waiting ? 'block' : 'none'; });
+    set('trackFailBox', function(e){ e.style.display = failed ? 'block' : 'none'; });
+    set('trackDelayBox', function(e){ e.style.display = (delayed && waiting) ? 'block' : 'none'; });
+    set('trackAdjusted', function(e){ e.style.display = (trackState==='adjusted' && fund==='crypto') ? 'block' : 'none'; });
+    var confN = Math.min(12, [1,5,12,12][trackStage] || 12);
+    set('trackConf', function(e){ e.style.display = (fund==='crypto' && waiting) ? 'flex' : 'none'; });
+    set('trackConfFill', function(e){ e.style.width = Math.round(confN/12*100) + '%'; });
+    set('trackConfLabel', function(e){ e.textContent = confN + ' of 12'; });
+    var wc = WAIT_CARDS[trackWaitIdx % WAIT_CARDS.length];
+    set('waitTitle', function(e){ e.textContent = wc[0]; });
+    set('waitBody', function(e){ e.textContent = wc[1]; });
+    /* persistent pending pill + bell item */
+    document.body.classList.toggle('tx-pending', waiting);
+    set('pendingPillTime', function(e){ e.textContent = elapsedLabel(trackElapsed); });
+    set('attnTitle', function(e){ e.textContent = delayed ? 'Taking a little longer than usual' : 'Creating your hUSD'; });
+    set('attnSub', function(e){ e.textContent = (document.getElementById('getAmt')||{textContent:''}).textContent + ' · ' + elapsedLabel(trackElapsed) + ' elapsed · nothing needed from you'; });
+    set('notifPending', function(e){ e.style.display = waiting ? '' : 'none'; });
+    set('notifPendingTitle', function(e){ e.textContent = delayed ? 'Purchase taking a little longer' : 'Creating your hUSD'; });
+    set('notifPendingMsg', function(e){ e.textContent = elapsedLabel(trackElapsed) + ' elapsed. Nothing needed from you — we’ll tell you when it lands.'; });
+    renderTimeline();
+  }
+  function startTracker(){
+    stopTracker(false);
+    trackElapsed=0; trackStage=0; trackState='pending'; trackWaitIdx=0;
+    paintTracker();
+    trackTimer=setInterval(function(){
+      if(trackState==='done'||trackState==='adjusted'||trackState==='failed'){ return; }
+      trackElapsed++;
+      if(trackElapsed % 6 === 0) trackWaitIdx++;
+      if(trackState==='pending' && trackElapsed % 4 === 0 && trackStage < trackStages().length - 1) trackStage++;
+      paintTracker();
+    },1000);
+  }
+  function stopTracker(clearPill){
+    if(trackTimer){ clearInterval(trackTimer); trackTimer=null; }
+    if(clearPill){ document.body.classList.remove('tx-pending'); var np=document.getElementById('notifPending'); if(np) np.style.display='none'; }
+  }
+  function setTrack(kind){
+    if(kind==='delayed'){ trackState='delayed'; trackStage=1; trackElapsed=Math.max(trackElapsed, TRACK_DELAY_AFTER+42); }
+    else if(kind==='failed'){ trackState='failed'; trackStage=1; }
+    else if(kind==='adjusted'){ trackState='adjusted'; trackStage=trackStages().length; }
+    else { trackState='done'; trackStage=trackStages().length; }
+    paintTracker();
+  }
+  function toggleWhat(){
+    var b=document.getElementById('whatBody'), t=document.getElementById('whatToggle'), l=document.getElementById('whatToggleLabel');
+    var open=b.classList.toggle('open');
+    if(t) t.setAttribute('aria-expanded', open?'true':'false');
+    if(l) l.textContent = open ? 'Hide' : 'Explain';
+  }
+  function openTracker(){ closeAllNav(); go('issue'); issueStep=3; prereqHidden=true; showIssue(); window.scrollTo(0,0); }
+
+  /* redeem flow — prerequisites step, Unera Stablecoin parity */
+  var redeemStep=0, redeemHidden=false;
+  function redeemLabels(){ return redeemHidden ? ['Amount','Review','Status'] : ['Prerequisites','Amount','Review','Status']; }
+  function showRedeem(){ document.querySelectorAll('#s-redeem .flow-step-r').forEach(function(el){el.style.display=el.dataset.rstep==redeemStep?'block':'none';}); renderStepper('redeemStepper', redeemLabels(), redeemHidden?redeemStep-1:redeemStep); }
+  function enterRedeem(){ kycDone=document.body.dataset.level==='L2'; walletDone=document.body.classList.contains('connected'); setPrereqUI(); redeemHidden=kycDone&&walletDone; redeemStep=redeemHidden?1:0; checkPrereq(); showRedeem(); window.scrollTo(0,0); }
+  function nextRedeem(){ if(redeemStep===0) redeemHidden=true; if(redeemStep<3){redeemStep++;showRedeem();window.scrollTo(0,0);} }
+  function prevRedeem(){ var min=redeemHidden?1:0; if(redeemStep>min){redeemStep--;showRedeem();window.scrollTo(0,0);} }
+  function resetRedeem(){ redeemStep=redeemHidden?1:0; showRedeem(); }
+  function recalcRedeem(){var v=parseFloat(document.getElementById('redAmt').value)||0;document.getElementById('redGet').textContent='$'+Math.max(0,(v*RATE-FEE)).toFixed(2);}
+
+  /* kyc */
+  var kycStep=0;
+  function kycReview(){kycStep=2;renderStepper('kycStepper',['Start','Verify','Review'],kycStep);document.getElementById('kycStart').style.display='none';document.getElementById('kycReviewState').style.display='block';window.scrollTo(0,0);}
+  function kycApprove(){setLevel('L2');kycStep=0;document.getElementById('kycStart').style.display='block';document.getElementById('kycReviewState').style.display='none';go('dashboard');}
+
+  /* ── History: data model + grouped render + detail drawer ── */
+  var HIST_TX=[
+    {id:'IS-7741',t:'issue',fund:'Fiat',date:'Feb 11, 2026',time:'2:34 PM',inAmt:'$250.00',out:'+249.50 hUSD',fee:'$0.50',rate:'1.0000',hash:'0x9f3a…b21c',block:'#21,456,902',conf:'32/32',status:'completed',pay:'e-Transfer'},
+    {id:'IS-7738',t:'issue',fund:'Crypto',date:'Feb 10, 2026',time:'9:12 AM',inAmt:'180.00 USDC',out:'+179.50 hUSD',fee:'$0.50',rate:'1.0000',hash:'0x4c1e…9a02',block:'#21,452,110',conf:'8/12',status:'processing',pay:'USDC on Ethereum'},
+    {id:'RD-3320',t:'redeem',fund:'Fiat',date:'Feb 9, 2026',time:'4:05 PM',inAmt:'100.00 hUSD',out:'−$99.50',fee:'$0.50',rate:'1.0000',hash:'0x77be…1f3d',block:'#21,448,901',conf:'32/32',status:'completed',pay:'Chase ••••4821'},
+    {id:'IS-7720',t:'issue',fund:'Fiat',date:'Feb 7, 2026',time:'11:48 AM',inAmt:'$500.00',out:'+499.50 hUSD',fee:'$0.50',rate:'1.0000',hash:'0x02af…cc81',block:'—',conf:'0/32',status:'pending',pay:'Bank transfer'},
+    {id:'RD-3301',t:'redeem',fund:'Fiat',date:'Feb 4, 2026',time:'8:22 AM',inAmt:'75.00 hUSD',out:'−$74.50',fee:'$0.50',rate:'1.0000',hash:'0xa9d2…44e7',block:'#21,438,210',conf:'32/32',status:'completed',pay:'Chase ••••4821'}
+  ];
+  var STATUS_LABEL={completed:'Completed',processing:'Processing',pending:'Pending',failed:'Failed'};
+  function txGroupKey(d){ if(d==='Feb 11, 2026') return 'Today'; if(d==='Feb 10, 2026') return 'Yesterday'; return d; }
+  function arrowSvg(dir){ return dir==='in'
+    ? '<svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"/></svg>'
+    : '<svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-720v368L296-496l-56 56 240 240 240-240-56-56-144 144v-368h-80Z"/></svg>'; }
+  function renderHistory(){
+    var t=window.__histType||'all', q=(window.__histQuery||'').toLowerCase();
+    var rows=HIST_TX.filter(function(x){
+      var typeOk=(t==='all'||x.t===t);
+      var textOk=!q || (x.hash+' '+x.t+' '+x.fund+' '+x.id+' '+x.pay).toLowerCase().indexOf(q)>=0;
+      return typeOk && textOk;
+    });
+    var host=document.getElementById('histList'); if(!host) return;
+    var cnt=document.getElementById('histCount'); if(cnt) cnt.textContent=rows.length+(rows.length===1?' transaction':' transactions')+(t!=='all'||q?' · filtered':'');
+    if(!rows.length){ host.innerHTML='<div class="tx-list"><div class="tx-empty"><svg width="40" height="40" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-200h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Z"/></svg><div style="font-weight:600;color:var(--text-primary)">No transactions found</div><div style="font-size:.85rem;margin-top:.25rem">Try adjusting your search or filters.</div></div></div>'; return; }
+    var groups=[], gmap={};
+    rows.forEach(function(x){ var k=txGroupKey(x.date); if(!gmap[k]){gmap[k]={key:k,items:[]};groups.push(gmap[k]);} gmap[k].items.push(x); });
+    host.innerHTML=groups.map(function(g){
+      return '<div class="hist-group"><div class="hist-group-label">'+g.key+'</div><div class="tx-list">'+g.items.map(function(x){
+        var dir=x.t==='issue'?'in':'out';
+        var sub=(x.t==='issue'?'Issuance':'Redemption')+' · '+x.fund;
+        var confChip=(x.status==='processing')?'<span class="conf-pill"><span class="rate-dot" style="background:var(--warning)"></span>'+x.conf+' conf</span>':'';
+        var verified=(x.status==='completed')?'<span class="tx-verified"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>On-chain</span>':'';
+        return '<button class="tx-row" onclick="openTxDrawer(\''+x.id+'\')">'
+          +'<span class="tx-ico '+dir+'">'+arrowSvg(dir)+'</span>'
+          +'<span class="tx-main"><span class="tx-title">'+(x.t==='issue'?'Issued hUSD':'Redeemed hUSD')+'</span>'
+          +'<span class="tx-sub">'+sub+' · '+x.time+' '+confChip+verified+'</span></span>'
+          +'<span class="tx-amounts"><div class="tx-amt '+dir+'">'+x.out+'</div><div class="tx-amt-sub">'+x.inAmt+'</div></span>'
+          +'<span class="tx-amounts" style="display:flex;align-items:center;gap:.5rem"><span class="status-pill sp-'+x.status+'">'+STATUS_LABEL[x.status]+'</span>'
+          +'<svg class="tx-chev" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg></span>'
+          +'</button>';
+      }).join('')+'</div></div>';
+    }).join('');
+  }
+  function histFilter(btn,t){ btn.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); window.__histType=t; renderHistory(); }
+  function histSearch(q){ window.__histQuery=q; renderHistory(); }
+  function drawHistSpark(){
+    var host=document.getElementById('histSpark'); if(!host) return;
+    var pts=[0,0.7,1.5,1.2,2.3,3.1,2.8,3.7,4.5,4.2,5.1,5.9,6.4,6.1,7.0,7.55];
+    var w=560,h=72,pad=3,max=Math.max.apply(null,pts),span=max||1;
+    var X=function(i){return pad+i/(pts.length-1)*(w-pad*2);},Y=function(v){return pad+(1-v/span)*(h-pad*2);};
+    var line=pts.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);}).join(' ');
+    var area=line+' L '+X(pts.length-1).toFixed(1)+' '+(h-pad)+' L '+X(0).toFixed(1)+' '+(h-pad)+' Z';
+    host.innerHTML='<svg width="100%" height="100%" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><defs><linearGradient id="hsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--fin-up)" stop-opacity="0.18"/><stop offset="100%" stop-color="var(--fin-up)" stop-opacity="0"/></linearGradient></defs><path d="'+area+'" fill="url(#hsg)"/><path d="'+line+'" fill="none" stroke="var(--fin-up)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+  }
+
+  function tlRow(state,label,meta,last){
+    var ic={done:'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>',current:'<span style="width:8px;height:8px;border-radius:50%;background:#fff"></span>',pending:''}[state];
+    var bg={done:'var(--fin-up)',current:'var(--brand-deep-blue)',pending:'#fff'}[state];
+    var bd={done:'var(--fin-up)',current:'var(--brand-deep-blue)',pending:'var(--neutral-300)'}[state];
+    var line=last?'':'<span style="flex:1;width:2px;min-height:18px;background:'+(state==='done'?'var(--fin-up)':'var(--neutral-200)')+';margin-top:2px"></span>';
+    return '<li style="display:grid;grid-template-columns:26px 1fr;gap:.7rem"><div style="display:flex;flex-direction:column;align-items:center"><span style="width:26px;height:26px;border-radius:50%;background:'+bg+';border:2px solid '+bd+';display:flex;align-items:center;justify-content:center;color:var(--text-secondary)">'+ic+'</span>'+line+'</div><div style="padding-bottom:'+(last?'0':'.9rem')+'"><div style="font-size:.88rem;font-weight:600;color:'+(state==='pending'?'var(--text-secondary)':'var(--text-primary)')+'">'+label+'</div>'+(meta?'<div style="font-size:.76rem;color:var(--text-secondary);margin-top:1px">'+meta+'</div>':'')+'</div></li>';
+  }
+  function openTxDrawer(id){
+    var x=HIST_TX.filter(function(r){return r.id===id;})[0]; if(!x) return;
+    var dir=x.t==='issue'?'in':'out';
+    var issue=x.t==='issue';
+    var tl;
+    if(x.status==='completed'){
+      tl=issue
+        ? tlRow('done','Payment settled',x.date+' · '+x.time)+tlRow('done','Compliance cleared','Sanctions, name match, geo')+tlRow('done','Hold period','Released')+tlRow('done','hUSD minted','Block '+x.block,true)
+        : tlRow('done','Tokens burned','Block '+x.block)+tlRow('done','Liquidity confirmed','Disbursement approved')+tlRow('done','Disbursement','Bank transfer sent')+tlRow('done','Funds received',x.date,true);
+    } else if(x.status==='processing'){
+      tl=tlRow('done','Payment settled',x.time)+tlRow('done','Compliance cleared','')+tlRow('current','Awaiting confirmations',x.conf+' blocks confirmed')+tlRow('pending','hUSD minted','',true);
+    } else if(x.status==='pending'){
+      tl=tlRow('current','Payment pending','Awaiting settlement')+tlRow('pending','Compliance review','')+tlRow('pending','Hold period','')+tlRow('pending','hUSD minted','',true);
+    } else {
+      tl=tlRow('done','Payment settled','')+tlRow('current','Compliance review','Action required',true);
+    }
+    var kv=function(k,v,mono){return '<div class="review-row"><span class="k">'+k+'</span><span class="v'+(mono?' mono':'')+'">'+v+'</span></div>';};
+    document.getElementById('txDrawerBody').innerHTML=
+      '<div class="drawer-hero"><span class="tx-ico '+dir+'">'+arrowSvg(dir)+'</span>'
+      +'<div class="amt '+dir+'" style="color:'+(issue?'var(--fin-up)':'var(--fin-down)')+'">'+x.out+'</div>'
+      +'<div class="meta">'+(issue?'Issued hUSD':'Redeemed hUSD')+' · '+x.fund+'</div>'
+      +'<div style="margin-top:.6rem"><span class="status-pill sp-'+x.status+'">'+STATUS_LABEL[x.status]+'</span></div></div>'
+      +'<div class="drawer-sec-label">Status</div><ol class="drawer-tl">'+tl+'</ol>'
+      +'<div class="drawer-sec-label">Details</div>'
+      +kv('Transaction ID',x.id)+kv(issue?'You paid':'You burned',x.inAmt)+kv(issue?'You received':'You received',x.out)
+      +kv('Fee',x.fee)+kv('Rate (locked)',x.rate)+kv(issue?'Funding':'Destination',x.pay)+kv('Initiated',x.date+' · '+x.time)
+      +'<div class="drawer-sec-label">On-chain</div>'
+      +'<div class="contract" style="margin-bottom:.6rem"><code class="mono">'+x.hash+'</code><a class="ex-link" href="#">Explorer ↗</a><button class="copy-btn" onclick="this.textContent=\'Copied\'">Copy</button></div>'
+      +kv('Block',x.block)+kv('Confirmations',x.conf)
+      +'<button class="btn btn-secondary" style="width:100%;margin-top:1.25rem" onclick="this.innerHTML=\'Receipt downloaded ✓\'"><svg width="18" height="18" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg> Download receipt (PDF)</button>';
+    document.getElementById('txDrawer').classList.add('open');
+    document.getElementById('txDrawerOverlay').classList.add('open');
+  }
+  function closeTxDrawer(){ document.getElementById('txDrawer').classList.remove('open'); document.getElementById('txDrawerOverlay').classList.remove('open'); }
+
+  /* ── PoR charts (inline SVG, mirrors DS components) ── */
+  function polar(cx,cy,r,deg){var a=deg*Math.PI/180;return {x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)};}
+  function arcPath(cx,cy,r,s,e){var p0=polar(cx,cy,r,s),p1=polar(cx,cy,r,e),large=e-s>180?1:0;return 'M '+p0.x+' '+p0.y+' A '+r+' '+r+' 0 '+large+' 1 '+p1.x+' '+p1.y;}
+  function drawGauge(){
+    var size=220,cx=size/2,cy=size/2,R=size*0.42,stroke=14,val=105.2,floor=100,max=120;
+    var a0=180,a1=360,va=a0+(Math.min(val,max)/max)*(a1-a0),fa=a0+(floor/max)*(a1-a0),fp=polar(cx,cy,R,fa);
+    return '<svg width="'+size+'" height="'+(size*0.62)+'" viewBox="0 0 '+size+' '+(size*0.62)+'">'
+      +'<path d="'+arcPath(cx,cy,R,a0,a1)+'" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="'+stroke+'" stroke-linecap="round"/>'
+      +'<path d="'+arcPath(cx,cy,R,a0,va)+'" fill="none" stroke="var(--fin-up)" stroke-width="'+stroke+'" stroke-linecap="round"/>'
+      +'<circle cx="'+fp.x+'" cy="'+fp.y+'" r="6" fill="#fff"/>'
+      +'<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-size="38" font-weight="700" fill="#fff" style="font-family:var(--font-display)">105.2%</text>'
+      +'</svg><div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.7);margin-top:-12px;text-align:center">Reserve ratio · floor 100%</div>';
+  }
+  function drawDonut(){
+    var size=170,th=24,r=(size-th)/2,cx=size/2,c=2*Math.PI*r,items=[['var(--por-bank)',60],['var(--por-stable)',30],['var(--por-treasury)',8],['var(--por-cash)',2]],off=0,segs='';
+    items.forEach(function(it){var len=it[1]/100*c;segs+='<circle cx="'+cx+'" cy="'+cx+'" r="'+r+'" fill="none" stroke="'+it[0]+'" stroke-width="'+th+'" stroke-dasharray="'+len+' '+(c-len)+'" stroke-dashoffset="'+(-off)+'"/>';off+=len;});
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><g transform="rotate(-90 '+cx+' '+cx+')"><circle cx="'+cx+'" cy="'+cx+'" r="'+r+'" fill="none" stroke="var(--neutral-200)" stroke-width="'+th+'"/>'+segs+'</g><text x="'+cx+'" y="'+(cx-2)+'" text-anchor="middle" font-size="22" font-weight="700" fill="var(--text-primary)" style="font-family:var(--font-display)">$19.4M</text><text x="'+cx+'" y="'+(cx+16)+'" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text-secondary)" style="letter-spacing:.08em">RESERVES</text></svg>';
+  }
+  function drawTrend(){
+    var w=520,h=150,pad=8,data=[];for(var i=0;i<90;i++)data.push(101.4+Math.sin(i/7)*1.1+i*0.04);
+    var min=Math.min.apply(null,data.concat([100])),max=Math.max.apply(null,data),span=(max-min)||1;
+    var X=function(i){return pad+i/(data.length-1)*(w-pad*2);},Y=function(v){return pad+(1-(v-min)/span)*(h-pad*2);};
+    var line=data.map(function(v,i){return (i?'L':'M')+' '+X(i).toFixed(1)+' '+Y(v).toFixed(1);}).join(' ');
+    var area=line+' L '+X(data.length-1).toFixed(1)+' '+(h-pad)+' L '+X(0).toFixed(1)+' '+(h-pad)+' Z';
+    return '<svg width="100%" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" style="display:block"><defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--brand-teal)" stop-opacity="0.2"/><stop offset="100%" stop-color="var(--brand-teal)" stop-opacity="0"/></linearGradient></defs><line x1="'+pad+'" x2="'+(w-pad)+'" y1="'+Y(100)+'" y2="'+Y(100)+'" stroke="var(--neutral-300)" stroke-width="1" stroke-dasharray="4 4"/><path d="'+area+'" fill="url(#tg)"/><path d="'+line+'" fill="none" stroke="var(--brand-teal)" stroke-width="2" stroke-linejoin="round"/></svg>';
+  }
+  var porDrawn=false;
+  function drawPor(){ if(porDrawn) return; porDrawn=true;
+    document.getElementById('gaugeMount').innerHTML=drawGauge();
+    document.getElementById('donutMount').innerHTML=drawDonut();
+    document.getElementById('trendMount').innerHTML=drawTrend();
+  }
+
+  /* init */
+  renderMethods(); showIssue(); showRedeem(); recalc(); setLevel('L1'); renderHistory();
+</script>
+</body>
+</html>
