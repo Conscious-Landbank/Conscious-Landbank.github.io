@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Submission Review — UNERA Admin</title>
+
+    <!-- TestFoundersGrotesk — UNERA V2 brand font -->
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+    </style>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+
+            --neutral-800:       #1e4e5a;
+            --neutral-200:       #e8f5f6;
+
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            --fin-up:            #1a7a5e;
+            --error:             var(--brand-red);
+            --error-bg:          rgba(171, 87, 112, 0.10);
+
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+
+            --surface-operator:        color-mix(in srgb, var(--brand-purple) 10%, var(--brand-white));
+            --surface-operator-strong: color-mix(in srgb, var(--brand-purple) 18%, var(--brand-white));
+            --surface-warning-soft:    color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-white));
+            --surface-sky:             color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-deep:            color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white));
+
+            --font-stat-size:         2.5rem;
+            --font-stat-size-compact: 2rem;
+
+            --op-nav:              var(--brand-black);
+            --op-accent:           var(--brand-purple);
+            --op-icon-well:        color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--surface-operator);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* ── Skip Link ─────────────────────────────────────────── */
+        .skip-link {
+            position: absolute; top: -40px; left: 0;
+            background: var(--brand-deep-blue); color: var(--brand-white);
+            padding: 8px 16px; text-decoration: none;
+            z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600;
+        }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-cloud-blue); }
+
+        /* ── Navigation ────────────────────────────────────────── */
+        .nav {
+            background: var(--op-nav); padding: 0 2rem; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .nav-brand {
+            display: flex; align-items: center; gap: 0.625rem;
+            text-decoration: none; flex-shrink: 0;
+        }
+        .nav-brand:focus { outline: 3px solid var(--brand-cloud-blue); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-img { height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block; }
+        .op-pill {
+            background: var(--brand-cloud-blue); color: var(--brand-deep-blue);
+            font-family: var(--font-body); font-size: 0.625rem; font-weight: 700;
+            letter-spacing: 0.08em; padding: 0.125rem 0.5rem; border-radius: 980px;
+            line-height: 1.4; white-space: nowrap; text-transform: uppercase;
+        }
+        .tabs { flex: 1; display: flex; align-items: stretch; gap: 0; padding: 0 1.5rem; height: 64px; }
+        .tab {
+            padding: 0 1.25rem; height: 64px;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: none; border: none; border-bottom: 2px solid transparent;
+            color: rgba(255,255,255,0.75); font-weight: 500;
+            font-family: var(--font-body); font-size: 0.875rem;
+            cursor: pointer; text-decoration: none; transition: all 0.15s; white-space: nowrap;
+        }
+        .tab:hover { color: var(--brand-cloud-blue); background: rgba(255,255,255,0.04); }
+        .tab:focus-visible { outline: 2px solid var(--brand-cloud-blue); outline-offset: -2px; }
+        .tab.active { color: var(--brand-cloud-blue); font-weight: 600; border-bottom-color: var(--op-accent); }
+        .tab-badge {
+            background: var(--brand-cloud-blue); color: var(--brand-deep-blue);
+            border: 2px solid var(--brand-black);
+            font-size: 0.625rem; font-weight: 700;
+            padding: 0.125rem 0.4rem; border-radius: 980px;
+            min-width: 1.25rem; text-align: center; line-height: 1.3;
+        }
+        .op-user-profile {
+            display: flex; align-items: center; position: relative;
+            cursor: pointer; padding: 0.375rem 0.5rem; border-radius: 0.5rem;
+            transition: background 0.2s; flex-shrink: 0; min-height: 44px;
+            background: none; border: none;
+        }
+        .op-user-profile:hover { background: rgba(255,255,255,0.08); }
+        .op-user-profile:focus-visible { outline: 3px solid var(--brand-cloud-blue); outline-offset: 2px; }
+        .op-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-white); font-weight: 600; font-size: 0.813rem; flex-shrink: 0;
+        }
+        .op-dropdown {
+            position: absolute; top: calc(100% + 0.5rem); right: 0; width: 260px;
+            background: var(--brand-white); border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002; overflow: hidden;
+        }
+        .op-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .op-dropdown-header {
+            padding: 1rem; background: var(--surface-operator);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .op-dropdown-avatar-lg {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-white); font-weight: 700; font-size: 1.125rem; flex-shrink: 0;
+        }
+        .op-dropdown-email { font-size: 0.813rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+        .op-dropdown-menu { padding: 0.5rem; }
+        .op-dropdown-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem; border-radius: 0.5rem;
+            color: var(--neutral-800); text-decoration: none;
+            transition: all 0.15s; cursor: pointer; font-size: 0.875rem;
+            width: 100%; background: none; border: none;
+            font-family: var(--font-body); min-height: 44px;
+        }
+        .op-dropdown-item:hover { background: var(--surface-operator); color: var(--brand-deep-blue); }
+        .op-dropdown-item:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .op-dropdown-item svg { fill: currentColor; flex-shrink: 0; }
+
+        /* ── Hamburger ─────────────────────────────────────────── */
+        .hamburger {
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; gap: 5px; background: none; border: none;
+            cursor: pointer; padding: 10px; min-width: 44px; min-height: 44px;
+            border-radius: 0.5rem; margin-left: auto;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.08); }
+        .hamburger:focus-visible { outline: 3px solid var(--brand-cloud-blue); outline-offset: 2px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--brand-white); transition: all 0.3s ease; border-radius: 2px; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ── Mobile Menu ───────────────────────────────────────── */
+        .mobile-menu-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            z-index: 10010; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu {
+            display: none; position: fixed; top: 0; right: -100%;
+            width: 80%; max-width: 320px; height: 100%;
+            background: var(--brand-white); z-index: 10011;
+            padding: 1.5rem; box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease; overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.5rem; padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .mobile-menu-brand { font-family: var(--font-display); font-weight: 600; font-size: 0.938rem; color: var(--text-primary); }
+        .mobile-menu-close {
+            background: none; border: none; cursor: pointer; padding: 8px;
+            min-width: 44px; min-height: 44px; border-radius: 0.5rem;
+            display: flex; align-items: center; justify-content: center; color: var(--text-primary);
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mobile-menu-close svg { fill: currentColor; }
+        .mobile-nav-tabs { display: flex; flex-direction: column; gap: 0.25rem; }
+        .mobile-tab {
+            display: flex; padding: 1rem; font-size: 0.938rem;
+            font-family: var(--font-body); border-radius: 0.5rem;
+            text-align: left; text-decoration: none; color: var(--text-primary);
+            transition: background 0.15s; min-height: 44px; align-items: center; gap: 0.5rem;
+        }
+        .mobile-tab:hover { background: var(--surface-operator); }
+        .mobile-tab:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mobile-tab.active {
+            background: var(--surface-operator-strong); color: var(--brand-deep-blue);
+            font-weight: 600; border-left: 3px solid var(--op-accent);
+            border-radius: 0 0.5rem 0.5rem 0; padding-left: calc(1rem - 3px);
+        }
+        .mobile-nav-user { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
+        .mobile-nav-email { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.75rem; }
+        .mobile-logout-btn {
+            display: flex; align-items: center; gap: 0.5rem; width: 100%;
+            padding: 0.75rem 1rem; background: transparent;
+            border: 1.5px solid var(--border-subtle); border-radius: 0.75rem;
+            font-weight: 500; font-family: var(--font-body); font-size: 0.938rem;
+            color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
+            min-height: 46px; justify-content: center;
+        }
+        .mobile-logout-btn:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); background: var(--surface-deep); }
+        .mobile-logout-btn:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mobile-logout-btn svg { fill: currentColor; }
+
+        /* ── Container ─────────────────────────────────────────── */
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem 2.75rem 4rem; }
+
+        /* ── Breadcrumb ────────────────────────────────────────── */
+        .kyc-breadcrumb {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 1.5rem; font-size: 0.875rem;
+        }
+        .kyc-back-link {
+            display: inline-flex; align-items: center; gap: 0.375rem;
+            color: var(--op-accent); text-decoration: none; font-weight: 500;
+        }
+        .kyc-back-link:hover { text-decoration: underline; }
+        .kyc-back-link:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 4px; }
+        .kyc-back-link svg { fill: currentColor; }
+        .kyc-breadcrumb-sep { color: var(--text-secondary); }
+        .kyc-breadcrumb-current { color: var(--text-secondary); font-family: 'Courier New', monospace; font-size: 0.813rem; }
+
+        /* ── Page header ───────────────────────────────────────── */
+        .page-header { margin-bottom: 2rem; }
+        .page-title {
+            font-family: var(--font-display); font-size: 2.5rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 0.5rem;
+            line-height: 1.1; letter-spacing: -0.02em;
+        }
+        .page-subtitle { color: var(--text-secondary); font-size: 1rem; line-height: 1.5; }
+
+        /* ── 2-column detail grid ──────────────────────────────── */
+        .kyc-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 2rem;
+            align-items: start;
+        }
+        .kyc-detail-left { display: flex; flex-direction: column; gap: 1.5rem; }
+        .kyc-detail-right { position: sticky; top: calc(64px + 1.5rem); }
+
+        /* ── Detail cards ──────────────────────────────────────── */
+        .kyc-detail-card {
+            background: var(--brand-white); border-radius: 1.25rem;
+            border: 1px solid var(--border-subtle); box-shadow: var(--shadow-card);
+            padding: 1.5rem;
+        }
+        .kyc-detail-card-title {
+            font-family: var(--font-display); font-size: 0.813rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--text-secondary); margin-bottom: 1.25rem;
+        }
+
+        /* ── Badges ────────────────────────────────────────────── */
+        .badge {
+            display: inline-block; padding: 0.25rem 0.625rem;
+            border-radius: 980px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+        .badge-verified { background: var(--brand-cloud-blue); color: var(--brand-deep-blue); }
+        .badge-pending  { background: var(--surface-warning-soft); color: var(--brand-deep-blue); }
+        .badge-rejected { background: var(--error-bg); color: var(--error); }
+        .badge-info     { background: var(--surface-sky); color: var(--brand-deep-blue); }
+
+        /* ── User cell / avatar ────────────────────────────────── */
+        .user-cell { display: flex; align-items: center; gap: 0.75rem; }
+        .drawer-avatar {
+            width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-white); font-weight: 700; font-size: 1.25rem;
+        }
+        .user-name  { font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+        .user-email { font-size: 0.875rem; color: var(--text-secondary); }
+        .user-id    { font-family: 'Courier New', monospace; font-size: 0.688rem; color: var(--text-secondary); display: block; margin-top: 0.063rem; }
+        .kyc-link {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            color: var(--op-accent); font-size: 0.813rem; font-weight: 500; text-decoration: none;
+        }
+        .kyc-link:hover { text-decoration: underline; }
+        .kyc-link:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 4px; }
+        .kyc-link svg { fill: currentColor; }
+
+        /* ── Field rows ────────────────────────────────────────── */
+        .kyc-field-rows { display: flex; flex-direction: column; gap: 0; }
+        .kyc-field-row {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 0.625rem 0; border-bottom: 1px solid var(--border-subtle); gap: 1rem;
+        }
+        .kyc-field-row:last-child { border-bottom: none; }
+        .kyc-field-label { font-size: 0.813rem; color: var(--text-secondary); font-weight: 500; flex-shrink: 0; min-width: 130px; }
+        .kyc-field-value { font-size: 0.875rem; color: var(--text-primary); font-weight: 600; text-align: right; }
+
+        /* ── Document viewer ───────────────────────────────────── */
+        .kyc-doc-viewer {
+            background: var(--surface-operator-strong);
+            border-radius: 0.75rem; border: 1.5px dashed var(--brand-light-blue);
+            aspect-ratio: 16/10; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 0.75rem;
+            padding: 1.5rem; cursor: pointer; transition: border-color 0.15s;
+            width: 100%; text-align: center;
+        }
+        .kyc-doc-viewer:hover { border-color: var(--op-accent); }
+        .kyc-doc-viewer:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .kyc-doc-viewer svg { fill: var(--text-secondary); }
+        .kyc-doc-viewer-label { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); }
+        .kyc-doc-viewer-hint  { font-size: 0.75rem; color: var(--text-secondary); font-weight: 400; }
+        .kyc-selfie-viewer { aspect-ratio: 3/4; max-width: 240px; margin: 0 auto; }
+
+        /* Status pills */
+        .status-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .status-pill-item { display: flex; flex-direction: column; gap: 0.25rem; align-items: flex-start; }
+        .status-pill-label { font-size: 0.688rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+
+        /* ── Decision panel ────────────────────────────────────── */
+        .kyc-decision-panel {
+            background: var(--brand-white); border-radius: 1.25rem;
+            border: 1px solid var(--border-subtle); box-shadow: var(--shadow-card);
+            padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
+        }
+        .kyc-decision-title {
+            font-family: var(--font-display); font-size: 1.125rem; font-weight: 700;
+            color: var(--text-primary);
+        }
+        .kyc-decision-current {
+            display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+            font-size: 0.875rem; color: var(--text-secondary);
+        }
+        .kyc-decision-field { display: flex; flex-direction: column; gap: 0.375rem; }
+        .kyc-decision-field label { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
+        .kyc-decision-field select,
+        .kyc-decision-field textarea {
+            width: 100%; padding: 0.625rem 0.875rem;
+            border: 1.5px solid var(--border-subtle); border-radius: 0.625rem;
+            font-size: 0.875rem; font-family: var(--font-body);
+            background: var(--brand-white); color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+        .kyc-decision-field select  { min-height: 44px; cursor: pointer; }
+        .kyc-decision-field textarea { min-height: 96px; resize: vertical; }
+        .kyc-decision-field select:focus,
+        .kyc-decision-field textarea:focus {
+            outline: none; border-color: var(--brand-deep-blue);
+            box-shadow: 0 0 0 3px rgba(23,61,71,0.08);
+        }
+        .kyc-note-hint { font-size: 0.75rem; color: var(--text-secondary); }
+        .kyc-note-hint.required { color: var(--error); }
+        .kyc-back-link-detail {
+            display: inline-flex; align-items: center; gap: 0.375rem;
+            color: var(--text-secondary); font-size: 0.813rem; text-decoration: none;
+            padding: 0.25rem 0; font-weight: 500;
+        }
+        .kyc-back-link-detail:hover { color: var(--brand-deep-blue); }
+        .kyc-back-link-detail:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; border-radius: 4px; }
+        .kyc-back-link-detail svg { fill: currentColor; }
+
+        /* ── Buttons ───────────────────────────────────────────── */
+        .btn-primary {
+            padding: 0.75rem 1.5rem; background: var(--brand-deep-blue); color: var(--brand-white);
+            border: none; border-radius: 0.75rem; font-weight: 600; font-family: var(--font-body);
+            font-size: 0.938rem; cursor: pointer; transition: all 0.2s; min-height: 46px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; text-decoration: none;
+        }
+        .btn-primary:hover { background: var(--neutral-800); box-shadow: 0 4px 14px rgba(23,61,71,0.3); transform: translateY(-1px); }
+        .btn-primary:focus-visible { outline: 3px solid rgba(23,61,71,0.3); outline-offset: 2px; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-secondary {
+            padding: 0.75rem 1.25rem; background: transparent;
+            border: 1.5px solid var(--border-subtle); border-radius: 0.75rem;
+            font-weight: 600; font-family: var(--font-body); font-size: 0.938rem;
+            color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
+            min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-secondary:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); background: var(--surface-deep); }
+        .btn-secondary:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-danger {
+            padding: 0.75rem 1.5rem; background: var(--brand-red); color: var(--brand-white);
+            border: none; border-radius: 0.75rem; font-weight: 600; font-family: var(--font-body);
+            font-size: 0.938rem; cursor: pointer; transition: all 0.2s; min-height: 46px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+        }
+        .btn-danger:hover { filter: brightness(0.9); }
+        .btn-danger:focus-visible { outline: 2px solid var(--brand-red); outline-offset: 2px; }
+        .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── Empty state ───────────────────────────────────────── */
+        .user-empty { padding: 3rem 2rem; text-align: center; }
+        .user-empty-icon {
+            width: 64px; height: 64px; margin: 0 auto 1.5rem;
+            background: var(--op-icon-well); border-radius: 1rem;
+            display: flex; align-items: center; justify-content: center; color: var(--brand-deep-blue);
+        }
+        .user-empty-icon svg { fill: currentColor; }
+        .user-empty-text { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .user-empty-desc { color: var(--text-secondary); font-size: 0.938rem; }
+
+        /* ── sr-only ───────────────────────────────────────────── */
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+        /* ── Confirm Dialog ────────────────────────────────────── */
+        .confirm-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px); z-index: 10025;
+            display: none; align-items: center; justify-content: center;
+        }
+        .confirm-overlay.active { display: flex; }
+        .confirm-dialog {
+            background: var(--brand-white); border-radius: 1.25rem; padding: 1.75rem;
+            max-width: 440px; width: 90%; box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+        }
+        .confirm-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); }
+        .confirm-message { color: var(--text-secondary); font-size: 0.938rem; margin-bottom: 1.25rem; line-height: 1.5; }
+        .audit-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .audit-note {
+            width: 100%; padding: 0.625rem 0.875rem; border: 1.5px solid var(--border-subtle);
+            border-radius: 0.625rem; font-size: 0.875rem; font-family: var(--font-body);
+            color: var(--text-primary); background: var(--brand-white); resize: vertical;
+            min-height: 80px; transition: border-color 0.2s; margin-bottom: 1.25rem;
+        }
+        .audit-note:focus { outline: none; border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.08); }
+        .confirm-actions { display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap; }
+
+        /* ── Lightbox ──────────────────────────────────────────── */
+        .lightbox-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.88);
+            z-index: 10020; display: none;
+            align-items: center; justify-content: center; padding: 2rem;
+        }
+        .lightbox-overlay.active { display: flex; }
+        .lightbox-img {
+            max-width: 90vw; max-height: 75vh;
+            background: var(--neutral-200); border-radius: 0.75rem;
+            display: flex; align-items: center; justify-content: center;
+            width: 640px; aspect-ratio: 4/3;
+        }
+        .lightbox-close {
+            position: fixed; top: 1.5rem; right: 1.5rem;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-white); cursor: pointer; transition: background 0.15s;
+        }
+        .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+        .lightbox-close:focus-visible { outline: 2px solid var(--brand-white); outline-offset: 2px; }
+        .lightbox-close svg { fill: currentColor; }
+        .lightbox-caption {
+            position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.6); color: var(--brand-white);
+            padding: 0.5rem 1.25rem; border-radius: 980px; font-size: 0.875rem; white-space: nowrap;
+        }
+
+        /* ── Toast ─────────────────────────────────────────────── */
+        .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 10030; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
+        .toast {
+            background: var(--brand-white); border-left: 4px solid var(--brand-deep-blue);
+            padding: 1rem 1.25rem; border-radius: 0.75rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; min-width: 280px; max-width: 360px;
+            animation: toastIn 0.25s ease-out; pointer-events: all;
+        }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .toast.toast-error   { border-left-color: var(--brand-red); }
+        .toast.toast-success { border-left-color: var(--fin-up); }
+        .toast-text { font-size: 0.875rem; color: var(--text-primary); flex: 1; }
+        .toast-dismiss {
+            background: none; border: none; cursor: pointer; font-size: 1.25rem;
+            color: var(--text-secondary); padding: 0.25rem; line-height: 1;
+            min-width: 28px; min-height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px;
+        }
+        .toast-dismiss:hover { color: var(--text-primary); background: var(--surface-operator); }
+        .toast-dismiss:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+
+        /* ── Responsive ────────────────────────────────────────── */
+        @media (max-width: 960px) {
+            #operatorProfile, .tabs { display: none !important; }
+            .hamburger { display: flex; }
+            .nav { padding: 0 1rem; }
+            .page-title { font-size: 2rem; }
+            .kyc-detail-grid { grid-template-columns: 1fr; }
+            .kyc-detail-right { position: static; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem 1.5rem 3rem; }
+            .page-title { font-size: 1.75rem; }
+            /* Prevent iOS font zoom (inputs must be ≥ 16px / 1rem) */
+            .kyc-decision-field select,
+            .kyc-decision-field textarea,
+            .audit-note { font-size: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 1.25rem 1rem 320px; }
+            .page-title { font-size: 1.5rem; }
+            .kyc-detail-right {
+                position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+                border-radius: 1.25rem 1.25rem 0 0; max-height: 50vh; overflow-y: auto;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+                border-bottom-left-radius: 0; border-bottom-right-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="nav" role="navigation" aria-label="UNERA Admin navigation">
+            <a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
+                <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <span class="op-pill" aria-label="Admin portal">ADMIN</span>
+            </a>
+
+            <div class="tabs" role="tablist" aria-label="Admin sections">
+                <a href="dashboard.html" class="tab" role="tab" aria-selected="false">Dashboard</a>
+                <a href="hc-management.html" class="tab" role="tab" aria-selected="false" aria-label="HC Management, 2 pending items">
+                    HC Management
+                    <span class="tab-badge" id="tabHcBadge" aria-hidden="true">2</span>
+                </a>
+                <a href="user-management.html" class="tab" role="tab" aria-selected="false" aria-label="User Management, 3 locked accounts">
+                    Users
+                    <span class="tab-badge" id="tabUsersBadge" aria-hidden="true">3</span>
+                </a>
+                <span class="tab active" role="tab" aria-current="page" aria-selected="true"
+                      aria-label="KYC Management, 7 pending items">
+                    KYC
+                    <span class="tab-badge" id="tabKycBadge" aria-hidden="true">7</span>
+                </span>
+            </div>
+
+            <div class="op-user-profile"
+                 onclick="toggleOperatorDropdown()"
+                 id="operatorProfile"
+                 role="button"
+                 aria-expanded="false"
+                 aria-haspopup="true"
+                 aria-label="Admin profile menu"
+                 tabindex="0">
+                <div class="op-avatar" id="operatorAvatar" aria-hidden="true">OP</div>
+                <div class="op-dropdown" id="operatorDropdown" role="menu" aria-label="Admin account menu" onclick="event.stopPropagation()">
+                    <div class="op-dropdown-header">
+                        <div class="op-dropdown-avatar-lg" id="operatorDropdownAvatar" aria-hidden="true">OP</div>
+                        <div class="op-dropdown-email" id="operatorEmail"></div>
+                    </div>
+                    <div class="op-dropdown-menu">
+                        <button class="op-dropdown-item" role="menuitem" onclick="logout()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                            </svg>
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="hamburger" id="hamburgerBtn"
+                    aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenu">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"></div>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="UNERA Admin navigation menu">
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-brand">UNERA Admin Menu</span>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <nav class="mobile-nav-tabs" aria-label="Admin sections">
+            <a href="dashboard.html" class="mobile-tab">Dashboard</a>
+            <a href="hc-management.html" class="mobile-tab" aria-label="HC Management, 2 pending items">
+                HC Management
+                <span class="tab-badge" aria-hidden="true">2</span>
+            </a>
+            <a href="user-management.html" class="mobile-tab" aria-label="User Management, 3 locked accounts">
+                Users
+                <span class="tab-badge" aria-hidden="true">3</span>
+            </a>
+            <span class="mobile-tab active" aria-current="page" aria-label="KYC Management, current page">
+                KYC
+                <span class="tab-badge" aria-hidden="true">7</span>
+            </span>
+        </nav>
+        <div class="mobile-nav-user">
+            <div class="mobile-nav-email" id="mobileOperatorEmail"></div>
+            <button class="mobile-logout-btn" onclick="logout()" aria-label="Log out of operator portal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                </svg>
+                Log Out
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         Main Content
+    ════════════════════════════════════════════════════ -->
+    <main id="main-content">
+        <div class="container">
+
+            <!-- Breadcrumb -->
+            <nav class="kyc-breadcrumb" aria-label="Breadcrumb">
+                <a href="kyc-management.html" class="kyc-back-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240 120-480l240-240 57 56-144 144h487v80H273l144 144-57 56Z"/></svg>
+                    KYC Management
+                </a>
+                <span class="kyc-breadcrumb-sep" aria-hidden="true">/</span>
+                <span class="kyc-breadcrumb-current" id="breadcrumbId" aria-current="page">Submission</span>
+            </nav>
+
+            <!-- Page header -->
+            <div class="page-header">
+                <h1 class="page-title" id="detailPageTitle">KYC submission</h1>
+                <p class="page-subtitle" id="detailPageSubtitle">Loading…</p>
+            </div>
+
+            <!-- 2-column detail grid (hidden until loaded) -->
+            <div class="kyc-detail-grid" id="kycDetailContent" style="display:none;">
+
+                <!-- Left: review canvas -->
+                <div class="kyc-detail-left">
+
+                    <!-- User card -->
+                    <div class="kyc-detail-card">
+                        <div class="kyc-detail-card-title">Applicant</div>
+                        <div class="user-cell">
+                            <div class="drawer-avatar" id="detailAvatar" aria-hidden="true">?</div>
+                            <div>
+                                <div class="user-name"  id="detailName">—</div>
+                                <div class="user-email" id="detailEmail">—</div>
+                                <code class="user-id"   id="detailUserId">—</code>
+                            </div>
+                        </div>
+                        <a class="kyc-link" id="detailUserLink" href="user-management.html"
+                           style="margin-top:1rem;display:inline-flex;">
+                            Open user profile
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>
+                        </a>
+                    </div>
+
+                    <!-- Submission meta -->
+                    <div class="kyc-detail-card">
+                        <div class="kyc-detail-card-title">Submission details</div>
+                        <div class="kyc-field-rows">
+                            <div class="kyc-field-row">
+                                <span class="kyc-field-label">Submission ID</span>
+                                <code class="kyc-field-value" id="detailSubId" style="font-family:'Courier New',monospace;font-size:0.75rem;">—</code>
+                            </div>
+                            <div class="kyc-field-row">
+                                <span class="kyc-field-label">Document type</span>
+                                <span class="kyc-field-value" id="detailDocType">—</span>
+                            </div>
+                            <div class="kyc-field-row">
+                                <span class="kyc-field-label">Submitted at</span>
+                                <span class="kyc-field-value"><time id="detailSubmittedTime">—</time></span>
+                            </div>
+                            <div class="kyc-field-row">
+                                <span class="kyc-field-label">Last decision</span>
+                                <span class="kyc-field-value" id="detailLastDecision">Awaiting review</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ID document front -->
+                    <div class="kyc-detail-card">
+                        <div class="kyc-detail-card-title">ID document — Front</div>
+                        <button class="kyc-doc-viewer" aria-label="View ID front — click to enlarge"
+                                onclick="openLightbox('ID Document — Front')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg>
+                            <span class="kyc-doc-viewer-label">ID Front — mock placeholder</span>
+                            <span class="kyc-doc-viewer-hint">Click to enlarge</span>
+                        </button>
+                    </div>
+
+                    <!-- ID document back -->
+                    <div class="kyc-detail-card" id="detailDocBackCard">
+                        <div class="kyc-detail-card-title">ID document — Back</div>
+                        <button class="kyc-doc-viewer" aria-label="View ID back — click to enlarge"
+                                onclick="openLightbox('ID Document — Back')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg>
+                            <span class="kyc-doc-viewer-label">ID Back — mock placeholder</span>
+                            <span class="kyc-doc-viewer-hint">Click to enlarge</span>
+                        </button>
+                    </div>
+
+                    <!-- Selfie -->
+                    <div class="kyc-detail-card">
+                        <div class="kyc-detail-card-title">Selfie / liveness photo</div>
+                        <button class="kyc-doc-viewer kyc-selfie-viewer" aria-label="View selfie — click to enlarge"
+                                onclick="openLightbox('Selfie / liveness photo')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm40-80h480L570-480 450-320l-90-120-120 160Zm-40 80v-560 560Z"/></svg>
+                            <span class="kyc-doc-viewer-label">Selfie — mock placeholder</span>
+                            <span class="kyc-doc-viewer-hint">Click to enlarge</span>
+                        </button>
+                        <div class="status-pills" id="detailLiveness" style="margin-top:1rem;"></div>
+                    </div>
+
+                    <!-- Extracted fields -->
+                    <div class="kyc-detail-card">
+                        <div class="kyc-detail-card-title">Extracted fields</div>
+                        <div class="kyc-field-rows" id="detailExtractedFields"></div>
+                    </div>
+
+                </div>
+
+                <!-- Right: sticky decision panel -->
+                <aside class="kyc-detail-right" aria-label="Review decision panel">
+                    <div class="kyc-decision-panel" id="decisionPanel">
+
+                        <div>
+                            <div class="kyc-decision-title">Review decision</div>
+                            <div class="kyc-decision-current" style="margin-top:0.5rem;">
+                                <span style="font-size:0.813rem;color:var(--text-secondary);">Current status</span>
+                                <span id="detailCurrentStatus"></span>
+                            </div>
+                        </div>
+
+                        <div class="kyc-decision-field">
+                            <label for="detailStatusSelect">Set status</label>
+                            <select id="detailStatusSelect" aria-label="Select new KYC status" onchange="onDetailStatusChange()">
+                                <option value="">— select —</option>
+                                <option value="pending">Pending</option>
+                                <option value="verified">Verified</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="reverify">Re-verification required</option>
+                            </select>
+                        </div>
+
+                        <div class="kyc-decision-field">
+                            <label for="detailAuditNote">
+                                Audit note <span id="detailAuditNoteHintLabel" style="font-weight:400;color:var(--text-secondary);font-size:0.813rem;"></span>
+                            </label>
+                            <textarea id="detailAuditNote" rows="4"
+                                      placeholder="e.g. All checks passed — face match confirmed."
+                                      oninput="checkDetailAuditNote()"></textarea>
+                            <p class="kyc-note-hint" id="detailAuditNoteReq" style="display:none;">
+                                Required for Rejected / Re-verification (minimum 8 characters)
+                            </p>
+                        </div>
+
+                        <button type="button" class="btn-primary" id="detailSaveBtn"
+                                style="width:100%;justify-content:center;"
+                                onclick="requestDetailUpdate()"
+                                disabled>
+                            Save decision
+                        </button>
+
+                        <a href="kyc-management.html" class="kyc-back-link-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240 120-480l240-240 57 56-144 144h487v80H273l144 144-57 56Z"/></svg>
+                            Back to queue
+                        </a>
+                    </div>
+                </aside>
+
+            </div>
+
+            <!-- Not found state -->
+            <div class="user-empty" id="kycDetailNotFound" style="display:none;">
+                <div class="user-empty-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor"><path d="M508.5-291.5Q520-303 520-320t-11.5-28.5Q497-360 480-360t-28.5 11.5Q440-337 440-320t11.5 28.5Q463-280 480-280t28.5-11.5ZM440-440h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                </div>
+                <p class="user-empty-text">Submission not found</p>
+                <p class="user-empty-desc">This submission ID does not exist or has been removed.</p>
+                <a href="kyc-management.html" class="btn-secondary" style="margin-top:1rem;">Back to queue</a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════
+         Lightbox
+    ════════════════════════════════════════════════════ -->
+    <div class="lightbox-overlay" id="lightboxOverlay"
+         role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" aria-hidden="true">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Close document image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+        </button>
+        <div class="lightbox-img" id="lightboxImg">
+            <span style="color:var(--text-secondary);font-size:0.875rem;text-align:center;padding:1rem;line-height:1.5;" id="lightboxLabel">Document preview</span>
+        </div>
+        <p class="lightbox-caption" id="lightbox-caption">Document preview</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         Confirm Dialog
+    ════════════════════════════════════════════════════ -->
+    <div class="confirm-overlay" id="kycConfirmOverlay"
+         role="alertdialog" aria-modal="true"
+         aria-labelledby="kyc-confirm-title"
+         aria-describedby="kyc-confirm-message"
+         aria-hidden="true">
+        <div class="confirm-dialog">
+            <h3 class="confirm-title" id="kyc-confirm-title">Confirm status update</h3>
+            <p class="confirm-message" id="kyc-confirm-message"></p>
+            <label for="kyc-audit-note" class="audit-label">
+                Reason for audit trail
+                <span id="kyc-audit-required-hint" aria-hidden="true"></span>
+                <span class="sr-only" id="kyc-audit-required-sr"></span>
+            </label>
+            <textarea id="kyc-audit-note" class="audit-note" rows="3"
+                      placeholder="e.g. Documents clear — face match confirmed."
+                      oninput="checkKycAuditNote()"></textarea>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" onclick="cancelKycConfirm()">Cancel</button>
+                <button type="button" id="kycConfirmActionBtn" class="btn-primary" disabled>Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="operator-session.js"></script>
+    <script>
+        // ── Auth guard ──────────────────────────────────────────
+        UneraAdminAuth.guardAppPage();
+        var urlParams    = new URLSearchParams(window.location.search);
+        var devMode      = UneraAdminAuth.isDevMode();
+        var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
+        var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
+        ['operatorAvatar','operatorDropdownAvatar'].forEach(function(id) {
+            var el = document.getElementById(id); if (el) el.textContent = initial;
+        });
+        ['operatorEmail','mobileOperatorEmail'].forEach(function(id) {
+            var el = document.getElementById(id); if (el) el.textContent = operatorEmailVal;
+        });
+
+        // ── Operator dropdown ───────────────────────────────────
+        function toggleOperatorDropdown() {
+            var dropdown = document.getElementById('operatorDropdown');
+            var btn      = document.getElementById('operatorProfile');
+            if (dropdown && btn) { var isOpen = dropdown.classList.toggle('show'); btn.setAttribute('aria-expanded', isOpen); }
+        }
+        document.addEventListener('click', function(e) {
+            var profile  = document.getElementById('operatorProfile');
+            var dropdown = document.getElementById('operatorDropdown');
+            if (profile && dropdown && !profile.contains(e.target)) { dropdown.classList.remove('show'); profile.setAttribute('aria-expanded', 'false'); }
+        });
+        document.getElementById('operatorProfile').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleOperatorDropdown(); }
+        });
+
+        // ── Mobile menu ─────────────────────────────────────────
+        (function() {
+            var hamburger  = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var overlay    = document.querySelector('.mobile-menu-overlay');
+            var closeBtn   = document.querySelector('.mobile-menu-close');
+            function openMenu() { hamburger.classList.add('active'); hamburger.setAttribute('aria-expanded', 'true'); mobileMenu.classList.add('active'); overlay.classList.add('active'); overlay.removeAttribute('aria-hidden'); mobileMenu.removeAttribute('aria-hidden'); document.body.style.overflow = 'hidden'; }
+            function closeMenu() { hamburger.classList.remove('active'); hamburger.setAttribute('aria-expanded', 'false'); mobileMenu.classList.remove('active'); overlay.classList.remove('active'); overlay.setAttribute('aria-hidden', 'true'); mobileMenu.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+            if (hamburger) hamburger.addEventListener('click', function() { mobileMenu.classList.contains('active') ? closeMenu() : openMenu(); });
+            if (closeBtn)  closeBtn.addEventListener('click', closeMenu);
+            if (overlay)   overlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu(); });
+        })();
+
+        function logout() { UneraAdminAuth.logout(); }
+
+        // ── Helpers ─────────────────────────────────────────────
+        function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        function relativeTime(isoStr) {
+            var diff = Math.floor((Date.now() - new Date(isoStr)) / 1000);
+            if (diff < 60)     return 'Just now';
+            if (diff < 3600)   return Math.floor(diff/60) + ' min ago';
+            if (diff < 86400)  return Math.floor(diff/3600) + ' hr ago';
+            if (diff < 604800) return Math.floor(diff/86400) + ' days ago';
+            return new Date(isoStr).toLocaleDateString('en-CA');
+        }
+        function isoDate(offsetDays) { var d = new Date(); d.setDate(d.getDate() - offsetDays); return d.toISOString(); }
+
+        // ── Mock data (same as kyc-management.html) ─────────────
+        var kycSubmissions = [
+            { id:'kyc_01HX4MA', user:{ name:'Sarah L.',         email:'sarah.l@example.com',    userId:'usr_a1b2c3', initial:'S' }, docType:'passport',      docTypeLabel:'Passport',       submittedAt:isoDate(3),  status:'pending',  matchScore:0.94, liveness:'passed', lastDecision:null },
+            { id:'kyc_02PK7NB', user:{ name:'James Okonkwo',    email:'j.okonkwo@example.com',  userId:'usr_b3c4d5', initial:'J' }, docType:'driverlicense', docTypeLabel:'Driver License', submittedAt:isoDate(12), status:'verified', matchScore:0.97, liveness:'passed', lastDecision:{ by:'admin@unera.ca', at:isoDate(10), status:'verified',  note:'Documents clear. Selfie match confirmed.' } },
+            { id:'kyc_03QR8OC', user:{ name:'Priya Sharma',     email:'priya.s@example.com',    userId:'usr_c5d6e7', initial:'P' }, docType:'passport',      docTypeLabel:'Passport',       submittedAt:isoDate(1),  status:'pending',  matchScore:0.88, liveness:'passed', lastDecision:null },
+            { id:'kyc_04ST9PD', user:{ name:'Carlos Mendoza',   email:'c.mendoza@example.com',  userId:'usr_d7e8f9', initial:'C' }, docType:'nationalid',    docTypeLabel:'National ID',    submittedAt:isoDate(20), status:'rejected', matchScore:0.42, liveness:'failed', lastDecision:{ by:'admin@unera.ca', at:isoDate(18), status:'rejected',  note:'Document expiry unreadable. Selfie mismatch above threshold.' } },
+            { id:'kyc_05UV0QE', user:{ name:'Aisha Bello',      email:'aisha.b@example.com',    userId:'usr_e9f0a1', initial:'A' }, docType:'passport',      docTypeLabel:'Passport',       submittedAt:isoDate(5),  status:'reverify', matchScore:0.61, liveness:'passed', lastDecision:{ by:'admin@unera.ca', at:isoDate(4),  status:'reverify', note:'Name on document does not match account profile. Please re-submit.' } },
+            { id:'kyc_06WX1RF', user:{ name:'Tomoki Nakamura',  email:'t.nakamura@example.com', userId:'usr_f1a2b3', initial:'T' }, docType:'driverlicense', docTypeLabel:'Driver License', submittedAt:isoDate(30), status:'verified', matchScore:0.99, liveness:'passed', lastDecision:{ by:'kyc@unera.ca',   at:isoDate(28), status:'verified',  note:'All checks passed.' } },
+            { id:'kyc_07YZ2SG', user:{ name:'Fatima Al-Hassan', email:'f.alhassan@example.com', userId:'usr_a3b4c5', initial:'F' }, docType:'nationalid',    docTypeLabel:'National ID',    submittedAt:isoDate(2),  status:'pending',  matchScore:0.91, liveness:'passed', lastDecision:null },
+            { id:'kyc_08AB3TH', user:{ name:'Diego Ramirez',    email:'d.ramirez@example.com',  userId:'usr_b5c6d7', initial:'D' }, docType:'passport',      docTypeLabel:'Passport',       submittedAt:isoDate(8),  status:'rejected', matchScore:0.35, liveness:'failed', lastDecision:{ by:'admin@unera.ca', at:isoDate(6),  status:'rejected',  note:'Photo quality too low. Suspected document tampering.' } },
+            { id:'kyc_09CD4UI', user:{ name:'Elena Petrov',     email:'e.petrov@example.com',   userId:'usr_c7d8e9', initial:'E' }, docType:'driverlicense', docTypeLabel:'Driver License', submittedAt:isoDate(0),  status:'pending',  matchScore:0.78, liveness:'passed', lastDecision:null },
+            { id:'kyc_10EF5VJ', user:{ name:'Haruto Watanabe',  email:'h.watanabe@example.com', userId:'usr_d9e0f1', initial:'H' }, docType:'passport',      docTypeLabel:'Passport',       submittedAt:isoDate(14), status:'reverify', matchScore:0.55, liveness:'passed', lastDecision:{ by:'kyc@unera.ca',   at:isoDate(13), status:'reverify', note:'DOB on document differs from registration by 1 year. Clarify and re-submit.' } }
+        ];
+
+        var kycBadgeMap = {
+            pending:  '<span class="badge badge-pending">Pending</span>',
+            verified: '<span class="badge badge-verified">Verified</span>',
+            rejected: '<span class="badge badge-rejected">Rejected</span>',
+            reverify: '<span class="badge badge-info">Re-verification</span>'
+        };
+        var statusLabels = { pending:'Pending', verified:'Verified', rejected:'Rejected', reverify:'Re-verification required' };
+
+        var pendingKycConfirm    = null;
+        var detailSubmissionId   = null;
+
+        // ── Load detail ──────────────────────────────────────────
+        function loadDetail() {
+            var id = urlParams.get('id');
+            var s  = id ? kycSubmissions.find(function(k) { return k.id === id; }) : null;
+
+            if (!s) {
+                document.getElementById('kycDetailContent').style.display = 'none';
+                document.getElementById('kycDetailNotFound').style.display = 'block';
+                return;
+            }
+
+            detailSubmissionId = s.id;
+
+            // Breadcrumb
+            document.getElementById('breadcrumbId').textContent = s.id;
+
+            // Page header
+            document.getElementById('detailPageTitle').textContent  = 'KYC submission';
+            document.getElementById('detailPageSubtitle').innerHTML =
+                escapeHtml(s.user.name) + ' &bull; ' + escapeHtml(s.user.email) +
+                ' &bull; submitted ' + relativeTime(s.submittedAt);
+
+            // User card
+            document.getElementById('detailAvatar').textContent = s.user.initial;
+            document.getElementById('detailName').textContent   = s.user.name;
+            document.getElementById('detailEmail').textContent  = s.user.email;
+            document.getElementById('detailUserId').textContent = s.user.userId;
+            document.getElementById('detailUserLink').href = 'user-management.html?user=' + encodeURIComponent(s.user.userId);
+
+            // Submission meta
+            document.getElementById('detailSubId').textContent       = s.id;
+            document.getElementById('detailDocType').textContent     = s.docTypeLabel;
+            var timeEl = document.getElementById('detailSubmittedTime');
+            timeEl.textContent = relativeTime(s.submittedAt);
+            timeEl.setAttribute('datetime', s.submittedAt);
+            document.getElementById('detailLastDecision').innerHTML = s.lastDecision
+                ? escapeHtml((statusLabels[s.lastDecision.status] || s.lastDecision.status).toUpperCase()) +
+                  ' by ' + escapeHtml(s.lastDecision.by) + '<br><time datetime="' + escapeHtml(s.lastDecision.at) + '">' + relativeTime(s.lastDecision.at) + '</time>'
+                : 'Awaiting review';
+
+            // Liveness
+            document.getElementById('detailLiveness').innerHTML =
+                '<div class="status-pill-item"><span class="status-pill-label">Liveness</span>' +
+                (s.liveness === 'passed' ? '<span class="badge badge-verified">Passed</span>' : '<span class="badge badge-rejected">Failed</span>') +
+                '</div>' +
+                '<div class="status-pill-item"><span class="status-pill-label">Match score</span>' +
+                '<span class="badge badge-info">' + Math.round(s.matchScore * 100) + '%</span></div>';
+
+            // Extracted fields
+            var fields = [
+                { label:'Full name',       value: s.user.name },
+                { label:'Date of birth',   value: '01 Jan 1988 (mock)' },
+                { label:'Document no.',    value: 'P' + s.id.replace('kyc_','').toUpperCase() },
+                { label:'Expiry',          value: '2029-11-30 (mock)' },
+                { label:'Country',         value: 'Canada (mock)' },
+                { label:'Address',         value: '123 Main St, Toronto, ON (mock)' }
+            ];
+            document.getElementById('detailExtractedFields').innerHTML = fields.map(function(f) {
+                return '<div class="kyc-field-row">' +
+                    '<span class="kyc-field-label">' + escapeHtml(f.label) + '</span>' +
+                    '<span class="kyc-field-value">' + escapeHtml(f.value) + '</span>' +
+                '</div>';
+            }).join('');
+
+            // Decision panel
+            document.getElementById('detailCurrentStatus').innerHTML = kycBadgeMap[s.status];
+
+            document.getElementById('kycDetailContent').style.display = 'grid';
+        }
+
+        // ── Decision panel interactions ──────────────────────────
+        function onDetailStatusChange() {
+            var sel          = document.getElementById('detailStatusSelect');
+            var newStatus    = sel.value;
+            var noteRequired = (newStatus === 'rejected' || newStatus === 'reverify');
+            var saveBtn      = document.getElementById('detailSaveBtn');
+            var noteReqEl    = document.getElementById('detailAuditNoteReq');
+            var hintEl       = document.getElementById('detailAuditNoteHintLabel');
+
+            if (!newStatus) {
+                saveBtn.disabled = true;
+                noteReqEl.style.display = 'none';
+                hintEl.textContent = '';
+                return;
+            }
+            hintEl.textContent = noteRequired ? '(required)' : '(optional)';
+            noteReqEl.style.display = noteRequired ? 'block' : 'none';
+            noteReqEl.className = 'kyc-note-hint' + (noteRequired ? ' required' : '');
+
+            var note = (document.getElementById('detailAuditNote').value || '').trim();
+            saveBtn.disabled = noteRequired && note.length < 8;
+        }
+
+        function checkDetailAuditNote() {
+            var sel          = document.getElementById('detailStatusSelect');
+            var newStatus    = sel.value;
+            var noteRequired = (newStatus === 'rejected' || newStatus === 'reverify');
+            var note         = (document.getElementById('detailAuditNote').value || '').trim();
+            document.getElementById('detailSaveBtn').disabled = !newStatus || (noteRequired && note.length < 8);
+        }
+
+        function requestDetailUpdate() {
+            var s         = kycSubmissions.find(function(k) { return k.id === detailSubmissionId; });
+            var newStatus = document.getElementById('detailStatusSelect').value;
+            if (!s || !newStatus) return;
+            pendingKycConfirm = { submissionId: detailSubmissionId, newStatus: newStatus };
+
+            document.getElementById('kyc-confirm-title').textContent =
+                'Update KYC status for ' + s.user.name + '?';
+            document.getElementById('kyc-confirm-message').textContent =
+                s.user.name + '\u2019s KYC will be marked as \u201c' + (statusLabels[newStatus] || newStatus) + '\u201d. This is logged in the admin audit trail.';
+
+            var noteRequired = (newStatus === 'rejected' || newStatus === 'reverify');
+            var auditNote    = document.getElementById('kyc-audit-note');
+            auditNote.value  = '';
+            auditNote.setAttribute('aria-required', noteRequired ? 'true' : 'false');
+            document.getElementById('kyc-audit-required-hint').textContent = noteRequired ? ' (required)' : ' (optional)';
+            document.getElementById('kyc-audit-required-sr').textContent   = noteRequired ? '— required, minimum 8 characters' : '— optional';
+
+            var confirmBtn = document.getElementById('kycConfirmActionBtn');
+            confirmBtn.disabled   = noteRequired;
+            confirmBtn.className  = newStatus === 'rejected' ? 'btn-danger' : 'btn-primary';
+            confirmBtn.textContent = 'Confirm update';
+            confirmBtn.onclick     = function() { commitDetailUpdate(); };
+
+            var overlay = document.getElementById('kycConfirmOverlay');
+            overlay.classList.add('active'); overlay.removeAttribute('aria-hidden');
+            setTimeout(function() { document.getElementById('kyc-audit-note').focus(); }, 50);
+        }
+
+        function checkKycAuditNote() {
+            if (!pendingKycConfirm) return;
+            var note         = (document.getElementById('kyc-audit-note').value || '').trim();
+            var noteRequired = (pendingKycConfirm.newStatus === 'rejected' || pendingKycConfirm.newStatus === 'reverify');
+            document.getElementById('kycConfirmActionBtn').disabled = noteRequired && note.length < 8;
+        }
+
+        function cancelKycConfirm() {
+            var overlay = document.getElementById('kycConfirmOverlay');
+            overlay.classList.remove('active'); overlay.setAttribute('aria-hidden', 'true');
+            pendingKycConfirm = null;
+            setTimeout(function() { document.getElementById('detailSaveBtn').focus(); }, 50);
+        }
+
+        function commitDetailUpdate() {
+            if (!pendingKycConfirm) return;
+            var submissionId = pendingKycConfirm.submissionId;
+            var newStatus    = pendingKycConfirm.newStatus;
+            var note         = document.getElementById('kyc-audit-note').value.trim();
+            var s = kycSubmissions.find(function(k) { return k.id === submissionId; });
+            if (!s) { cancelKycConfirm(); return; }
+
+            s.status       = newStatus;
+            s.lastDecision = { by: operatorEmailVal, at: new Date().toISOString(), status: newStatus, note: note };
+
+            cancelKycConfirm();
+
+            // Update current status badge
+            document.getElementById('detailCurrentStatus').innerHTML = kycBadgeMap[newStatus];
+
+            // Update last decision in meta card
+            document.getElementById('detailLastDecision').innerHTML =
+                escapeHtml((statusLabels[newStatus] || newStatus).toUpperCase()) +
+                ' by ' + escapeHtml(operatorEmailVal) +
+                '<br><time datetime="' + new Date().toISOString() + '">Just now</time>';
+
+            // Reset decision panel
+            document.getElementById('detailStatusSelect').value = '';
+            document.getElementById('detailAuditNote').value    = '';
+            document.getElementById('detailSaveBtn').disabled   = true;
+            document.getElementById('detailAuditNoteReq').style.display = 'none';
+            document.getElementById('detailAuditNoteHintLabel').textContent = '';
+
+            showToast(
+                'Status updated to \u201c' + (statusLabels[newStatus] || newStatus) + '\u201d for ' + s.user.name + '.',
+                newStatus === 'rejected' ? 'error' : 'success'
+            );
+        }
+
+        // Focus trap — confirm modal
+        document.getElementById('kycConfirmOverlay').addEventListener('keydown', function(e) {
+            if (e.key !== 'Tab') return;
+            var focusable = Array.from(document.querySelector('.confirm-dialog').querySelectorAll(
+                'button:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+            )).filter(function(el) { return el.offsetParent !== null; });
+            if (!focusable.length) return;
+            var first = focusable[0], last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        });
+
+        // ── Lightbox ─────────────────────────────────────────────
+        function openLightbox(captionText) {
+            var overlay = document.getElementById('lightboxOverlay');
+            document.getElementById('lightbox-caption').textContent = captionText;
+            document.getElementById('lightboxLabel').textContent    = captionText + ' — mock placeholder';
+            overlay.classList.add('active'); overlay.removeAttribute('aria-hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(function() { document.getElementById('lightboxClose').focus(); }, 50);
+        }
+        function closeLightbox() {
+            var overlay = document.getElementById('lightboxOverlay');
+            overlay.classList.remove('active'); overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+        document.getElementById('lightboxOverlay').addEventListener('click', function(e) { if (e.target === this) closeLightbox(); });
+        document.getElementById('lightboxOverlay').addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') { e.preventDefault(); document.getElementById('lightboxClose').focus(); }
+        });
+
+        // ── Global Escape ────────────────────────────────────────
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            var confirmEl  = document.getElementById('kycConfirmOverlay');
+            var lightboxEl = document.getElementById('lightboxOverlay');
+            if (confirmEl  && confirmEl.classList.contains('active'))  { cancelKycConfirm(); return; }
+            if (lightboxEl && lightboxEl.classList.contains('active')) { closeLightbox();    return; }
+        });
+
+        // ── Toast ────────────────────────────────────────────────
+        function showToast(message, type) {
+            var container = document.getElementById('toastContainer');
+            var toast     = document.createElement('div');
+            var cls = 'toast';
+            if (type === 'error')   cls += ' toast-error';
+            if (type === 'success') cls += ' toast-success';
+            toast.className = cls;
+            toast.setAttribute('role', 'status');
+            toast.innerHTML =
+                '<span class="toast-text">' + escapeHtml(message) + '</span>' +
+                '<button class="toast-dismiss" aria-label="Dismiss notification">\u00d7</button>';
+            container.appendChild(toast);
+            var dismiss = function() {
+                toast.style.opacity = '0'; toast.style.transition = 'opacity 0.25s';
+                setTimeout(function() { if (toast.parentNode) toast.remove(); }, 260);
+            };
+            toast.querySelector('.toast-dismiss').onclick = dismiss;
+            setTimeout(dismiss, 4500);
+        }
+
+        // ── Init ─────────────────────────────────────────────────
+        loadDetail();
+        UneraAdminAuth.applyPortalRbac('kyc-detail');
+    </script>
+</body>
+</html>

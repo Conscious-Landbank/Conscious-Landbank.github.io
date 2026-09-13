@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vertical height audit · action flows</title>
+<style>body{font-family:ui-monospace,monospace;font-size:12px;padding:12px}iframe{border:1px solid #ccc;display:block;margin-bottom:8px}#log{white-space:pre-wrap}</style>
+</head>
+<body>
+<div id="log">running…</div>
+<div id="stage"></div>
+<script>
+/* Per-step vertical footprint at the review baselines. ?p=page.html limits pages,
+   ?w=1 adds width-overflow check. */
+const qs = new URLSearchParams(location.search);
+const PAGES = qs.get('p') ? qs.get('p').split(',') : ['send-enhanced.html','exchange.html','trade.html','add-money.html','donate.html','stake.html'];
+const VIEWPORTS = [[1280,720],[1024,744],[744,1133]];
+const logEl = document.getElementById('log');
+const out = [];
+function say(s){ out.push(s); console.log('[VH] ' + s); logEl.textContent = out.join('\n'); }
+async function run(){
+  const stage = document.getElementById('stage');
+  for (const pg of PAGES) {
+    for (const [w, vh] of VIEWPORTS) {
+      const f = document.createElement('iframe');
+      f.width = w; f.height = vh; f.src = pg;
+      stage.innerHTML = ''; stage.appendChild(f);
+      await new Promise(res => { let done=false; f.onload=()=>{ if(!done){done=true; setTimeout(res, 900);} }; setTimeout(()=>{ if(!done){done=true; res();} }, 12000); });
+      const d = f.contentDocument;
+      if (!d) { say('NULLDOC ' + pg + ' @' + w); continue; }
+      const steps = [...d.querySelectorAll('.step-content')];
+      const active = steps.filter(s => s.classList.contains('active'));
+      say('--- ' + pg + ' @' + w + 'x' + vh + ' (steps=' + steps.length + ')');
+      for (const s of steps) {
+        steps.forEach(x => x.classList.toggle('active', x === s));
+        await new Promise(res => setTimeout(res, 120));
+        const sh = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight);
+        const sw = Math.max(d.documentElement.scrollWidth, d.body.scrollWidth);
+        say('  [' + (s.id || s.dataset.step || 'step?') + '] sh=' + sh + ' over=' + Math.max(0, sh - vh) + ' stepH=' + Math.round(s.getBoundingClientRect().height) + (sw > w + 2 ? ' WOVERFLOW sw=' + sw : ''));
+      }
+      steps.forEach(x => x.classList.toggle('active', active.includes(x)));
+    }
+  }
+  say('VH AUDIT COMPLETE');
+}
+run();
+</script>
+</body>
+</html>

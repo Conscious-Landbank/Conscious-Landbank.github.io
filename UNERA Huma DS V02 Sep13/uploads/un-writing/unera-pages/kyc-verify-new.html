@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Identity - Huma</title>
+    <style>
+        /* ── TestFoundersGrotesk - 10 canonical OTF files ── */
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../fonts/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+
+            --primary-green:     #173d47;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+
+            --surface-sky:       color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-scatter:   color-mix(in srgb, var(--neutral-200) 38%, var(--brand-white));
+            --surface-action-green:        color-mix(in srgb, var(--fin-up) 6%, color-mix(in srgb, var(--brand-cloud-blue) 36%, var(--brand-white)));
+            --surface-action-green-strong: color-mix(in srgb, var(--fin-up) 10%, color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white)));
+            --surface-warning-soft:        color-mix(in srgb, var(--brand-yellow) 50%, white);
+            --surface-error-soft:          color-mix(in srgb, var(--brand-red) 10%, white);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--brand-cloud-blue);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Skip link ── */
+        .skip-link {
+            position: absolute; top: -40px; left: 0;
+            background: var(--brand-deep-blue); color: white;
+            padding: 8px 16px; text-decoration: none;
+            z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600;
+        }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-yellow); }
+        .visually-hidden {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+        }
+
+        /* ── Navigation ── */
+        .nav {
+            background: var(--gradient-ink);
+            padding: 0 2.75rem; height: 44px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .nav-left  { display: flex; align-items: center; gap: 2.75rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .nav-brand:focus { outline: 3px solid var(--brand-yellow); outline-offset: 2px; border-radius: 4px; }
+        .nav-logo-img { height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block; }
+        .nav-links { display: flex; gap: 1.375rem; list-style: none; align-items: center; }
+        .nav-link {
+            color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.75rem; font-weight: 500;
+            letter-spacing: 0.02em; transition: color 0.2s; padding: 0.5rem; border-radius: 4px;
+            display: inline-flex; align-items: center; line-height: 1; background: none; border: none;
+            cursor: pointer; font-family: var(--font-body);
+        }
+        .nav-link:hover { color: var(--brand-yellow); }
+        .nav-link:focus, .nav-link:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .nav-link.active { color: var(--brand-yellow); font-weight: 600; }
+        .user-profile-nav { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.5rem; transition: background 0.2s; }
+        .user-profile-nav:hover { background: rgba(255,255,255,0.08); }
+        .user-profile-nav:focus, .user-profile-nav:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 2px; border-radius: 0.5rem; }
+        .user-avatar-nav {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-earth));
+            display: flex; align-items: center; justify-content: center;
+            color: var(--brand-deep-blue); font-weight: 600; font-size: 0.813rem;
+        }
+        .user-name-nav { font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.9); }
+        .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; }
+        .hamburger:focus, .hamburger:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 2px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--brand-white); border-radius: 2px; transition: all 0.3s ease; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px,6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px,-6px); }
+        .mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10002; opacity: 0; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+        .mobile-menu { display: none; position: fixed; top: 0; right: -100%; width: 80%; max-width: 320px; height: 100%; background: var(--brand-white); z-index: 10003; padding: 1.5rem; box-shadow: -4px 0 12px rgba(0,0,0,0.1); transition: right 0.3s ease; overflow-y: auto; }
+        .mobile-menu.active { display: block; right: 0; }
+        .mobile-menu-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); }
+        .mobile-menu-close { background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; color: var(--text-primary); }
+        .mobile-menu-close:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; }
+        .mobile-nav-links .nav-link { display: block; padding: 1rem; font-size: 1rem; border-radius: 8px; color: var(--text-primary); }
+        .mobile-nav-links .nav-link:hover { background: rgba(23,61,71,0.06); color: var(--brand-deep-blue); }
+        .mobile-nav-links .nav-link.active { background: rgba(23,61,71,0.08); color: var(--brand-deep-blue); font-weight: 600; }
+
+        /* ── Container ── */
+        .container { max-width: 700px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+        /* ── Page header ── */
+        .page-header { text-align: center; margin-bottom: 2.5rem; }
+        .page-title { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--brand-deep-blue); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -0.02em; }
+        .page-subtitle { font-size: 1rem; color: var(--text-secondary); }
+
+        /* ── Stepper (desktop - 3 nodes) ── */
+        .stepper {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 2.5rem; position: relative; padding: 0 1rem;
+            max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+        .stepper::before {
+            content: ''; position: absolute; top: 23px; left: 24px; right: 24px; height: 2px;
+            background: var(--neutral-300); z-index: 0;
+        }
+        .stepper-progress {
+            position: absolute; top: 23px; left: 24px; height: 2px;
+            background: var(--gradient-primary); transition: width 0.5s ease; z-index: 1;
+            max-width: calc(100% - 48px);
+        }
+        .step { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; position: relative; z-index: 2; flex: 1; }
+        .step-circle {
+            width: 46px; height: 46px; border-radius: 50%; background: white;
+            border: 2px solid var(--neutral-300);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-family: var(--font-display); font-size: 1rem; transition: all 0.3s;
+            color: var(--neutral-400);
+        }
+        .step.active .step-circle  { background: var(--brand-deep-blue); border-color: transparent; color: white; transform: scale(1.08); }
+        .step.completed .step-circle { background: var(--brand-deep-blue); border-color: transparent; color: white; }
+        .unera-checkmark { display: block; flex-shrink: 0; fill: none; }
+        .step.completed .step-circle .unera-checkmark { width: 20px; height: 20px; }
+        .step-label-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.125rem; }
+        .step-label { font-size: 0.8rem; color: var(--neutral-600); font-weight: 500; text-align: center; }
+        .step.active .step-label { color: var(--brand-deep-blue); font-weight: 600; }
+        .step.completed .step-label { color: var(--fin-up); }
+        .step-vendor { font-size: 0.625rem; color: var(--neutral-400); font-weight: 500; text-align: center; letter-spacing: 0.03em; }
+        .step.active .step-vendor { color: var(--neutral-500); }
+
+        /* ── Mobile compact stepper ── */
+        .mobile-stepper-compact {
+            display: none; align-items: center; justify-content: space-between;
+            background: white; border: 1px solid var(--border-subtle); border-radius: 0.75rem;
+            padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+        }
+        .mobile-step-current { display: flex; align-items: center; gap: 0.75rem; }
+        .mobile-step-circle {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--brand-deep-blue); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.875rem; flex-shrink: 0;
+        }
+        .mobile-step-info { display: flex; flex-direction: column; }
+        .mobile-step-label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+        .mobile-step-title { font-size: 0.938rem; color: var(--text-primary); font-weight: 600; }
+        .mobile-step-counter { font-size: 0.75rem; color: var(--text-secondary); padding: 0.25rem 0.625rem; background: var(--neutral-100); border-radius: 1rem; white-space: nowrap; }
+
+        /* ── KYC Steps ── */
+        .kyc-step { display: none; animation: kfade 0.3s ease; }
+        .kyc-step.active { display: block; }
+        @keyframes kfade { from { opacity: 0; transform: translateY(0.4rem); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Widget card ── */
+        .widget-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            border: 1px solid var(--border-subtle);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* ── Section headers ── */
+        .section-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.375rem; }
+        .section-desc  { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5; }
+
+        /* ── Buttons ── */
+        .btn {
+            padding: 0.75rem 1.5rem; border-radius: 0.75rem;
+            font-size: 0.938rem; font-weight: 600; border: none; cursor: pointer;
+            transition: all 0.2s; font-family: var(--font-body);
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+            min-height: 46px; text-decoration: none;
+        }
+        .btn:focus, .btn:focus-visible { outline: 3px solid rgba(23,61,71,0.35); outline-offset: 2px; }
+        .btn-primary { background: var(--brand-deep-blue); color: var(--brand-white); }
+        .btn-primary:hover { filter: brightness(0.92); box-shadow: 0 4px 12px rgba(23,61,71,0.3); transform: translateY(-1px); }
+        .btn-secondary { background: transparent; color: var(--text-secondary); border: 2px solid var(--border-subtle); }
+        .btn-secondary:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .btn-full { width: 100%; }
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.25rem; }
+        .btn-row-single { margin-top: 1.25rem; }
+
+        /* ── Welcome (Screen 1 / Prepare) ── */
+        .welcome-hero { text-align: center; padding: 1.5rem 0 0.75rem; }
+        .welcome-icon-wrap {
+            width: 72px; height: 72px; border-radius: 1.25rem;
+            background: var(--brand-deep-blue);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem; color: var(--brand-white);
+        }
+        .welcome-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--brand-deep-blue); margin-bottom: 0.375rem; }
+        .welcome-subtitle { font-size: 0.938rem; color: var(--text-secondary); margin-bottom: 2rem; }
+
+        /* ── Benefit cards (shared - Start screen & Result screen) ── */
+        .kyc-benefits { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem; }
+        .kyc-benefit-card {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1rem 1.125rem;
+            background: var(--brand-white);
+            border: 1.5px solid var(--border-subtle); border-radius: 1rem;
+        }
+        /* Match vertical size to sibling card (title + 2-line body + subline) */
+        .kyc-benefit-card--featured {
+            padding-block: 1.75rem;
+        }
+        /* In result context (inside white widget-card): use surface-scatter bg to distinguish */
+        .kyc-benefits--result .kyc-benefit-card { background: var(--surface-scatter); }
+        .benefit-icon {
+            width: 48px; height: 48px; border-radius: 0.75rem; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .benefit-icon--law    { background: color-mix(in srgb, var(--brand-light-blue) 22%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .benefit-icon--unlock { background: color-mix(in srgb, var(--brand-yellow) 40%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .benefit-icon--fast   { background: color-mix(in srgb, var(--brand-yellow) 40%, var(--brand-white)); color: var(--brand-deep-blue); }
+        .benefit-content { flex: 1; }
+        .benefit-title { font-size: 0.938rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.125rem; }
+        .benefit-desc  { font-size: 0.813rem; color: var(--text-secondary); }
+        .benefit-desc--subline { margin-top: 0.375rem; }
+        .benefit-desc-pills { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem; }
+        .benefit-pill { font-size: 0.688rem; font-weight: 600; color: var(--fin-up); background: var(--fin-up-bg); padding: 0.1rem 0.5rem; border-radius: 999px; }
+
+        /* ── Trust bar ── */
+        .trust-bar-minimal {
+            display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.625rem;
+            margin-top: 1.25rem; padding: 0.625rem 1rem;
+            background: var(--neutral-100); border: 1px solid var(--border-subtle); border-radius: 0.75rem;
+            font-size: 0.813rem; color: var(--text-secondary);
+        }
+
+        /* ── Demo mode panel (Screen 1) ── */
+        .demo-test-panel {
+            margin-top: 1.25rem; padding: 1.125rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white));
+            border: 1px solid var(--border-subtle); border-radius: 1rem;
+            text-align: center;
+        }
+        .demo-test-label {
+            font-size: 0.688rem; font-weight: 700; color: var(--neutral-500);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.625rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.375rem;
+        }
+        .demo-test-btns { display: flex; flex-wrap: wrap; gap: 0.375rem; justify-content: center; }
+
+        /* ── Sumsub handoff (Screen 2) ── */
+        .sumsub-handoff { text-align: center; }
+        .sumsub-loader {
+            width: 72px; height: 72px; border-radius: 1.25rem;
+            background: var(--brand-deep-blue);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0.5rem auto 1.5rem; color: var(--brand-white);
+        }
+        .vendor-trust-row {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.625rem 1rem; margin: 1.25rem 0;
+            background: var(--neutral-100); border: 1px solid var(--border-subtle); border-radius: 0.75rem;
+            font-size: 0.813rem; color: var(--text-secondary);
+        }
+        .vendor-trust-row svg { flex-shrink: 0; color: var(--fin-up); }
+        .vendor-trust-row strong { color: var(--text-primary); }
+        .sumsub-slot {
+            min-height: 200px; border: 2px dashed var(--neutral-300); border-radius: 1rem;
+            background: var(--neutral-100); margin: 1.25rem 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 2rem 1rem;
+        }
+        .sumsub-slot-label {
+            font-size: 0.813rem; font-weight: 600; color: var(--neutral-400);
+            text-align: center; line-height: 1.5;
+        }
+        .sumsub-handoff-progress {
+            height: 4px; background: var(--neutral-200); border-radius: 2px; margin: 1rem 0 0;
+            overflow: hidden;
+        }
+        .sumsub-handoff-progress-fill {
+            height: 100%; width: 0%; background: var(--brand-deep-blue); border-radius: 2px;
+            transition: width 6s linear;
+        }
+        /* Demo controls on screen 2 */
+        .demo-separator { border: none; border-top: 1.5px dashed var(--neutral-300); margin: 1.25rem 0 1rem; }
+        .demo-label { font-size: 0.688rem; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; text-align: left; }
+        .demo-btns { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+        .demo-btn {
+            padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600;
+            border: 1.5px solid var(--border-subtle); background: var(--brand-white);
+            cursor: pointer; transition: all 0.2s; font-family: var(--font-body);
+            color: var(--text-secondary); min-height: 34px;
+        }
+        .demo-btn:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); }
+        .demo-btn:focus, .demo-btn:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .demo-btn.active { border-color: var(--brand-deep-blue); background: var(--brand-deep-blue); color: var(--brand-white); }
+
+        /* ── KYC dashboard-alert demo modals (same chrome as dashboard notificationModal) ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10010;
+            animation: kycModalFadeIn 0.2s ease-out;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        @keyframes kycModalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .kyc-demo-modal-shell.modal {
+            background: var(--brand-white);
+            border-radius: 16px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: kycModalSlideUp 0.3s ease-out;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .kyc-demo-modal-shell.modal::-webkit-scrollbar {
+            display: none;
+        }
+        @keyframes kycModalSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .kyc-demo-modal-shell .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .kyc-demo-modal-shell .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .kyc-demo-modal-shell .modal-close {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            color: var(--text-secondary);
+        }
+        .kyc-demo-modal-shell .modal-close:hover {
+            background: var(--neutral-100);
+        }
+        .kyc-demo-modal-shell .modal-close:focus,
+        .kyc-demo-modal-shell .modal-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .kyc-demo-modal-shell .modal-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .kyc-demo-modal-shell .modal-body::-webkit-scrollbar {
+            display: none;
+        }
+        .kyc-demo-modal-shell .modal-footer {
+            flex-shrink: 0;
+            padding: 0 1.5rem 1.5rem;
+            border-top: none;
+        }
+        .kyc-demo-modal-shell .modal-footer.kyc-demo-modal-footer {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+        .kyc-demo-modal-shell .modal-footer.kyc-demo-modal-footer .btn {
+            flex: 1 1 0;
+            width: auto;
+            min-width: 0;
+            min-height: 46px;
+        }
+        .kyc-demo-modal-shell .notification-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: var(--brand-white);
+        }
+        .kyc-demo-modal-shell .notification-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+        .kyc-demo-modal-shell .notification-icon.warning {
+            background: var(--warning);
+            color: var(--brand-white);
+        }
+        .kyc-demo-modal-shell .notification-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+            text-align: center;
+        }
+        body.kyc-demo-modal-open {
+            overflow: hidden;
+        }
+
+        /* ── Result icon - unified 72×72 rounded square (replaces 100px circle variants) ── */
+        .result-icon-wrap {
+            width: 72px; height: 72px; border-radius: 1.25rem;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0.5rem auto 1.5rem; flex-shrink: 0;
+            animation: kfade 0.4s ease-out;
+        }
+        .result-icon-wrap--success {
+            background: var(--brand-deep-blue); color: var(--brand-white);
+        }
+        .result-icon-wrap--review {
+            background: var(--surface-warning-soft); color: var(--brand-deep-blue);
+            border: 1.5px solid color-mix(in srgb, var(--warning) 35%, transparent);
+        }
+        .result-icon-wrap--error {
+            background: var(--surface-error-soft); color: var(--brand-red);
+            border: 1.5px solid color-mix(in srgb, var(--brand-red) 28%, transparent);
+        }
+        .result-icon-wrap--locked {
+            background: var(--surface-error-soft); color: var(--brand-red);
+            border: 1.5px solid color-mix(in srgb, var(--brand-red) 28%, transparent);
+        }
+
+        /* ── Outcome screen chrome ── */
+        .outcome-screen { padding: 0.5rem 0 0.25rem; }
+        .outcome-hero { text-align: center; padding: 0.75rem 0 1.5rem; }
+        .outcome-badge {
+            display: inline-flex; align-items: center; gap: 0.375rem;
+            font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.875rem;
+            border-radius: 999px; margin-bottom: 0.875rem;
+        }
+        .outcome-badge--success { background: var(--fin-up-bg); color: var(--fin-up); }
+        .outcome-badge--review  { background: var(--surface-warning-soft); color: var(--warning); border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent); }
+        .outcome-badge--error   { background: var(--surface-error-soft); color: var(--error); }
+        .outcome-badge--locked  { background: var(--surface-error-soft); color: var(--error); }
+        .outcome-subtitle { font-size: 0.938rem; color: var(--text-secondary); line-height: 1.55; max-width: 380px; margin: 0 auto; }
+        .outcome-ref-row {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            font-size: 0.813rem; color: var(--text-secondary);
+            background: var(--neutral-100); border: 1px solid var(--border-subtle);
+            border-radius: 0.625rem; padding: 0.5rem 0.875rem;
+            margin: 1rem auto 0; max-width: 320px;
+        }
+        .outcome-ref-label { font-weight: 500; }
+        .outcome-ref-val { font-family: ui-monospace, monospace; font-size: 0.75rem; color: var(--text-primary); font-weight: 600; }
+
+        /* ── Outcome tip (retry guidance) ── */
+        .outcome-tip {
+            display: flex; align-items: flex-start; gap: 0.625rem;
+            padding: 0.75rem 0.875rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white));
+            border: 1.5px solid var(--border-subtle); border-radius: 0.75rem;
+            margin-top: 0.875rem; font-size: 0.875rem; color: var(--text-secondary);
+        }
+        .outcome-tip-icon { color: var(--brand-deep-blue); flex-shrink: 0; margin-top: 1px; }
+        .outcome-tip strong { color: var(--text-primary); font-weight: 700; }
+
+        /* ── Error banner ── */
+        .error-banner {
+            background: var(--surface-error-soft);
+            border-top: 1px solid color-mix(in srgb, var(--brand-red) 22%, transparent);
+            border-right: 1px solid color-mix(in srgb, var(--brand-red) 22%, transparent);
+            border-bottom: 1px solid color-mix(in srgb, var(--brand-red) 22%, transparent);
+            border-left: 4px solid var(--error);
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem; margin: 1.25rem 0 0;
+        }
+        .error-banner-title { font-size: 0.875rem; font-weight: 700; color: var(--error); margin-bottom: 0.5rem; }
+        .error-code-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .error-code-chip {
+            font-family: ui-monospace, monospace; font-size: 0.75rem; font-weight: 700;
+            color: var(--error); background: rgba(171,87,112,0.1);
+            border: 1px solid rgba(171,87,112,0.25); border-radius: 0.375rem;
+            padding: 0.15rem 0.5rem; letter-spacing: 0.03em;
+        }
+
+        /* ── Review timeline ── */
+        .review-timeline {
+            display: flex; flex-direction: column; gap: 0;
+            background: var(--surface-scatter); border: 1px solid var(--border-subtle);
+            border-radius: 0.875rem; padding: 0.875rem 1rem; margin-top: 1.125rem;
+        }
+        .rtl-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle); }
+        .rtl-row:last-child { border-bottom: none; }
+        .rtl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .rtl-dot--active  { background: var(--brand-deep-blue); }
+        .rtl-dot--pending { background: var(--neutral-300); }
+        .rtl-text { font-size: 0.813rem; color: var(--text-secondary); }
+        .rtl-text strong { color: var(--text-primary); font-weight: 600; }
+
+        /* ── Countdown (max retries locked) ── */
+        .countdown-display {
+            text-align: center; padding: 1rem;
+            background: var(--surface-error-soft);
+            border: 1px solid color-mix(in srgb, var(--brand-red) 22%, transparent);
+            border-radius: 0.875rem; margin: 1rem 0 0;
+        }
+        .countdown-label { font-size: 0.75rem; font-weight: 600; color: var(--error); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+        .countdown-timer { font-family: ui-monospace, monospace; font-size: 1.75rem; font-weight: 700; color: var(--brand-deep-blue); letter-spacing: 0.05em; }
+
+        /* ── Hard-block note ── */
+        .hard-block-note {
+            font-size: 0.813rem; color: var(--text-secondary); text-align: center;
+            padding: 0.75rem; background: var(--neutral-100); border-radius: 0.625rem;
+            margin-top: 0.875rem; line-height: 1.5;
+        }
+        .hard-block-note a { color: var(--brand-deep-blue); font-weight: 600; text-decoration: none; }
+        .hard-block-note a:hover { text-decoration: underline; }
+        .hard-block-note a:focus { outline: 2px solid var(--brand-deep-blue); outline-offset: 1px; border-radius: 2px; }
+
+        /* ── Loading spinner ── */
+        .loading-spinner {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: var(--brand-white);
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--brand-deep-blue); color: white;
+            padding: 0.75rem 1.5rem; border-radius: 0.875rem;
+            font-size: 0.875rem; font-weight: 600; z-index: 10020;
+            transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0;
+            max-width: 90vw; text-align: center;
+            box-shadow: 0 8px 24px rgba(23,61,71,0.35);
+        }
+        .toast.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .nav { padding: 0 1rem; }
+            .nav-links, .user-profile-nav { display: none; }
+            .hamburger { display: flex; }
+            .container { padding: 1.5rem 1rem 3rem; }
+            .page-title { font-size: 1.625rem; }
+            .stepper { display: none; }
+            .mobile-stepper-compact { display: flex; }
+            .btn-row { grid-template-columns: 1fr; }
+            .outcome-subtitle { max-width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 1.25rem 0.875rem 2.5rem; }
+            .widget-card { padding: 1.125rem; }
+            .page-title { font-size: 1.375rem; }
+            .welcome-title { font-size: 1.25rem; }
+            .demo-btns { gap: 0.25rem; }
+        }
+    </style>
+    <link rel="stylesheet" href="consumer-app-nav.css">
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- ── Navigation ── -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma White Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <ul class="nav-links" role="list">
+                <li><a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DASHBOARD</a></li>
+                <li id="walletNavItem">
+                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
+                </li>
+                <li class="nav-dropdown-item" id="navDdTransact">
+                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
+                        TRANSACT
+                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu" aria-label="Transact options">
+                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Tokens</a></li>
+                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send Tokens</a></li>
+                        <li><a href="stake.html" class="nav-dd-item" role="menuitem">Stake</a></li>
+                        <li><a href="exchange.html" class="nav-dd-item" role="menuitem">Exchange</a></li>
+                    </ul>
+                </li>
+                <li><a href="explore-centres.html" class="nav-link" id="navLinkCentres">CENTERS</a></li>
+                <li id="navAuthLinks" style="display: none;">
+                    <a href="login_2.html" class="nav-link btn-nav-secondary">LOG IN</a>
+                    <a href="signup_2.html" class="nav-link btn-nav-primary">SIGN UP</a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <!-- Notification Bell -->
+            <div class="notification-bell-wrapper" id="notificationBellWrapper">
+                <button
+                    type="button"
+                    id="notificationBell"
+                    class="notification-bell-btn"
+                    aria-label="Notifications, 3 unread"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    onclick="toggleNotificationPanel()"
+                >
+                    <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
+                    </svg>
+                    <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
+                </button>
+
+                <!-- Desktop notification panel - mirrors #userDropdown structure -->
+                <div class="user-dropdown-nav notification-panel" id="notificationPanel"
+                     role="dialog" aria-label="Notifications" aria-modal="false"
+                     onclick="event.stopPropagation()">
+
+                    <!-- Header - mirrors .dropdown-header-nav -->
+                    <div class="dropdown-header-nav notif-panel-header">
+                        <div class="notif-panel-title-row">
+                            <span class="notif-panel-title">Notifications</span>
+                            <span class="notif-unread-label" id="notifUnreadLabel">3 unread</span>
+                        </div>
+                        <div class="notif-panel-actions">
+                            <a href="notifications.html" class="notif-action-link view-all-link">View all</a>
+                            <button type="button" class="notif-action-link"
+                                    onclick="markAllNotificationsRead()">Mark all read</button>
+                            <button type="button" class="notif-close-btn"
+                                    onclick="closeNotificationPanel()" aria-label="Close notifications">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notification list - items rendered by renderNotificationPanel() -->
+                    <div class="dropdown-menu-nav notif-list-wrapper">
+                        <div class="dropdown-section-title-nav">NEW</div>
+                        <ul class="notif-list" id="notificationList" role="list" aria-live="polite">
+                            <!-- items injected by renderNotificationPanel('desktop') -->
+                        </ul>
+                    </div>
+
+                    <!-- Footer - mirrors dropdown-divider + item pattern -->
+                    <div class="dropdown-divider-nav notif-panel-divider" id="notifPanelDivider"></div>
+                    <div class="dropdown-menu-nav notif-panel-footer" id="notifPanelFooter">
+                        <button type="button" class="btn btn-secondary notif-footer-btn" id="clearAllNotificationsBtn"
+                                onclick="clearAllNotifications()">Clear all notifications</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-wallet-display" id="navWalletDisplay"
+                 style="display: none; position: relative;"
+                 data-wallet-session="disconnected"
+                 aria-label="Account menu, wallet not connected">
+
+                    <div class="nav-wallet-session-connected" hidden>
+                    <div class="nav-wallet-avatar">
+                        <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+                    </div>
+                    <div class="nav-wallet-info nav-wallet-trigger"
+                         role="button" tabindex="0"
+                         aria-haspopup="true" aria-expanded="false"
+                         aria-label="Open account menu"
+                         onclick="toggleUserDropdown(event)"
+                         onkeydown="handleUserMenuTriggerKey(event)">
+                        <span class="nav-wallet-address-row">
+                            <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
+                            <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-wallet-balance" id="navWalletBalance">2,500.00 hUSD</span>
+                    </div>
+                    <div class="nav-network-badge"
+                         role="button"
+                         tabindex="0"
+                         aria-haspopup="listbox"
+                         aria-expanded="false"
+                         aria-label="Switch network, currently Ethereum"
+                         onclick="toggleNetworkDropdown(event)"
+                         onkeydown="handleNetworkBadgeKey(event)">
+                        <svg class="nav-network-icon" id="navNetworkIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+                        </svg>
+                        <span id="navNetworkLabel">Ethereum</span>
+                        <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- Network Switcher Dropdown -->
+                    <div class="network-dropdown-nav" id="networkDropdown"
+                         role="listbox"
+                         aria-label="Select blockchain network"
+                         onclick="event.stopPropagation()">
+                        <div class="network-dropdown-header-nav">Mainnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav active"
+                                 role="option" aria-selected="true" tabindex="0"
+                                 data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Ethereum</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base','Base','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                        <div class="network-dropdown-header-nav" style="margin-top:0.25rem;">Testnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="sepolia" data-chain-label="Sepolia" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('sepolia','Sepolia','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA" opacity="0.5"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base-sepolia" data-chain-label="Base Sepolia" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base-sepolia','Base Sepolia','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF" opacity="0.5"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Network Switcher Dropdown -->
+                    </div>
+
+                    <div class="nav-wallet-session-disconnected" hidden>
+                        <div class="nav-wallet-avatar">
+                            <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        </div>
+                    </div>
+
+                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                            <div class="dropdown-header-nav">
+                                <div class="dropdown-user-info-nav">
+                                    <div class="dropdown-avatar-nav">JS</div>
+                                    <div class="dropdown-user-details-nav">
+                                        <div class="dropdown-user-name-nav">Jane Smith</div>
+                                        <div class="dropdown-user-email-nav">jane@example.com</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-wallet-badge-nav dropdown-wallet-status-nav"
+                                     id="dropdownWalletStatusChip"
+                                     data-state="disconnected"
+                                     role="status"
+                                     aria-live="polite">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                         viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                        <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
+                                    </svg>
+                                    <span id="dropdownWalletStatusText">No wallet connected</span>
+                                </div>
+                                <span id="dropdownWalletAddress" class="visually-hidden" aria-hidden="true"></span>
+                            </div>
+                            <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
+                        </div>
+</div>
+
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma Black Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+                <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
+            <a href="login_2.html" class="mobile-drawer-auth-login">LOG IN</a>
+            <a href="signup_2.html" class="mobile-drawer-auth-signup">SIGN UP</a>
+        </div>
+        <div id="drawerWalletRow" class="mobile-drawer-wallet-row" style="display: none;">
+            <span aria-hidden="true">🦊</span>
+            <div class="drawer-wallet-info">
+                <div id="drawerWalletAddress">0x742d...3a8f</div>
+                <div class="drawer-wallet-meta-row">
+                    <span id="drawerWalletBalance">2,500.00 hUSD</span>
+                    <span id="drawerWalletNetwork">Base</span>
+                </div>
+            </div>
+        </div>
+        <div id="drawerConnectRow" hidden aria-hidden="true"></div>
+        <ul class="mobile-nav-links" role="list">
+            <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
+            <li class="mobile-nav-section-label">TRANSACT</li>
+            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Tokens</a></li>
+            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send Tokens</a></li>
+            <li><a href="stake.html" class="nav-link mobile-nav-sub">Stake</a></li>
+            <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
+            </ul>
+        <div id="mobileUserMenu"></div>
+                <div id="mobileNotificationsSection"></div>
+    </div>
+<main id="main-content">
+    <div class="container">
+
+        <!-- Dynamic page header -->
+        <header class="page-header">
+            <h1 class="page-title" id="pageTitle">Verify Your Identity</h1>
+            <p class="page-subtitle" id="pageSubtitle">Complete KYC verification to unlock your full Huma account</p>
+        </header>
+
+        <!-- Desktop stepper - 3 nodes -->
+        <div class="stepper" id="desktopStepper" aria-label="Verification progress" role="list">
+            <div class="stepper-progress" id="stepperProgress" style="width:0%"></div>
+            <div class="step active" id="stepEl1" role="listitem">
+                <div class="step-circle" id="stepCircle1">1</div>
+                <div class="step-label-wrap">
+                    <span class="step-label">Prepare</span>
+                </div>
+            </div>
+            <div class="step" id="stepEl2" role="listitem">
+                <div class="step-circle" id="stepCircle2">2</div>
+                <div class="step-label-wrap">
+                    <span class="step-label">Verify</span>
+                    <span class="step-vendor">via Sumsub</span>
+                </div>
+            </div>
+            <div class="step" id="stepEl3" role="listitem">
+                <div class="step-circle" id="stepCircle3">3</div>
+                <div class="step-label-wrap">
+                    <span class="step-label">Done</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile compact stepper -->
+        <div class="mobile-stepper-compact" id="mobileStepper" aria-live="polite">
+            <div class="mobile-step-current">
+                <div class="mobile-step-circle" id="mobileStepNum" aria-hidden="true">1</div>
+                <div class="mobile-step-info">
+                    <span class="mobile-step-label">Current step</span>
+                    <span class="mobile-step-title" id="mobileStepTitle">Prepare</span>
+                </div>
+            </div>
+            <span class="mobile-step-counter" id="mobileStepCounter">1 of 3</span>
+        </div>
+
+        <!-- ══ Screen 1: Prepare ══ -->
+        <div class="kyc-step active" id="step-1">
+            <div class="widget-card">
+                <div class="welcome-hero">
+                    <div class="welcome-icon-wrap" aria-hidden="true">
+                        <!-- verified_user FILL=1 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                            <path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/>
+                        </svg>
+                    </div>
+                    <h2 class="welcome-title">What you'll need</h2>
+                    <p class="welcome-subtitle">This takes about 5 minutes. You'll need a government-issued photo ID and access to your camera.</p>
+                </div>
+
+                <div class="kyc-benefits" role="list">
+                    <div class="kyc-benefit-card kyc-benefit-card--featured" role="listitem">
+                        <div class="benefit-icon benefit-icon--unlock" aria-hidden="true">
+                            <!-- lock FILL=1 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/>
+                            </svg>
+                        </div>
+                        <div class="benefit-content">
+                            <div class="benefit-title">Unlock Full Features</div>
+                            <div class="benefit-desc-pills">
+                                <span class="benefit-pill">Wallet</span>
+                                <span class="benefit-pill">Transfers</span>
+                                <span class="benefit-pill">Donations</span>
+                                <span class="benefit-pill">Full Dashboard</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kyc-benefit-card" role="listitem">
+                        <div class="benefit-icon benefit-icon--fast" aria-hidden="true">
+                            <!-- bolt FILL=1 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                <path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/>
+                            </svg>
+                        </div>
+                        <div class="benefit-content">
+                            <div class="benefit-title">Fast &amp; Secure</div>
+                            <div class="benefit-desc">~5 minutes &nbsp;·&nbsp; 95% instant approval</div>
+                            <div class="benefit-desc benefit-desc--subline">Your verification data is protected</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-full" onclick="goToStep(2)" aria-label="Start identity verification">
+                    Start Verification
+                    <!-- arrow_forward FILL=0 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                        <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+                    </svg>
+                </button>
+
+                <div class="trust-bar-minimal" aria-label="Security assurances">
+                    <span style="display:inline-flex;align-items:center;gap:0.375rem;">
+                        <!-- verified FILL=1 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm94-278 226-226-56-56-170 170-86-84-56 56 142 140Z"/></svg>
+                        GDPR &amp; CCPA compliant
+                    </span>
+                </div>
+
+                <!-- Demo Mode panel (prototype only) -->
+                <div class="demo-test-panel" role="region" aria-label="Demo mode controls">
+                    <p class="demo-test-label">
+                        <!-- science FILL=1 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M120-120q-23 0-35-19t-1-40l220-380v-280h-40q-17 0-28.5-11.5T224-879q0-17 11.5-28.5T264-919h432q17 0 28.5 11.5T736-879q0 17-11.5 28.5T696-839h-40v280l220 380q11 21-1 40t-35 19H120Z"/></svg>
+                        Demo mode: set the outcome on the next screen
+                    </p>
+                    <div class="demo-test-btns" role="group" aria-label="Demo control">
+                        <button class="demo-btn" onclick="goToStep(2)" type="button">Preview Flow</button>
+                        <button class="demo-btn" onclick="openKycDashboardAlertDemoModal('blocked')" type="button">Blocked alert</button>
+                        <button class="demo-btn" onclick="openKycDashboardAlertDemoModal('retry')" type="button">Retry alert</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ Screen 2: Verify (Sumsub handoff) ══ -->
+        <div class="kyc-step" id="step-2">
+            <div class="widget-card sumsub-handoff">
+                <div class="sumsub-loader" aria-hidden="true">
+                    <div class="loading-spinner"></div>
+                </div>
+                <h2 class="section-title" style="text-align:center;">Opening secure verification…</h2>
+                <p class="section-desc" style="text-align:center; margin-bottom:0;">
+                    We're handing you off to our verification partner. Please complete all the steps in the panel below.
+                </p>
+
+                <!-- Fake progress bar - animates to 100% over 6 s -->
+                <div class="sumsub-handoff-progress" aria-hidden="true">
+                    <div class="sumsub-handoff-progress-fill" id="handoffProgressFill"></div>
+                </div>
+
+                <div class="vendor-trust-row" aria-label="Powered by Sumsub">
+                    <!-- verified FILL=1 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm94-278 226-226-56-56-170 170-86-84-56 56 142 140Z"/></svg>
+                    Powered by <strong>Sumsub</strong> · bank-grade identity verification
+                </div>
+
+                <!-- Sumsub SDK slot - iframe mounts here in production -->
+                <div class="sumsub-slot" role="region" aria-label="Sumsub verification panel">
+                    <!-- camera_front FILL=0 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" style="color:var(--neutral-300);">
+                        <path d="M480-400q-66 0-113-47t-47-113v-200q0-66 47-113t113-47q66 0 113 47t47 113v200q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-560v-200q0-33-23.5-56.5T480-840q-33 0-56.5 23.5T400-760v200q0 33 23.5 56.5T480-480Zm-40 360v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Z"/>
+                    </svg>
+                    <span class="sumsub-slot-label">
+                        Sumsub verification UI loads here<br>
+                        <span style="font-size:0.75rem; font-weight:400; color:var(--neutral-400);">(SDK iframe in production)</span>
+                    </span>
+                </div>
+
+                <!-- Demo outcome selector (prototype only) -->
+                <hr class="demo-separator" aria-hidden="true">
+                <p class="demo-label">Prototype: simulate a Sumsub result</p>
+                <div class="demo-btns" role="group" aria-label="Demo outcome selector">
+                    <button class="demo-btn active" id="demoBtn-null"       onclick="setKycDemo(null)"          type="button">Happy path</button>
+                    <button class="demo-btn"         id="demoBtn-review"    onclick="setKycDemo('review')"      type="button">Under review</button>
+                    <button class="demo-btn"         id="demoBtn-forgery"   onclick="setKycDemo('forgery')"     type="button">FORGERY</button>
+                    <button class="demo-btn"         id="demoBtn-damaged"   onclick="setKycDemo('damaged')"     type="button">DOCUMENT_DAMAGED</button>
+                    <button class="demo-btn"         id="demoBtn-expired"   onclick="setKycDemo('expired')"     type="button">EXPIRED</button>
+                    <button class="demo-btn"         id="demoBtn-face"      onclick="setKycDemo('face')"        type="button">FACE_MISMATCH</button>
+                    <button class="demo-btn"         id="demoBtn-quality"   onclick="setKycDemo('quality')"     type="button">LOW_QUALITY</button>
+                    <button class="demo-btn"         id="demoBtn-duplicate" onclick="setKycDemo('duplicate')"   type="button">DUPLICATE_ACCOUNT</button>
+                    <button class="demo-btn"         id="demoBtn-maxretries" onclick="setKycDemo('maxretries')" type="button">Max retries</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ Screen 3: Done (result rendered by JS) ══ -->
+        <div class="kyc-step" id="step-3">
+            <div class="widget-card">
+                <div id="kycOutcome" role="region" aria-live="polite" aria-atomic="true"></div>
+            </div>
+        </div>
+
+    </div><!-- /.container -->
+</main>
+
+<!-- Demo: dashboard-style KYC alert scenarios (notification modal chrome) -->
+<div class="modal-overlay" id="kycBlockedDemoModal" role="dialog" aria-modal="true" aria-labelledby="kycBlockedDemoTitle" aria-describedby="kycBlockedDemoDesc" onclick="if (event.target === this) closeKycDashboardAlertDemoModal()">
+    <div class="modal notification-modal kyc-demo-modal-shell" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 id="kycBlockedDemoTitle" class="modal-title">Identity verification unavailable</h2>
+            <button type="button" class="modal-close" onclick="closeKycDashboardAlertDemoModal()" aria-label="Close dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="notification-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+            </div>
+            <p id="kycBlockedDemoDesc" class="notification-message">You're not able to complete identity verification on this account while we review it. Please contact support for next steps.</p>
+        </div>
+        <div class="modal-footer kyc-demo-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeKycDashboardAlertDemoModal()">OK</button>
+            <a class="btn btn-primary" href="mailto:support@unera.ca" aria-label="Contact Huma support about your verification status">Contact support</a>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="kycRetryDemoModal" role="dialog" aria-modal="true" aria-labelledby="kycRetryDemoTitle" aria-describedby="kycRetryDemoDesc" onclick="if (event.target === this) closeKycDashboardAlertDemoModal()">
+    <div class="modal notification-modal kyc-demo-modal-shell" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 id="kycRetryDemoTitle" class="modal-title">Verification needs another try</h2>
+            <button type="button" class="modal-close" onclick="closeKycDashboardAlertDemoModal()" aria-label="Close dialog">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="notification-icon warning" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M40-120l440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z"/></svg>
+            </div>
+            <p id="kycRetryDemoDesc" class="notification-message">Additional information is needed to complete your identity check. Please resume the verification flow to resubmit.</p>
+        </div>
+        <div class="modal-footer kyc-demo-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeKycDashboardAlertDemoModal()">OK</button>
+            <button type="button" class="btn btn-primary" onclick="resumeVerificationFromDemoModal()" aria-label="Resume identity verification">Resume verification</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="kycToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+    /* ── State ── */
+    const S = { step: 1, demoMode: null, countdown: null };
+
+    /* ── Constants ── */
+    const STEP_LABELS    = ['Prepare', 'Verify', 'Done'];
+    const STEP_PROGRESS  = ['0%', '50%', '100%'];
+    const UNERA_CHECKMARK_SVG = '<svg class="unera-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+
+    /* ── Page heading per step (step 3 set by renderOutcome) ── */
+    const PAGE_HEADINGS = {
+        1: { title: 'Verify Your Identity',    sub: 'Complete KYC verification to unlock your full Huma account' },
+        2: { title: 'Verifying Your Identity', sub: 'This usually takes 2–5 minutes' },
+    };
+
+    const OUTCOME_HEADINGS = {
+        null:       { title: 'Verification Complete',      sub: 'Welcome to Huma. Full features are unlocked.' },
+        review:     { title: 'Under Review',               sub: 'We\'re reviewing your documents' },
+        forgery:    { title: 'Verification Unsuccessful',  sub: 'Please review the details below' },
+        damaged:    { title: 'Verification Unsuccessful',  sub: 'Please review the details below' },
+        expired:    { title: 'Verification Unsuccessful',  sub: 'Please review the details below' },
+        face:       { title: 'Verification Unsuccessful',  sub: 'Please review the details below' },
+        quality:    { title: 'Verification Unsuccessful',  sub: 'Please review the details below' },
+        duplicate:  { title: 'Verification Unsuccessful',  sub: 'Please review the details below' },
+        maxretries: { title: 'Account Locked',             sub: 'Try again after the cooldown period' },
+    };
+
+    /* ── Handoff timer (Screen 2 - Sumsub loading) ── */
+    const HANDOFF_DURATION_MS = 6000;
+    let handoffTimer = null;
+
+    /* ── Dashboard KYC alert demo modals (blocked / retry scenarios) ── */
+    function openKycDashboardAlertDemoModal(kind) {
+        const id = kind === 'blocked' ? 'kycBlockedDemoModal' : 'kycRetryDemoModal';
+        const overlay = document.getElementById(id);
+        if (!overlay) return;
+        closeKycDashboardAlertDemoModal();
+        overlay.classList.add('active');
+        document.body.classList.add('kyc-demo-modal-open');
+        const closeBtn = overlay.querySelector('.modal-close');
+        if (closeBtn) closeBtn.focus();
+    }
+
+    function closeKycDashboardAlertDemoModal() {
+        ['kycBlockedDemoModal', 'kycRetryDemoModal'].forEach(mid => {
+            const el = document.getElementById(mid);
+            if (el) el.classList.remove('active');
+        });
+        document.body.classList.remove('kyc-demo-modal-open');
+    }
+
+    function resumeVerificationFromDemoModal() {
+        closeKycDashboardAlertDemoModal();
+        goToStep(2);
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (!document.body.classList.contains('kyc-demo-modal-open')) return;
+        closeKycDashboardAlertDemoModal();
+    });
+
+    /* ── Step navigation ── */
+    function goToStep(n) {
+        document.getElementById('step-' + S.step).classList.remove('active');
+        S.step = n;
+        document.getElementById('step-' + n).classList.add('active');
+        updateStepper();
+        updatePageHeading(n);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        /* Cancel any running handoff timer */
+        if (handoffTimer) { clearTimeout(handoffTimer); handoffTimer = null; }
+
+        /* Screen 2: start progress fill + auto-advance on happy path */
+        if (n === 2) {
+            const fill = document.getElementById('handoffProgressFill');
+            if (fill) {
+                fill.style.width = '0%';
+                /* Trigger reflow then animate */
+                requestAnimationFrame(() => { fill.style.width = '100%'; });
+            }
+            if (S.demoMode === null) {
+                handoffTimer = setTimeout(() => {
+                    renderOutcome();
+                    goToStep(3);
+                }, HANDOFF_DURATION_MS);
+            }
+        }
+    }
+
+    function updateStepper() {
+        const n = S.step;
+        document.getElementById('stepperProgress').style.width = STEP_PROGRESS[n - 1];
+        for (let i = 1; i <= 3; i++) {
+            const el     = document.getElementById('stepEl' + i);
+            const circle = document.getElementById('stepCircle' + i);
+            el.classList.remove('active', 'completed');
+            if (i < n) {
+                el.classList.add('completed');
+                circle.innerHTML = UNERA_CHECKMARK_SVG;
+            } else if (i === n) {
+                el.classList.add('active');
+                circle.textContent = i;
+            } else {
+                circle.textContent = i;
+            }
+        }
+        document.getElementById('mobileStepNum').textContent   = n;
+        document.getElementById('mobileStepTitle').textContent = STEP_LABELS[n - 1];
+        document.getElementById('mobileStepCounter').textContent = n + ' of 3';
+    }
+
+    function updatePageHeading(n) {
+        const h = PAGE_HEADINGS[n];
+        if (!h) return;
+        document.getElementById('pageTitle').textContent    = h.title;
+        document.getElementById('pageSubtitle').textContent = h.sub;
+    }
+
+    /* ── Demo outcome selector ── */
+    function setKycDemo(mode) {
+        S.demoMode = mode;
+        if (handoffTimer) { clearTimeout(handoffTimer); handoffTimer = null; }
+        document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+        const activeId = 'demoBtn-' + (mode === null ? 'null' : mode);
+        const btn = document.getElementById(activeId);
+        if (btn) btn.classList.add('active');
+        renderOutcome();
+        goToStep(3);
+    }
+
+    /* ── Shared benefit cards HTML (uses .kyc-benefit-card - same class as Start screen) ── */
+    function benefitCardsHTML() {
+        return `<div class="kyc-benefits kyc-benefits--result" role="list" aria-label="Why verify your identity" style="margin-top:1.25rem;">
+            <div class="kyc-benefit-card kyc-benefit-card--featured" role="listitem">
+                <div class="benefit-icon benefit-icon--unlock" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                        <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/>
+                    </svg>
+                </div>
+                <div class="benefit-content">
+                    <div class="benefit-title">Unlock Full Features</div>
+                    <div class="benefit-desc-pills">
+                        <span class="benefit-pill">Wallet</span>
+                        <span class="benefit-pill">Transfers</span>
+                        <span class="benefit-pill">Donations</span>
+                        <span class="benefit-pill">Full Dashboard</span>
+                    </div>
+                </div>
+            </div>
+            <div class="kyc-benefit-card" role="listitem">
+                <div class="benefit-icon benefit-icon--fast" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                        <path d="m320-80 40-280H160l360-520h80l-40 320h240L400-80h-80Z"/>
+                    </svg>
+                </div>
+                <div class="benefit-content">
+                    <div class="benefit-title">Fast &amp; Secure</div>
+                    <div class="benefit-desc">~5 minutes &nbsp;·&nbsp; 95% instant approval</div>
+                    <div class="benefit-desc benefit-desc--subline">Your verification data is protected</div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    /* ── Render outcome into Screen 3 ── */
+    function renderOutcome() {
+        const el = document.getElementById('kycOutcome');
+        if (!el) return;
+        if (S.countdown) { clearInterval(S.countdown); S.countdown = null; }
+
+        const mode = S.demoMode;
+
+        /* Update page heading for step 3 */
+        const h = OUTCOME_HEADINGS[mode] || OUTCOME_HEADINGS[null];
+        document.getElementById('pageTitle').textContent    = h.title;
+        document.getElementById('pageSubtitle').textContent = h.sub;
+
+        /* ── SVG icons for result-icon-wrap (36×36, FILL=1) - canonical NewUnera paths ── */
+        const icons = {
+            success: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>`,
+            review:  `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Zm28 168-108-108v-240h80v210l92 92-64 46Z"/></svg>`,
+            error:   `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M508.5-291.5Q520-303 520-320t-11.5-28.5Q497-360 480-360t-28.5 11.5Q440-337 440-320t11.5 28.5Q463-280 480-280t28.5-11.5ZM440-440h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>`,
+            locked:  `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>`,
+        };
+
+        /* ── Happy Path ── */
+        if (!mode) {
+            el.innerHTML = `
+            <div class="outcome-screen">
+                <div class="outcome-hero">
+                    <div class="result-icon-wrap result-icon-wrap--success" aria-hidden="true">${icons.success}</div>
+                    <div class="outcome-badge outcome-badge--success" role="status">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                        Verified
+                    </div>
+                    <p class="outcome-subtitle">Your identity has been successfully verified. You now have full access to all Huma features.</p>
+                    <div class="outcome-ref-row" aria-label="Verification reference">
+                        <span class="outcome-ref-label">Reference</span>
+                        <span class="outcome-ref-val">KYC-2026-04-78931</span>
+                    </div>
+                </div>
+                <a href="dashboard-enhanced.html" class="btn btn-primary btn-full" style="margin-top:1.5rem;">
+                    Go to Dashboard
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg>
+                </a>
+            </div>`;
+            return;
+        }
+
+        /* ── Under Review ── */
+        if (mode === 'review') {
+            el.innerHTML = `
+            <div class="outcome-screen">
+                <div class="outcome-hero">
+                    <div class="result-icon-wrap result-icon-wrap--review" aria-hidden="true">${icons.review}</div>
+                    <div class="outcome-badge outcome-badge--review" role="status">Under Review</div>
+                    <p class="outcome-subtitle">Your documents have been submitted and are being reviewed by our compliance team. We'll notify you by email.</p>
+                </div>
+                <div class="review-timeline" aria-label="Review timeline">
+                    <div class="rtl-row">
+                        <div class="rtl-dot rtl-dot--active"></div>
+                        <div class="rtl-text"><strong>Documents submitted</strong> · under manual review</div>
+                    </div>
+                    <div class="rtl-row">
+                        <div class="rtl-dot rtl-dot--pending"></div>
+                        <div class="rtl-text">Compliance review · typically 1–2 business days</div>
+                    </div>
+                    <div class="rtl-row">
+                        <div class="rtl-dot rtl-dot--pending"></div>
+                        <div class="rtl-text">Email notification sent on approval or if action needed</div>
+                    </div>
+                </div>
+                ${benefitCardsHTML()}
+                <div class="btn-row">
+                    <button class="btn btn-secondary" onclick="restartFlow()">Back to Start</button>
+                    <a href="mailto:support@unera.finance" class="btn btn-primary">Contact Support</a>
+                </div>
+            </div>`;
+            return;
+        }
+
+        /* ── Max Retries / Locked ── */
+        if (mode === 'maxretries') {
+            let secs = 23 * 3600 + 47 * 60 + 12;
+            const fmt = s => {
+                const hh  = String(Math.floor(s / 3600)).padStart(2, '0');
+                const mm  = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+                const ss  = String(s % 60).padStart(2, '0');
+                return hh + ':' + mm + ':' + ss;
+            };
+            el.innerHTML = `
+            <div class="outcome-screen">
+                <div class="outcome-hero">
+                    <div class="result-icon-wrap result-icon-wrap--locked" aria-hidden="true">${icons.locked}</div>
+                    <div class="outcome-badge outcome-badge--locked" role="status">Locked</div>
+                    <p class="outcome-subtitle">You've reached the maximum number of verification attempts (3 of 3). Your account is locked for 24 hours.</p>
+                </div>
+                <div class="countdown-display" aria-live="polite" aria-atomic="true">
+                    <div class="countdown-label">Retry available in</div>
+                    <div class="countdown-timer" id="kycCountdownTimer">${fmt(secs)}</div>
+                </div>
+                ${benefitCardsHTML()}
+                <div class="btn-row">
+                    <button class="btn btn-secondary" onclick="notifyByEmail()">Notify Me by Email</button>
+                    <a href="mailto:support@unera.finance" class="btn btn-primary">Contact Support</a>
+                </div>
+                <p class="hard-block-note">Need help sooner? Email us at <a href="mailto:support@unera.finance">support@unera.finance</a> and our team will assist you.</p>
+            </div>`;
+            S.countdown = setInterval(() => {
+                secs--;
+                if (secs <= 0) { clearInterval(S.countdown); secs = 0; }
+                const t = document.getElementById('kycCountdownTimer');
+                if (t) t.textContent = fmt(secs);
+            }, 1000);
+            return;
+        }
+
+        /* ── Standard fail states ── */
+        const failConfig = {
+            forgery:  {
+                code: 'FORGERY', hardBlock: true,
+                subtitle: 'Our system detected an issue with your document.',
+                bannerMsg: 'Document authenticity check failed. This requires manual review.',
+                tip: null,
+                ctaPrimary: { label: 'Contact Support', action: "window.location.href='mailto:support@unera.finance'" },
+                ctaSecondary: { label: 'Learn More', action: 'openLearnMore()' },
+                note: 'This issue requires manual review by our compliance team. Please contact support with a valid government-issued ID.'
+            },
+            damaged:  {
+                code: 'DOCUMENT_DAMAGED', hardBlock: false,
+                subtitle: 'We could not read your document clearly.',
+                bannerMsg: 'The document could not be read due to damage or poor quality.',
+                tip: 'Ensure your document is flat, well-lit, and free from folds, tears, or water damage.',
+                ctaPrimary: { label: 'Try Again', action: 'retryVerification()' },
+                ctaSecondary: { label: 'Contact Support', action: "window.location.href='mailto:support@unera.finance'" }
+            },
+            expired:  {
+                code: 'EXPIRED_DOCUMENT', hardBlock: false,
+                subtitle: 'We could not accept your document.',
+                bannerMsg: 'Your document appears to be expired.',
+                tip: 'Please use a valid, non-expired government-issued ID with a current expiry date.',
+                ctaPrimary: { label: 'Try Again', action: 'retryVerification()' },
+                ctaSecondary: { label: 'Contact Support', action: "window.location.href='mailto:support@unera.finance'" }
+            },
+            face:     {
+                code: 'FACE_MISMATCH', hardBlock: false,
+                subtitle: "Your selfie doesn't match your document photo.",
+                bannerMsg: "The selfie provided didn't match the photo on your document.",
+                tip: 'Remove glasses, hats, or face coverings. Ensure your face is fully visible and well-lit.',
+                ctaPrimary: { label: 'Retry Selfie', action: 'retryVerification()' },
+                ctaSecondary: { label: 'Contact Support', action: "window.location.href='mailto:support@unera.finance'" }
+            },
+            quality:  {
+                code: 'LOW_QUALITY_IMAGE', hardBlock: false,
+                subtitle: 'Your photos were too blurry or poorly lit to process.',
+                bannerMsg: 'Document images could not be processed due to low quality.',
+                tip: 'Take photos in bright, natural light. Hold your device steady. Avoid shadows and reflections.',
+                ctaPrimary: { label: 'Try Again', action: 'retryVerification()' },
+                ctaSecondary: { label: 'Contact Support', action: "window.location.href='mailto:support@unera.finance'" }
+            },
+            duplicate: {
+                code: 'DUPLICATE_ACCOUNT', hardBlock: true,
+                subtitle: 'An account already exists with these identity details.',
+                bannerMsg: 'An account already exists linked to these identity credentials.',
+                tip: null,
+                ctaPrimary: { label: 'Contact Support', action: "window.location.href='mailto:support@unera.finance'" },
+                ctaSecondary: null,
+                note: 'If you believe this is an error, please contact our support team. Each person can only hold one Huma account.'
+            },
+        };
+
+        const cfg = failConfig[mode];
+        if (!cfg) return;
+
+        const tipHTML = cfg.tip ? `
+        <div class="outcome-tip" role="note">
+            <div class="outcome-tip-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M423.5-103.5Q400-127 400-160h160q0 33-23.5 56.5T480-80q-33 0-56.5-23.5ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Z"/>
+                </svg>
+            </div>
+            <span><strong>Tip:&nbsp;</strong>${cfg.tip}</span>
+        </div>` : '';
+
+        const noteHTML = cfg.note ? `<p class="hard-block-note">${cfg.note}</p>` : '';
+
+        const ctaRow = cfg.ctaSecondary
+            ? `<div class="btn-row"><button class="btn btn-secondary" onclick="${cfg.ctaSecondary.action}">${cfg.ctaSecondary.label}</button><button class="btn btn-primary" onclick="${cfg.ctaPrimary.action}">${cfg.ctaPrimary.label}</button></div>`
+            : `<div class="btn-row-single"><button class="btn btn-primary btn-full" onclick="${cfg.ctaPrimary.action}">${cfg.ctaPrimary.label}</button></div>`;
+
+        el.innerHTML = `
+        <div class="outcome-screen">
+            <div class="outcome-hero">
+                <div class="result-icon-wrap result-icon-wrap--error" aria-hidden="true">${icons.error}</div>
+                <div class="outcome-badge outcome-badge--error" role="status">Verification Failed</div>
+                <p class="outcome-subtitle">${cfg.subtitle}</p>
+            </div>
+            <div class="error-banner" role="alert">
+                <div class="error-banner-title">Issue detected:</div>
+                <div class="error-code-row">
+                    <span class="error-code-chip">${cfg.code}</span>
+                </div>
+                <p style="font-size:0.813rem; color:var(--text-secondary); margin-top:0.5rem; line-height:1.45;">${cfg.bannerMsg}</p>
+            </div>
+            ${tipHTML}
+            ${benefitCardsHTML()}
+            ${ctaRow}
+            ${noteHTML}
+        </div>`;
+    }
+
+    /* ── Retry: go back to Sumsub handoff screen ── */
+    function retryVerification() {
+        goToStep(2);
+    }
+
+    /* ── Restart: go back to Prepare screen ── */
+    function restartFlow() {
+        S.demoMode = null;
+        if (handoffTimer) { clearTimeout(handoffTimer); handoffTimer = null; }
+        if (S.countdown)  { clearInterval(S.countdown); S.countdown = null; }
+        document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+        const def = document.getElementById('demoBtn-null');
+        if (def) def.classList.add('active');
+        goToStep(1);
+    }
+
+    function openLearnMore() { showToast('Opening compliance FAQ…'); }
+    function notifyByEmail() { showToast("We'll email you when you can retry. Check your inbox."); }
+
+    function showToast(msg) {
+        const t = document.getElementById('kycToast');
+        if (!t) return;
+        t.textContent = msg;
+        t.classList.add('visible');
+        setTimeout(() => t.classList.remove('visible'), 3500);
+    }
+
+    /* ── Hamburger menu ── */
+    (function() {
+        const btn     = document.getElementById('hamburgerBtn');
+        const overlay = document.getElementById('mobileMenuOverlay');
+        const menu    = document.getElementById('mobileMenu');
+        const closeBtn = document.getElementById('mobileMenuClose');
+        function open()  { btn.classList.add('active'); menu.classList.add('active'); overlay.classList.add('active'); btn.setAttribute('aria-expanded', 'true'); menu.removeAttribute('hidden'); }
+        function close() { btn.classList.remove('active'); menu.classList.remove('active'); overlay.classList.remove('active'); btn.setAttribute('aria-expanded', 'false'); }
+        if (btn)      btn.addEventListener('click',     () => btn.classList.contains('active') ? close() : open());
+        if (closeBtn) closeBtn.addEventListener('click', close);
+        if (overlay)  overlay.addEventListener('click',  close);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('active')) close(); });
+    })();
+</script>
+    <script src="consumer-app-nav.js"></script>
+</body>
+</html>

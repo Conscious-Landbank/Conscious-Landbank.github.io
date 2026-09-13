@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HC Management — UNERA Admin</title>
+
+    <!-- TestFoundersGrotesk — UNERA V2 brand font -->
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+    </style>
+
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* ── UNERA V2 Brand Colors ─────────────────────────── */
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+
+            /* ── Semantic aliases ─────────────────────────────── */
+            --primary-green:     #173d47;
+            --primary-blue:      #90c2b8;
+            --accent-pink:       #ffffab;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+            --neutral-50:        #ffffff;
+
+            /* ── Legacy gradient names: solid fills only on product HTML ── */
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-dusk:     var(--brand-deep-blue);
+
+            /* ── Typography ───────────────────────────────────── */
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+
+            /* ── Financial semantic tokens ────────────────────── */
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --fin-down-bg:       color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --fin-neutral:       #6b9090;
+            --fin-neutral-bg:    rgba(107, 144, 144, 0.10);
+
+            /* ── Semantic status aliases ──────────────────────── */
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+            --error-bg:          rgba(171, 87, 112, 0.10);
+
+            /* ── Accessibility ────────────────────────────────── */
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+
+            /* ── Surface tints ────────────────────────────────── */
+            --surface-impact:    color-mix(in srgb, var(--brand-cloud-blue) 22%, var(--brand-white));
+            --surface-action:    color-mix(in srgb, var(--brand-cloud-blue) 14%, var(--brand-white));
+            --surface-warm:      color-mix(in srgb, var(--brand-earth) 12%, var(--brand-white));
+            --surface-sky:       color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-deep:      color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white));
+            --surface-error-soft: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
+            --surface-warning-soft: color-mix(in srgb, var(--brand-yellow) 50%, var(--brand-white));
+
+            /* ── KPI stat sizes ───────────────────────────────── */
+            --font-stat-size:         2.5rem;
+            --font-stat-size-compact: 2rem;
+
+            /* ── Operator-only accent layer (purple-leaning) ───── */
+            --op-nav:              var(--brand-black);
+            --op-accent:           var(--brand-purple);
+            --op-accent-ink:       var(--brand-white);
+            --surface-operator:    color-mix(in srgb, var(--brand-purple) 10%, var(--brand-white));
+            --surface-operator-strong: color-mix(in srgb, var(--brand-purple) 18%, var(--brand-white));
+            --op-icon-well:        color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+        }
+
+        /* ── Reduced Motion ───────────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ── Base ─────────────────────────────────────────────── */
+        body {
+            font-family: var(--font-body);
+            background: var(--surface-operator);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* ── Skip Link ────────────────────────────────────────── */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 3px solid var(--brand-cloud-blue);
+        }
+
+        /* ── Navigation ───────────────────────────────────────── */
+        .nav {
+            background: var(--op-nav);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .nav-brand:focus {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .nav-logo-img {
+            height: 24px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+
+        .op-pill {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            font-family: var(--font-body);
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.125rem 0.5rem;
+            border-radius: 980px;
+            line-height: 1.4;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        /* ── Tab bar ──────────────────────────────────────────── */
+        .tabs {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            padding: 0 1.5rem;
+            height: 64px;
+        }
+
+        .tab {
+            padding: 0 1.25rem;
+            height: 64px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: rgba(255,255,255,0.75);
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .tab:hover {
+            color: var(--brand-cloud-blue);
+            background: rgba(255,255,255,0.04);
+        }
+        .tab:focus-visible {
+            outline: 2px solid var(--brand-cloud-blue);
+            outline-offset: -2px;
+        }
+        .tab.active {
+            color: var(--brand-cloud-blue);
+            font-weight: 600;
+            border-bottom-color: var(--op-accent);
+        }
+
+        /* ── Tab badge ────────────────────────────────────────── */
+        .tab-badge {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+            border: 2px solid var(--brand-deep-blue);
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.4rem;
+            border-radius: 980px;
+            min-width: 1.25rem;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* ── Operator user profile ────────────────────────────── */
+        .op-user-profile {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            min-height: 44px;
+        }
+        .op-user-profile:hover { background: rgba(255,255,255,0.08); }
+        .op-user-profile:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+
+        .op-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 600;
+            font-size: 0.813rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 260px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+        .op-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .op-dropdown-header {
+            padding: 1rem;
+            background: var(--surface-operator);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .op-dropdown-avatar-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--brand-purple) 55%, var(--brand-earth));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .op-dropdown-email {
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .op-dropdown-menu { padding: 0.5rem; }
+
+        .op-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 100%;
+            background: none;
+            border: none;
+            font-family: var(--font-body);
+            min-height: 44px;
+        }
+        .op-dropdown-item:hover {
+            background: var(--surface-operator);
+            color: var(--brand-deep-blue);
+        }
+        .op-dropdown-item:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .op-dropdown-item svg { fill: currentColor; flex-shrink: 0; }
+
+        /* ── Hamburger ────────────────────────────────────────── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            margin-left: auto;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.08); }
+        .hamburger:focus-visible {
+            outline: 3px solid var(--brand-cloud-blue);
+            outline-offset: 2px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--brand-white);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ── Mobile Menu Overlay ──────────────────────────────── */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10010;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--brand-white);
+            z-index: 10011;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-menu-brand {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.938rem;
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-menu-close svg { fill: currentColor; }
+
+        .mobile-nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .mobile-tab {
+            display: flex;
+            padding: 1rem;
+            font-size: 0.938rem;
+            font-family: var(--font-body);
+            border-radius: 0.5rem;
+            text-align: left;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: background 0.15s;
+            min-height: 44px;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .mobile-tab:hover { background: var(--surface-operator); }
+        .mobile-tab:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-tab.active {
+            background: var(--surface-operator-strong);
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+            border-left: 3px solid var(--op-accent);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding-left: calc(1rem - 3px);
+        }
+
+        .mobile-nav-user {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .mobile-nav-email {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        .mobile-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+            justify-content: center;
+        }
+        .mobile-logout-btn:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .mobile-logout-btn:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .mobile-logout-btn svg { fill: currentColor; }
+
+        /* ── Main Container ───────────────────────────────────── */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2.75rem 4rem;
+        }
+
+        /* ── Page Header ──────────────────────────────────────── */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        /* ── Buttons ──────────────────────────────────────────── */
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background: var(--neutral-800);
+            box-shadow: 0 4px 14px rgba(23, 61, 71, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-primary:focus-visible {
+            outline: 3px solid rgba(23, 61, 71, 0.3);
+            outline-offset: 2px;
+        }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-secondary:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+            background: var(--surface-deep);
+        }
+        .btn-secondary:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        /* Table row actions — keep in sync with user / kyc / team */
+        .btn-view,
+        .btn-edit {
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            min-height: 46px;
+            min-width: 7.75rem;
+            padding: 0 0.75rem;
+            border-radius: 0.5rem;
+            font-family: var(--font-body);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border-subtle);
+            background: var(--brand-white);
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s, background 0.15s;
+        }
+        .btn-view:hover {
+            border-color: var(--brand-deep-blue);
+            color: var(--brand-deep-blue);
+        }
+        .btn-edit:hover {
+            border-color: var(--op-accent);
+            background: var(--surface-operator);
+            color: var(--brand-deep-blue);
+        }
+        .btn-view:focus-visible,
+        .btn-edit:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .btn-view svg,
+        .btn-edit svg {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        @media (max-width: 480px) {
+            .btn-view,
+            .btn-edit {
+                min-width: min(100%, 7.75rem);
+            }
+        }
+
+        /* ── Stats Grid (admin KPI strip) ─────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+        }
+
+        .stat-card.stat-card-link {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.2s;
+            text-align: left;
+            width: 100%;
+        }
+        button.stat-card.stat-card-link {
+            appearance: none;
+            -webkit-appearance: none;
+            font: inherit;
+        }
+        .stat-card.stat-card-link:hover {
+            border-color: var(--op-accent);
+            box-shadow: 0 8px 24px rgba(106, 87, 112, 0.15);
+            transform: translateY(-4px);
+        }
+        .stat-card.stat-card-link:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .stat-card.stat-card-link[aria-pressed="true"] {
+            border-color: var(--op-accent);
+            box-shadow: 0 4px 16px rgba(106, 87, 112, 0.12);
+        }
+
+        .stat-card.has-pending,
+        .stat-card.has-alert {
+            border-color: color-mix(in srgb, var(--warning) 40%, transparent);
+            background: color-mix(in srgb, var(--warning) 3%, var(--brand-white));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 1rem;
+            background: var(--op-icon-well);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-deep-blue);
+            flex-shrink: 0;
+        }
+        .stat-icon svg {
+            fill: currentColor;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: var(--font-stat-size);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-change {
+            font-size: 0.813rem;
+            color: var(--fin-up);
+            font-weight: 500;
+        }
+        .stat-change.negative { color: var(--fin-down); }
+        .stat-change.neutral  { color: var(--text-secondary); }
+
+        /* ── HC Section card ──────────────────────────────────── */
+        /* Match `.user-section`: no outer padding — toolbar / table use `.table-toolbar` padding */
+        .hc-section {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 0;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .hc-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--brand-deep-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+        .hc-section:hover::before { transform: scaleX(1); }
+        .hc-section:hover {
+            border-color: var(--op-accent);
+            box-shadow: 0 8px 24px rgba(106, 87, 112, 0.12);
+        }
+
+        /* ── HC Table ─────────────────────────────────────────── */
+        .hc-table-wrap {
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .hc-table-wrap::-webkit-scrollbar { display: none; }
+
+        .hc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* ── Table search + filters ─────────────────────────── */
+        .table-toolbar {
+            padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle);
+            display: flex; align-items: flex-start; gap: 0.75rem; flex-wrap: wrap;
+        }
+        .toolbar-rows { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+        .toolbar-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; width: 100%; }
+        .toolbar-row--search { align-items: flex-end; }
+        .toolbar-filter-summary {
+            display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-left: auto;
+        }
+        .filter-count-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--brand-deep-blue); color: var(--brand-white); border-radius: 980px;
+            font-size: 0.688rem; font-weight: 700; min-width: 1.25rem; height: 1.25rem; padding: 0 0.35rem;
+        }
+        .filter-summary-text { font-size: 0.813rem; color: var(--text-secondary); }
+        .search-wrap { position: relative; flex: 1; min-width: 240px; max-width: 360px; }
+        .search-wrap svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); fill: var(--text-secondary); pointer-events: none; }
+        .search-input {
+            width: 100%; padding: 0.625rem 1rem 0.625rem 2.25rem;
+            border: 1.5px solid var(--border-subtle); border-radius: 0.625rem;
+            font-size: 1rem; font-family: var(--font-body); background: var(--brand-white);
+            color: var(--text-primary); transition: border-color 0.2s;
+        }
+        .search-input:focus { outline: none; border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.08); }
+        .filter-group { display: flex; flex-direction: column; gap: 0.25rem; }
+        .filter-group-label {
+            font-size: 0.688rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--text-secondary); padding: 0 0.125rem;
+        }
+        .filter-chips-bar { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+        .filter-chip {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.5rem 0.875rem; border: 1.5px solid var(--border-subtle);
+            border-radius: 980px; font-size: 0.813rem; font-weight: 500; cursor: pointer;
+            background: var(--brand-white); color: var(--text-secondary); font-family: var(--font-body);
+            transition: border-color 0.15s, color 0.15s, background 0.15s; min-height: 44px;
+        }
+        .filter-chip:hover { border-color: var(--op-accent); color: var(--brand-deep-blue); }
+        .filter-chip.active { background: var(--surface-operator-strong); border-color: var(--op-accent); color: var(--brand-deep-blue); font-weight: 600; }
+        .filter-chip:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .btn-clear-all {
+            font-size: 0.813rem; font-weight: 600; font-family: var(--font-body);
+            color: var(--op-accent); background: none; border: none; cursor: pointer;
+            padding: 0.25rem 0; min-height: 44px; text-decoration: underline;
+        }
+        .btn-clear-all:hover { color: var(--brand-deep-blue); }
+        .btn-clear-all:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) {
+            .filter-chip, .search-input, .btn-clear-all { transition: none; }
+        }
+
+        .table-result-bar {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.813rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+            min-height: 2.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ── New column styles ──────────────────────────────── */
+        .slug-mini { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 0.125rem; }
+        .region-pill {
+            display: inline-block; padding: 0.188rem 0.625rem; border-radius: 980px; font-size: 0.75rem;
+            font-weight: 600; background: var(--surface-sky); color: var(--brand-deep-blue);
+        }
+        .cat-pill-stack { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+        .cat-pill {
+            display: inline-block; padding: 0.125rem 0.5rem; border-radius: 980px; font-size: 0.7rem;
+            font-weight: 600; letter-spacing: 0.02em; text-transform: capitalize;
+            background: var(--surface-operator-strong); color: var(--brand-deep-blue);
+        }
+        .cat-pill-more { background: var(--neutral-200); color: var(--text-secondary); }
+        .completeness-meter { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+        .meter-track { width: 52px; height: 6px; background: var(--neutral-200); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+        .meter-fill { height: 100%; border-radius: 3px; background: var(--fin-up); transition: width 0.3s; }
+        .meter-fill.warn { background: var(--warning); }
+        .meter-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
+        .meter-label.done { color: var(--fin-up); }
+        .hc-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: var(--surface-operator);
+            border-bottom: 1px solid var(--border-subtle);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .hc-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+        .hc-table tr:last-child td { border-bottom: none; }
+        .hc-table tbody tr:hover { background: var(--surface-operator); }
+
+        /* ── Status Badges ────────────────────────────────────── */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .badge-active {
+            background: var(--brand-cloud-blue);
+            color: var(--brand-deep-blue);
+        }
+        .badge-inactive {
+            background: var(--surface-operator-strong);
+            color: var(--brand-deep-blue);
+        }
+        .badge-warning {
+            background: var(--surface-warning-soft);
+            color: var(--brand-deep-blue);
+        }
+
+        /* ── Toggle switch ────────────────────────────────────── */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--neutral-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .toggle[aria-checked="true"] { background: var(--brand-deep-blue); }
+        .toggle-slider {
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 20px; height: 20px;
+            background: var(--brand-white);
+            border-radius: 50%;
+            transition: left 0.2s;
+        }
+        .toggle[aria-checked="true"] .toggle-slider { left: 26px; }
+        .toggle:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .toggle.toggle-sm {
+            width: 36px;
+            height: 18px;
+        }
+        .toggle.toggle-sm .toggle-slider {
+            width: 14px;
+            height: 14px;
+        }
+        .toggle.toggle-sm[aria-checked="true"] .toggle-slider { left: 20px; }
+
+        /* ── Skeleton ─────────────────────────────────────────── */
+        .hc-skeleton { padding: 1rem 1.5rem; }
+        .skeleton-row {
+            height: 52px;
+            background: var(--neutral-200);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            animation: skeleton-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes skeleton-pulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.45; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton-row { animation: none; opacity: 1; }
+        }
+
+        /* ── Empty state ──────────────────────────────────────── */
+        .hc-empty {
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+        .hc-empty-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: var(--op-icon-well);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-deep-blue);
+        }
+        .hc-empty-icon svg { fill: currentColor; }
+        .hc-empty-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .hc-empty-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Drawer CSS removed — editing handled by operator-hc-edit.html */
+
+
+
+
+        /* ── Confirm Dialog ───────────────────────────────────── */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 10020;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirm-overlay.active { display: flex; }
+
+        .confirm-dialog {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+        }
+        .confirm-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        .confirm-message {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        .btn-confirm {
+            padding: 0.75rem 1.5rem;
+            background: var(--brand-red);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            min-height: 46px;
+            transition: all 0.2s;
+        }
+        .btn-confirm:hover { filter: brightness(0.9); }
+        .btn-confirm:focus-visible {
+            outline: 2px solid var(--brand-red);
+            outline-offset: 2px;
+        }
+
+
+        /* ── Toast ────────────────────────────────────────────── */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10030;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            background: var(--brand-white);
+            border-left: 4px solid var(--brand-deep-blue);
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            min-width: 280px;
+            animation: toastIn 0.25s ease-out;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .toast.toast-error { border-left-color: var(--brand-red); }
+        .toast-text { font-size: 0.875rem; color: var(--text-primary); flex: 1; }
+        .toast-dismiss {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            padding: 0.25rem;
+            line-height: 1;
+            min-width: 28px;
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        .toast-dismiss:hover { color: var(--text-primary); background: var(--surface-operator); }
+        .toast-dismiss:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        /* ── sr-only ──────────────────────────────────────────── */
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 960px) {
+            #operatorProfile,
+            .tabs {
+                display: none !important;
+            }
+            .hamburger { display: flex; }
+            .nav { padding: 0 1rem; }
+            .page-title { font-size: 2rem; }
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Responsive table — stacked card layout */
+            .hc-table, .hc-table thead, .hc-table tbody,
+            .hc-table tr, .hc-table th, .hc-table td {
+                display: block;
+            }
+            .hc-table thead, .hc-table thead tr {
+                position: absolute;
+                width: 1px; height: 1px;
+                padding: 0; margin: -1px;
+                overflow: hidden;
+                clip: rect(0,0,0,0);
+            }
+            .hc-table tbody tr {
+                background: var(--brand-white);
+                border: 1px solid var(--border-subtle);
+                border-radius: 0.75rem;
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+                box-shadow: var(--shadow-card);
+            }
+            .hc-table tbody tr:first-child { margin-top: 0.75rem; }
+            .hc-table tbody tr:hover { background: var(--surface-operator); }
+            .hc-table td {
+                border: none;
+                padding: 0.5rem 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .hc-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                flex-shrink: 0;
+            }
+            .hc-table td[data-label="Action"]::before { display: none; }
+            .hc-table td:last-child {
+                flex-direction: row-reverse;
+                justify-content: flex-start;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--border-subtle);
+                margin-top: 0.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem 1.5rem 3rem; }
+            .stat-value { font-size: var(--font-stat-size-compact); }
+            .table-toolbar { flex-direction: column; }
+            .toolbar-rows .toolbar-row { flex-direction: column; align-items: stretch; }
+            .toolbar-filter-summary { margin-left: 0; }
+            .filter-group { flex-direction: column; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 1.25rem 1rem 3rem; }
+            .page-title { font-size: 1.75rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .search-wrap { max-width: 100%; }
+            .filter-chip { flex: 1 1 auto; justify-content: center; min-width: 2.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="nav" role="navigation" aria-label="UNERA Admin navigation">
+            <a href="dashboard.html" class="nav-brand" aria-label="UNERA Admin Home">
+                <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+                <span class="op-pill" aria-label="Admin portal">ADMIN</span>
+            </a>
+
+            <div class="tabs" role="tablist" aria-label="Admin sections">
+                <a href="dashboard.html" class="tab" role="tab" aria-selected="false">Dashboard</a>
+                <span class="tab active" role="tab" aria-current="page" aria-selected="true" aria-label="HC Management, 2 pending items">
+                    HC Management
+                    <span class="tab-badge" id="tabHcBadge" aria-hidden="true">2</span>
+                </span>
+                <a href="user-management.html" class="tab" role="tab" aria-selected="false" aria-label="User Management, 3 locked accounts">
+                    Users
+                    <span class="tab-badge" id="tabUsersBadge" aria-hidden="true">3</span>
+                </a>
+                <a href="kyc-management.html" class="tab" role="tab" aria-selected="false" aria-label="KYC Management, 7 pending items">
+                    KYC
+                    <span class="tab-badge" id="tabKycBadge" aria-hidden="true">7</span>
+                </a>
+            </div>
+
+            <!-- Operator profile dropdown -->
+            <div class="op-user-profile"
+                 onclick="toggleOperatorDropdown()"
+                 id="operatorProfile"
+                 role="button"
+                 aria-expanded="false"
+                 aria-haspopup="true"
+                 aria-label="Admin profile menu"
+                 tabindex="0">
+                <div class="op-avatar" id="operatorAvatar" aria-hidden="true">OP</div>
+                <div class="op-dropdown" id="operatorDropdown" role="menu" aria-label="Admin account menu" onclick="event.stopPropagation()">
+                    <div class="op-dropdown-header">
+                        <div class="op-dropdown-avatar-lg" id="operatorDropdownAvatar" aria-hidden="true">OP</div>
+                        <div class="op-dropdown-email" id="operatorEmail"></div>
+                    </div>
+                    <div class="op-dropdown-menu">
+                        <button class="op-dropdown-item" role="menuitem" onclick="logout()">
+                            <!-- logout FILL=0 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                            </svg>
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hamburger (mobile) -->
+            <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-modal="true" aria-label="UNERA Admin navigation menu">
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-brand">UNERA Admin Menu</span>
+            <button class="mobile-menu-close" aria-label="Close navigation menu">
+                <!-- close FILL=1 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                </svg>
+            </button>
+        </div>
+        <nav class="mobile-nav-tabs" aria-label="Admin sections">
+            <a href="dashboard.html" class="mobile-tab">Dashboard</a>
+            <span class="mobile-tab active" aria-current="page" aria-label="HC Management, current page">
+                HC Management
+                <span class="tab-badge" id="mobileHcBadge" aria-hidden="true">2</span>
+            </span>
+            <a href="user-management.html" class="mobile-tab" aria-label="User Management, 3 locked accounts">
+                Users
+                <span class="tab-badge" aria-hidden="true">3</span>
+            </a>
+            <a href="kyc-management.html" class="mobile-tab" aria-label="KYC Management, 7 pending items">
+                KYC
+                <span class="tab-badge" aria-hidden="true">7</span>
+            </a>
+        </nav>
+        <div class="mobile-nav-user">
+            <div class="mobile-nav-email" id="mobileOperatorEmail"></div>
+            <button class="mobile-logout-btn" onclick="logout()" aria-label="Log out of operator portal">
+                <!-- logout FILL=0 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                </svg>
+                Log Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container" role="main">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Humanity Centre Management</h1>
+                <p class="page-subtitle">Create and manage Humanity Centre profiles. They appear in <a href="explore-centres.html" style="color:var(--op-accent);font-weight:500;">the public directory</a>.</p>
+            </div>
+            <button class="btn-primary" onclick="window.location.href='hc-edit.html'" id="addHcBtn" aria-label="Add a new Humanity Centre">
+                <!-- add_circle FILL=0 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                    <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                </svg>
+                Add New HC
+            </button>
+        </div>
+
+        <!-- Humanity Centre KPIs -->
+        <div class="stats-grid" role="region" aria-labelledby="hc-stats-heading">
+            <h2 id="hc-stats-heading" class="sr-only">Humanity Centre statistics</h2>
+
+            <button type="button" class="stat-card stat-card-link has-pending" id="hc-stat-pending-card" aria-pressed="false"
+                    onclick="setHcStatFilter('pending', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Pending approval</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- schedule FILL=0 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                            <path d="m614-310 51-51-149-149v-210h-72v240l170 170ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-pending">2</div>
+                <div class="stat-change neutral" id="hc-stat-pending-caption">Awaiting operator review</div>
+            </button>
+
+            <button type="button" class="stat-card stat-card-link" id="hc-stat-live-card" aria-pressed="false"
+                    onclick="setHcStatFilter('live', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Live in directory</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- groups FILL=0 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor">
+                            <path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 48.5 46.5T720-305v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780Zm-455-80h311q-10-20-55.5-35T480-370q-55 0-100.5 15T325-320ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-live">11</div>
+                <div class="stat-change neutral" id="hc-stat-live-caption">1 inactive · 2 pending</div>
+            </button>
+
+            <button type="button" class="stat-card stat-card-link has-alert" id="hc-stat-incomplete-card" aria-pressed="false"
+                    onclick="setHcStatFilter('incomplete', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Incomplete profiles</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- checklist Material Symbols outlined (24 × 24) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5.55 19L2 15.45l1.4-1.4l2.125 2.125l4.25-4.25l1.4 1.425zm0-8L2 7.45l1.4-1.4l2.125 2.125l4.25-4.25l1.4 1.425zM13 17v-2h9v2zm0-8V7h9v2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-incomplete">10</div>
+                <div class="stat-change neutral" id="hc-stat-incomplete-caption">Under 100% checklist</div>
+            </button>
+
+            <button type="button" class="stat-card stat-card-link" id="hc-stat-inactive-card" aria-pressed="false"
+                    onclick="setHcStatFilter('inactive', this)">
+                <div class="stat-header">
+                    <div><div class="stat-label">Inactive</div></div>
+                    <div class="stat-icon" aria-hidden="true">
+                        <!-- visibility_off Material Symbols -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="m19.8 22.6l-4.2-4.15q-.875.275-1.762.413T12 19q-3.775 0-6.725-2.087T1 11.5q.525-1.325 1.325-2.463T4.15 7L1.4 4.2l1.4-1.4l18.4 18.4zM12 16q.275 0 .513-.025t.512-.1l-5.4-5.4q-.075.275-.1.513T7.5 11.5q0 1.875 1.313 3.188T12 16m7.3.45l-3.175-3.15q.175-.425.275-.862t.1-.938q0-1.875-1.312-3.187T12 7q-.5 0-.937.1t-.863.3L7.65 4.85q1.025-.425 2.1-.637T12 4q3.775 0 6.725 2.088T23 11.5q-.575 1.475-1.513 2.738T19.3 16.45m-4.625-4.6l-3-3q.7-.125 1.288.113t1.012.687t.613 1.038t.087 1.162"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="hc-stat-inactive">1</div>
+                <div class="stat-change neutral">Hidden from public directory</div>
+            </button>
+        </div>
+
+        <!-- HC Section -->
+        <section class="hc-section" aria-labelledby="hc-section-heading">
+            <h2 id="hc-section-heading" class="sr-only">Humanity Centres</h2>
+
+            <!-- Skeleton loader -->
+            <div class="hc-skeleton" id="hcSkeleton" aria-hidden="true">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+            </div>
+
+            <!-- Empty state -->
+            <div class="hc-empty" id="hcEmpty" style="display: none;" role="status">
+                <div class="hc-empty-icon" aria-hidden="true">
+                    <!-- groups FILL=0 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -960 960 960" fill="currentColor">
+                        <path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 48.5 46.5T720-305v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780Zm-455-80h311q-10-20-55.5-35T480-370q-55 0-100.5 15T325-320ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Z"/>
+                    </svg>
+                </div>
+                <p class="hc-empty-text">No Humanity Centres yet</p>
+                <p class="hc-empty-desc">Add your first Humanity Centre. Complete profiles include programs, gallery, and a testimonial so donors see real impact.</p>
+                <button class="btn-primary" onclick="window.location.href='hc-edit.html'">Add your first Humanity Centre</button>
+            </div>
+
+            <!-- HC Table -->
+            <div class="hc-table-wrap" id="hcTableWrap" style="display: none;">
+                <!-- Toolbar: search row + filter row (matches user-management pattern) -->
+                <div class="table-toolbar">
+                    <div class="toolbar-rows">
+                        <div class="toolbar-row toolbar-row--search">
+                            <div class="search-wrap" role="search">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                                <input type="search" class="search-input" id="hc-search" placeholder="Search centres…" aria-label="Search Humanity Centres" oninput="filterTable()">
+                            </div>
+                            <div class="toolbar-filter-summary" id="hcFilterSummary" aria-live="polite" hidden>
+                                <span class="filter-count-badge" aria-hidden="true">0</span>
+                                <span class="filter-summary-text"></span>
+                                <button type="button" class="btn-clear-all" id="hcClearAllBtn">Clear all</button>
+                            </div>
+                        </div>
+                        <div class="toolbar-row toolbar-row--filters">
+                            <div class="filter-group">
+                                <span class="filter-group-label" id="hc-region-label">Region</span>
+                                <div class="filter-chips-bar" role="group" aria-labelledby="hc-region-label">
+                                    <button type="button" class="filter-chip active" data-region="all" aria-pressed="true" onclick="setRegionFilter(this)">All</button>
+                                    <button type="button" class="filter-chip" data-region="Africa" aria-pressed="false" onclick="setRegionFilter(this)">Africa</button>
+                                    <button type="button" class="filter-chip" data-region="Asia" aria-pressed="false" onclick="setRegionFilter(this)">Asia</button>
+                                    <button type="button" class="filter-chip" data-region="Americas" aria-pressed="false" onclick="setRegionFilter(this)">Americas</button>
+                                    <button type="button" class="filter-chip" data-region="Europe" aria-pressed="false" onclick="setRegionFilter(this)">Europe</button>
+                                    <button type="button" class="filter-chip" data-region="Oceania" aria-pressed="false" onclick="setRegionFilter(this)">Oceania</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-result-bar" id="hcResultBar" aria-live="polite" aria-atomic="true">
+                    <span id="hcResultCount"></span>
+                </div>
+                <table class="hc-table" id="hcTable" aria-describedby="hc-table-caption">
+                    <caption id="hc-table-caption" class="sr-only">List of Humanity Centres with name, location, region, categories, profile completeness, last updated, and actions</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Region</th>
+                            <th scope="col">Categories</th>
+                            <th scope="col">Completeness</th>
+                            <th scope="col">Last Updated</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hc-list">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+                <div id="hc-no-results" style="display:none;padding:2rem 1.5rem;text-align:center;color:var(--text-secondary);font-size:0.938rem;">No centres match your search.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Drawer removed — editing handled by operator-hc-edit.html -->
+
+    <!-- ═══════════════════════════════════════════════════════════
+         Deactivation Confirm Dialog
+    ════════════════════════════════════════════════════════════ -->
+    <div class="confirm-overlay" id="confirmOverlay"
+         role="alertdialog"
+         aria-modal="true"
+         aria-labelledby="confirm-title"
+         aria-describedby="confirm-message"
+         aria-hidden="true">
+        <div class="confirm-dialog">
+            <h3 class="confirm-title" id="confirm-title">Deactivate Humanity Centre?</h3>
+            <p class="confirm-message" id="confirm-message">This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.</p>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" style="flex: none; padding: 0.75rem 1.25rem;" onclick="cancelDeactivate()">Cancel</button>
+                <button type="button" class="btn-confirm" onclick="confirmDeactivate()">Deactivate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Cropper modal removed — image cropping handled in operator-hc-edit.html -->
+
+    <script src="operator-session.js"></script>
+    <script>
+        // ── Auth guard ─────────────────────────────────────────
+        UneraAdminAuth.guardAppPage();
+        var devMode = UneraAdminAuth.isDevMode();
+
+        // ── Load operator email + avatar initial ───────────────
+        var operatorEmailVal = localStorage.getItem('operatorEmail') || (devMode ? 'dev@test.local' : 'Operator');
+        var initial = (operatorEmailVal.split('@')[0][0] || 'O').toUpperCase();
+
+        var avatarEl          = document.getElementById('operatorAvatar');
+        var dropdownAvatarEl  = document.getElementById('operatorDropdownAvatar');
+        var emailEl           = document.getElementById('operatorEmail');
+        var mobileEmailEl     = document.getElementById('mobileOperatorEmail');
+
+        if (avatarEl)         avatarEl.textContent         = initial;
+        if (dropdownAvatarEl) dropdownAvatarEl.textContent  = initial;
+        if (emailEl)          emailEl.textContent           = operatorEmailVal;
+        if (mobileEmailEl)    mobileEmailEl.textContent     = operatorEmailVal;
+
+        // ── Operator dropdown toggle ───────────────────────────
+        function toggleOperatorDropdown() {
+            var dropdown = document.getElementById('operatorDropdown');
+            var btn      = document.getElementById('operatorProfile');
+            if (dropdown && btn) {
+                var isOpen = dropdown.classList.toggle('show');
+                btn.setAttribute('aria-expanded', isOpen);
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            var profile  = document.getElementById('operatorProfile');
+            var dropdown = document.getElementById('operatorDropdown');
+            if (profile && dropdown && !profile.contains(e.target)) {
+                dropdown.classList.remove('show');
+                profile.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.getElementById('operatorProfile').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleOperatorDropdown();
+            }
+        });
+
+        // ── Mobile menu ────────────────────────────────────────
+        (function() {
+            var hamburger  = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var overlay    = document.querySelector('.mobile-menu-overlay');
+            var closeBtn   = document.querySelector('.mobile-menu-close');
+
+            function openMenu() {
+                hamburger.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenu.classList.add('active');
+                overlay.classList.add('active');
+                overlay.removeAttribute('aria-hidden');
+                mobileMenu.removeAttribute('aria-hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+                mobileMenu.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            if (hamburger) hamburger.addEventListener('click', function() {
+                mobileMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+            if (overlay)  overlay.addEventListener('click', closeMenu);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) closeMenu();
+            });
+        })();
+
+        // ── Logout ─────────────────────────────────────────────
+        function logout() {
+            UneraAdminAuth.logout();
+        }
+
+        // ── Mock HC data (12 rows) — enriched with region/categories/completeness ──
+        var humanityCentres = [
+            { id:1,  name:'Nairobi Hope Centre',      slug:'nairobi-hope-centre',      location:'Kibera, Nairobi, Kenya',     region:'Africa',   categories:['education','healthcare','nutrition'], completeness:6, lastUpdated:'2 days ago',   status:'Active',   pendingApproval:true  },
+            { id:2,  name:'Mumbai Community Centre',  slug:'mumbai-community-centre',  location:'Dharavi, Mumbai, India',     region:'Asia',     categories:['education','skills'],                 completeness:4, lastUpdated:'1 week ago',   status:'Active',   pendingApproval:true  },
+            { id:3,  name:'São Paulo Care Centre',    slug:'sao-paulo-care-centre',    location:'São Paulo, Brazil',          region:'Americas', categories:['healthcare','nutrition'],             completeness:3, lastUpdated:'3 days ago',   status:'Active'   },
+            { id:4,  name:'Dhaka Relief Centre',      slug:'dhaka-relief-centre',      location:'Dhaka, Bangladesh',          region:'Asia',     categories:['water','healthcare'],                 completeness:2, lastUpdated:'5 days ago',   status:'Active'   },
+            { id:5,  name:'Lagos Community Hub',      slug:'lagos-community-hub',      location:'Lagos, Nigeria',             region:'Africa',   categories:['skills','education'],                 completeness:5, lastUpdated:'Yesterday',     status:'Active'   },
+            { id:6,  name:'Manila Support Centre',    slug:'manila-support-centre',    location:'Manila, Philippines',        region:'Asia',     categories:['healthcare','nutrition'],             completeness:2, lastUpdated:'2 weeks ago',  status:'Inactive' },
+            { id:7,  name:'Cairo Aid Centre',         slug:'cairo-aid-centre',         location:'Cairo, Egypt',               region:'Africa',   categories:['water','environment'],                completeness:3, lastUpdated:'4 days ago',   status:'Active'   },
+            { id:8,  name:'Port-au-Prince Centre',    slug:'port-au-prince-centre',    location:'Port-au-Prince, Haiti',      region:'Americas', categories:['healthcare','nutrition','water'],     completeness:4, lastUpdated:'1 week ago',   status:'Active'   },
+            { id:9,  name:'Jakarta Hope Centre',      slug:'jakarta-hope-centre',      location:'Jakarta, Indonesia',         region:'Asia',     categories:['education','skills'],                 completeness:5, lastUpdated:'3 days ago',   status:'Active'   },
+            { id:10, name:'Karachi Community Centre', slug:'karachi-community-centre', location:'Karachi, Pakistan',          region:'Asia',     categories:['education'],                          completeness:1, lastUpdated:'3 weeks ago',  status:'Active'   },
+            { id:11, name:'Lima Support Centre',      slug:'lima-support-centre',      location:'Lima, Peru',                 region:'Americas', categories:['healthcare'],                         completeness:3, lastUpdated:'6 days ago',   status:'Active'   },
+            { id:12, name:'Kampala Care Centre',      slug:'kampala-care-centre',      location:'Kampala, Uganda',            region:'Africa',   categories:['nutrition','healthcare','education'],  completeness:4, lastUpdated:'2 days ago',   status:'Active'   }
+        ];
+
+        var pendingDeactivateHC    = null;
+        var activeRegionFilter     = 'all';
+        var activeStatFilter       = 'all';
+
+        function formatStatInt(n) {
+            return Math.max(0, Number(n) || 0).toLocaleString('en-CA');
+        }
+
+        function setHcStatFilter(key, btn) {
+            var next = (activeStatFilter === key) ? 'all' : key;
+            activeStatFilter = next;
+            document.querySelectorAll('.stats-grid .stat-card-link').forEach(function(el) {
+                el.setAttribute('aria-pressed', el === btn && next !== 'all' ? 'true' : 'false');
+            });
+            filterTable();
+            var search = document.getElementById('hc-search');
+            if (search && tableWrapDisplayed()) search.focus({ preventScroll: true });
+        }
+
+        function tableWrapDisplayed() {
+            var wrap = document.getElementById('hcTableWrap');
+            return wrap && wrap.style.display !== 'none';
+        }
+
+        /**
+         * Recompute Humanity Centre KPIs from mock data — keeps cards aligned with toggles / edits.
+         */
+        function updateHcOverviewStats() {
+            var pending    = humanityCentres.filter(function(h) { return h.pendingApproval === true; }).length;
+            var active     = humanityCentres.filter(function(h) { return h.status === 'Active'; }).length;
+            var inactive   = humanityCentres.filter(function(h) { return h.status === 'Inactive'; }).length;
+            var incomplete = humanityCentres.filter(function(h) { return Number(h.completeness) < 6; }).length;
+
+            var elP = document.getElementById('hc-stat-pending');
+            var elL = document.getElementById('hc-stat-live');
+            var elI = document.getElementById('hc-stat-incomplete');
+            var elN = document.getElementById('hc-stat-inactive');
+            if (elP) elP.textContent = formatStatInt(pending);
+            if (elL) elL.textContent = formatStatInt(active);
+            if (elI) elI.textContent = formatStatInt(incomplete);
+            if (elN) elN.textContent = formatStatInt(inactive);
+
+            var capLive = document.getElementById('hc-stat-live-caption');
+            if (capLive) capLive.textContent = formatStatInt(inactive) + ' inactive · ' + formatStatInt(pending) + ' pending';
+
+            var worst = null;
+            humanityCentres.forEach(function(h) {
+                if (Number(h.completeness) >= 6) return;
+                if (!worst || Number(h.completeness) < Number(worst.completeness)) worst = h;
+            });
+            var capInc = document.getElementById('hc-stat-incomplete-caption');
+            if (capInc) {
+                capInc.textContent = worst
+                    ? ('Lowest score: ' + worst.name + ' (' + worst.completeness + '/6)')
+                    : 'All profiles complete';
+            }
+
+            var pendingCard = document.getElementById('hc-stat-pending-card');
+            if (pendingCard) pendingCard.classList.toggle('has-pending', pending > 0);
+
+            var incompleteCard = document.getElementById('hc-stat-incomplete-card');
+            if (incompleteCard) incompleteCard.classList.toggle('has-alert', incomplete > 0);
+
+            ['hc-stat-pending-card','hc-stat-live-card','hc-stat-incomplete-card','hc-stat-inactive-card'].forEach(function(id, idx) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var lbl = [['Pending approval', pending], ['Live in directory', active], ['Incomplete profiles', incomplete], ['Inactive', inactive]][idx];
+                el.setAttribute('aria-label',
+                    lbl[0] + ', ' + formatStatInt(lbl[1]) + '. Toggle filter on the Humanity Centre table below.');
+            });
+
+            var tabB    = document.getElementById('tabHcBadge');
+            var mobB    = document.getElementById('mobileHcBadge');
+            var pendingStr = String(pending);
+            if (tabB) tabB.textContent = pendingStr;
+            if (mobB) mobB.textContent = pendingStr;
+        }
+        function showToast(message, isError) {
+            var container = document.getElementById('toastContainer');
+            var toast     = document.createElement('div');
+            toast.className   = 'toast' + (isError ? ' toast-error' : '');
+            toast.setAttribute('role', 'status');
+            toast.innerHTML   =
+                '<span class="toast-text">' + escapeHtml(message) + '</span>' +
+                '<button class="toast-dismiss" aria-label="Dismiss notification">&times;</button>';
+            container.appendChild(toast);
+            var dismiss = function() { toast.remove(); };
+            toast.querySelector('.toast-dismiss').onclick = dismiss;
+            setTimeout(dismiss, 4000);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ── Search + filter ────────────────────────────────────
+        function rowPassesStatFilter(row) {
+            if (activeStatFilter === 'all') return true;
+            switch (activeStatFilter) {
+                case 'pending':    return row.getAttribute('data-pending') === 'true';
+                case 'incomplete': return row.getAttribute('data-incomplete') === 'true';
+                case 'inactive':   return row.getAttribute('data-inactive') === 'true';
+                case 'live':       return row.getAttribute('data-live') === 'true';
+                default:           return true;
+            }
+        }
+
+        function filterTable() {
+            var query  = (document.getElementById('hc-search').value || '').toLowerCase().trim();
+            var tbody  = document.getElementById('hc-list');
+            var noRes  = document.getElementById('hc-no-results');
+            if (!tbody || !noRes) return;
+            var rows   = tbody.querySelectorAll('tr');
+            var shown  = 0;
+            rows.forEach(function(row) {
+                var name     = (row.dataset.name     || '').toLowerCase();
+                var location = (row.dataset.location || '').toLowerCase();
+                var region   = (row.dataset.region   || '');
+                var matchQ   = !query || name.indexOf(query)>=0 || location.indexOf(query)>=0;
+                var matchR   = activeRegionFilter==='all' || region===activeRegionFilter;
+                var matchS   = rowPassesStatFilter(row);
+                var visible  = matchQ && matchR && matchS;
+                row.style.display = visible ? '' : 'none';
+                if (visible) shown++;
+            });
+            noRes.style.display = shown===0 ? '' : 'none';
+            updateHcFilterSummary();
+            updateHcResultCount(shown, rows.length);
+        }
+
+        function updateHcResultCount(filteredLen, totalLen) {
+            var countEl = document.getElementById('hcResultCount');
+            if (!countEl) return;
+            var hasFilters = countHcActiveFilters() > 0;
+            countEl.textContent = hasFilters
+                ? (filteredLen + ' of ' + totalLen + ' centres')
+                : (filteredLen + ' centres');
+        }
+
+        function countHcActiveFilters() {
+            var n = 0;
+            if (activeStatFilter !== 'all') n++;
+            if (activeRegionFilter !== 'all') n++;
+            var q = (document.getElementById('hc-search').value || '').trim();
+            if (q) n++;
+            return n;
+        }
+        function updateHcFilterSummary() {
+            var el = document.getElementById('hcFilterSummary');
+            if (!el) return;
+            var count = countHcActiveFilters();
+            el.hidden = count === 0;
+            var badge = el.querySelector('.filter-count-badge');
+            var txt = el.querySelector('.filter-summary-text');
+            if (badge) badge.textContent = count;
+            if (txt) txt.textContent = count === 1 ? '1 filter active' : count + ' filters active';
+        }
+        function clearHcFilters() {
+            activeStatFilter = 'all';
+            activeRegionFilter = 'all';
+            document.querySelectorAll('.stats-grid .stat-card-link').forEach(function(el) {
+                el.setAttribute('aria-pressed', 'false');
+            });
+            var search = document.getElementById('hc-search');
+            if (search) search.value = '';
+            var bar = document.querySelector('#hcTableWrap .filter-chips-bar');
+            if (bar) {
+                bar.querySelectorAll('.filter-chip').forEach(function(c) {
+                    var on = c.dataset.region === 'all';
+                    c.classList.toggle('active', on);
+                    c.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            }
+            filterTable();
+        }
+        function setRegionFilter(btn) {
+            var bar = btn.closest('.filter-chips-bar');
+            if (!bar) return;
+            bar.querySelectorAll('.filter-chip').forEach(function(c) {
+                var on = c === btn;
+                c.classList.toggle('active', on);
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            activeRegionFilter = btn.dataset.region;
+            filterTable();
+        }
+
+        // ── Deactivation confirm (row-level quick toggle) ──────
+        function cancelDeactivate() {
+            document.getElementById('confirmOverlay').classList.remove('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'true');
+            pendingDeactivateHC = null;
+            document.removeEventListener('keydown', handleConfirmEscape);
+        }
+
+        function handleConfirmEscape(e) {
+            if (e.key === 'Escape') cancelDeactivate();
+        }
+
+        function confirmDeactivate() {
+            document.removeEventListener('keydown', handleConfirmEscape);
+
+            if (pendingDeactivateHC && pendingDeactivateHC.rowId) {
+                var hc = humanityCentres.find(function(h) { return h.id === pendingDeactivateHC.rowId; });
+                if (hc) {
+                    hc.status = 'Inactive';
+                    loadHCs();
+                    showToast(hc.name + ' deactivated.');
+                }
+            }
+
+            document.getElementById('confirmOverlay').classList.remove('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'true');
+            pendingDeactivateHC = null;
+        }
+
+        function toggleRowStatus(id) {
+            var hc = humanityCentres.find(function(h) { return h.id === id; });
+            if (!hc) return;
+            if (hc.status === 'Inactive') {
+                hc.status = 'Active';
+                loadHCs();
+                showToast(hc.name + ' activated.');
+                return;
+            }
+            pendingDeactivateHC = { rowId: id };
+            document.getElementById('confirm-message').textContent =
+                'This Centre will be hidden from the public directory. Users will not be able to find or interact with it until reactivated.';
+            document.getElementById('confirmOverlay').classList.add('active');
+            document.getElementById('confirmOverlay').setAttribute('aria-hidden', 'false');
+            document.addEventListener('keydown', handleConfirmEscape);
+            setTimeout(function() {
+                var cancelBtn = document.querySelector('.confirm-actions .btn-secondary');
+                if (cancelBtn) cancelBtn.focus();
+            }, 50);
+        }
+
+
+        // ── Load HCs into table ────────────────────────────────
+        function loadHCs() {
+            var skeleton  = document.getElementById('hcSkeleton');
+            var empty     = document.getElementById('hcEmpty');
+            var tableWrap = document.getElementById('hcTableWrap');
+            var tbody     = document.getElementById('hc-list');
+
+            skeleton.style.display  = 'block';
+            skeleton.removeAttribute('aria-hidden');
+            empty.style.display     = 'none';
+            tableWrap.style.display = 'none';
+
+            setTimeout(function() {
+                skeleton.style.display = 'none';
+                skeleton.setAttribute('aria-hidden', 'true');
+
+                if (humanityCentres.length === 0) {
+                    empty.style.display = 'block';
+                    updateHcOverviewStats();
+                } else {
+                    tableWrap.style.display = 'block';
+                    tbody.innerHTML = humanityCentres.map(function(hc) {
+                        var isActive = hc.status === 'Active';
+                        var pend     = hc.pendingApproval === true;
+                        var cats = hc.categories || [];
+                        var catPills = cats.slice(0,2).map(function(c){ return '<span class="cat-pill">'+escapeHtml(c)+'</span>'; }).join('');
+                        if(cats.length>2) catPills += '<span class="cat-pill cat-pill-more">+' + (cats.length-2) + '</span>';
+                        var pct = Math.round((hc.completeness/6)*100);
+                        var isDone = hc.completeness >= 6;
+                        var pendingPill = pend ? '<span class="badge badge-warning" style="margin-left:0.25rem;">Pending</span>' : '';
+                        var isIncomplete = Number(hc.completeness) < 6;
+                        var isInactiveRow = hc.status === 'Inactive';
+                        var isLivePublic = isActive && !pend;
+                        return '<tr data-name="'+escapeHtml(hc.name)+'" data-location="'+escapeHtml(hc.location)+'" data-region="'+escapeHtml(hc.region || '')+'"' +
+                            ' data-pending="' + (pend ? 'true' : 'false') + '"' +
+                            ' data-incomplete="' + (isIncomplete ? 'true' : 'false') + '"' +
+                            ' data-inactive="' + (isInactiveRow ? 'true' : 'false') + '"' +
+                            ' data-live="' + (isLivePublic ? 'true' : 'false') + '">' +
+                            '<td data-label="Name">' +
+                                '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.25rem;margin-bottom:0.125rem;">' +
+                                    '<span style="font-weight:600;">' + escapeHtml(hc.name) + '</span>' + pendingPill +
+                                '</div>' +
+                                '<code class="slug-mini">' + escapeHtml(hc.slug||'') + '</code>' +
+                            '</td>' +
+                            '<td data-label="Location" style="color:var(--text-secondary);">' + escapeHtml(hc.location) + '</td>' +
+                            '<td data-label="Region"><span class="region-pill">' + escapeHtml(hc.region||'—') + '</span></td>' +
+                            '<td data-label="Categories"><div class="cat-pill-stack">' + (catPills||'<span style="color:var(--text-secondary);font-size:0.75rem;">—</span>') + '</div></td>' +
+                            '<td data-label="Completeness">' +
+                                '<div class="completeness-meter">' +
+                                    '<div class="meter-track"><div class="meter-fill' + (!isDone && pct<67?' warn':'') + '" style="width:'+pct+'%"></div></div>' +
+                                    '<span class="meter-label' + (isDone?' done':'') + '">' + hc.completeness + '/6</span>' +
+                                '</div>' +
+                            '</td>' +
+                            '<td data-label="Last Updated" style="color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(hc.lastUpdated||'—') + '</td>' +
+                            '<td data-label="Action">' +
+                                '<div style="display:flex;align-items:center;gap:0.375rem;flex-wrap:wrap;">' +
+                                    '<a href="centre-detail.html?id=' + escapeHtml(hc.slug||hc.id) + '" target="_blank" rel="noopener" class="btn-view" aria-label="View '+escapeHtml(hc.name)+' on public directory">' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>' +
+                                        'View' +
+                                    '</a>' +
+                                    '<a href="hc-edit.html?id=' + escapeHtml(hc.slug||hc.id) + '" class="btn-edit" aria-label="Edit ' + escapeHtml(hc.name) + '">' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>' +
+                                        'Edit' +
+                                    '</a>' +
+                                    '<button type="button" class="toggle toggle-sm" role="switch"' +
+                                        ' aria-checked="' + isActive + '"' +
+                                        ' aria-label="' + (isActive ? 'Deactivate' : 'Activate') + ' ' + escapeHtml(hc.name) + '"' +
+                                        ' aria-describedby="badge-' + hc.id + '"' +
+                                        ' onclick="toggleRowStatus(' + hc.id + ')">' +
+                                        '<span class="toggle-slider"></span>' +
+                                    '</button>' +
+                                    '<span id="badge-' + hc.id + '" class="badge ' + (isActive ? 'badge-active' : 'badge-inactive') + '" aria-hidden="true">' + escapeHtml(hc.status) + '</span>' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>';
+                    }).join('');
+                    filterTable();
+                    updateHcOverviewStats();
+                }
+                UneraAdminAuth.applyPortalRbac('hc-management');
+            }, 300);
+        }
+
+        // ── Status toggle (drawer removed — kept for row-level quick toggle) ──
+        function toggleStatus() { /* no-op — drawer removed */ }
+        function toggleStatusKeydown(e) { if(e.key===' '||e.key==='Enter'){e.preventDefault();toggleStatus();} }
+        function trapFocus() {}
+
+        // ── Init ───────────────────────────────────────────────
+        updateHcOverviewStats();
+        UneraAdminAuth.applyPortalRbac('hc-management');
+        var hcClearBtn = document.getElementById('hcClearAllBtn');
+        if (hcClearBtn) hcClearBtn.addEventListener('click', clearHcFilters);
+        loadHCs();
+    </script>
+</body>
+</html>

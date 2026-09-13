@@ -1,0 +1,103 @@
+<!-- Stablecoin wallet-connect parity (paste before </body>). Uses #walletConnectNotifier to avoid clashing with pages that already define #notificationModal. -->
+    <div class="modal-overlay notification-modal-shell" id="walletConnectNotifier" role="dialog" aria-modal="true" aria-labelledby="wcNotifierTitle">
+        <div class="modal notification-modal">
+            <div class="modal-header">
+                <h2 id="wcNotifierTitle" class="modal-title">Notification</h2>
+                <button type="button" class="modal-close" onclick="closeWCOutcomeModal()" aria-label="Close notification">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="wcNotifierIcon" aria-hidden="true"></div>
+                <div class="notification-message" id="wcNotifierMessage" role="status"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeWCOutcomeModal()" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connect Wallet Modal (dashboard-enhanced parity) -->
+    <div class="modal-overlay" id="connectModal" role="dialog" aria-modal="true" aria-labelledby="connectModalTitle" aria-describedby="connectModalDesc" onclick="closeConnectModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="connectModalTitle">Connect. Contribute. Change lives.</h2>
+                <button type="button" class="modal-close" onclick="closeConnectModal()" aria-label="Close modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="connect-test-scenarios" id="connectTestScenarios" role="group" aria-label="Test scenario selector">
+                    <span class="test-scenarios-label">DEV · Simulate scenario</span>
+                    <div class="scenario-pills">
+                        <button type="button" class="scenario-pill active" data-scenario="happy" onclick="setConnectScenario('happy', this)">✓ Happy Path</button>
+                        <button type="button" class="scenario-pill" data-scenario="wrong-network" onclick="setConnectScenario('wrong-network', this)">Wrong Network</button>
+                        <button type="button" class="scenario-pill" data-scenario="not-installed" onclick="setConnectScenario('not-installed', this)">Not Installed</button>
+                        <button type="button" class="scenario-pill" data-scenario="user-rejected" onclick="setConnectScenario('user-rejected', this)">User Rejected</button>
+                    </div>
+                </div>
+                <p class="modal-desc" id="connectModalDesc">Unera is your gateway to impact. Select a supported wallet to authenticate and continue.</p>
+                <div class="wallet-grid">
+                    <button type="button" class="wallet-option-card recommended" data-provider="metamask" onclick="handleWalletConnect('metamask')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M20.3 5.1L13.5 9.9l1.3-3L20.3 5.1z" fill="#E17726" stroke="#E17726" stroke-width="0.25"/>
+                                <path d="M3.7 5.1l6.7 4.9-1.2-3.1L3.7 5.1zM17.6 15.9l-1.8 2.8 3.9 1.1 1.1-3.8-3.2-.1zM3.3 16l1.1 3.8 3.9-1.1-1.8-2.8-3.2.1z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+                                <path d="M8.1 11.1l-1.1 1.6 3.8.2-.1-4.1-2.6 2.3zM15.9 11.1l-2.6-2.4-.2 4.2 3.9-.2-1.1-1.6zM8.3 18.7l2.3-1.1-2-1.5-.3 2.6zM13.4 17.6l2.3 1.1-.3-2.6-2 1.5z" fill="#E27625" stroke="#E27625" stroke-width="0.25"/>
+                                <path d="M15.7 18.7l-2.3-1.1.2 1.5v.7l2.1-1.1zM8.3 18.7l2.1 1.1v-.7l.2-1.5-2.3 1.1z" fill="#D5BFB2" stroke="#D5BFB2" stroke-width="0.25"/>
+                                <path d="M10.5 14.4l-1.9-.6 1.4-.6.5 1.2zM13.5 14.4l.5-1.2 1.4.6-1.9.6z" fill="#233447" stroke="#233447" stroke-width="0.25"/>
+                                <path d="M8.3 18.7l.3-2.8-2.1.1 1.8 2.7zM15.4 15.9l.3 2.8 1.8-2.7-2.1-.1zM17 12.7l-3.9.2.4 2 .5-1.2 1.4.6 1.6-1.6zM8.6 13.8l1.4-.6.5 1.2.4-2-3.9-.2 1.6 1.6z" fill="#CC6228" stroke="#CC6228" stroke-width="0.25"/>
+                                <path d="M7 12.7l1.7 3.3-.1-1.6L7 12.7zM15.4 14.4l-.1 1.6 1.7-3.3-1.6 1.7zM10.9 12.9l-.4 2 .5 2.6.1-3-.2-1.6zM13.1 12.9l-.2 1.5.1 3.1.5-2.6-.4-2z" fill="#E27525" stroke="#E27525" stroke-width="0.25"/>
+                                <path d="M13.5 14.4l-.5 2.6.4.3 2-1.5.1-1.6-2 .2zM8.6 13.8l.1 1.6 2 1.5.4-.3-.5-2.6-2-.2z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+                                <path d="M13.6 20.2v-.7l-.2-.2h-2.8l-.2.2v.7l-2.1-1.1.7.6 1.5 1h2.9l1.5-1 .7-.6-2-1z" fill="#C0AC9D" stroke="#C0AC9D" stroke-width="0.25"/>
+                                <path d="M13.4 17.6l-.4-.3h-2l-.4.3-.2 1.5.2-.2h2.8l.2.2-.2-1.5z" fill="#161616" stroke="#161616" stroke-width="0.25"/>
+                                <path d="M20.7 10.4l.6-2.8-1-2.5-7.9 5.9 3 2.5 4.3 1.2.9-1.1-.4-.3.6-.6-.5-.4.6-.5-.4-.3zM3.7 7.6l.6 2.8-.4.3.6.5-.5.4.6.6-.4.3.9 1.1 4.3-1.2 3-2.5L4.7 5.1l-1 2.5z" fill="#763E1A" stroke="#763E1A" stroke-width="0.25"/>
+                                <path d="M19.8 13.6l-4.3-1.2 1.3 1.6-1.7 3.3 2.3-.1h3.4l-1-3.6zM8.5 12.4l-4.3 1.2-1 3.6h3.4l2.3.1-1.7-3.3 1.3-1.6zM13.1 12.9l.3-4.7 1.4-3.8h-6.2l1.4 3.8.3 4.7.1 1.6v3.1h2l.1-3.1-.4-1.6z" fill="#F5841F" stroke="#F5841F" stroke-width="0.25"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">MetaMask</span>
+                    </button>
+                    <button type="button" class="wallet-option-card" data-provider="walletconnect" onclick="handleWalletConnect('walletconnect')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M5.5 9.5c3.5-3.5 9.2-3.5 12.7 0l.4.4c.2.2.2.5 0 .7l-1.4 1.4c-.1.1-.3.1-.4 0l-.6-.6c-2.4-2.4-6.4-2.4-8.8 0l-.6.6c-.1.1-.3.1-.4 0L4.9 10.6c-.2-.2-.2-.5 0-.7l.6-.4zm15.7 2.9l1.3 1.3c.2.2.2.5 0 .7l-5.7 5.7c-.2.2-.5.2-.7 0l-4.1-4.1c-.1-.1-.2-.1-.2 0l-4.1 4.1c-.2.2-.5.2-.7 0l-5.7-5.7c-.2-.2-.2-.5 0-.7l1.3-1.3c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0l4.1 4.1c.1.1.2.1.2 0l4.1-4.1c.2-.2.5-.2.7 0z" fill="#3B99FC"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">WalletConnect</span>
+                    </button>
+                    <button type="button" class="wallet-option-card" data-provider="coinbase" onclick="handleWalletConnect('coinbase')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" fill="#0052FF"/>
+                                <path d="M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">Coinbase</span>
+                    </button>
+                    <button type="button" class="wallet-option-card" data-provider="brave" onclick="handleWalletConnect('brave')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L2 7l2 9 8 6 8-6 2-9-10-5z" fill="#FB542B"/>
+                                <path d="M12 2v20M22 7H2M20 16H4" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">Brave</span>
+                    </button>
+                    <button type="button" class="wallet-option-card" data-provider="ledger" onclick="handleWalletConnect('ledger')">
+                        <div class="wallet-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <rect x="4" y="4" width="16" height="16" rx="2" fill="#333"/>
+                                <path d="M7 7h3v3H7V7zM14 7h3v3h-3V7zM7 14h3v3H7v-3zM14 14h3v3h-3v-3z" fill="white"/>
+                            </svg>
+                        </div>
+                        <span class="wallet-name">Ledger</span>
+                    </button>
+                </div>
+                <div class="wallet-note">
+                    <small>⚡ Powered by MetaMask and compatible wallets</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wallet-connect-parity.js" defer></script>

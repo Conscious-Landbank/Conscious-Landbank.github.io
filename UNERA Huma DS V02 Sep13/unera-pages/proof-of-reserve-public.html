@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof of Reserve - Huma</title>
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Light.otf") format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-LightItalic.otf") format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Regular.otf") format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-RegularItalic.otf") format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Medium.otf") format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-MediumItalic.otf") format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Semibold.otf") format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-SemiboldItalic.otf") format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Bold.otf") format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-BoldItalic.otf") format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --brand-deep-blue:   #173d47;
+            --brand-yellow:      #ffffab;
+            --brand-cloud-blue:  #ebfcf5;
+            --brand-earth:       #cec4b8;
+            --brand-black:       #000000;
+            --brand-white:       #ffffff;
+            --brand-red:         #ab5770;
+            --brand-purple:      #6a5770;
+            --brand-light-blue:  #90c2b8;
+            --primary-green:     #173d47;
+            --primary-blue:      #90c2b8;
+            --accent-pink:       #ffffab;
+            --neutral-900:       #173d47;
+            --neutral-800:       #1e4e5a;
+            --neutral-700:       #2e6374;
+            --neutral-600:       #3d6b78;
+            --neutral-500:       #90c2b8;
+            --neutral-400:       #b8d1d6;
+            --neutral-300:       #d8ecee;
+            --neutral-200:       #e8f5f6;
+            --neutral-100:       #f3fafb;
+            --neutral-50:        #ffffff;
+            --gradient-primary:  var(--brand-deep-blue);
+            --gradient-sky:      color-mix(in srgb, var(--brand-cloud-blue) 50%, var(--brand-white));
+            --gradient-warm:     color-mix(in srgb, var(--brand-yellow) 30%, var(--brand-white));
+            --gradient-deep:     var(--brand-deep-blue);
+            --gradient-ink:      var(--brand-deep-blue);
+            --gradient-dusk:     var(--brand-deep-blue);
+            --font-display:      'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body:         'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --fin-up:            #1a7a5e;
+            --fin-up-bg:         color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --fin-down:          var(--brand-red);
+            --por-bank:          var(--fin-up);
+            --por-stable:        #2e5f6a;
+            --por-treasury:      var(--brand-purple);
+            --por-cash:          #b8a030;
+            --success:           var(--fin-up);
+            --warning:           #b8a030;
+            --error:             var(--brand-red);
+            --error-bg:          color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));
+            --text-primary:      #173d47;
+            --text-secondary:    #3d6b78;
+            --border-subtle:     rgba(23, 61, 71, 0.13);
+            --shadow-card:       0 2px 12px rgba(23, 61, 71, 0.07);
+            /* Surfaces (align with newunera-color-system.mdc) */
+            --surface-impact:   color-mix(in srgb, var(--brand-cloud-blue) 22%, var(--brand-white));
+            --surface-action:   color-mix(in srgb, var(--brand-cloud-blue) 14%, var(--brand-white));
+            --surface-sky:      color-mix(in srgb, var(--brand-cloud-blue) 18%, var(--brand-white));
+            --surface-deep:     color-mix(in srgb, var(--brand-deep-blue) 4%, var(--brand-white));
+            --font-stat-size:         2.5rem;
+            --font-stat-size-compact: 2rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--brand-cloud-blue);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 0 0 8px 0;
+            font-weight: 600;
+        }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-yellow); }
+
+        /* Navigation */
+        .nav {
+            background: var(--gradient-ink);
+            padding: 0 2.75rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2.75rem;
+        }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .nav-brand:focus {
+            outline: 3px solid var(--brand-yellow);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        .nav-logo-img { height: 24px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; display: block; }
+
+        .nav-links {
+            display: flex;
+            gap: 1.375rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--brand-yellow); }
+        .nav-link:focus {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+        .nav-link.active {
+            color: var(--brand-yellow);
+            font-weight: 600;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            min-height: 44px;
+            min-width: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.1); }
+        .hamburger:focus {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--brand-white);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(23, 61, 71, 0.55);
+            z-index: 10010;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--brand-white);
+            z-index: 10011;
+            padding: 1.5rem;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .mobile-menu.active { display: block; right: 0; }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .mobile-menu-header .nav-logo-img { height: 24px; }
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: var(--text-primary);
+        }
+        .mobile-menu-close:hover { background: var(--neutral-200); }
+        .mobile-menu-close:focus {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            list-style: none;
+        }
+        .mobile-nav-links .nav-link {
+            color: var(--text-primary);
+            display: block;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        .mobile-nav-links .nav-link:hover { background: rgba(23, 61, 71, 0.06); color: var(--brand-deep-blue); }
+        .mobile-nav-links .nav-link.active { background: rgba(23, 61, 71, 0.08); color: var(--brand-deep-blue); font-weight: 600; }
+
+        /* Hero Section */
+        .hero {
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-status-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 980px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--brand-white);
+            animation: pulse-network 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-network {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .refresh-countdown {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .ratio-display {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem 4rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .ratio-value {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 10vw, 5rem);
+            font-weight: 700;
+            color: var(--fin-up);
+            font-variant-numeric: tabular-nums;
+            line-height: 1.05;
+        }
+
+        .ratio-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .ratio-gauge {
+            width: 100%;
+            max-width: 320px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 980px;
+            margin-top: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ratio-gauge-fill {
+            height: 100%;
+            border-radius: 980px;
+            transition: width 0.5s ease;
+        }
+        .ratio-gauge-fill.healthy { background: var(--fin-up); }
+        .ratio-gauge-fill.caution { background: var(--warning); }
+        .ratio-gauge-fill.critical { background: var(--brand-red); }
+
+        .ratio-gauge-marker {
+            position: absolute;
+            left: 100%;
+            top: -4px;
+            width: 2px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .hero-inline-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-inline-stat {
+            font-size: 0.938rem;
+        }
+        .hero-inline-stat strong { font-weight: 700; }
+
+        .hero-cta {
+            margin-top: 2rem;
+        }
+
+        .btn-hero {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background: var(--brand-white);
+            color: var(--brand-deep-blue);
+            border: none;
+            border-radius: 980px;
+            font-weight: 600;
+            font-size: 0.938rem;
+            cursor: pointer;
+            text-decoration: none;
+            min-height: 46px;
+            transition: all 0.2s;
+        }
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .btn-hero:focus {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        .last-updated {
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Stats Grid - Impact Card Style */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--brand-deep-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+
+        .stat-card:hover {
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 12px 32px rgba(23, 61, 71, 0.12);
+            transform: translateY(-6px);
+        }
+        .stat-card:hover::before { transform: scaleX(1); }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 1rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 60%, var(--brand-white));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg { width: 28px; height: 28px; stroke: var(--brand-deep-blue); }
+
+        .stat-trend {
+            padding: 0.375rem 0.75rem;
+            background: var(--fin-up-bg);
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .stat-trend.negative {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: var(--font-stat-size);
+            font-weight: 700;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+            line-height: 1.1;
+        }
+
+        .stat-value.shimmer { animation: shimmer-pulse 0.5s ease-out; }
+
+        @keyframes shimmer-pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .ratio-pill {
+            padding: 0.375rem 0.75rem;
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .ratio-pill.healthy { background: var(--fin-up-bg); color: var(--success); }
+        .ratio-pill.caution { background: color-mix(in srgb, var(--warning) 20%, var(--brand-white)); color: var(--warning); }
+        .ratio-pill.critical { background: var(--error-bg); color: var(--error); }
+
+        /* Section */
+        .section {
+            background: var(--surface-action);
+            border-radius: 1.25rem;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 2rem;
+            background: var(--brand-deep-blue);
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-content {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Reserve Composition - Distribution Bars */
+        .composition-summary {
+            display: flex;
+            height: 48px;
+            background: var(--neutral-100);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .composition-segment {
+            height: 100%;
+            transition: flex 0.5s ease;
+        }
+
+        .distribution-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .distribution-bar-item {
+            position: relative;
+        }
+
+        .distribution-bar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .distribution-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .distribution-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .distribution-icon svg { width: 18px; height: 18px; stroke: var(--brand-deep-blue); }
+
+        .distribution-value {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .distribution-bar {
+            height: 48px;
+            background: var(--neutral-100);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .distribution-bar-fill {
+            height: 100%;
+            border-radius: 0.75rem;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .distribution-bar-fill.bank { background: var(--por-bank); }
+        .distribution-bar-fill.stablecoin { background: var(--por-stable); }
+        .distribution-bar-fill.treasury { background: var(--por-treasury); }
+        .distribution-bar-fill.cash { background: var(--por-cash); }
+
+        .distribution-bar-item:hover .distribution-bar-fill {
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .verify-link {
+            font-size: 0.813rem;
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 0.25rem;
+            display: inline-block;
+        }
+        .verify-link:hover { text-decoration: underline; }
+
+        /* PoR Services */
+        .por-services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .por-service-card {
+            background: var(--brand-white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .por-service-card:hover {
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 8px 24px rgba(23, 61, 71, 0.12);
+        }
+
+        .por-service-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .por-service-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .por-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: var(--fin-up-bg);
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .por-status-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .por-service-desc {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .por-service-meta {
+            font-size: 0.813rem;
+            color: var(--neutral-600);
+        }
+
+        /* Smart Contract Verification */
+        .contract-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--neutral-100);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .contract-address {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-600);
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: var(--neutral-200); color: var(--brand-deep-blue); }
+        .copy-btn:focus {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .explorer-link {
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .explorer-link:hover { text-decoration: underline; }
+
+        .methodology-note {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Audit History */
+        .audit-featured {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+            background: var(--fin-up-bg);
+            border-radius: 1rem;
+            border: 1px solid color-mix(in srgb, var(--fin-up) 25%, var(--border-subtle));
+            margin-bottom: 2rem;
+        }
+
+        .audit-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.75rem;
+            background: var(--brand-deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            flex-shrink: 0;
+        }
+        .audit-icon svg { width: 40px; height: 40px; stroke: var(--brand-white); }
+
+        .audit-info { flex: 1; }
+
+        .audit-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .audit-date {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.938rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 980px;
+            font-weight: 600;
+            font-size: 0.938rem;
+            cursor: pointer;
+            text-decoration: none;
+            min-height: 46px;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(23, 61, 71, 0.3);
+        }
+        .btn-primary:focus {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        .audit-timeline {
+            list-style: none;
+        }
+
+        .audit-timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .audit-timeline-item:last-child { border-bottom: none; }
+
+        .audit-result-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .audit-result-badge.passed { background: var(--fin-up-bg); color: var(--success); }
+
+        /* How It Works */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step-card {
+            background: var(--brand-white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--brand-deep-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+
+        .step-card:hover {
+            border-color: var(--brand-deep-blue);
+            box-shadow: 0 12px 32px rgba(23, 61, 71, 0.12);
+            transform: translateY(-4px);
+        }
+        .step-card:hover::before { transform: scaleX(1); }
+
+        .step-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--neutral-100);
+            border-radius: 980px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: var(--brand-white);
+        }
+
+        .step-icon svg { width: 40px; height: 40px; stroke: var(--brand-white); }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.938rem;
+            line-height: 1.6;
+        }
+
+        /* FAQ Accordion */
+        .faq-list { list-style: none; }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .faq-item:last-child { border-bottom: none; }
+
+        .faq-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .faq-trigger:hover { background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white)); }
+
+        .faq-trigger:focus {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+
+        .faq-trigger[aria-expanded="true"] .faq-icon { transform: rotate(45deg); }
+
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            margin-left: 1rem;
+            stroke: var(--brand-deep-blue);
+            transition: transform 0.3s;
+        }
+
+        .faq-content {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-content-inner {
+            padding: 0 0 1.5rem 0;
+        }
+
+        .faq-answer {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--brand-white);
+            border-top: 1px solid var(--border-subtle);
+            padding: 3rem 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .footer-logo-img { height: 32px; width: auto; max-width: 200px; object-fit: contain; object-position: left center; display: block; }
+
+        .footer-tagline {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li { margin-bottom: 0.5rem; }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.938rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--brand-deep-blue); }
+
+        .footer-contact {
+            font-size: 0.938rem;
+            color: var(--text-secondary);
+        }
+
+        .footer-contact a {
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+        }
+        .footer-contact a:hover { text-decoration: underline; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--brand-deep-blue);
+            color: var(--brand-white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.938rem;
+            font-weight: 500;
+            z-index: 10020;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .steps-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 1200px) and (min-width: 769px) {
+            .stat-card { padding: 1.5rem; }
+            .stats-grid .stat-value { font-size: var(--font-stat-size-compact); }
+        }
+
+        @media (max-width: 900px) {
+            .por-services-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .nav { padding: 0 1rem; }
+
+            .hero-title { font-size: 2rem; }
+            .ratio-value { font-size: clamp(2.25rem, 9vw, 3.5rem); }
+            .stat-value { font-size: var(--font-stat-size-compact); }
+            .ratio-display { padding: 1.5rem 2rem; }
+
+            .stats-grid { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; }
+
+            .section { padding: 2rem; }
+            .container { padding: 2rem 1rem; }
+
+            .audit-featured { flex-direction: column; text-align: center; }
+
+            .distribution-bar { height: 40px; }
+            .composition-summary { height: 40px; }
+
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-brand { justify-content: center; }
+        }
+
+        @media (max-width: 600px) {
+            .hero-inline-stats { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+    <style>
+.notif-badge {
+            min-width: 18px;
+            height: 18px;
+            padding: 0 3px;
+            border-radius: 9px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--brand-yellow);
+            color: var(--brand-deep-blue);
+            font-size: 0.625rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--brand-deep-blue);
+        }
+
+        .notif-badge[data-count="0"] {
+            display: none;
+        }
+
+/* Notification bell family copied from account-settings.html - nav is infrastructure; without these
+   rules the bell renders as an unstyled UA button with the badge stacked below the icon. */
+.notification-bell-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .notification-bell-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .notification-bell-btn:hover .notif-bell-icon {
+            color: var(--brand-yellow);
+        }
+
+        .notification-bell-btn:focus {
+            outline: none;
+        }
+
+        .notification-bell-btn:focus-visible {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        .notification-bell-btn .notif-bell-icon {
+            width: 20px;
+            height: 20px;
+            color: rgba(255, 255, 255, 0.85);
+            transition: color 0.2s;
+        }
+
+        .notification-bell-btn.ring .notif-bell-icon {
+            animation: notifRing 0.5s ease-in-out;
+        }
+
+        @keyframes notifRing {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-13deg); }
+            60% { transform: rotate(10deg); }
+            80% { transform: rotate(-8deg); }
+        }
+
+/* Nav dropdown family copied from account-settings.html - this page was missing the base .user-dropdown-nav rules, so the account menu rendered permanently open and pushed the page wider than the viewport. */
+/* User Dropdown in Nav */
+        .user-dropdown-nav {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            width: 280px;
+            background: var(--brand-white);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.28, 0.11, 0.32, 1);
+            z-index: 10002;
+            overflow: hidden;
+        }
+
+        .user-dropdown-nav.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .user-dropdown-nav:not(.show) {
+            pointer-events: none;
+        }
+
+        #navWalletDisplay > #userDropdown.user-dropdown-nav {
+            right: 0;
+            left: auto;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ── Disconnected wallet session (account-settings pilot) ── */
+        .nav-wallet-display[data-wallet-session="disconnected"] {
+            display: flex;
+            padding: 0.125rem;
+            justify-content: center;
+        }
+        .nav-wallet-session-connected,
+        .nav-wallet-session-disconnected {
+            display: flex;
+            align-items: center;
+            gap: 0.3125rem;
+        }
+        .nav-wallet-session-connected[hidden],
+        .nav-wallet-session-disconnected[hidden] {
+            display: none !important;
+        }
+
+        .nav-wallet-session-disconnected .user-avatar-nav:focus-visible {
+            outline: 2px solid var(--brand-yellow);
+            outline-offset: 2px;
+        }
+
+        .dropdown-wallet-status-nav[data-state="disconnected"] {
+            background: color-mix(in srgb, var(--brand-earth) 18%, var(--brand-white));
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .dropdown-wallet-status-nav[data-state="connected"] {
+            background: rgba(23, 61, 71, 0.1);
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+        }
+
+        .mobile-wallet-status {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.625rem 0.875rem;
+            margin: 0.5rem 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.813rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: color-mix(in srgb, var(--brand-earth) 18%, var(--brand-white));
+        }
+        .mobile-wallet-status[hidden],
+        .mobile-dropdown-section[data-session-section="network"][hidden] {
+            display: none !important;
+        }
+
+        body[data-wallet-session="disconnected"] #desktopMenuContainer a[href*="wallet-enhanced"],
+        body[data-wallet-session="disconnected"] #mobileUserDropdown a[href*="wallet-enhanced"] {
+            display: none !important;
+        }
+
+        .dropdown-header-nav {
+            padding: 1.25rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white));
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .dropdown-user-info-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .dropdown-avatar-nav {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--brand-deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-white);
+            font-weight: 700;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .dropdown-user-details-nav {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-user-name-nav {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--neutral-900);
+            margin-bottom: 0.125rem;
+        }
+
+        .dropdown-user-email-nav {
+            font-size: 0.813rem;
+            color: var(--neutral-600);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dropdown-wallet-badge-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(23, 61, 71, 0.1);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-family: var(--font-body);
+            color: var(--brand-deep-blue);
+            font-weight: 600;
+        }
+
+        .dropdown-wallet-badge-nav svg {
+            stroke: var(--brand-deep-blue);
+        }
+
+        /* FE-132: account-menu profile summary chips + wallet address (Binance-style) */
+        .dropdown-chips-nav { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.625rem; }
+        .dropdown-chip { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.02em; padding: 0.1875rem 0.5rem; border-radius: 0.375rem; }
+        .dropdown-chip--level { background: var(--neutral-200); color: var(--text-secondary); text-transform: uppercase; }
+        .dropdown-chip--verified { background: var(--fin-up-bg); color: var(--fin-up); }
+        .dropdown-chip--verified svg { width: 13px; height: 13px; fill: currentColor; }
+        .dropdown-chip--verified[data-verified="false"] { background: var(--surface-warning-soft, color-mix(in srgb, var(--warning) 16%, var(--brand-white))); color: var(--warning); }
+        .dropdown-chip--verified[data-verified="false"] .dropdown-chip-verified-text::after { content: "Unverified"; }
+        .dropdown-chip--verified[data-verified="false"] .dropdown-chip-verified-text { font-size: 0; }
+        .dropdown-chip--verified[data-verified="false"] .dropdown-chip-verified-text::after { font-size: 0.6875rem; }
+        .dropdown-wallet-addr-nav { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem 0.625rem; background: var(--brand-white); border: 1px solid var(--border-subtle); border-radius: 0.5rem; cursor: pointer; font-family: var(--font-body); text-align: left; transition: border-color 0.15s, background 0.15s; }
+        .dropdown-wallet-addr-nav:hover { border-color: var(--brand-deep-blue); background: var(--neutral-50); }
+        .dropdown-wallet-addr-nav:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .dropdown-wallet-addr-icon { font-size: 0.875rem; flex-shrink: 0; }
+        .dropdown-wallet-addr-text { flex: 1; min-width: 0; font-family: ui-monospace, 'Courier New', monospace; font-size: 0.8125rem; font-weight: 600; color: var(--brand-deep-blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-wallet-copy { width: 15px; height: 15px; fill: var(--text-secondary); flex-shrink: 0; }
+        .dropdown-wallet-addr-nav:hover .dropdown-wallet-copy { fill: var(--brand-deep-blue); }
+        .dropdown-wallet-addr-nav[data-state="disconnected"] { background: color-mix(in srgb, var(--brand-earth) 14%, var(--brand-white)); cursor: default; }
+        .dropdown-wallet-addr-nav[data-state="disconnected"] .dropdown-wallet-addr-text { color: var(--text-secondary); font-family: var(--font-body); font-weight: 500; }
+        .dropdown-wallet-addr-nav[data-state="disconnected"] .dropdown-wallet-copy,
+        .dropdown-wallet-addr-nav[data-state="disconnected"] .dropdown-wallet-addr-icon { display: none; }
+
+        .dropdown-menu-nav {
+            padding: 0.5rem;
+        }
+
+        .dropdown-section-nav {
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-section-title-nav {
+            font-size: 0.688rem;
+            font-weight: 700;
+            color: var(--neutral-600);
+            letter-spacing: 0.05em;
+            padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .dropdown-item-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--neutral-800);
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item-nav:hover {
+            background: rgba(23, 61, 71, 0.08);
+            color: var(--brand-deep-blue);
+        }
+
+        .dropdown-item-nav svg {
+            stroke: currentColor;
+            flex-shrink: 0;
+        }
+
+        .dropdown-divider-nav {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.06);
+            margin: 0.5rem 0;
+        }
+</style>
+<link rel="stylesheet" href="consumer-app-nav.css">
+<style>
+/* Prototype edge-case bar + shared banner (in-memory only; stripped for production) */
+.flow-demo-bar { margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1.5px dashed var(--border-subtle, rgba(23,61,71,0.15)); }
+.demo-label { font-size: 0.688rem; font-weight: 600; color: var(--text-secondary, #5b6b70); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; text-align: left; }
+.demo-btns { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.demo-btn { padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1.5px solid var(--border-subtle, rgba(23,61,71,0.15)); background: var(--brand-white, #fff); cursor: pointer; transition: all 0.15s; font-family: var(--font-body, inherit); color: var(--text-secondary, #5b6b70); min-height: 34px; }
+.demo-btn:hover { border-color: var(--brand-deep-blue, #173d47); color: var(--brand-deep-blue, #173d47); }
+.demo-btn:focus-visible { outline: 2px solid var(--brand-deep-blue, #173d47); outline-offset: 2px; }
+.demo-btn.active { border-color: var(--brand-deep-blue, #173d47); background: var(--brand-deep-blue, #173d47); color: var(--brand-white, #fff); }
+@media (max-width: 768px) { .demo-btn { min-height: 44px; } }
+.edge-case-banner { display: flex; align-items: flex-start; gap: 0.625rem; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; background: color-mix(in srgb, var(--brand-deep-blue, #173d47) 6%, #fff); border: 1.5px solid color-mix(in srgb, var(--brand-deep-blue, #173d47) 20%, transparent); }
+.edge-case-banner[hidden] { display: none !important; }
+.edge-case-banner svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; fill: var(--brand-deep-blue, #173d47); }
+.edge-case-banner.is-error { background: var(--surface-error-soft, color-mix(in srgb, #b3261e 8%, #fff)); border-color: color-mix(in srgb, #b3261e 28%, transparent); }
+.edge-case-banner.is-error svg { fill: var(--error, #b3261e); }
+.edge-case-banner.is-warning { background: var(--surface-warning-soft, color-mix(in srgb, #f5c518 16%, #fff)); border-color: color-mix(in srgb, #b8860b 32%, transparent); }
+.edge-case-banner.is-warning svg { fill: color-mix(in srgb, var(--brand-deep-blue, #173d47) 55%, #b8860b); }
+.edge-banner-text { flex: 1; min-width: 200px; }
+.edge-banner-title { font-weight: 700; font-size: 0.9375rem; margin: 0 0 0.2rem; color: var(--text-primary, #173d47); }
+.edge-banner-body { font-size: 0.8125rem; color: var(--text-secondary, #5b6b70); line-height: 1.45; margin: 0; }
+.edge-banner-btn { width: auto; min-height: 40px; padding: 0 1.1rem; font-size: 0.813rem; font-weight: 600; font-family: var(--font-body, inherit); border-radius: 0.5rem; border: 1.5px solid var(--brand-deep-blue, #173d47); background: var(--brand-white, #fff); color: var(--brand-deep-blue, #173d47); cursor: pointer; align-self: center; white-space: nowrap; }
+.edge-banner-btn:hover { background: color-mix(in srgb, var(--brand-deep-blue, #173d47) 8%, #fff); }
+.edge-banner-btn:focus-visible { outline: 2px solid var(--brand-deep-blue, #173d47); outline-offset: 2px; }
+@media (max-width: 560px) { .edge-banner-btn { width: 100%; flex: 1 1 100%; } }
+[data-edge-disabled] { opacity: 0.45 !important; pointer-events: none !important; }
+</style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma White Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <ul class="nav-links" role="list">
+                <li><a href="dashboard-enhanced.html" class="nav-link" id="navLinkDashboard">DONATION</a></li>
+                <li id="walletNavItem">
+                    <button type="button" class="nav-link nav-connect-btn" id="navConnectBtn" onclick="openConnectModal()" aria-label="Connect wallet">CONNECT</button>
+                    <a href="wallet-enhanced.html" class="nav-link" id="walletNavLink" style="display: none;">WALLET</a>
+                </li>
+                <li class="nav-dropdown-item" id="navDdTransact">
+                    <button type="button" class="nav-link nav-dropdown-trigger" id="navDdTransactBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navDdTransactMenu">
+                        TRANSACT
+                        <svg class="nav-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDdTransactMenu" role="menu" aria-label="Transact options">
+                        <li><a href="add-money.html" class="nav-dd-item" role="menuitem">Add Tokens</a></li>
+                        <li><a href="send-enhanced.html" class="nav-dd-item" role="menuitem">Send Tokens</a></li>
+                        <li><a href="stake.html" class="nav-dd-item" role="menuitem">Stake</a></li>
+                        <li><a href="exchange.html" class="nav-dd-item" role="menuitem">Exchange</a></li>
+                    </ul>
+                </li>
+                <li id="navAuthLinks" style="display: none;">
+                    <a href="login_2.html" class="nav-link btn-nav-secondary">LOG IN</a>
+                    <a href="signup_2.html" class="nav-link btn-nav-primary">SIGN UP</a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <!-- Notification Bell -->
+            <div class="notification-bell-wrapper" id="notificationBellWrapper">
+                <button
+                    type="button"
+                    id="notificationBell"
+                    class="notification-bell-btn"
+                    aria-label="Notifications, 3 unread"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    onclick="toggleNotificationPanel()"
+                >
+                    <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
+                    </svg>
+                    <span class="notif-badge" id="notifBadge" aria-hidden="true">3</span>
+                </button>
+
+                <!-- Desktop notification panel - mirrors #userDropdown structure -->
+                <div class="user-dropdown-nav notification-panel" id="notificationPanel"
+                     role="dialog" aria-label="Notifications" aria-modal="false"
+                     onclick="event.stopPropagation()">
+
+                    <!-- Header - mirrors .dropdown-header-nav -->
+                    <div class="dropdown-header-nav notif-panel-header">
+                        <div class="notif-panel-title-row">
+                            <span class="notif-panel-title">Notifications</span>
+                            <span class="notif-unread-label" id="notifUnreadLabel">3 unread</span>
+                        </div>
+                        <div class="notif-panel-actions">
+                            <a href="notifications.html" class="notif-action-link view-all-link">View all</a>
+                            <button type="button" class="notif-action-link"
+                                    onclick="markAllNotificationsRead()">Mark all read</button>
+                            <button type="button" class="notif-close-btn"
+                                    onclick="closeNotificationPanel()" aria-label="Close notifications">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notification list - items rendered by renderNotificationPanel() -->
+                    <div class="dropdown-menu-nav notif-list-wrapper">
+                        <div class="dropdown-section-title-nav">NEW</div>
+                        <ul class="notif-list" id="notificationList" role="list" aria-live="polite">
+                            <!-- items injected by renderNotificationPanel('desktop') -->
+                        </ul>
+                    </div>
+
+                    <!-- Footer - mirrors dropdown-divider + item pattern -->
+                    <div class="dropdown-divider-nav notif-panel-divider" id="notifPanelDivider"></div>
+                    <div class="dropdown-menu-nav notif-panel-footer" id="notifPanelFooter">
+                        <button type="button" class="btn btn-secondary notif-footer-btn" id="clearAllNotificationsBtn"
+                                onclick="clearAllNotifications()">Clear all notifications</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-wallet-display" id="navWalletDisplay"
+                 style="display: none; position: relative;"
+                 data-wallet-session="disconnected"
+                 aria-label="Account menu, wallet not connected">
+
+                    <div class="nav-wallet-session-connected" hidden>
+                    <div class="nav-wallet-avatar">
+                        <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        <span class="nav-wallet-metamask-badge" aria-hidden="true">🦊</span>
+                    </div>
+                    <div class="nav-wallet-info nav-wallet-trigger"
+                         role="button" tabindex="0"
+                         aria-haspopup="true" aria-expanded="false"
+                         aria-label="Open account menu"
+                         onclick="toggleUserDropdown(event)"
+                         onkeydown="handleUserMenuTriggerKey(event)">
+                        <span class="nav-wallet-address-row">
+                            <span class="nav-wallet-address" id="navWalletAddress">0x0822...7B75</span>
+                            <svg class="nav-wallet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-wallet-balance" id="navWalletBalance">2,500.00 hUSD</span>
+                    </div>
+                    <div class="nav-network-badge"
+                         role="button"
+                         tabindex="0"
+                         aria-haspopup="listbox"
+                         aria-expanded="false"
+                         aria-label="Switch network, currently Ethereum"
+                         onclick="toggleNetworkDropdown(event)"
+                         onkeydown="handleNetworkBadgeKey(event)">
+                        <svg class="nav-network-icon" id="navNetworkIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+                        </svg>
+                        <span id="navNetworkLabel">Ethereum</span>
+                        <svg class="nav-network-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- Network Switcher Dropdown -->
+                    <div class="network-dropdown-nav" id="networkDropdown"
+                         role="listbox"
+                         aria-label="Select blockchain network"
+                         onclick="event.stopPropagation()">
+                        <div class="network-dropdown-header-nav">Mainnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav active"
+                                 role="option" aria-selected="true" tabindex="0"
+                                 data-chain-id="ethereum" data-chain-label="Ethereum" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('ethereum','Ethereum','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Ethereum</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base" data-chain-label="Base" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base','Base','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                        <div class="network-dropdown-header-nav" style="margin-top:0.25rem;">Testnet</div>
+                        <div class="network-options-list-nav">
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="sepolia" data-chain-label="Sepolia" data-chain-color="#627EEA"
+                                 onclick="switchNetwork('sepolia','Sepolia','#627EEA',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#627EEA" opacity="0.5"/>
+                                    <path d="M10 3.5L6 10.2l4 2.3 4-2.3L10 3.5z" fill="white" opacity="0.8"/>
+                                    <path d="M6 10.2l4 5.8 4-5.8-4 2.3-4-2.3z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="network-option-nav"
+                                 role="option" aria-selected="false" tabindex="0"
+                                 data-chain-id="base-sepolia" data-chain-label="Base Sepolia" data-chain-color="#0052FF"
+                                 onclick="switchNetwork('base-sepolia','Base Sepolia','#0052FF',this)"
+                                 onkeydown="handleNetworkOptionKey(event)">
+                                <svg class="network-option-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                    <circle cx="10" cy="10" r="10" fill="#0052FF" opacity="0.5"/>
+                                    <path d="M10 4.5C7 4.5 4.5 7 4.5 10S7 15.5 10 15.5c2.6 0 4.8-1.7 5.4-4H10V10h7c0 3.9-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7c1.8 0 3.4.7 4.6 1.8l-1.4 1.4C12.3 5.4 11.2 4.5 10 4.5z" fill="white"/>
+                                </svg>
+                                <span class="network-option-name">Base Sepolia</span>
+                                <span class="network-testnet-badge">Testnet</span>
+                                <svg class="network-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Network Switcher Dropdown -->
+                    </div>
+
+                    <div class="nav-wallet-session-disconnected" hidden>
+                        <div class="nav-wallet-avatar">
+                            <div class="user-avatar-nav" onclick="toggleUserDropdown()">JS</div>
+                        </div>
+                    </div>
+
+                <div class="user-dropdown-nav" id="userDropdown" onclick="event.stopPropagation()">
+                            <div class="dropdown-header-nav">
+                                <div class="dropdown-user-info-nav">
+                                    <div class="dropdown-avatar-nav">JS</div>
+                                    <div class="dropdown-user-details-nav">
+                                        <div class="dropdown-user-name-nav">Jane Smith</div>
+                                        <div class="dropdown-user-email-nav">jane@example.com</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-wallet-badge-nav dropdown-wallet-status-nav"
+                                     id="dropdownWalletStatusChip"
+                                     data-state="disconnected"
+                                     role="status"
+                                     aria-live="polite">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                         viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                                        <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z"/>
+                                    </svg>
+                                    <span id="dropdownWalletStatusText">No wallet connected</span>
+                                </div>
+                                <span id="dropdownWalletAddress" class="visually-hidden" aria-hidden="true"></span>
+                            </div>
+                            <div class="dropdown-menu-nav" id="desktopMenuContainer"></div>
+                        </div>
+</div>
+
+            <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="nav-brand" aria-label="Huma Home">
+                <img src="NewLogo/Huma Black Text Nav.svg" alt="Huma" class="nav-logo-img" height="24">
+            </a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+                <div id="drawerAuthRow" class="mobile-drawer-auth-row" style="display: none;">
+            <a href="login_2.html" class="mobile-drawer-auth-login">LOG IN</a>
+            <a href="signup_2.html" class="mobile-drawer-auth-signup">SIGN UP</a>
+        </div>
+        <div id="drawerWalletRow" class="mobile-drawer-wallet-row" style="display: none;">
+            <span aria-hidden="true">🦊</span>
+            <div class="drawer-wallet-info">
+                <div id="drawerWalletAddress">0x742d...3a8f</div>
+                <div class="drawer-wallet-meta-row">
+                    <span id="drawerWalletBalance">2,500.00 hUSD</span>
+                    <span id="drawerWalletNetwork">Base</span>
+                </div>
+            </div>
+        </div>
+        <div id="drawerConnectRow" hidden aria-hidden="true"></div>
+        <ul class="mobile-nav-links" role="list">
+            <li id="mobileConnectNavItem" style="display: none;"><button type="button" class="mobile-drawer-connect-btn" onclick="openConnectModal()">CONNECT</button></li>
+            <li class="mobile-nav-section-label">TRANSACT</li>
+            <li><a href="add-money.html" class="nav-link mobile-nav-sub">Add Tokens</a></li>
+            <li><a href="send-enhanced.html" class="nav-link mobile-nav-sub">Send Tokens</a></li>
+            <li><a href="stake.html" class="nav-link mobile-nav-sub">Stake</a></li>
+            <li><a href="exchange.html" class="nav-link mobile-nav-sub">Exchange</a></li>
+            </ul>
+        <div id="mobileUserMenu"></div>
+                <div id="mobileNotificationsSection"></div>
+    </div>
+
+    <main id="main-content" class="container" role="main">
+        <!-- Prototype demo bar (CLAUDE.md edge-bar rule): first child of the page main, above the title. -->
+        <div class="flow-demo-bar" id="edgeDemoBar" data-edge-keep>
+            <p class="demo-label">Prototype: simulate a data state</p>
+            <div class="demo-btns" id="edgeCasePills" role="group" aria-label="Edge case selector"></div>
+        </div>
+        <div class="edge-case-banner" id="edgeCaseBanner" data-edge-keep role="status" hidden>
+            <span id="edgeBannerIcon" aria-hidden="true" style="display:flex;"></span>
+            <div class="edge-banner-text">
+                <p class="edge-banner-title" id="edgeBannerTitle"></p>
+                <p class="edge-banner-body" id="edgeBannerBody"></p>
+            </div>
+            <button type="button" class="edge-banner-btn" id="edgeBannerRetry" onclick="setEdgeCase('happy')" hidden>Try again</button>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <path d="M2 10h20"/>
+                        </svg>
+                    </div>
+                    <span class="stat-trend">+2.1% 30d</span>
+                </div>
+                <div class="stat-label">Total Reserve Holdings</div>
+                <div class="stat-value" id="statReserve">$2,994,250</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-label">Total Tokens Issued</div>
+                <div class="stat-value" id="statIssued">$2,845,290</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                        </svg>
+                    </div>
+                    <span class="ratio-pill healthy">Healthy</span>
+                </div>
+                <div class="stat-label">Backing Ratio</div>
+                <div class="stat-value">105.2%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-label">Surplus Buffer</div>
+                <div class="stat-value">$148,960</div>
+            </div>
+        </div>
+
+        <section class="section" id="composition">
+            <h2 class="section-title">Reserve Composition</h2>
+            <div class="composition-summary" role="img" aria-label="Reserve composition: 60% Bank, 30% Stablecoins, 8% Treasury, 2% Cash">
+                <div class="composition-segment" style="flex: 60; background: var(--por-bank);"></div>
+                <div class="composition-segment" style="flex: 30; background: var(--por-stable);"></div>
+                <div class="composition-segment" style="flex: 8; background: var(--por-treasury);"></div>
+                <div class="composition-segment" style="flex: 2; background: var(--por-cash);"></div>
+            </div>
+            <div class="distribution-bars">
+                <div class="distribution-bar-item">
+                    <div class="distribution-bar-header">
+                        <span class="distribution-label">
+                            <span class="distribution-icon" style="background: color-mix(in srgb, var(--por-bank) 20%, var(--brand-white));"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="1"/><path d="M4 8h16M4 12h4M10 12h4M16 12h4M4 16h8"/></svg></span>
+                            Bank Deposits (CAD)
+                        </span>
+                        <span class="distribution-value">60% • $1,796,550</span>
+                    </div>
+                    <div class="distribution-bar">
+                        <div class="distribution-bar-fill bank" style="width: 60%;"></div>
+                    </div>
+                    <a href="#" class="verify-link">Verify on audit report</a>
+                </div>
+                <div class="distribution-bar-item">
+                    <div class="distribution-bar-header">
+                        <span class="distribution-label">
+                            <span class="distribution-icon" style="background: color-mix(in srgb, var(--por-stable) 20%, var(--brand-white));"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7 12h10M12 7v10"/></svg></span>
+                            Stablecoins (USDC)
+                        </span>
+                        <span class="distribution-value">30% • $898,275</span>
+                    </div>
+                    <div class="distribution-bar">
+                        <div class="distribution-bar-fill stablecoin" style="width: 30%;"></div>
+                    </div>
+                    <a href="https://etherscan.io" class="verify-link" target="_blank" rel="noopener">View on Etherscan</a>
+                </div>
+                <div class="distribution-bar-item">
+                    <div class="distribution-bar-header">
+                        <span class="distribution-label">
+                            <span class="distribution-icon" style="background: color-mix(in srgb, var(--por-treasury) 20%, var(--brand-white));"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19V5M4 9l4-2 4 2 4-2v10"/><path d="M8 7v6M12 5v6M16 3v6"/></svg></span>
+                            Treasury Bonds
+                        </span>
+                        <span class="distribution-value">8% • $239,540</span>
+                    </div>
+                    <div class="distribution-bar">
+                        <div class="distribution-bar-fill treasury" style="width: 8%;"></div>
+                    </div>
+                    <a href="#" class="verify-link">Verify on audit report</a>
+                </div>
+                <div class="distribution-bar-item">
+                    <div class="distribution-bar-header">
+                        <span class="distribution-label">
+                            <span class="distribution-icon" style="background: color-mix(in srgb, var(--por-cash) 20%, var(--brand-white));"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>
+                            Cash Equivalent
+                        </span>
+                        <span class="distribution-value">2% • $59,885</span>
+                    </div>
+                    <div class="distribution-bar">
+                        <div class="distribution-bar-fill cash" style="width: 2%;"></div>
+                    </div>
+                    <a href="#" class="verify-link">Verify on audit report</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">PoR Services</h2>
+            <div class="por-services-grid">
+                <div class="por-service-card">
+                    <div class="por-service-header">
+                        <h3 class="por-service-title">PoR Recording Service</h3>
+                        <span class="por-status-badge"><span class="dot"></span>Operational</span>
+                    </div>
+                    <p class="por-service-desc">Reserve data is recorded to the smart contract automatically on a daily schedule, with manual triggers available for material changes. All recordings are timestamped and block-verified.</p>
+                    <p class="por-service-meta">Last recorded: Block #21,456,789 • Feb 11, 2026 2:30 PM UTC</p>
+                </div>
+                <div class="por-service-card">
+                    <div class="por-service-header">
+                        <h3 class="por-service-title">PoR Display Service</h3>
+                        <span class="por-status-badge"><span class="dot"></span>Operational</span>
+                    </div>
+                    <p class="por-service-desc">Data is sourced directly from on-chain smart contract state. Display updates every 5 minutes. No backend API required, only public RPC endpoints.</p>
+                    <p class="por-service-meta">Updated 12 minutes ago • Methodology: On-chain attestation</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="smart-contract">
+            <h2 class="section-title">Smart Contract Verification</h2>
+            <div class="contract-card">
+                <span class="contract-address" id="contractAddress">0x742d35Cc6634C0532925a3b844Bc454e4438f44e</span>
+                <button type="button" class="copy-btn" aria-label="Copy contract address" onclick="copyAddress('contractAddress')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2"/>
+                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                    </svg>
+                </button>
+                <a href="https://etherscan.io/address/0x742d35Cc6634C0532925a3b844Bc454e4438f44e" class="explorer-link" target="_blank" rel="noopener">View on Etherscan</a>
+            </div>
+            <p class="methodology-note">Reserve attestations are stored on-chain. Anyone can verify the total supply, reserve backing, and audit metadata by reading the contract state. Last block recorded: #21,456,789.</p>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Audit History</h2>
+            <div class="audit-featured">
+                <div class="audit-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                </div>
+                <div class="audit-info">
+                    <div class="audit-title">February 2026 Audit Report</div>
+                    <div class="audit-date">Verified by: Independent Auditors LLP • Date: February 1, 2026</div>
+                    <a href="#" class="btn-primary">Download Full Report (PDF)</a>
+                </div>
+            </div>
+            <ul class="audit-timeline">
+                <li class="audit-timeline-item">
+                    <span class="audit-result-badge passed">✓ Passed</span>
+                    <span>January 2026 · Independent Auditors LLP</span>
+                    <a href="#" class="explorer-link">Download</a>
+                </li>
+                <li class="audit-timeline-item">
+                    <span class="audit-result-badge passed">✓ Passed</span>
+                    <span>December 2025 · Independent Auditors LLP</span>
+                    <a href="#" class="explorer-link">Download</a>
+                </li>
+                <li class="audit-timeline-item">
+                    <span class="audit-result-badge passed">✓ Passed</span>
+                    <span>November 2025 · Independent Auditors LLP</span>
+                    <a href="#" class="explorer-link">Download</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">How Our Reserves Work</h2>
+            <p class="section-content">
+                Huma maintains full transparency by holding reserves that equal or exceed the total value of all hCAD stablecoins in circulation. Our reserves are independently audited monthly to ensure complete backing.
+            </p>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <span class="step-badge">Step 1</span>
+                    <div class="step-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <path d="M2 10h20"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Secure Storage</div>
+                    <div class="step-desc">Reserves held in regulated financial institutions and verified stablecoins</div>
+                </div>
+                <div class="step-card">
+                    <span class="step-badge">Step 2</span>
+                    <div class="step-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Independent Audits</div>
+                    <div class="step-desc">Monthly verification by certified third-party auditors</div>
+                </div>
+                <div class="step-card">
+                    <span class="step-badge">Step 3</span>
+                    <div class="step-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Real-Time Reporting</div>
+                    <div class="step-desc">Publicly accessible reserve data updated continuously</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <ul class="faq-list">
+                <li class="faq-item">
+                    <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-1" id="faq-trigger-1" onclick="toggleFaq(1)">
+                        What does "Proof of Reserve" mean?
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content" id="faq-1" role="region" aria-labelledby="faq-trigger-1">
+                        <div class="faq-content-inner">
+                            <p class="faq-answer">Proof of Reserve means that Huma holds assets equal to or greater than the total value of all hCAD stablecoins in circulation. This ensures that every token is fully backed by real assets.</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="faq-item">
+                    <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-2" id="faq-trigger-2" onclick="toggleFaq(2)">
+                        How often are reserves audited?
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content" id="faq-2" role="region" aria-labelledby="faq-trigger-2">
+                        <div class="faq-content-inner">
+                            <p class="faq-answer">Our reserves are independently audited monthly by certified third-party auditors. Audit reports are published publicly and available for download.</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="faq-item">
+                    <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-3" id="faq-trigger-3" onclick="toggleFaq(3)">
+                        What happens if the backing ratio drops below 100%?
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content" id="faq-3" role="region" aria-labelledby="faq-trigger-3">
+                        <div class="faq-content-inner">
+                            <p class="faq-answer">We maintain a buffer above 100% to ensure stability. If the ratio approaches 100%, automatic safeguards prevent new token issuance until reserves are restored. However, with our current 105.2% ratio, we have a healthy safety margin.</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="faq-item">
+                    <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-4" id="faq-trigger-4" onclick="toggleFaq(4)">
+                        Where are the reserves held?
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content" id="faq-4" role="region" aria-labelledby="faq-trigger-4">
+                        <div class="faq-content-inner">
+                            <p class="faq-answer">Reserves are held in regulated Canadian financial institutions, verified USDC stablecoins, government treasury bonds, and highly liquid cash equivalents. All holdings are segregated and audited regularly.</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="faq-item">
+                    <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-5" id="faq-trigger-5" onclick="toggleFaq(5)">
+                        Can I redeem my hCAD for the underlying reserves?
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content" id="faq-5" role="region" aria-labelledby="faq-trigger-5">
+                        <div class="faq-content-inner">
+                            <p class="faq-answer">Yes, hCAD tokens can be redeemed for Canadian dollars at any time through our withdrawal process. The redemption is processed within 1-3 business days.</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="faq-item">
+                    <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-6" id="faq-trigger-6" onclick="toggleFaq(6)">
+                        How can I verify the reserve data?
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content" id="faq-6" role="region" aria-labelledby="faq-trigger-6">
+                        <div class="faq-content-inner">
+                            <p class="faq-answer">Reserve data is updated in real-time on this page. You can also download monthly audit reports and verify on-chain data through blockchain explorers.</p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">
+                    <img src="NewLogo/Huma Black Text.svg" alt="Huma" class="footer-logo-img" width="160" height="32">
+                </div>
+                <p class="footer-tagline">One Flow. Many Lives. Transparent reserves for impact.</p>
+                <p class="footer-tagline" style="margin-top: 1rem;">© 2026 Huma. All rights reserved.</p>
+            </div>
+            <div>
+                <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard-enhanced.html">Donation</a></li>
+                    <li><a href="proof-of-reserve-public.html">Proof of Reserve</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">Reserve Inquiries</h3>
+                <p class="footer-contact">
+                    Contract: <button type="button" class="copy-btn" style="display: inline; padding: 0;" aria-label="Copy contract address" onclick="copyAddress('contractAddress')">0x742d...f44e</button><br>
+                    <a href="mailto:reserves@unera.io">reserves@unera.io</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">Copied to clipboard</div>
+
+    <script>
+        (function() {
+            const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function copyAddress(elementId) {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+                const text = el.textContent.trim();
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('Copied to clipboard');
+                }).catch(function() {
+                    showToast('Copy failed');
+                });
+            }
+            window.copyAddress = copyAddress;
+
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                if (!toast) return;
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 2000);
+            }
+
+            function toggleFaq(id) {
+                const trigger = document.getElementById('faq-trigger-' + id);
+                const content = document.getElementById('faq-' + id);
+                if (!trigger || !content) return;
+                const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+                trigger.setAttribute('aria-expanded', !isExpanded);
+                content.style.maxHeight = !isExpanded ? content.scrollHeight + 'px' : '0';
+            }
+            window.toggleFaq = toggleFaq;
+
+            var refreshSeconds = 5 * 60;
+            function updateCountdown() {
+                const m = Math.floor(refreshSeconds / 60);
+                const s = refreshSeconds % 60;
+                const el = document.getElementById('refreshCountdown');
+                if (el) el.textContent = 'Refreshing in ' + m + ':' + (s < 10 ? '0' : '') + s;
+                if (refreshSeconds <= 0) {
+                    refreshSeconds = 5 * 60;
+                    document.querySelectorAll('.stat-value, #ratioValue').forEach(function(v) {
+                        v.classList.add('shimmer');
+                        setTimeout(function() { v.classList.remove('shimmer'); }, 500);
+                    });
+                } else {
+                    refreshSeconds--;
+                }
+            }
+            setInterval(updateCountdown, 1000);
+
+            var hamburger = document.querySelector('.hamburger');
+            var mobileMenu = document.querySelector('.mobile-menu');
+            var mobileOverlay = document.querySelector('.mobile-menu-overlay');
+            var mobileClose = document.querySelector('.mobile-menu-close');
+
+            function openMenu() {
+                hamburger.classList.add('active');
+                hamburger.setAttribute('aria-expanded', 'true');
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeMenu() {
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            if (hamburger) hamburger.addEventListener('click', function() {
+                mobileMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+            if (mobileOverlay) mobileOverlay.addEventListener('click', closeMenu);
+
+            if (!REDUCED_MOTION) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+                document.querySelectorAll('.stat-card, .section, .step-card, .por-service-card').forEach(function(el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                    el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                    observer.observe(el);
+                });
+            }
+        })();
+    </script>
+    <script src="consumer-app-nav.js"></script>
+
+    <script>
+    /* Prototype edge-case simulator (in-memory only, never persisted; stripped for production). */
+    (function () {
+        var CASES = [{"id":"happy","label":"Happy path (default)"},{"id":"feed","label":"Feed unavailable","tone":"error","title":"Attestation feed unavailable","body":"Live reserve data cannot be loaded right now. Figures below show the last verified attestation.","retry":true},{"id":"stale","label":"Attestation stale","tone":"warning","title":"Attestation is older than 24 hours","body":"The next attestation is due shortly. Reserves remain fully backed as of the last report."}];
+        var ICONS = {"error":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -960 960 960\" aria-hidden=\"true\"><path d=\"M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z\"/></svg>","warning":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -960 960 960\" aria-hidden=\"true\"><path d=\"m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z\"/></svg>","info":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -960 960 960\" aria-hidden=\"true\"><path d=\"M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z\"/></svg>"};
+        var current = 'happy';
+        var hiddenSnapshot = null;
+        function ctas() { return document.querySelectorAll("main .btn-primary, main button[type='submit']"); }
+        function contentEls() {
+            var main = document.getElementById('main-content') || document.querySelector('main');
+            return Array.prototype.filter.call(main.children, function (el) { return !el.hasAttribute('data-edge-keep'); });
+        }
+        function sync() {
+            document.querySelectorAll('#edgeCasePills .demo-btn').forEach(function (b) {
+                b.classList.toggle('active', b.getAttribute('data-case') === current);
+            });
+        }
+        window.setEdgeCase = function (id) {
+            current = id;
+            var c = null;
+            for (var i = 0; i < CASES.length; i++) if (CASES[i].id === id) c = CASES[i];
+            sync();
+            var banner = document.getElementById('edgeCaseBanner');
+            ctas().forEach(function (b) { if (b.hasAttribute('data-edge-disabled')) { b.removeAttribute('data-edge-disabled'); b.disabled = false; b.removeAttribute('aria-disabled'); } });
+            if (hiddenSnapshot) { contentEls().forEach(function (el) { if (hiddenSnapshot.has(el)) el.hidden = hiddenSnapshot.get(el); }); hiddenSnapshot = null; }
+            if (!c || id === 'happy') { banner.hidden = true; return; }
+            banner.hidden = false;
+            banner.className = 'edge-case-banner is-' + (c.tone || 'info');
+            banner.setAttribute('role', c.tone === 'error' ? 'alert' : 'status');
+            document.getElementById('edgeBannerIcon').innerHTML = ICONS[c.tone] || ICONS.info;
+            document.getElementById('edgeBannerTitle').textContent = c.title;
+            document.getElementById('edgeBannerBody').textContent = c.body;
+            document.getElementById('edgeBannerRetry').hidden = !c.retry;
+            if (c.blocking) ctas().forEach(function (b) { b.setAttribute('data-edge-disabled', ''); b.disabled = true; b.setAttribute('aria-disabled', 'true'); });
+            if (c.hideContent) {
+                hiddenSnapshot = new Map();
+                contentEls().forEach(function (el) { hiddenSnapshot.set(el, el.hidden); el.hidden = true; });
+            }
+        };
+        function init() {
+            document.getElementById('edgeCasePills').innerHTML = CASES.map(function (c) {
+                return '<button type="button" class="demo-btn" data-case="' + c.id + '" onclick="setEdgeCase(\'' + c.id + '\')">' + c.label + '</button>';
+            }).join('');
+            sync();
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    })();
+    </script>
+</body>
+</html>

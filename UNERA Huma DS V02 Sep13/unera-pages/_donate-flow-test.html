@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Donate flow functional test</title>
+<style>body{font-family:ui-monospace,monospace;font-size:12px;padding:12px}#log{white-space:pre-wrap}</style></head>
+<body>
+<div id="log">running…</div>
+<div id="stage"></div>
+<script>
+const out = [];
+function say(s){ out.push(s); console.log('[FLOW] ' + s); document.getElementById('log').textContent = out.join('\n'); }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function overflow(f, w){
+  const d = f.contentDocument, de = d.documentElement;
+  const sw = Math.max(de.scrollWidth, d.body.scrollWidth);
+  return sw > w + 2 ? sw : 0;
+}
+function active(f){
+  const el = f.contentDocument.querySelector('.step-content.active');
+  return el ? el.id : 'none';
+}
+async function drive(rail){
+  const w = 360;
+  const stage = document.getElementById('stage');
+  const f = document.createElement('iframe');
+  f.width = w; f.height = 900; f.src = 'donate.html';
+  stage.innerHTML = ''; stage.appendChild(f);
+  await new Promise(res => { f.onload = () => setTimeout(res, 900); setTimeout(res, 9000); });
+  const W = f.contentWindow, D = W.UNERA_DON, doc = f.contentDocument;
+  if (!D) { say('FAIL: UNERA_DON missing'); return; }
+  D.setUserState('wallet');
+  await sleep(300);
+  const chk = (label) => { const o = overflow(f, w); say((o ? 'OVERFLOW sw=' + o : 'ok') + ' · ' + label + ' · active=' + active(f)); };
+  chk('step1 (' + rail + ')');
+  const row = doc.querySelector('.centre-pick-row');
+  if (!row) { say('FAIL: no centre rows'); return; }
+  row.click(); await sleep(300);
+  chk('step2 after centre pick');
+  if (rail === 'bank') {
+    // Eric, 4 Sep - phase 1 ships Card only; bank transfer needs the phase-2 preview pill first
+    const p2 = doc.querySelector('#phasePills [data-p="2"]');
+    if (p2) { p2.click(); await sleep(200); } else say('FAIL: phase-2 pill missing');
+    const bankChip = doc.querySelector('#railSelect [data-r="bank"]');
+    if (bankChip && bankChip.getAttribute('aria-disabled') !== 'true') { bankChip.click(); await sleep(200); } else say('FAIL: bank method missing or still disabled after phase-2 pill');
+    const eur = doc.querySelector('#ccySelect [data-c="EUR"]');
+    if (eur) { eur.click(); await sleep(200); }
+  }
+  if (rail === 'crypto') {
+    doc.getElementById('methodCrypto').click(); await sleep(300);
+  }
+  doc.getElementById('amountInput').value = '150';
+  doc.getElementById('amountInput').dispatchEvent(new W.Event('input', {bubbles:true}));
+  await sleep(200);
+  chk('step2 amount entered');
+  if (rail === 'bank') {
+    const ql = doc.getElementById('quoteLine');
+    say('bank EUR quote line: ' + (ql && !ql.hidden ? '"' + ql.textContent.trim() + '"' : 'MISSING (FAIL)'));
+  }
+  doc.getElementById('toStep3').click(); await sleep(400);
+  chk('step3 review');
+  say('reviewContinueBtn label: "' + doc.getElementById('reviewContinueBtn').textContent.trim() + '"');
+  if (rail !== 'crypto') {
+    doc.getElementById('reviewContinueBtn').click(); await sleep(400);
+    chk('step4 payment');
+    say('payment step active: ' + (active(f) === 'stepPay' ? 'yes (ok)' : 'NO (FAIL) active=' + active(f)));
+  }
+  const btnTxt = doc.getElementById('confirmBtn').textContent.trim();
+  say('confirmBtn label: "' + btnTxt + '"');
+  if (rail === 'card') {
+    say('cards rendered: ' + doc.querySelectorAll('#cardSelect .card-chip').length + ' · card summary rows: ' + doc.querySelectorAll('#payCardSummary .summary-row').length + ' · payTitle: "' + doc.getElementById('payTitle').textContent.trim() + '"');
+  }
+  if (rail === 'bank') {
+    say('bank rows: ' + doc.querySelectorAll('#payBankRows .summary-row').length + ' · ref shown: ' + (/DON-\d{6}/.test(doc.getElementById('payBankRows').textContent) ? 'yes' : 'NO'));
+  }
+  if (rail === 'card') {
+    // Eric, 4 Sep - saved-card CVV re-entry: no CVV must block, then a valid one passes
+    doc.getElementById('confirmBtn').click(); await sleep(300);
+    const blocked = !doc.getElementById('payErrBanner').hidden && active(f) === 'stepPay';
+    say('pay without CVV blocked: ' + (blocked ? 'yes (ok)' : 'NO (FAIL)'));
+    const cv = doc.getElementById('donCvv');
+    say('CVV field shown: ' + (cv && !doc.getElementById('donCvvWrap').hidden ? 'yes (ok)' : 'NO (FAIL)'));
+    cv.value = '123';
+  }
+  doc.getElementById(rail === 'crypto' ? 'reviewContinueBtn' : 'confirmBtn').click(); await sleep(600);
+  chk('after confirm/pay');
+  if (rail === 'crypto') {
+    say(doc.getElementById('txTrackerMount').children.length ? 'tracker mounted' : 'FAIL: tracker not mounted');
+    return;
+  }
+  if (rail === 'card') {
+    say(active(f) === 'stepProcessing' ? 'processing tracker running' : (active(f) === 'step5' ? ('card success terminal: "' + (doc.querySelector('#step5 h2, #step5 .success-title, #step5 .txt-headline') || {textContent:'?'}).textContent.trim() + '" · stale err banner: ' + (doc.getElementById('payErrBanner').hidden ? 'none (ok)' : 'VISIBLE (FAIL)')) : (doc.getElementById('payErrBanner').hidden ? 'FAIL: not processing, no error shown' : 'error banner shown: ' + doc.getElementById('payErrTitle').textContent)));;
+  } else {
+    say(/Waiting for your bank transfer/i.test(doc.getElementById('step5').textContent) ? 'bank_pending terminal ok' : 'FAIL: bank terminal missing');
+  }
+  const stepEls = doc.querySelectorAll('#stepper .step').length;
+  say('stepper steps: ' + stepEls + (stepEls === 5 ? '' : ' (FAIL: expected 5)'));
+}
+/* Eric, 4 Sep (reply 20): phase 1 shows all fiat methods, only Card enabled. */
+async function driveGate(){
+  const w = 360;
+  const stage = document.getElementById('stage');
+  const f = document.createElement('iframe');
+  f.width = w; f.height = 900; f.src = 'donate.html';
+  stage.innerHTML = ''; stage.appendChild(f);
+  await new Promise(res => { f.onload = () => setTimeout(res, 900); setTimeout(res, 9000); });
+  const D = f.contentWindow.UNERA_DON, doc = f.contentDocument;
+  if (!D) { say('FAIL: UNERA_DON missing'); return; }
+  D.setUserState('wallet'); await sleep(300);
+  const row = doc.querySelector('.centre-pick-row');
+  if (!row) { say('FAIL: no centre rows'); return; }
+  row.click(); await sleep(300);
+  const rails = doc.querySelectorAll('#railSelect .rail-choice');
+  say('rail rows: ' + rails.length + (rails.length === 4 ? ' (ok)' : ' (FAIL: want 4)'));
+  const gated = [...rails].filter(r => r.getAttribute('aria-disabled') === 'true');
+  const badges = doc.querySelectorAll('#railSelect .rail-soon-badge').length;
+  say('phase 1: disabled=' + gated.length + ' badges=' + badges + (gated.length === 3 && badges === 3 ? ' (ok)' : ' (FAIL: want 3/3)'));
+  const bank = doc.querySelector('#railSelect [data-r="bank"]');
+  bank.click(); await sleep(200);
+  const cardSel = doc.querySelector('#railSelect [data-r="card"]').classList.contains('selected');
+  say('gated bank click ignored, card stays selected: ' + (cardSel ? 'yes (ok)' : 'NO (FAIL)'));
+  const minH = Math.min(...[...doc.querySelectorAll('#railSelect .rail-choice')].map(r => r.getBoundingClientRect().height));
+  say('smallest rail row height: ' + Math.round(minH) + 'px' + (minH >= 44 ? ' (ok)' : ' (FAIL: <44)'));
+  const o = overflow(f, w);
+  say((o ? 'OVERFLOW sw=' + o : 'ok') + ' · rail list at 360');
+  const p2 = doc.querySelector('#phasePills [data-p="2"]');
+  p2.click(); await sleep(200);
+  const bankOn = doc.querySelector('#railSelect [data-r="bank"]').getAttribute('aria-disabled') === 'false';
+  const stillSoon = [...doc.querySelectorAll('#railSelect .rail-choice')].filter(r => r.getAttribute('aria-disabled') === 'true').length;
+  say('phase 2: bank enabled=' + (bankOn ? 'yes' : 'NO (FAIL)') + ' · wise+moneygram still gated=' + stillSoon + (stillSoon === 2 ? ' (ok)' : ' (FAIL)'));
+}
+(async () => {
+  say('— card flow —'); await drive('card');
+  say('— phase-1 gating —'); await driveGate();
+  say('— bank flow (phase-2 preview) —'); await drive('bank');
+  say('— crypto flow —'); await drive('crypto');
+  say('— failed card payment retry —'); await driveFail();
+  say('TEST COMPLETE');
+})();
+async function driveFail(){
+  const w = 360, stage = document.getElementById('stage');
+  const f = document.createElement('iframe');
+  f.width = w; f.height = 900; f.src = 'donate.html';
+  stage.innerHTML = ''; stage.appendChild(f);
+  await new Promise(res => { f.onload = () => setTimeout(res, 900); setTimeout(res, 9000); });
+  const W = f.contentWindow, D = W.UNERA_DON, doc = f.contentDocument;
+  D.setUserState('wallet'); await sleep(300);
+  const pill = doc.querySelector('#outcomePills [data-v="pay_failed"]');
+  if (!pill) { say('FAIL: pay_failed pill missing'); return; }
+  pill.click(); await sleep(200);
+  doc.querySelector('.centre-pick-row').click(); await sleep(300);
+  doc.getElementById('amountInput').value = '50';
+  doc.getElementById('amountInput').dispatchEvent(new W.Event('input', {bubbles:true})); await sleep(200);
+  doc.getElementById('toStep3').click(); await sleep(300);
+  doc.getElementById('reviewContinueBtn').click(); await sleep(300);
+  const cvf = doc.getElementById('donCvv'); if (cvf) cvf.value = '123';
+  doc.getElementById('confirmBtn').click(); await sleep(500);
+  say('processing… waiting for failure');
+  let btn = null;
+  for (let i = 0; i < 30; i++) { await sleep(1000); btn = doc.getElementById('payAgainBtn'); if (btn) break; }
+  if (!btn) { say('FAIL: payAgainBtn never appeared · active=' + active(f) + ' · step5: ' + doc.getElementById('step5').textContent.slice(0,120)); return; }
+  say('fail terminal shows "' + btn.textContent.trim() + '"');
+  btn.click(); await sleep(400);
+  const banner = doc.getElementById('payErrBanner');
+  say('after retry click: active=' + active(f) + (active(f) === 'stepPay' ? ' (payment step ok)' : ' (FAIL: expected stepPay)') + ' · error banner ' + (banner.hidden ? 'HIDDEN (FAIL)' : 'shown: ' + doc.getElementById('payErrTitle').textContent.trim()));
+  const o = overflow(f, w); say(o ? 'OVERFLOW sw=' + o : 'ok · retry step layout');
+}
+</script>
+</body>
+</html>
