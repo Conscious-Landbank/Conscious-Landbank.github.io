@@ -157,12 +157,17 @@
     var hub = host.dataset.hub || 'hUSD';
     var hubSub = host.dataset.hubsub != null ? host.dataset.hubsub : '1 : 1';
     var compact = host.dataset.compact != null;
+    var vert = host.dataset.vertical != null; // 0914 (cc-1/cc-2): vertical variant for narrow rails
+    var alignStart = host.dataset.align === 'start'; // 0914 (cc-2 round 2): left-align quiet rail variant
     var cv = document.createElement('canvas');
     cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;'; cv.setAttribute('aria-hidden', 'true');
     var grid = document.createElement('div');
-    grid.style.cssText = 'position:relative;display:grid;grid-template-columns:minmax(80px,1fr) auto minmax(80px,1fr);align-items:center;gap:16px;padding:8px 0;';
+    grid.style.cssText = vert
+      ? 'position:relative;display:grid;grid-template-columns:auto;justify-items:' + (alignStart ? 'start' : 'center') + ';align-items:center;gap:14px;padding:6px 0;'
+      : 'position:relative;display:grid;grid-template-columns:minmax(80px,1fr) auto minmax(80px,1fr);align-items:center;gap:16px;padding:8px 0;';
     var lastGap = -1;
     function fitGap() {
+      if (vert) return;
       var w = host.clientWidth || 600;
       // gap derived from HOST width, not viewport: 7vw ate the narrow auth sidebar
       var g = Math.round(Math.min(90, Math.max(12, (w - hubEl.offsetWidth - 200) * 0.28)));
@@ -170,7 +175,7 @@
     }
     function col(items, alignEnd) {
       var c = document.createElement('div');
-      c.style.cssText = 'display:flex;flex-direction:column;gap:12px;align-items:' + (alignEnd ? 'flex-end' : 'flex-start') + ';min-width:0;';
+      c.style.cssText = 'display:flex;flex-direction:column;gap:12px;align-items:' + (vert ? (alignStart ? 'flex-start' : 'center') : (alignEnd ? 'flex-end' : 'flex-start')) + ';min-width:0;max-width:100%;';
       items.forEach(function (it) {
         var chip = document.createElement('div');
         chip.style.cssText = 'max-width:100%;background:rgba(16,23,26,0.92);border:1px solid ' + (it.hl ? 'rgba(236,214,160,0.45)' : 'rgba(255,255,255,0.10)') + ';border-radius:12px;padding:9px 13px;box-shadow:0 6px 18px -8px rgba(0,0,0,0.55);';
@@ -200,17 +205,26 @@
       paths = [];
       Array.prototype.forEach.call(leftCol.children, function (ch, i) {
         var b = rel(ch.getBoundingClientRect(), hr);
-        paths.push({ from: [b.x + b.w + 4, b.y + b.h / 2], to: [hx - hrad - 4, hy], col: TEAL, ph: i * 0.31, dur: 4600 + (i % 3) * 750, into: true });
+        paths.push(vert
+          ? { from: [b.x + b.w / 2, b.y + b.h + 4], to: [hx, hy - hrad - 4], col: TEAL, ph: i * 0.31, dur: 4600 + (i % 3) * 750, into: true, vert: true }
+          : { from: [b.x + b.w + 4, b.y + b.h / 2], to: [hx - hrad - 4, hy], col: TEAL, ph: i * 0.31, dur: 4600 + (i % 3) * 750, into: true });
       });
       Array.prototype.forEach.call(rightCol.children, function (ch, i) {
         var b = rel(ch.getBoundingClientRect(), hr);
-        paths.push({ from: [hx + hrad + 4, hy], to: [b.x - 4, b.y + b.h / 2], col: GOLD, ph: 0.5 + i * 0.27, dur: 5200 + (i % 3) * 650, into: false });
+        paths.push(vert
+          ? { from: [hx, hy + hrad + 4], to: [b.x + b.w / 2, b.y - 4], col: GOLD, ph: 0.5 + i * 0.27, dur: 5200 + (i % 3) * 650, into: false, vert: true }
+          : { from: [hx + hrad + 4, hy], to: [b.x - 4, b.y + b.h / 2], col: GOLD, ph: 0.5 + i * 0.27, dur: 5200 + (i % 3) * 650, into: false });
       });
       if (RM) frame(0);
     }
     function bez(p, t) {
-      var x0 = p.from[0], y0 = p.from[1], x1 = p.to[0], y1 = p.to[1];
-      var c1x = x0 + (x1 - x0) * 0.45, c2x = x0 + (x1 - x0) * 0.55, u = 1 - t;
+      var x0 = p.from[0], y0 = p.from[1], x1 = p.to[0], y1 = p.to[1], u = 1 - t;
+      if (p.vert) {
+        var c1y = y0 + (y1 - y0) * 0.45, c2y = y0 + (y1 - y0) * 0.55;
+        return [u * u * u * x0 + 3 * u * u * t * x0 + 3 * u * t * t * x1 + t * t * t * x1,
+                u * u * u * y0 + 3 * u * u * t * c1y + 3 * u * t * t * c2y + t * t * t * y1];
+      }
+      var c1x = x0 + (x1 - x0) * 0.45, c2x = x0 + (x1 - x0) * 0.55;
       return [u * u * u * x0 + 3 * u * u * t * c1x + 3 * u * t * t * c2x + t * t * t * x1,
               u * u * u * y0 + 3 * u * u * t * y0 + 3 * u * t * t * y1 + t * t * t * y1];
     }
@@ -219,7 +233,8 @@
       ctx.clearRect(0, 0, W, H);
       paths.forEach(function (p) {
         ctx.beginPath(); ctx.moveTo(p.from[0], p.from[1]);
-        ctx.bezierCurveTo(p.from[0] + (p.to[0] - p.from[0]) * 0.45, p.from[1], p.from[0] + (p.to[0] - p.from[0]) * 0.55, p.to[1], p.to[0], p.to[1]);
+        if (p.vert) ctx.bezierCurveTo(p.from[0], p.from[1] + (p.to[1] - p.from[1]) * 0.45, p.to[0], p.from[1] + (p.to[1] - p.from[1]) * 0.55, p.to[0], p.to[1]);
+        else ctx.bezierCurveTo(p.from[0] + (p.to[0] - p.from[0]) * 0.45, p.from[1], p.from[0] + (p.to[0] - p.from[0]) * 0.55, p.to[1], p.to[0], p.to[1]);
         ctx.strokeStyle = 'rgba(255,255,255,0.075)'; ctx.lineWidth = 1; ctx.stroke();
         if (RM) return;
         for (var d = 0; d < 2; d++) { // two staggered lights per path, varied pace per lane

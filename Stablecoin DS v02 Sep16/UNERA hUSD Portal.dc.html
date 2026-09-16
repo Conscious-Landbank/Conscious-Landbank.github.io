@@ -47,6 +47,7 @@
   /* FE-219 polish: settlement-rail waiting visual (flowing segment + active-node halo) */
   @keyframes uFlow { to { background-position: 36px 0 } }
   @keyframes uHalo { 0% { transform: scale(0.55); opacity: 0.9 } 100% { transform: scale(1.45); opacity: 0 } }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
@@ -572,7 +573,7 @@
         </div>
       </div>
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem 1.5rem; min-width:0;">
-        <husd-flow data-hub="hUSD"
+        <husd-flow data-hub="hUSD" data-hubsub="ON-CHAIN"
           data-left="[{'t':'You','s':'0x74…3a8f · New York'}]"
           data-right="[{'t':'Linh','s':'0x9c…41e2 · Da Nang','hl':true}]"></husd-flow>
         <div data-r="flexwrap" style="display:flex; justify-content:space-between; gap:0.6rem; margin-top:1.3rem; padding-top:1.1rem; border-top:1px solid var(--line2);">
@@ -620,7 +621,7 @@
         <a href="https://huma.example/donate" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.88rem; font-weight:700; color:var(--gold); background:rgba(236,214,160,0.1); border:1px solid rgba(236,214,160,0.3); border-radius:980px; padding:0.5rem 1rem; text-decoration:none;">Donate on Huma Platform <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
       </div>
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem 1.5rem; min-width:0;">
-        <husd-flow data-hub="hUSD"
+        <husd-flow data-hub="hUSD" data-hubsub="YIELD"
           data-left="[{'t':'Reserve interest','s':'Cash and T-bill yield'}]"
           data-right="[{'t':'Humanity Centers','s':'Allocated by the Swiss Association','hl':true}]"></husd-flow>
         <div data-r="flexwrap" style="display:flex; justify-content:space-between; gap:0.6rem; margin-top:1.3rem; padding-top:1.1rem; border-top:1px solid var(--line2);">
@@ -873,36 +874,36 @@
         <husd-dust data-density="18" style="position:absolute; inset:-20% -10%;"></husd-dust>
         <div style="position:relative; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:700; margin-bottom:0.45rem;">Get <span style="text-transform:none;">hUSD</span></div>
         <h1 style="position:relative; font-family:var(--font-display); font-weight:700; font-size:1.7rem; line-height:1.12; letter-spacing:-0.02em; margin:0 0 0.5rem;">Turn dollars into hUSD, 1:1.</h1>
-        <p style="position:relative; font-size:0.88rem; color:var(--dim); margin:0; line-height:1.5; text-wrap:pretty;">Pay by card, bank transfer, or crypto. We create your hUSD only after your payment clears and identity checks pass, so every coin is backed 1:1 from the start.</p>
+        <p style="position:relative; font-size:0.88rem; color:var(--dim); margin:0; line-height:1.5; text-wrap:pretty;">Pay by card, bank transfer, or crypto. hUSD is created only after your payment clears.</p>
       </div>
-      <!-- the mint, drawn live (0908: same visual language as the Overview flow — here it maps to *this* order) -->
-      <div data-r="hidemobile" style="background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:0.4rem 0.8rem 0.3rem;">
-        <husd-flow data-hub="hUSD" data-compact=""
-          data-left="[{'t':'Your payment'}]"
-          data-right="[{'t':'Your wallet','hl':true}]"></husd-flow>
-      </div>
-      <!-- stepper, vertical -->
+      <!-- stepper first: it is the rail's main job (cc-1) -->
       <div data-r="flowstepper" style="display:flex; flex-direction:column;">
         <sc-for list="{{ getSteps }}" as="st" hint-placeholder-count="3">
           <div style="display:flex; flex-direction:column;">
             <div style="display:flex; align-items:center; gap:0.65rem;">
-              <div style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; font-variant-numeric:tabular-nums; background:{{ st.bg }}; color:{{ st.fg }}; border:1.5px solid {{ st.bd }}; transition:all .3s; flex-shrink:0;">{{ st.mark }}</div>
-              <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ st.lblColor }}; font-weight:600;">{{ st.label }}</span>
+              <div style="width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; font-variant-numeric:tabular-nums; background:{{ st.bg }}; color:{{ st.fg }}; border:1.5px solid {{ st.bd }}; transition:all .3s; flex-shrink:0;">{{ st.mark }}</div>
+              <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ st.lblColor }}; font-weight:600;">{{ st.label }}</span>
             </div>
-            <div data-r="steplink" style="width:1.5px; height:13px; background:{{ st.lineColor }}; margin:2px 0 2px 12.5px;"></div>
+            <div data-r="steplink" style="width:1.5px; height:13px; background:{{ st.lineColor }}; margin:2px 0 2px 15.5px;"></div>
           </div>
         </sc-for>
         <div style="display:flex; align-items:center; gap:0.65rem;">
-          <div style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; background:{{ getDoneBg }}; color:{{ getDoneFg }}; border:1.5px solid {{ getDoneBd }}; flex-shrink:0;">{{ getDoneMark }}</div>
-          <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ getDoneLbl }}; font-weight:600;">Done</span>
+          <div style="width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; background:{{ getDoneBg }}; color:{{ getDoneFg }}; border:1.5px solid {{ getDoneBd }}; flex-shrink:0;">{{ getDoneMark }}</div>
+          <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ getDoneLbl }}; font-weight:600;">Done</span>
         </div>
+      </div>
+      <!-- rail flow visual (cc-1/cc-3, quieted): frameless, left-aligned, dimmed — background info, not a focal point -->
+      <div data-r="hidemobile" style="border-top:1px solid var(--line2); padding-top:1.1rem; opacity:0.7;">
+        <husd-flow data-vertical="" data-compact="" data-align="start" data-hub="hUSD" data-hubsub="MINT"
+          data-left="[{'t':'Your payment','s':'Card · bank · crypto'}]"
+          data-right="[{'t':'Your wallet','s':'hUSD, 1:1','hl':true}]"></husd-flow>
       </div>
     </aside>
     <div style="min-width:0;">
 
     <!-- FE-219 (Kevin 08-25): orders are FIFO; while one is in flight, new order creation is blocked -->
     <sc-if value="{{ fifoBlocked }}" hint-placeholder-val="{{ false }}">
-    <div style="max-width:480px; animation:uRise .4s ease both;">
+    <div style="max-width:508px; animation:uRise .4s ease both;">
       <div style="background:var(--panel); border:1px solid rgba(236,214,160,0.35); border-radius:18px; padding:1.7rem; text-align:center;">
         <div style="width:54px; height:54px; border-radius:50%; margin:0 auto 1rem; background:rgba(236,214,160,0.12); display:flex; align-items:center; justify-content:center; color:var(--gold);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg></div>
         <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0 0 0.4rem;">Finish your current order first</h2>
@@ -915,7 +916,7 @@
 
     <!-- FE-207 (Waiting UX): STEP W: confirm the receiving wallet (crypto path only, first step) -->
     <sc-if value="{{ getStepWallet }}" hint-placeholder-val="{{ false }}">
-    <div style="max-width:480px; animation:uRise .4s ease both;">
+    <div style="max-width:508px; animation:uRise .4s ease both;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
         <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0 0 0.4rem;">Where should your hUSD land?</h2>
         <p style="font-size:0.9rem; color:var(--dim); margin:0 0 1.2rem; line-height:1.5;">Pre-filled from your settings. Confirm it, or pick another linked wallet for this order. You can change it before you pay, never after.</p>
@@ -1085,7 +1086,7 @@
 
     <!-- STEP 1: review -->
     <sc-if value="{{ getStep1 }}" hint-placeholder-val="{{ true }}">
-    <div style="max-width:760px; animation:uRise .4s ease both;">
+    <div style="max-width:508px; animation:uRise .4s ease both;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.4rem;">
           <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0;">Review &amp; confirm</h2>
@@ -1107,7 +1108,7 @@
           <div style="font-family:var(--font-display); font-weight:700; font-size:2.6rem; color:var(--gold-bright); font-variant-numeric:tabular-nums; line-height:1;">{{ getReceiveStr }}</div>
           <div style="font-size:1rem; color:var(--dim); margin-top:0.3rem;">hUSD on {{ getNetwork }}</div>
         </div>
-        <div data-r="rev1grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:1rem; align-items:start;">
+        <div data-r="rev1grid" style="display:grid; grid-template-columns:1fr; gap:1rem; align-items:start;">
         <div style="background:var(--ink2); border-radius:12px; padding:0.4rem 1.1rem;">
           <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.92rem; color:var(--dim);">You pay</span><span style="font-size:0.92rem; font-weight:600; font-variant-numeric:tabular-nums;">{{ getPayStr }} {{ payToken }}</span></div>
           <div style="display:flex; justify-content:space-between; padding:0.7rem 0; border-bottom:1px solid var(--line2);"><span style="font-size:0.92rem; color:var(--dim);">{{ rateRowLabel }}</span><span style="font-size:0.92rem; font-weight:600;">{{ getRateRow }}</span></div>
@@ -1150,7 +1151,7 @@
 
     <!-- STEP 2: PAY (FE-219: method now chosen on the Amount step) · Card = Paysafe hard-lock · Bank = transfer instructions (V4) -->
     <sc-if value="{{ getStep2 }}" hint-placeholder-val="{{ false }}">
-    <div style="max-width:520px; animation:uRise .4s ease both;">
+    <div style="max-width:508px; animation:uRise .4s ease both;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.9rem;">
           <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0;">{{ payStepTitle }}</h2>
@@ -1376,7 +1377,7 @@
 
     <!-- FE-207 (Waiting UX): STEP D: your permanent personal deposit address (crypto path) -->
     <sc-if value="{{ getStepDeposit }}" hint-placeholder-val="{{ false }}">
-    <div style="max-width:480px; animation:uRise .4s ease both;">
+    <div style="max-width:508px; animation:uRise .4s ease both;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
         <h2 style="font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin:0 0 0.35rem;">Send your {{ payToken }}</h2>
         <p style="font-size:0.9rem; color:var(--dim); margin:0 0 1.2rem; line-height:1.5;">{{ depIntro }}</p>
@@ -1659,33 +1660,33 @@
         <husd-dust data-density="18" style="position:absolute; inset:-20% -10%;"></husd-dust>
         <div style="position:relative; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:700; margin-bottom:0.45rem;">Redeem <span style="text-transform:none;">hUSD</span></div>
         <h1 style="position:relative; font-family:var(--font-display); font-weight:700; font-size:1.7rem; line-height:1.12; letter-spacing:-0.02em; margin:0 0 0.5rem;">Back to dollars, 1:1.</h1>
-        <p style="position:relative; font-size:0.88rem; color:var(--dim); margin:0; line-height:1.5; text-wrap:pretty;">Exchange hUSD back into US dollars, paid to your verified bank account. If demand is high your request may wait in a queue; we show the status the whole way.</p>
+        <p style="position:relative; font-size:0.88rem; color:var(--dim); margin:0; line-height:1.5; text-wrap:pretty;">Back to US dollars in your verified bank account, usually within one business day.</p>
       </div>
-      <div style="display:flex; align-items:flex-start; gap:0.5rem; background:rgba(67,192,173,0.08); border:1px solid rgba(67,192,173,0.25); border-radius:11px; padding:0.6rem 0.8rem;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" style="flex-shrink:0; margin-top:2px;"><path d="M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>
-        <span style="font-size:0.82rem; color:var(--teal); font-weight:600; line-height:1.45;">1:1 back to US dollars · confirmed before any payout · about 1 business day</span>
-      </div>
-      <!-- the burn, drawn live (mirror of the Get-screen flow strip) -->
-      <div data-r="hidemobile" style="background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:0.4rem 0.8rem 0.3rem;">
-        <husd-flow data-hub="hUSD" data-compact="" data-hubsub="BURN"
-          data-left="[{'t':'Your wallet'}]"
-          data-right="[{'t':'Your bank','hl':true}]"></husd-flow>
-      </div>
-      <!-- stepper, vertical -->
+      <!-- stepper first: it is the rail's main job (cc-1) -->
       <div data-r="flowstepper" style="display:flex; flex-direction:column;">
         <sc-for list="{{ redeemSteps }}" as="st" hint-placeholder-count="2">
           <div style="display:flex; flex-direction:column;">
             <div style="display:flex; align-items:center; gap:0.65rem;">
-              <div style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; background:{{ st.bg }}; color:{{ st.fg }}; border:1.5px solid {{ st.bd }}; transition:all .3s; flex-shrink:0;">{{ st.mark }}</div>
-              <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ st.lblColor }}; font-weight:600;">{{ st.label }}</span>
+              <div style="width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; background:{{ st.bg }}; color:{{ st.fg }}; border:1.5px solid {{ st.bd }}; transition:all .3s; flex-shrink:0;">{{ st.mark }}</div>
+              <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ st.lblColor }}; font-weight:600;">{{ st.label }}</span>
             </div>
-            <div data-r="steplink" style="width:1.5px; height:13px; background:{{ st.lineColor }}; margin:2px 0 2px 12.5px;"></div>
+            <div data-r="steplink" style="width:1.5px; height:13px; background:{{ st.lineColor }}; margin:2px 0 2px 15.5px;"></div>
           </div>
         </sc-for>
         <div style="display:flex; align-items:center; gap:0.65rem;">
-          <div style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; background:{{ redDoneBg }}; color:{{ redDoneFg }}; border:1.5px solid {{ redDoneBd }}; flex-shrink:0;">{{ redDoneMark }}</div>
-          <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ redDoneLbl }}; font-weight:600;">Done</span>
+          <div style="width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; background:{{ redDoneBg }}; color:{{ redDoneFg }}; border:1.5px solid {{ redDoneBd }}; flex-shrink:0;">{{ redDoneMark }}</div>
+          <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:{{ redDoneLbl }}; font-weight:600;">Done</span>
         </div>
+      </div>
+      <div style="display:flex; align-items:flex-start; gap:0.5rem; background:rgba(67,192,173,0.08); border:1px solid rgba(67,192,173,0.25); border-radius:11px; padding:0.6rem 0.8rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" style="flex-shrink:0; margin-top:2px;"><path d="M12 8v4l3 2M12 22a10 10 0 110-20 10 10 0 010 20z"/></svg>
+        <span style="font-size:0.82rem; color:var(--teal); font-weight:600; line-height:1.45;">1:1 · confirmed before any payout · about 1 business day</span>
+      </div>
+      <!-- rail flow visual (cc-2, quieted): frameless, left-aligned, dimmed — background info, not a focal point -->
+      <div data-r="hidemobile" style="border-top:1px solid var(--line2); padding-top:1.1rem; opacity:0.7;">
+        <husd-flow data-vertical="" data-compact="" data-align="start" data-hub="hUSD" data-hubsub="BURN"
+          data-left="[{'t':'Your wallet','s':'hUSD'}]"
+          data-right="[{'t':'Your bank','s':'USD, 1:1','hl':true}]"></husd-flow>
       </div>
     </aside>
     <div style="min-width:0;">
@@ -1751,7 +1752,7 @@
 
     <!-- redeem step 1: review -->
     <sc-if value="{{ redStep1 }}" hint-placeholder-val="{{ true }}">
-    <div style="max-width:520px; animation:uRise .4s ease both;">
+    <div style="max-width:508px; animation:uRise .4s ease both;">
       <div style="background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:1.7rem;">
         <div style="text-align:center; margin-bottom:1.5rem;">
           <div style="font-size:0.86rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--mute); font-weight:600; margin-bottom:0.5rem;">You'll receive</div>
