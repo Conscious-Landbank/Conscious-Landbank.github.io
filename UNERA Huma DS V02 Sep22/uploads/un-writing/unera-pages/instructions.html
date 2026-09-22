@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huma - Quick Start Guide</title>
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Light.otf") format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Regular.otf") format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Medium.otf") format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Semibold.otf") format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url("../fonts/TestFoundersGrotesk-Bold.otf") format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --brand-deep-blue: #173d47;
+            --brand-yellow: #ffffab;
+            --brand-cloud-blue: #ebfcf5;
+            --brand-earth: #cec4b8;
+            --brand-white: #ffffff;
+            --brand-red: #ab5770;
+            --brand-purple: #6a5770;
+            --brand-light-blue: #90c2b8;
+            --text-primary: #173d47;
+            --text-secondary: #3d6b78;
+            --border-subtle: rgba(23, 61, 71, 0.13);
+            --shadow-card: 0 2px 12px rgba(23, 61, 71, 0.07);
+            --fin-up: #1a7a5e;
+            --fin-up-bg: color-mix(in srgb, var(--fin-up) 12%, var(--brand-white));
+            --warning: #b8a030;
+            --font-body: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+        .skip-link {
+            position: absolute; top: -40px; left: 0; background: var(--brand-deep-blue); color: white; padding: 8px 16px;
+            text-decoration: none; z-index: 10000; border-radius: 0 0 8px 0; font-weight: 600; font-family: var(--font-body);
+        }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-yellow); }
+        body {
+            font-family: var(--font-body);
+            background: var(--brand-cloud-blue);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            border: 1px solid var(--border-subtle);
+            padding: 3rem;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: var(--shadow-card);
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--brand-deep-blue);
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--brand-deep-blue);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            color: var(--brand-deep-blue);
+        }
+        .section-icon svg { display: block; }
+        .section-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            padding-left: 2.25rem;
+        }
+        .links { display: flex; flex-direction: column; gap: 0.75rem; }
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: color-mix(in srgb, var(--brand-cloud-blue) 30%, var(--brand-white));
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+        }
+        .link-item:hover {
+            background: color-mix(in srgb, var(--brand-cloud-blue) 45%, var(--brand-white));
+            transform: translateX(4px);
+        }
+        .link-item a {
+            color: var(--brand-deep-blue);
+            text-decoration: none;
+            font-weight: 500;
+            flex: 1;
+        }
+        .link-item a:hover { color: var(--text-secondary); }
+        .arrow { color: var(--text-secondary); display: inline-flex; align-items: center; flex-shrink: 0; }
+        .arrow svg { display: block; }
+        .reset-section {
+            background: color-mix(in srgb, var(--brand-red) 6%, var(--brand-white));
+            border: 1.5px solid color-mix(in srgb, var(--brand-red) 25%, transparent);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        .reset-btn {
+            background: var(--brand-red);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.938rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            margin-top: 0.75rem;
+            min-height: 46px;
+        }
+        .reset-btn:hover {
+            filter: brightness(0.9);
+            box-shadow: 0 4px 12px rgba(171, 87, 112, 0.35);
+        }
+        .reset-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        a:focus-visible, button:focus-visible, .link-item a:focus-visible, .reset-btn:focus-visible, .skip-link:focus-visible, kbd:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .container { padding: 2rem 1.5rem; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container" id="main-content" role="main">
+        <h1>Huma – Quick start guide</h1>
+        <p class="subtitle">One Flow. Many Lives. - All entry points and features at a glance</p>
+
+        <!-- Home -->
+        <div class="section">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg></span> Home</h2>
+            <div class="links">
+                <div class="link-item">
+                    <a href="index.html">Homepage</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authentication -->
+        <div class="section">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg></span> Authentication</h2>
+            <p class="section-description">
+                <strong>Sign Up:</strong> Required before any action (donate, buy, send). Choose to join as a Donor or HC Operator.<br>
+                <strong>Log In:</strong> Access your account via wallet, social login, or email/phone with password.
+            </p>
+            <div class="links">
+                <div class="link-item">
+                    <a href="signup_2.html">Sign Up</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+                <div class="link-item">
+                    <a href="login_2.html">Log In</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authentication Testing -->
+        <div class="section" style="background: color-mix(in srgb, var(--brand-deep-blue) 8%, var(--brand-white)); border: 2px solid var(--brand-deep-blue); border-radius: 1rem; padding: 1.5rem;">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg></span> Authentication testing guide</h2>
+            <p class="section-description" style="margin-bottom: 1rem;">
+                <strong>5-minute complete test</strong>: validation, loading states, mobile, accessibility
+            </p>
+
+            <!-- Quick Start -->
+            <div style="background: var(--brand-deep-blue); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; color: var(--brand-white);">
+                <div style="font-weight: 600; margin-bottom: 0.5rem;">Quick start</div>
+                <div style="font-size: 0.875rem; opacity: 0.95;">
+                    Open <code style="background: rgba(255,255,255,0.2); padding: 0.125rem 0.5rem; border-radius: 0.25rem; color: white;">login_2.html</code> →
+                    Type invalid email → See validation →
+                    Fix it → Submit → See spinner → Done.
+                </div>
+            </div>
+            
+            <!-- Login Test -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">1. Login page <code style="font-size: 0.813rem; background: color-mix(in srgb, var(--brand-cloud-blue) 35%, var(--brand-white)); padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-weight: 400;">login_2.html</code></h3>
+                <ul style="font-size: 0.875rem; line-height: 1.8; padding-left: 1.5rem; color: var(--text-secondary); list-style: none; margin-left: -1.5rem;">
+                    <li>Email: Type <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));">invalid</code> → error state | Type <code style="background: var(--fin-up-bg);">user@test.com</code> → valid</li>
+                    <li>Password: Leave empty → error | Fill → use show-password control → toggles</li>
+                    <li>Click &quot;Sign In&quot; → spinner → redirects to dashboard</li>
+                </ul>
+            </div>
+
+            <!-- Signup Test -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">2. Signup page <code style="font-size: 0.813rem; background: color-mix(in srgb, var(--brand-cloud-blue) 35%, var(--brand-white)); padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-weight: 400;">signup_2.html</code></h3>
+                <ul style="font-size: 0.875rem; line-height: 1.8; padding-left: 1.5rem; color: var(--text-secondary); list-style: none; margin-left: -1.5rem;">
+                    <li>Name: Type <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));">A</code> → error | Type <code style="background: var(--fin-up-bg);">John Doe</code> → valid</li>
+                    <li>Password tests:
+                        <div style="margin-left: 1rem; margin-top: 0.25rem;">
+                            • <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));">short</code> → &quot;8+ chars&quot; error<br>
+                            • <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white));">noNumbers!</code> → &quot;needs number&quot; error<br>
+                            • <code style="background: var(--fin-up-bg);">Test123!@#</code> → valid
+                        </div>
+                    </li>
+                    <li>Accept terms → Submit → spinner → redirects to KYC</li>
+                </ul>
+            </div>
+
+            <!-- Buttons & Mobile & Keyboard in compact grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <!-- Buttons -->
+                <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">3. Buttons</h3>
+                    <ul style="font-size: 0.875rem; line-height: 1.6; padding-left: 1rem; color: var(--text-secondary);">
+                        <li>Click wallet buttons → spinner (pass)</li>
+                        <li>Click social buttons → spinner (pass)</li>
+                        <li>Icons + text centered (pass)</li>
+                    </ul>
+                </div>
+
+                <!-- Mobile -->
+                <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">4. Mobile <span style="font-size: 0.813rem; font-weight: 400; color: var(--text-secondary);">375px</span></h3>
+                    <ul style="font-size: 0.875rem; line-height: 1.6; padding-left: 1rem; color: var(--text-secondary);">
+                        <li>CTA sticks to bottom (pass)</li>
+                        <li>Trust bar stacks (pass)</li>
+                        <li>No horizontal scroll (pass)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Keyboard Test -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">5. Accessibility</h3>
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                    Press <kbd style="background: color-mix(in srgb, var(--brand-cloud-blue) 35%, var(--brand-white)); padding: 0.125rem 0.5rem; border-radius: 0.25rem; border: 1px solid var(--border-subtle); font-size: 0.75rem;">Tab</kbd> →
+                    Skip link appears →
+                    Tab through fields →
+                    Visible focus outline on each (pass)
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem; padding: 1rem; background: color-mix(in srgb, var(--fin-up) 10%, var(--brand-white)); border-radius: 0.5rem; border-left: 4px solid var(--fin-up);">
+                <div style="font-weight: 600; color: var(--fin-up); margin-bottom: 0.25rem;">Success checklist</div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                    All validation working | Loading states smooth | Mobile responsive | Keyboard accessible
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Credentials -->
+        <div class="section" style="background: color-mix(in srgb, var(--fin-up) 8%, var(--brand-white)); border: 2px solid var(--fin-up); border-radius: 1rem; padding: 1.5rem;">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg></span> Test credentials for login</h2>
+            <p class="section-description" style="margin-bottom: 1rem;">
+                <strong>Use these credentials to test the login functionality:</strong>
+            </p>
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem;">
+                <div style="font-family: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif; font-size: 1rem; margin-bottom: 0.75rem;">
+                    <strong style="color: var(--text-primary);">Email:</strong> 
+                    <code style="background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white)); padding: 0.25rem 0.75rem; border-radius: 0.375rem; color: var(--fin-up); font-weight: 600;">test@unera.com</code>
+                </div>
+                <div style="font-family: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif; font-size: 1rem;">
+                    <strong style="color: var(--text-primary);">Password:</strong> 
+                    <code style="background: color-mix(in srgb, var(--brand-cloud-blue) 40%, var(--brand-white)); padding: 0.25rem 0.75rem; border-radius: 0.375rem; color: var(--fin-up); font-weight: 600;">Test@123</code>
+                </div>
+            </div>
+            
+            <p class="section-description" style="margin-bottom: 1rem;">
+                <strong>Password requirements (best practices):</strong>
+            </p>
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.5rem; font-size: 0.938rem; line-height: 1.6; color: var(--text-secondary);">
+                <div style="margin-bottom: 0.5rem;">Minimum <strong>8 characters</strong></div>
+                <div style="margin-bottom: 0.5rem;">At least <strong>1 uppercase letter</strong> (A–Z)</div>
+                <div style="margin-bottom: 0.5rem;">At least <strong>1 lowercase letter</strong> (a–z)</div>
+                <div style="margin-bottom: 0.5rem;">At least <strong>1 number</strong> (0–9)</div>
+                <div>At least <strong>1 special character</strong> (@$!%*?&amp;)</div>
+            </div>
+
+            <p class="section-description" style="margin-top: 1rem; margin-bottom: 0;">
+                <strong>Note:</strong> When you sign up with your own email/phone, your credentials are automatically saved for testing. The default test credentials above work if you haven't signed up yet.
+            </p>
+        </div>
+
+        <!-- KYC Testing Data -->
+        <div class="section" style="background: color-mix(in srgb, var(--warning) 14%, var(--brand-white)); border: 2px solid var(--warning); border-radius: 1rem; padding: 1.5rem;">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-320h640v-160H160v160Z"/></svg></span> KYC testing data – manual entry samples</h2>
+            <p class="section-description" style="margin-bottom: 1rem;">
+                <strong>Use these sample ID details to test the manual entry flow.</strong> Copy and paste the data below when testing the "Type Details" option in the KYC verification process.
+            </p>
+
+            <!-- Quick Test Flow -->
+            <div style="background: var(--warning); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; color: var(--brand-deep-blue);">
+                <div style="font-weight: 600; margin-bottom: 0.5rem;">Quick test flow</div>
+                <div style="font-size: 0.875rem; opacity: 0.95;">
+                    Open <code style="background: color-mix(in srgb, var(--brand-white) 45%, transparent); padding: 0.125rem 0.5rem; border-radius: 0.25rem; color: var(--brand-deep-blue);">kyc-verify.html</code> →
+                    Select document type →
+                    Click &quot;Type Details&quot; →
+                    Copy and paste data below → Done.
+                </div>
+            </div>
+
+            <!-- Sample 1: Passport -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--brand-light-blue);">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Sample 1: Passport (USA)</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.875rem;">
+                    <div>
+                        <strong style="color: var(--text-secondary);">Document Number:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-light-blue) 25%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--text-primary); font-weight: 600;">542378954</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Issuing Country:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-light-blue) 25%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--text-primary); font-weight: 600;">United States</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">First Name:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-light-blue) 25%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--text-primary); font-weight: 600;">Sarah</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Last Name:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-light-blue) 25%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--text-primary); font-weight: 600;">Mitchell</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Date of Birth:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-light-blue) 25%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--text-primary); font-weight: 600;">1990-03-15</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Expiry Date:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-light-blue) 25%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--text-primary); font-weight: 600;">2030-03-14</code>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <strong style="color: var(--text-secondary);">Nationality:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-light-blue) 25%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--text-primary); font-weight: 600;">American</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample 2: Driver's License -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--fin-up);">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Sample 2: Driver&apos;s License (Canada)</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.875rem;">
+                    <div>
+                        <strong style="color: var(--text-secondary);">License Number:</strong><br>
+                        <code style="background: var(--fin-up-bg); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--fin-up); font-weight: 600;">M2846-95847-30152</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Issuing Province:</strong><br>
+                        <code style="background: var(--fin-up-bg); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--fin-up); font-weight: 600;">Ontario</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">First Name:</strong><br>
+                        <code style="background: var(--fin-up-bg); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--fin-up); font-weight: 600;">Michael</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Last Name:</strong><br>
+                        <code style="background: var(--fin-up-bg); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--fin-up); font-weight: 600;">Chen</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Date of Birth:</strong><br>
+                        <code style="background: var(--fin-up-bg); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--fin-up); font-weight: 600;">1985-07-22</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Expiry Date:</strong><br>
+                        <code style="background: var(--fin-up-bg); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--fin-up); font-weight: 600;">2028-07-22</code>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <strong style="color: var(--text-secondary);">Address:</strong><br>
+                        <code style="background: var(--fin-up-bg); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--fin-up); font-weight: 600;">123 Maple Street, Toronto, ON M5H 2N2</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample 3: National ID Card -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--brand-red);">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Sample 3: National ID card (UK)</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.875rem;">
+                    <div>
+                        <strong style="color: var(--text-secondary);">ID Number:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-red); font-weight: 600;">GB-987654321</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Issuing Country:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-red); font-weight: 600;">United Kingdom</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">First Name:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-red); font-weight: 600;">Emma</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Last Name:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-red); font-weight: 600;">Thompson</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Date of Birth:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-red); font-weight: 600;">1992-11-08</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Expiry Date:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-red); font-weight: 600;">2032-11-08</code>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <strong style="color: var(--text-secondary);">Nationality:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-red) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-red); font-weight: 600;">British</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Samples -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--brand-purple);">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Address samples (optional fields)</h3>
+                <div style="display: grid; gap: 0.75rem; font-size: 0.875rem;">
+                    <div>
+                        <strong style="color: var(--text-secondary);">USA Address:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-purple) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-purple); font-weight: 600;">456 Oak Avenue, Apt 12B, San Francisco, CA 94102</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">Canada Address:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-purple) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-purple); font-weight: 600;">789 Pine Road, Vancouver, BC V6B 2K9</code>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary);">UK Address:</strong><br>
+                        <code style="background: color-mix(in srgb, var(--brand-purple) 12%, var(--brand-white)); padding: 0.25rem 0.5rem; border-radius: 0.25rem; color: var(--brand-purple); font-weight: 600;">15 Westminster Bridge Road, London SE1 7XW</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing Tips -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Testing tips</h3>
+                <ul style="font-size: 0.875rem; line-height: 1.8; color: var(--text-secondary); list-style: disc; padding-left: 1.5rem;">
+                    <li><strong>Document selection:</strong> Test all three document types (passport, driver&apos;s license, national ID)</li>
+                    <li><strong>Date format:</strong> Use YYYY-MM-DD format for dates (e.g. 1990-03-15)</li>
+                    <li><strong>Expiry date:</strong> Use a future date to avoid validation errors</li>
+                    <li><strong>Required fields:</strong> First name, last name, document number, DOB, and expiry date are always required</li>
+                    <li><strong>Optional fields:</strong> Address and nationality may be optional depending on document type</li>
+                    <li><strong>Validation:</strong> The form validates all fields in real time; watch for valid-state indicators in the UI</li>
+                    <li><strong>Photo upload:</strong> Use the &quot;Upload Files&quot; option to test file upload instead of manual entry</li>
+                    <li><strong>Camera option:</strong> Use &quot;Use Camera&quot; to test the photo capture flow (works best on mobile)</li>
+                </ul>
+            </div>
+
+            <!-- Success Checklist -->
+            <div style="margin-top: 1rem; padding: 1rem; background: color-mix(in srgb, var(--fin-up) 10%, var(--brand-white)); border-radius: 0.5rem; border-left: 4px solid var(--fin-up);">
+                <div style="font-weight: 600; color: var(--fin-up); margin-bottom: 0.25rem;">KYC testing checklist</div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                    Document selection works | Manual entry validates | File upload works | Camera capture works | Selfie capture works | Flow completes
+                </div>
+            </div>
+        </div>
+
+        <!-- KYC Verification -->
+        <div class="section">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></span> KYC verification (Step 1)</h2>
+            <p class="section-description">
+                <strong>Triggered when:</strong> First time buying stablecoins, donating, or sending funds.<br>
+                <strong>Required before:</strong> Any financial transactions or wallet creation.<br>
+                <strong>Takes:</strong> ~5 minutes, 95% instant approval. Industry standard for regulatory compliance.
+            </p>
+            <div class="links">
+                <div class="link-item">
+                    <a href="kyc-verify.html">Start KYC Verification</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Creation -->
+        <div class="section">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760H520q-71 0-115.5 44.5T360-600v240q0 71 44.5 115.5T520-200h320q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm163-157q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Z"/></svg></span> Wallet creation (Step 2)</h2>
+            <p class="section-description">
+                <strong>Triggered when:</strong> First donation after completing KYC verification.<br>
+                <strong>Purpose:</strong> Receive HUMA governance tokens for donations and vote on funding allocation.<br>
+                <strong>Note:</strong> Wallet creation only available after KYC is verified (industry standard).
+            </p>
+            <div class="links">
+                <div class="link-item">
+                    <a href="wallet-creation.html">Create Wallet</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet & Transactions -->
+        <div class="section">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M200-280v-280h80v280h-80Zm240 0v-280h80v280h-80ZM80-120v-80h800v80H80Zm600-160v-280h80v280h-80ZM80-640v-80l400-200 400 200v80H80Z"/></svg></span> Wallet &amp; transactions</h2>
+            <p class="section-description">
+                <strong>Multi-Currency Balances:</strong> View all your assets (hUSD, USDC, and USDT) with real-time updates.<br>
+                <strong>Transaction History:</strong> Complete history with advanced filtering by type, currency, status, and date range.<br>
+                <strong>Features:</strong> Search transactions, export to CSV/PDF, view detailed transaction info, privacy toggle for balances.<br>
+                <strong>Quick Actions:</strong> Add funds, send, donate, and export directly from wallet page.
+            </p>
+            <div class="links">
+                <div class="link-item">
+                    <a href="wallet-enhanced.html">Wallet & Transactions</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard & Features -->
+        <div class="section">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M640-160v-280h160v280H640Zm-240 0v-640h160v640H400Zm-240 0v-440h160v440H160Z"/></svg></span> Dashboard &amp; features</h2>
+            <p class="section-description">
+                <strong>Dashboard:</strong> View overview, quick stats, and recent activity.<br>
+                <strong>Convert:</strong> Buy hUSD, USDC, or USDT stablecoins (KYC required on first purchase).
+            </p>
+            <div class="links">
+                <div class="link-item">
+                    <a href="dashboard-enhanced.html">Main Dashboard</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+                <div class="link-item">
+                    <a href="exchange.html">Buy Stablecoins (Convert)</a>
+                    <span class="arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Updates -->
+        <div class="section" style="background: color-mix(in srgb, var(--fin-up) 8%, var(--brand-white)); border: 2px solid var(--fin-up); border-radius: 1rem; padding: 1.5rem;">
+            <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="m98-537 168-168q14-14 33-20t39-2l52 11q-54 64-85 116t-60 126L98-537Zm205 91q23-72 62.5-136T461-702q88-88 201-131.5T873-860q17 98-26 211T716-448q-55 55-120 95.5T459-289L303-446Zm332.5-97q33.5 0 56.5-23t23-56.5q0-33.5-23-56.5t-56.5-23q-33.5 0-56.5 23t-23 56.5q0 33.5 23 56.5t56.5 23ZM551-85l-64-147q74-29 126.5-60T730-377l10 52q4 20-2 39.5T718-252L551-85ZM162-318q35-35 85-35.5t85 34.5q35 35 35 85t-35 85q-25 25-83.5 43T87-74q14-103 32-161t43-83Z"/></svg></span> Recent updates (Jan 25, 2026)</h2>
+            <p class="section-description" style="margin-bottom: 1rem;">
+                <strong>Latest improvements to KYC flow and user experience</strong>
+            </p>
+
+            <!-- Phone Number Screen -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Phone number input screen</h3>
+                <ul style="font-size: 0.875rem; line-height: 1.8; padding-left: 1.5rem; color: var(--text-secondary); list-style: none; margin-left: -1.5rem;">
+                    <li>Fixed success checkmark icon: displays with a circular background</li>
+                    <li>Optimized spacing: reduced top padding, no scrolling required</li>
+                    <li>Improved QR code: proportions about 200×200px</li>
+                    <li>Compact layout: key information visible in the viewport</li>
+                </ul>
+            </div>
+
+            <!-- Document Type Pre-selection -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Document type pre-selection</h3>
+                <ul style="font-size: 0.875rem; line-height: 1.8; padding-left: 1.5rem; color: var(--text-secondary); list-style: none; margin-left: -1.5rem;">
+                    <li>Manual entry form pre-selects document type from Step 2</li>
+                    <li>Dropdown remains fully editable</li>
+                    <li>Consistent across passport, driver&apos;s license, and national ID flows</li>
+                    <li>Aligned radio and dropdown values</li>
+                </ul>
+            </div>
+
+            <!-- Back Button Navigation -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Smart Back button navigation</h3>
+                <ul style="font-size: 0.875rem; line-height: 1.8; padding-left: 1.5rem; color: var(--text-secondary); list-style: none; margin-left: -1.5rem;">
+                    <li>Manual entry &quot;Back&quot; returns to the correct document capture step (Step 3 or 4)</li>
+                    <li>Upload section &quot;Back&quot; returns to the correct camera screen</li>
+                    <li>Phone number &quot;Back&quot; returns to the appropriate KYC step (selfie or liveness)</li>
+                    <li>Context-aware navigation tracks origin</li>
+                </ul>
+            </div>
+
+            <!-- Webcam Default Flow -->
+            <div style="background: var(--brand-white); border-radius: 0.75rem; padding: 1.25rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Webcam-first selfie flow</h3>
+                <ul style="font-size: 0.875rem; line-height: 1.8; padding-left: 1.5rem; color: var(--text-secondary); list-style: none; margin-left: -1.5rem;">
+                    <li>Webcam is the default selfie method (no extra selection screen)</li>
+                    <li>&quot;Use Phone Camera&quot; available as scrollable alternative</li>
+                    <li>Upload and manual entry go to KYC Step 5 (selfie)</li>
+                    <li>Consistent behavior across document upload methods</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Reset Storage -->
+        <div class="section">
+            <div class="reset-section">
+                <h2><span class="section-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M280-160 80-360l200-200 56 57-103 103h287v80H233l103 103-56 57Zm400-240-56-57 103-103H440v-80h287L624-743l56-57 200 200-200 200Z"/></svg></span> Reset application</h2>
+                <p class="reset-description">
+                    Clear all saved data (user info, wallet, KYC status, etc.) and start fresh. 
+                    This will log you out and reset everything to default.
+                </p>
+                <button class="reset-btn" onclick="resetStorage()">Reset All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function resetStorage() {
+            showConfirmation(
+                'Are you sure you want to reset all data? This will clear:\n• User authentication\n• Wallet information\n• KYC status\n• All saved preferences\n\nThis action cannot be undone.',
+                'Reset All Data',
+                () => {
+                    // Clear all localStorage
+                    localStorage.clear();
+                    
+                    // Clear all sessionStorage
+                    sessionStorage.clear();
+                    
+                    // Show success message
+                    showNotification('All data has been reset successfully! You will now be redirected to the homepage.', 'success', 'Reset Complete');
+                    
+                    // Redirect to homepage
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+            );
+        }
+        
+        // Modal Functions
+        function showNotification(message, type, title) {
+            const modalHTML = `
+                <div class="modal-overlay" id="notificationModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: var(--brand-white); border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                        <h2 style="margin-bottom: 1rem; font-family: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif; color: #173d47;">${title}</h2>
+                        <p style="color: #3d6b78; line-height: 1.6;">${message}</p>
+                        <button onclick="closeNotificationModal()" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem 1.5rem; min-height: 46px; background: #173d47; color: #ffffff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">OK</button>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+        function closeNotificationModal() {
+            const modal = document.getElementById('notificationModal');
+            if (modal) modal.remove();
+        }
+        function showConfirmation(message, title, onConfirm) {
+            const formattedMessage = message.replace(/\n/g, '<br>');
+            const modalHTML = `
+                <div class="modal-overlay" id="confirmationModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: var(--brand-white); border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                        <h2 style="margin-bottom: 1rem; font-family: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif; color: #173d47;">${title}</h2>
+                        <p style="color: #3d6b78; line-height: 1.6; text-align: left;">${formattedMessage}</p>
+                        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                            <button onclick="closeConfirmationModal()" style="flex: 1; padding: 0.75rem; min-height: 46px; background: color-mix(in srgb, #ebfcf5 60%, #ffffff); color: #173d47; border: 1px solid rgba(23, 61, 71, 0.15); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+                            <button id="confirmBtn" style="flex: 1; padding: 0.75rem; min-height: 46px; background: #173d47; color: #ffffff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Confirm</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.getElementById('confirmBtn').onclick = () => {
+                closeConfirmationModal();
+                if (onConfirm) onConfirm();
+            };
+        }
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            if (modal) modal.remove();
+        }
+    </script>
+</body>
+</html>
