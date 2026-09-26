@@ -1,0 +1,308 @@
+<!-- @dsCard group="Transact" viewport="1180x3400" name="Transact Flows" subtitle="Add Tokens · Send · Exchange · Stake · Transaction Tracker (pending / delayed / failed) · estimated-vs-actual swap receipt" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="consumer-app.css">
+<link rel="stylesheet" href="../../unera-pages/tx-tracker.css">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--neutral-100); margin: 0; padding: 24px; color: var(--text-primary); }
+  .glabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin: 0 0 6px; }
+  .glabel:not(.first) { margin-top: 34px; }
+  .gsub { font-size: 12px; color: var(--text-secondary); margin: 0 0 16px; max-width: 720px; line-height: 1.5; }
+  .panel { background: #fff; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 1.5rem; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+
+  /* Action overview tiles */
+  .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .action-tile { background: #fff; border: 2px solid var(--border-subtle); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .action-tile .ic { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--brand-deep-blue) 8%, #fff); color: var(--brand-deep-blue); }
+  .action-tile .ic svg { width: 26px; height: 26px; fill: currentColor; }
+  .action-tile.primary { background: var(--brand-deep-blue); border: none; color: #fff; }
+  .action-tile.primary .ic { background: rgba(255,255,255,0.14); color: #fff; }
+  .action-tile h3 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; }
+  .action-tile p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45; }
+  .action-tile.primary p { color: rgba(255,255,255,0.75); }
+  .action-tile .src { font-family: var(--font-mono); font-size: 9.5px; color: var(--text-secondary); margin-top: auto; }
+  .action-tile.primary .src { color: rgba(255,255,255,0.6); }
+
+  /* Amount input */
+  .amount-section { background: #fff; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.75rem; }
+  .amount-wrap { position: relative; display: flex; align-items: center; }
+  .amount-wrap .ccy { position: absolute; left: 1rem; font-size: 2rem; color: var(--text-secondary); font-weight: 700; }
+  .amount-input { width: 100%; font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; padding: 0.5rem 1rem 0.5rem 2.75rem; border: 2px solid var(--border-subtle); border-radius: 12px; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+  .amount-input:focus { outline: none; border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23,61,71,0.12); }
+  .preset-row { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+  .preset-chip { padding: 0.5rem 1rem; border-radius: 980px; border: 1.5px solid var(--border-subtle); background: #fff; font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+  .preset-chip.active, .preset-chip:hover { border-color: var(--brand-deep-blue); color: var(--brand-deep-blue); background: rgba(23,61,71,0.04); }
+
+  /* Summary / fee rows */
+  .summary { background: var(--surface-scatter); border-radius: 12px; padding: 1.25rem 1.5rem; }
+  .summary-row { display: flex; justify-content: space-between; padding: 0.625rem 0; font-size: 0.9rem; border-bottom: 1px solid var(--border-subtle); }
+  .summary-row:last-child { border-bottom: none; font-weight: 700; font-size: 1rem; padding-bottom: 0; }
+  .summary-row .k { color: var(--text-secondary); }
+  .summary-row .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .summary-row:last-child .v { color: var(--brand-deep-blue); }
+
+  /* Payment methods */
+  .method { display: flex; align-items: center; gap: 0.875rem; padding: 1rem 1.25rem; border: 2px solid var(--border-subtle); border-radius: 12px; cursor: pointer; margin-bottom: 0.625rem; }
+  .method.active { border-color: var(--brand-deep-blue); background: rgba(23,61,71,0.03); }
+  .method .mic { width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--brand-deep-blue) 8%, #fff); color: var(--brand-deep-blue); display: flex; align-items: center; justify-content: center; }
+  .method .mic svg { width: 22px; height: 22px; fill: currentColor; }
+  .method .mtitle { font-weight: 600; font-size: 0.938rem; }
+  .method .msub { font-size: 0.8rem; color: var(--text-secondary); }
+  .method .radio { margin-left: auto; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-strong); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .method.active .radio { border-color: var(--brand-deep-blue); }
+  .method.active .radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--brand-deep-blue); }
+
+  /* Live rate banner */
+  .live-rate { background: var(--fin-up-bg); border: 1px solid color-mix(in srgb, var(--fin-up) 28%, transparent); border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+  .live-rate .lr-label { font-size: 0.8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; }
+  .live-rate .lr-label svg { width: 15px; height: 15px; fill: var(--fin-up); }
+  .live-rate .lr-val { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .rate-trend { font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; background: var(--fin-up-bg); color: var(--fin-up); }
+
+  /* Exchange pair + rate lock */
+  .swap-pair { display: flex; flex-direction: column; gap: 0.5rem; position: relative; }
+  .swap-leg { background: var(--surface-scatter); border-radius: 12px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+  .swap-leg .leg-amt { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .swap-leg .leg-tok { font-weight: 700; font-size: 0.875rem; background: #fff; border: 1.5px solid var(--border-subtle); border-radius: 980px; padding: 0.375rem 0.75rem; }
+  .swap-swapbtn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; border-radius: 50%; background: var(--brand-deep-blue); color: #fff; display: flex; align-items: center; justify-content: center; border: 3px solid var(--neutral-100); z-index: 2; }
+  .swap-swapbtn svg { width: 20px; height: 20px; fill: currentColor; }
+  .rate-lock { display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 1.25rem; border: 1.5px solid var(--border-subtle); border-radius: 12px; margin-top: 0.75rem; }
+  .rate-lock .rl-label { font-size: 0.85rem; color: var(--text-secondary); }
+  .rate-countdown { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--brand-deep-blue); font-variant-numeric: tabular-nums; }
+
+  /* APY compare */
+  .apy-compare { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+  .apy-item { text-align: center; padding: 0.875rem 0.5rem; border-radius: 12px; border: 1.5px solid var(--border-subtle); cursor: pointer; }
+  .apy-item.active { border-color: var(--fin-up); background: var(--fin-up-bg); }
+  .apy-item .apy-val { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--fin-up); }
+  .apy-item .apy-lbl { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+  .reward-proj { margin-top: 1rem; padding: 1rem 1.25rem; background: var(--fin-up-bg); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .reward-proj .rp-label { font-size: 0.85rem; color: var(--text-secondary); }
+  .reward-proj .rp-val { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--fin-up); font-variant-numeric: tabular-nums; }
+
+  /* mini stepper */
+  .ministep { display: flex; align-items: center; gap: 0; max-width: 460px; }
+  .ms-node { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .ms-circle { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--neutral-300); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; color: var(--text-secondary); background: #fff; font-size: 0.9rem; }
+  .ms-node.done .ms-circle, .ms-node.active .ms-circle { background: var(--brand-deep-blue); border-color: transparent; color: #fff; }
+  .ms-node.done .ms-circle svg { width: 18px; height: 18px; }
+  .ms-lbl { font-size: 0.72rem; color: var(--text-secondary); }
+  .ms-node.active .ms-lbl { color: var(--brand-deep-blue); font-weight: 600; }
+  .ms-line { flex: 1; height: 2px; background: var(--neutral-300); margin: 0 4px; margin-bottom: 22px; }
+  .ms-line.done { background: var(--brand-deep-blue); }
+
+  .btn { font-family: var(--font-body); font-weight: 600; font-size: 0.938rem; border-radius: 8px; border: 2px solid transparent; min-height: 46px; padding: 0 1.5rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+  .btn-primary { background: var(--brand-deep-blue); color: #fff; }
+  .btn-block { width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="glabel first">The four Transact actions</div>
+<p class="gsub">Everything under the nav's <strong>TRANSACT</strong> menu. Each is a guided, single-column flow built from the shared patterns below; primary money-in action (Buy/Add) uses the solid Deep&nbsp;Blue tile.</p>
+<div class="actions">
+  <div class="action-tile primary">
+    <div class="ic"><svg viewBox="0 -960 960 960"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg></div>
+    <h3>Add Tokens</h3>
+    <p>Buy stablecoins via bank transfer or card. Live rate, fee breakdown.</p>
+    <span class="src">add-money.html</span>
+  </div>
+  <div class="action-tile">
+    <div class="ic"><svg viewBox="0 -960 960 960"><path d="M120-160v-240l320-80-320-80v-240l760 320-760 320Z"/></svg></div>
+    <h3>Send Tokens</h3>
+    <p>Transfer to an address or payee. 4-step stepper → review → receipt.</p>
+    <span class="src">send-enhanced.html</span>
+  </div>
+  <div class="action-tile">
+    <div class="ic"><svg viewBox="0 -960 960 960"><path d="M280-160 80-360l200-200 56 57-103 103h287v80H233l103 103-56 57Zm400-240-56-57 103-103H440v-80h287L624-743l56-57 200 200-200 200Z"/></svg></div>
+    <h3>Exchange</h3>
+    <p>Convert between currencies. Swap pair, locked rate with countdown.</p>
+    <span class="src">exchange.html</span>
+  </div>
+  <div class="action-tile">
+    <div class="ic"><svg viewBox="0 -960 960 960"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg></div>
+    <h3>Stake</h3>
+    <p>Lock tokens to earn yield. APY by duration, reward projection.</p>
+    <span class="src">stake.html</span>
+  </div>
+</div>
+
+<div class="glabel">Shared patterns: used across all four flows</div>
+<div class="two">
+  <div>
+    <p class="gsub" style="margin-bottom:8px">Amount input: big display figure, <code style="font-family:var(--font-mono)">$</code> prefix, preset chips.</p>
+    <div class="amount-section">
+      <div class="amount-wrap"><span class="ccy">$</span><input class="amount-input" value="250.00" inputmode="decimal"></div>
+      <div class="preset-row">
+        <button class="preset-chip">$50</button>
+        <button class="preset-chip active">$250</button>
+        <button class="preset-chip">$500</button>
+        <button class="preset-chip">Max</button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <p class="gsub" style="margin-bottom:8px">Fee and summary breakdown: quiet panel, bold total.</p>
+    <div class="summary">
+      <div class="summary-row"><span class="k">Amount</span><span class="v">$250.00</span></div>
+      <div class="summary-row"><span class="k">Network fee</span><span class="v">$1.20</span></div>
+      <div class="summary-row"><span class="k">Huma fee</span><span class="v">$0.00</span></div>
+      <div class="summary-row"><span class="k">You receive</span><span class="v">249.00 hUSD</span></div>
+    </div>
+  </div>
+</div>
+<div style="margin-top:18px">
+  <p class="gsub" style="margin-bottom:8px">Progress stepper (Send) → terminal success / failure heroes (asymmetric: never recolor one into the other).</p>
+  <div class="panel">
+    <div class="ministep">
+      <div class="ms-node done"><div class="ms-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div><span class="ms-lbl">Amount</span></div>
+      <div class="ms-line done"></div>
+      <div class="ms-node active"><div class="ms-circle">2</div><span class="ms-lbl">Recipient</span></div>
+      <div class="ms-line"></div>
+      <div class="ms-node"><div class="ms-circle">3</div><span class="ms-lbl">Review</span></div>
+      <div class="ms-line"></div>
+      <div class="ms-node"><div class="ms-circle">4</div><span class="ms-lbl">Done</span></div>
+    </div>
+    <div style="display:flex; gap:28px; margin-top:24px; align-items:center;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="success-hero" style="width:64px;height:64px;box-shadow:0 6px 20px rgba(23,61,71,0.2),0 0 0 8px rgba(23,61,71,0.08)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px"><path d="M5 13l4 4L19 7"/></svg></div>
+        <span style="font-size:0.85rem;color:var(--fin-up);font-weight:700">Success</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--brand-red);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(171,87,112,0.25),0 0 0 8px rgba(171,87,112,0.10)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+        <span style="font-size:0.85rem;color:var(--brand-red);font-weight:700">Failure</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="glabel">Add Tokens: payment methods + live rate</div>
+<div class="two">
+  <div class="panel">
+    <div class="method active">
+      <div class="mic"><svg viewBox="0 -960 960 960"><path d="M200-280v-280h80v280h-80Zm240 0v-280h80v280h-80ZM80-120v-80h800v80H80Zm600-160v-280h80v280h-80ZM80-640v-80l400-200 400 200v80H80Z"/></svg></div>
+      <div><div class="mtitle">Bank transfer</div><div class="msub">RBC ···4821 · 1–2 days · free</div></div>
+      <span class="radio"></span>
+    </div>
+    <div class="method">
+      <div class="mic"><svg viewBox="0 -960 960 960"><path d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Z"/></svg></div>
+      <div><div class="mtitle">Debit / credit card</div><div class="msub">Visa ···7B75 · instant · 1.5%</div></div>
+      <span class="radio"></span>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="live-rate">
+      <span class="lr-label"><svg viewBox="0 -960 960 960"><path d="m136-240-56-56 296-298 160 160 208-206H640v-80h240v240h-80v-104L536-320 376-480 136-240Z"/></svg>Live rate · 1 USD = 1.00 hUSD</span>
+      <span class="rate-trend">+0.1%</span>
+    </div>
+    <div class="summary" style="margin-top:14px">
+      <div class="summary-row"><span class="k">You pay</span><span class="v">$250.00 CAD</span></div>
+      <div class="summary-row"><span class="k">Card fee (1.5%)</span><span class="v">$3.75</span></div>
+      <div class="summary-row"><span class="k">You receive</span><span class="v">246.25 hUSD</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="two" style="margin-top:18px">
+  <div>
+    <div class="glabel first">Exchange: swap pair + rate lock</div>
+    <div class="panel">
+      <div class="swap-pair">
+        <div class="swap-leg"><div><div style="font-size:0.7rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em">You pay</div><div class="leg-amt">500.00</div></div><span class="leg-tok">USDC ▾</span></div>
+        <div class="swap-leg"><div><div style="font-size:0.7rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em">You get</div><div class="leg-amt" style="color:var(--fin-up)">499.40</div></div><span class="leg-tok">hUSD ▾</span></div>
+        <div class="swap-swapbtn"><svg viewBox="0 -960 960 960"><path d="M320-440v-287L217-624l-57-56 200-200 200 200-57 56-103-103v287h-80ZM600-80 400-280l57-56 103 103v-287h80v287l103-103 57 56L600-80Z"/></svg></div>
+      </div>
+      <div class="rate-lock">
+        <div><div class="rl-label">Rate locked · 1 USDC = 0.9988 hUSD</div></div>
+        <div class="rate-countdown">0:14</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="glabel first">Stake: APY by duration + projection</div>
+    <div class="panel">
+      <div class="apy-compare">
+        <div class="apy-item"><div class="apy-val">3.2%</div><div class="apy-lbl">30 days</div></div>
+        <div class="apy-item"><div class="apy-val">4.8%</div><div class="apy-lbl">90 days</div></div>
+        <div class="apy-item active"><div class="apy-val">6.5%</div><div class="apy-lbl">180 days</div></div>
+        <div class="apy-item"><div class="apy-val">8.0%</div><div class="apy-lbl">365 days</div></div>
+      </div>
+      <div class="reward-proj">
+        <span class="rp-label">Est. reward · 1,000 hUSD · 180 days</span>
+        <span class="rp-val">+32.50</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="glabel">Transaction Tracker: the shared "pending" screen (FE-207 §B)</div>
+<p class="gsub">One implementation for every flow that can leave the user waiting: <strong>donate with crypto</strong>, <strong>buy hUSD with fiat</strong>, <strong>swap</strong>. Ship it from <code style="font-family:var(--font-mono)">unera-pages/tx-tracker.css</code> + <code style="font-family:var(--font-mono)">tx-tracker.js</code>. Never re-implement per flow. Rules: plain-language headline + ETA first (never a hash, never "12 confirmations"); confirmation depth is a <em>secondary</em> bar with a friendly label; named stages with one sentence each in Deep Blue (current) / <code style="font-family:var(--font-mono)">--fin-up</code> (done) / grey (upcoming); a reassurance block; a rotating <strong>While you wait</strong> card; a "What is happening?" expander in everyday language; a micro-fact line. States: <strong>running → delayed → done | failed</strong>. All motion is CSS-only and collapses under <code style="font-family:var(--font-mono)">prefers-reduced-motion</code>.</p>
+<div class="panel">
+  <section class="txt" data-kind="donation" data-state="running">
+    <div class="txt-hero">
+      <h2 class="txt-headline">Your donation is on its way</h2>
+      <p class="txt-eta">Usually takes 2–5 minutes · <span class="txt-timer">1:12</span> elapsed</p>
+    </div>
+    <ol class="txt-stages">
+      <li class="txt-stage is-done"><span class="txt-stage-marker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><span class="txt-stage-body"><span class="txt-stage-title">Sent from your wallet</span><span class="txt-stage-sub">You approved the transfer. Nothing else is needed from you.</span></span></li>
+      <li class="txt-stage is-current"><span class="txt-stage-marker">2</span><span class="txt-stage-body"><span class="txt-stage-title">Being confirmed by the network</span><span class="txt-stage-sub">The blockchain is writing your donation into a block.</span></span><span class="txt-stage-spin" aria-hidden="true"></span></li>
+      <li class="txt-stage"><span class="txt-stage-marker">3</span><span class="txt-stage-body"><span class="txt-stage-title">Checked by Huma</span><span class="txt-stage-sub">We match the transfer to your donation and convert it to US dollars.</span></span></li>
+      <li class="txt-stage"><span class="txt-stage-marker">4</span><span class="txt-stage-body"><span class="txt-stage-title">Delivered to the Humanity Center</span><span class="txt-stage-sub">The funds arrive and your digital receipt is issued.</span></span></li>
+    </ol>
+    <div class="txt-conf">
+      <div class="txt-conf-head"><span class="txt-conf-label">Network is double-checking</span><span class="txt-conf-count">4 of 12</span></div>
+      <div class="txt-conf-bar"><span class="txt-conf-fill" style="width:33%"></span></div>
+    </div>
+    <div class="txt-reassure">
+      <p class="txt-reassure-row"><svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Z"/></svg><span><strong>Your money is safe</strong>. The network is slow, not your funds.</span></p>
+      <p class="txt-reassure-row"><svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Z"/></svg><span>You can leave this page. We'll email you and ring the bell when it's done.</span></p>
+    </div>
+    <div class="txt-wait">
+      <p class="txt-wait-label">While you wait</p>
+      <div class="txt-wait-card">
+        <p class="txt-wait-eyebrow">Your impact</p>
+        <p class="txt-wait-title">Safe water for 3 families for a month</p>
+        <p class="txt-wait-body">That is what $100.00 does at Kibera Community Center. It funds clean water access and primary education.</p>
+      </div>
+    </div>
+    <details class="txt-what"><summary>What is happening?</summary><div class="txt-what-body"><p>You sent your donation to the center's wallet. The blockchain now has to agree that it happened, a bit like several banks countersigning the same transfer.</p></div></details>
+  </section>
+  <div class="two" style="margin-top:18px">
+    <div>
+      <div class="glabel first">Delayed: after the ETA is exceeded</div>
+      <div class="txt" data-state="delayed">
+        <h2 class="txt-headline" style="font-size:1.125rem">Taking a little longer than usual. That is normal when the network is busy. Nothing to do.</h2>
+        <div class="txt-banner" style="margin-top:0.75rem"><svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm112-192 56-56-148-148v-184h-80v216l172 172Z"/></svg><span>Networks get busy. Your money is safe and the donation is still queued. There is nothing to resend and nothing to pay again.</span></div>
+        <div class="txt-actions"><a class="txt-link" href="#">Contact support</a><a class="txt-link" href="#">Track in donation history</a></div>
+      </div>
+    </div>
+    <div>
+      <div class="glabel first">Failed: one clear next step</div>
+      <div class="txt" data-state="failed">
+        <h2 class="txt-headline" style="font-size:1.125rem">We couldn't complete this donation</h2>
+        <div class="txt-banner" style="margin-top:0.75rem"><svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m40-120 440-760 440 760H40Zm440-120q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Z"/></svg><span>The transaction was reverted before it reached the center. No funds left your wallet.</span></div>
+        <div class="txt-actions"><a class="txt-link" href="#">Start a new donation</a><a class="txt-link" href="#">Contact support</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="glabel">Swap receipt: estimated vs actual (FE-207 §B, Huma Platform)</div>
+<p class="gsub">Huma Platform swaps are <strong>not</strong> fixed 1:1. A ±0.1% pool spread is normal. Store both numbers and show both on the receipt, then say plainly that the order was adjusted. <strong>Never</strong> ask the user to create a new order.</p>
+<div class="panel">
+  <div class="summary">
+    <div class="summary-row"><span class="k">Estimated at review</span><span class="v">499.40 hUSD</span></div>
+    <div class="summary-row"><span class="k">Actually received</span><span class="v" style="color:var(--fin-up)">499.12 hUSD</span></div>
+    <div class="summary-row"><span class="k">Difference</span><span class="v">−0.056% · adjusted automatically, no new order needed</span></div>
+  </div>
+</div>
+
+<div class="glabel">Templates</div>
+<p class="gsub">Build any new Transact step by composing these: the consumer-app kit's <code style="font-family:var(--font-mono)">SendFlow</code> stepper (Amount → Recipient → Review → Done) is the canonical flow shell; the <strong>Consumer page</strong> template plus the amount-input, summary, payment-method, and success-hero patterns above cover Add, Exchange, and Stake. Money outcomes use <code style="font-family:var(--font-mono)">--fin-up</code> / <code style="font-family:var(--font-mono)">--fin-down</code>; stepper progression stays Deep Blue.</p>
+</body>
+</html>
