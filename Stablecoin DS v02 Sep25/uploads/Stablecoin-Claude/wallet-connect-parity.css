@@ -1,0 +1,456 @@
+/**
+ * Stablecoin parity — scoped clone of dashboard-enhanced modal + connect-wallet UI (no global .modal-overlay leak).
+ */
+
+@keyframes wc-parity-spin {
+    to { transform: rotate(360deg); }
+}
+
+#connectModal.modal-overlay,
+#walletConnectNotifier.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10010;
+    animation: wc-parity-fadeIn 0.2s ease-out;
+}
+
+@keyframes wc-parity-fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#connectModal.modal-overlay.active,
+#walletConnectNotifier.modal-overlay.active {
+    display: flex;
+}
+
+#connectModal .modal,
+#walletConnectNotifier .modal {
+    background: var(--brand-white);
+    border-radius: 16px;
+    max-width: 480px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: wc-parity-slideUp 0.3s ease-out;
+    display: block;
+    backdrop-filter: none;
+    padding: 0;
+}
+
+@keyframes wc-parity-slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#connectModal .modal-header,
+#walletConnectNotifier .modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#connectModal .modal-title,
+#walletConnectNotifier .modal-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+#connectModal .modal-close,
+#walletConnectNotifier .modal-close {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+}
+
+#connectModal .modal-close:hover,
+#walletConnectNotifier .modal-close:hover {
+    background: var(--neutral-100);
+}
+
+#connectModal .modal-body {
+    padding: 1.5rem;
+}
+
+/* Connect modal: no scrollbar clipping */
+#connectModal .modal {
+    overflow: visible;
+    max-height: none;
+}
+#connectModal .modal-body {
+    overflow: visible;
+}
+
+/* DEV: Test scenario selector */
+#connectModal .connect-test-scenarios {
+    background: var(--brand-cloud-blue);
+    border: 1.5px dashed var(--brand-light-blue);
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    margin-bottom: 1.25rem;
+}
+#connectModal .test-scenarios-label {
+    display: block;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+#connectModal .scenario-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+#connectModal .scenario-pill {
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-subtle);
+    background: var(--brand-white);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1.4;
+}
+#connectModal .scenario-pill:hover {
+    border-color: var(--brand-deep-blue);
+    color: var(--brand-deep-blue);
+}
+#connectModal .scenario-pill:focus {
+    outline: 2px solid var(--brand-deep-blue);
+    outline-offset: 2px;
+}
+#connectModal .scenario-pill.active {
+    background: var(--brand-deep-blue);
+    border-color: var(--brand-deep-blue);
+    color: var(--brand-yellow);
+}
+
+#walletConnectNotifier .notification-action-btn,
+#connectModal .notification-action-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+/* Outcome notifier */
+#walletConnectNotifier .modal {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+#walletConnectNotifier .modal::-webkit-scrollbar {
+    display: none;
+}
+#walletConnectNotifier .modal-header {
+    flex-shrink: 0;
+}
+#walletConnectNotifier .modal-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+#walletConnectNotifier .modal-body::-webkit-scrollbar {
+    display: none;
+}
+#walletConnectNotifier .modal-footer {
+    flex-shrink: 0;
+    padding-top: 1rem;
+}
+
+#walletConnectNotifier .notification-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: white;
+}
+
+#walletConnectNotifier .notification-icon.impact-style {
+    width: 56px;
+    height: 56px;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--brand-deep-blue) 12%, var(--brand-white));
+    color: inherit;
+    font-size: 1.75rem;
+}
+
+#walletConnectNotifier .notification-icon.error {
+    background: var(--error);
+}
+
+#walletConnectNotifier .notification-icon.warning {
+    background: var(--warning);
+}
+
+#walletConnectNotifier .notification-icon.info {
+    background: var(--brand-light-blue);
+}
+
+#walletConnectNotifier .notification-message {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+#walletConnectNotifier .impact-detail-wrapper {
+    text-align: left;
+}
+
+#walletConnectNotifier .modal-footer,
+#connectModal .modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+}
+
+#walletConnectNotifier.notification-modal-shell .modal-footer {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    border-top: none;
+}
+
+#walletConnectNotifier.notification-modal-shell .modal-footer .btn {
+    width: 100%;
+}
+
+/* Buttons (wallet connect notifier + connect overlay) */
+#walletConnectNotifier .btn,
+#connectModal .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.938rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    text-align: center;
+    text-decoration: none;
+}
+
+#walletConnectNotifier .btn:hover,
+#connectModal .btn:hover {
+    transform: translateY(-1px);
+}
+
+#walletConnectNotifier .btn:active,
+#connectModal .btn:active {
+    transform: translateY(0);
+}
+
+#walletConnectNotifier .btn:focus,
+#connectModal .btn:focus {
+    outline: 3px solid rgba(23, 61, 71, 0.3);
+    outline-offset: 2px;
+}
+
+#walletConnectNotifier .btn-primary,
+#connectModal .btn-primary {
+    background: var(--brand-deep-blue);
+    color: white;
+}
+
+#walletConnectNotifier .btn-primary:hover,
+#connectModal .btn-primary:hover {
+    background: var(--neutral-800);
+    box-shadow: 0 4px 12px rgba(23, 61, 71, 0.3);
+}
+
+#connectModal .modal-desc {
+    font-size: 0.938rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+#connectModal .wallet-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin: 1.5rem 0 1rem;
+}
+
+#connectModal .wallet-option-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0.5rem;
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 12px;
+    background: var(--brand-white);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    gap: 0.5rem;
+}
+
+#connectModal .wallet-option-card:hover {
+    border-color: var(--brand-deep-blue);
+    background: rgba(23, 61, 71, 0.02);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(23, 61, 71, 0.1);
+}
+
+#connectModal .wallet-option-card:focus {
+    outline: 2px solid var(--brand-deep-blue);
+    outline-offset: 2px;
+}
+
+#connectModal .wallet-option-card .wallet-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#connectModal .wallet-option-card .wallet-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+#connectModal .wallet-option-card .wallet-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+#connectModal .wallet-option-card.recommended {
+    background: color-mix(in srgb, var(--brand-cloud-blue) 16%, var(--brand-white));
+    border-color: var(--brand-deep-blue);
+}
+
+#connectModal .wallet-option-card.not-installed {
+    opacity: 0.55;
+    cursor: default;
+    pointer-events: none;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+#connectModal .wallet-option-card.not-installed .wallet-icon svg {
+    filter: grayscale(1);
+}
+
+#connectModal .wallet-not-installed-label {
+    font-size: 0.688rem;
+    font-weight: 600;
+    color: var(--error);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: -0.125rem;
+}
+
+#connectModal .wallet-install-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-deep-blue);
+    background: var(--brand-yellow);
+    border: none;
+    border-radius: 999px;
+    padding: 0.2rem 0.625rem;
+    cursor: pointer;
+    pointer-events: all;
+    margin-top: 0.125rem;
+    transition: opacity 0.15s;
+    font-family: var(--font-body);
+}
+
+#connectModal .wallet-install-btn:hover { opacity: 0.8; }
+
+#connectModal .wallet-install-btn:focus {
+    outline: 2px solid var(--brand-deep-blue);
+    outline-offset: 2px;
+}
+
+#connectModal .wallet-note {
+    font-size: 0.813rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin: 1rem 0 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+}
+
+#connectModal .wallet-note small {
+    opacity: 0.8;
+}
+
+#connectModal .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--neutral-200);
+    border-top-color: var(--brand-deep-blue);
+    border-radius: 50%;
+    animation: wc-parity-spin 0.8s linear infinite;
+}
+
+#connectModal .modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+#connectModal .modal-loading .spinner {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 480px) {
+    #connectModal .wallet-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.wc-dash-hidden {
+    display: none !important;
+}
