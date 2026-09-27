@@ -1349,7 +1349,7 @@ function renderActs() {
   var left = total - vis;
   $('actFoot').hidden = total <= PAGE;
   $('actShown').textContent = vis; $('actTotal').textContent = total;
-  $('actViewAll').hidden = left <= 0;
+  $('actViewAll').hidden = left <= 0 || shown > PAGE;
   $('actCollapse').hidden = shown <= PAGE;
   var elSum = el.reduce(function (n, a) { return n + a.hp; }, 0);
   $('claimAllBtn').textContent = el.length ? 'Claim all · ' + fmt(elSum) + ' HP' : 'Claim all';
@@ -1386,7 +1386,7 @@ function renderHist() {
   }).join('') || '<li class="hp-act-meta" style="padding:0.75rem 0;list-style:none;">No claims yet.</li>';
   $('histFoot').hidden = claims.length <= PAGE;
   $('histShown').textContent = Math.min(histShown, claims.length); $('histTotal').textContent = claims.length;
-  $('histMore').hidden = histShown >= claims.length;
+  $('histMore').hidden = histShown >= claims.length || histShown > PAGE;
   $('histCollapse').hidden = histShown <= PAGE;
   $('histList').querySelectorAll('[data-detail]').forEach(function (r) {
     var open = function () { openClaimDetail(r.getAttribute('data-detail')); };
@@ -1625,12 +1625,12 @@ TAB_NAMES.forEach(function (t, i) {
 $('actViewAll').addEventListener('click', function () {
   var b = $('actViewAll'); if (b.classList.contains('loading')) return;
   b.classList.add('loading'); b.setAttribute('aria-busy', 'true');
-  setTimeout(function () { shown += PAGE; renderActs(); b.classList.remove('loading'); b.removeAttribute('aria-busy'); }, 350);
+  setTimeout(function () { shown = 999; renderActs(); b.classList.remove('loading'); b.removeAttribute('aria-busy'); }, 350);
 });
 $('histMore').addEventListener('click', function () {
   var b = $('histMore'); if (b.classList.contains('loading')) return;
   b.classList.add('loading'); b.setAttribute('aria-busy', 'true');
-  setTimeout(function () { histShown += PAGE; renderHist(); b.classList.remove('loading'); b.removeAttribute('aria-busy'); }, 350);
+  setTimeout(function () { histShown = 999; renderHist(); b.classList.remove('loading'); b.removeAttribute('aria-busy'); }, 350);
 });
 $('histCollapse').addEventListener('click', function () {
   histShown = PAGE; renderHist();
