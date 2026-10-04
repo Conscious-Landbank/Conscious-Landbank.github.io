@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow 1 — Stablecoin Management | Huma</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      background: #1e293b;
+      padding: 0 2rem;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .top-nav .brand {
+      color: #f1f5f9;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-decoration: none;
+      margin-right: 1rem;
+    }
+    .top-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .top-nav a:hover { background: #334155; color: #f1f5f9; }
+    .top-nav a.active { background: #0f172a; color: #ffffff; }
+
+    /* ── PAGE LAYOUT ── */
+    .page { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+    .page-header p { color: #64748b; font-size: 0.9375rem; max-width: 720px; }
+    .breadcrumb {
+      font-size: 0.8125rem;
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+    }
+    .breadcrumb span { color: #64748b; }
+
+    /* ── TWO-COLUMN LAYOUT ── */
+    .layout { display: grid; grid-template-columns: 260px 1fr; gap: 1.5rem; align-items: start; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .card h2 {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    /* ── SCOPE LIST ── */
+    .scope-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .scope-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: #334155;
+    }
+    .scope-list li .num {
+      background: #173d47;
+      color: #fff;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── LEGEND ── */
+    .legend-list { display: flex; flex-direction: column; gap: 0.625rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.625rem; font-size: 0.8125rem; }
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      border: 1px solid transparent;
+    }
+    .swatch-happy   { background: #d1fae5; border-color: #10b981; }
+    .swatch-edge    { background: #fef9c3; border-color: #ca8a04; }
+    .swatch-error   { background: #fee2e2; border-color: #ef4444; }
+    .swatch-missing { background: #f1f5f9; border-color: #94a3b8; border-style: dashed; }
+    .swatch-screen  { background: #dbeafe; border-color: #3b82f6; }
+    .legend-label { color: #334155; }
+
+    /* ── MISSING FEATURES TABLE ── */
+    .missing-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+    .missing-table th {
+      background: #f1f5f9;
+      color: #64748b;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .missing-table td {
+      padding: 0.625rem 0.75rem;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+      color: #334155;
+    }
+    .missing-table tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .badge-missing  { background: #f1f5f9; color: #64748b; border: 1px dashed #94a3b8; }
+    .badge-edge     { background: #fef9c3; color: #854d0e; }
+    .badge-proto    { background: #ede9fe; color: #5b21b6; }
+
+    /* ── DIAGRAM AREA ── */
+    .diagram-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow: auto;
+    }
+    .diagram-card h2 {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      margin-bottom: 1.25rem;
+    }
+    pre.mermaid { overflow: auto; }
+
+    /* ── FOOTNOTES ── */
+    .footnote {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 1rem;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav" aria-label="Flow navigation">
+  <span class="brand">Huma Flows</span>
+  <a href="flow-stablecoin-management.html" class="active" aria-current="page">Flow 1 — Management</a>
+  <a href="flow-stablecoin-remittance.html">Flow 2 — Remittance</a>
+</nav>
+
+<main class="page">
+
+  <header class="page-header">
+    <div class="breadcrumb">Feature Tracker &rsaquo; <span>Stablecoin Management</span></div>
+    <h1>Flow 1 — Stablecoin Management</h1>
+    <p>Dashboard and Wallet Hub: balance display, transaction history, quick actions, notifications, and history tabs. Covers all 6 sub-features from the feature tracker.</p>
+  </header>
+
+  <div class="layout">
+
+    <!-- ── SIDEBAR ─────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <div class="card">
+        <h2>Sub-features</h2>
+        <ul class="scope-list">
+          <li><span class="num">1</span>Display current stablecoin balances — KPI hero on Dashboard + portfolio rows on Wallet</li>
+          <li><span class="num">2</span>View recent transactions with status (completed, pending)</li>
+          <li><span class="num">3</span>Quick buttons for sending or purchasing stablecoins</li>
+          <li><span class="num">4</span>Simple visual summaries of activity and balances</li>
+          <li><span class="num">5</span>Alerts for transaction statuses — notification bell + inbox</li>
+          <li><span class="num">6</span>Access donation and remittance history in one place</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Legend</h2>
+        <div class="legend-list">
+          <div class="legend-item"><div class="legend-swatch swatch-happy"></div><span class="legend-label">Happy path — main user journey</span></div>
+          <div class="legend-item"><div class="legend-swatch swatch-screen"></div><span class="legend-label">Destination screen — exits to this page</span></div>
+          <div class="legend-item"><div class="legend-swatch swatch-edge"></div><span class="legend-label">Edge case — alternate or degenerate state</span></div>
+          <div class="legend-item"><div class="legend-swatch swatch-error"></div><span class="legend-label">Error or blocked state</span></div>
+          <div class="legend-item"><div class="legend-swatch swatch-missing"></div><span class="legend-label">Missing / stub — not yet implemented</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Entry Points</h2>
+        <ul class="scope-list">
+          <li><span class="num">→</span>Post-login redirect</li>
+          <li><span class="num">→</span>Direct URL to <code>dashboard-enhanced.html</code></li>
+          <li><span class="num">→</span>Direct URL to <code>wallet-enhanced.html</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Prototype Gaps</h2>
+        <table class="missing-table">
+          <thead>
+            <tr><th>Gap</th><th>Type</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Transaction detail view — <code>showTransactionDetail()</code> is a stub; row click does nothing</td>
+              <td><span class="badge badge-missing">Missing</span></td>
+            </tr>
+            <tr>
+              <td>Wallet scope filtering — <code>activeWalletScope</code> state exists but is not applied to the transaction list</td>
+              <td><span class="badge badge-edge">Edge</span></td>
+            </tr>
+            <tr>
+              <td><code>listing</code> notification type — no dedicated tab, surfaces under All tab only</td>
+              <td><span class="badge badge-edge">Edge</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </aside>
+
+    <!-- ── DIAGRAM ──────────────────────────────────────────── -->
+    <div class="diagram-card">
+      <h2>Complete User Flow</h2>
+
+      <pre class="mermaid">
+flowchart TD
+    classDef happy   fill:#d1fae5,stroke:#10b981,color:#065f46
+    classDef screen  fill:#dbeafe,stroke:#3b82f6,color:#1e3a8a
+    classDef edge    fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef error   fill:#fee2e2,stroke:#ef4444,color:#991b1b
+    classDef missing fill:#f1f5f9,stroke:#94a3b8,color:#64748b,stroke-dasharray:5 5
+
+    %% ── ENTRY ──────────────────────────────────────────────
+    Start(["Authenticated User"]):::happy --> LoadDash["Load dashboard-enhanced.html"]:::happy
+    LoadDash --> KycStatus{"KYC Status?"}
+
+    %% ── KYC ERROR PATH ─────────────────────────────────────
+    KycStatus -->|"Not Verified"| KycBanner["#kycAlert Banner shown"]:::error
+    KycBanner --> BannerChoice{"User Action"}
+    BannerChoice -->|"Dismiss"| BannerHidden["Banner hidden — stored in localStorage"]:::edge
+    BannerHidden --> DashView
+    BannerChoice -->|"Complete KYC"| KycVerify["kyc-verify-new.html"]:::screen
+    KycVerify --> KycOutcome{"KYC Outcome"}
+    KycOutcome -->|"Approved"| LoadDash
+    KycOutcome -->|"Needs Retry"| KycRetry["dashboard-kyc-retry.html"]:::error
+    KycRetry -->|"Re-submit docs"| KycVerify
+    KycOutcome -->|"Blocked"| KycBlocked["dashboard-kyc-blocked.html"]:::error
+    KycBlocked --> SupportEmail["Contact: support@unera.ca"]:::error
+
+    %% ── DASHBOARD MAIN VIEW ────────────────────────────────
+    KycStatus -->|"Verified"| DashView["Dashboard View"]:::happy
+    DashView --> ImpactCards["Impact Cards: balance · yield · donations · lives"]:::happy
+    DashView --> QuickActions["Quick Actions: Buy · Send · Exchange · Donate"]:::happy
+    DashView --> Activity["Recent Activity Table"]:::happy
+    DashView --> NotifBell["Notification Bell + Badge Count"]:::happy
+
+    %% ── QUICK ACTIONS — WALLET GATE ────────────────────────
+    QuickActions --> WalletQ{"Wallet Connected?"}
+    WalletQ -->|"No"| WalletModal["WalletPrompt Modal"]:::edge
+    WalletModal --> Provider{"Select Provider"}
+    Provider -->|"MetaMask / WalletConnect / Coinbase / Brave / Ledger"| ConnectR{"Connect Result"}
+    ConnectR -->|"Wrong Network"| WrongNet["Error: Switch Network Required"]:::error
+    WrongNet --> Provider
+    ConnectR -->|"Not Installed"| NotInstalled["Install Extension Prompt"]:::error
+    ConnectR -->|"User Rejected"| Rejected["Rejected State — Retry Option"]:::error
+    Rejected --> Provider
+    ConnectR -->|"Success"| KycQ
+    WalletQ -->|"Yes"| KycQ{"KYC Verified?"}
+    KycQ -->|"No"| KycModal["Confirmation Modal → redirect to KYC"]:::edge
+    KycModal --> KycVerify
+    KycQ -->|"Yes"| ActionTarget{"Action Selected"}
+    ActionTarget -->|"Buy Stablecoins"| BuyPage["add-money.html?intent=buy"]:::screen
+    ActionTarget -->|"Send"| SendPage["send-enhanced.html"]:::screen
+    ActionTarget -->|"Exchange"| ExchPage["exchange.html"]:::screen
+    ActionTarget -->|"Donate"| ExpPage["explore-centres.html"]:::screen
+
+    %% ── RECENT ACTIVITY ────────────────────────────────────
+    Activity --> ActivityA{"Row Interaction"}
+    ActivityA -->|"View All →"| WalletPage["wallet-enhanced.html"]:::happy
+    ActivityA -->|"Click Row"| TxStub["⚠ Tx Detail — stub, not implemented"]:::missing
+
+    %% ── NOTIFICATIONS ──────────────────────────────────────
+    NotifBell --> NotifPanel["Notification Panel: unread badge count"]:::happy
+    NotifPanel --> NotifType{"Notification Type"}
+    NotifType -->|"transaction / donation / remittance"| NotifCta["CTA → relevant page"]:::happy
+    NotifType -->|"verification"| KycVerify
+    NotifType -->|"system / security"| SupportEmail
+    NotifType -->|"listing"| ListingNote["⚠ All-tab only — no dedicated listing tab"]:::edge
+    NotifPanel --> MarkRead["Mark All Read / Clear All"]:::happy
+    NotifPanel --> AllNotif["View All → notifications.html"]:::screen
+
+    %% ── WALLET PAGE ────────────────────────────────────────
+    WalletPage --> Balances["Portfolio: hUSD · USDC · USDT"]:::happy
+    WalletPage --> TxHistory["Transaction History Section"]:::happy
+
+    Balances --> Privacy{"Privacy Toggle"}
+    Privacy -->|"ON"| Masked["⚠ Balances masked *** across KPI + rows"]:::edge
+    Privacy -->|"OFF"| Visible["Balances visible normally"]:::happy
+
+    Balances --> ScopeBadge["⚠ Wallet Scope: badge shown — list filtering not wired"]:::missing
+
+    Balances --> AssetAction{"Per-Asset Quick Action"}
+    AssetAction -->|"Issue / Get"| BuyPage
+    AssetAction -->|"Redeem"| MintRedeem["Stablecoin/redeem-unera-cad.html"]:::edge
+    AssetAction -->|"Send"| SendPage
+    AssetAction -->|"Exchange"| ExchPage
+    AssetAction -->|"Governance"| GovPage["governance.html"]:::screen
+
+    %% ── MINT PORTAL (out of wallet platform) ─────────────
+    MintPortal["Stablecoin/ mint & redeem portal"]:::edge
+    MintRedeem --> MintPortal
+
+    TxHistory --> Search{"Search or Filter"}
+    Search -->|"Results Found"| TxList["Paginated List: completed · pending badges"]:::happy
+    Search -->|"No Results"| EmptyState["⚠ Empty State — clear filters prompt"]:::edge
+    TxList --> More{"Load More / Scroll Sentinel"}
+    More -->|"More Rows"| TxList
+    More -->|"All Loaded"| AllLoaded["All Transactions Shown"]:::happy
+    TxHistory --> Tabs["History Tabs: All · Donations · Remittance"]:::happy
+      </pre>
+
+      <p class="footnote">Source: <code>NewUnera/dashboard-enhanced.html</code> · <code>NewUnera/wallet-enhanced.html</code> · <code>NewUnera/notifications.html</code> &nbsp;|&nbsp; Buy Stablecoins → <code>add-money.html?intent=buy</code> &nbsp;|&nbsp; Unera CAD mint/redeem under <code>Stablecoin/</code> portal (separate subgraph) &nbsp;|&nbsp; Prototype state: May 2026</p>
+    </div>
+
+  </div>
+
+</main>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    flowchart: { curve: 'basis', htmlLabels: true, padding: 20 },
+    themeVariables: {
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+      fontSize: '13px',
+      primaryColor: '#d1fae5',
+      primaryTextColor: '#065f46',
+      primaryBorderColor: '#10b981',
+      lineColor: '#94a3b8',
+      background: '#ffffff',
+      nodeBorder: '#e2e8f0',
+      clusterBkg: '#f8fafc',
+      titleColor: '#0f172a',
+      edgeLabelBackground: '#f8fafc'
+    }
+  });
+</script>
+
+</body>
+</html>

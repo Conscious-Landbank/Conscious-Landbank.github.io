@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify sign-in — UNERA Admin</title>
+    <script src="../../OldUnera/code-input-handler.js" defer></script>
+    <style>
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-LightItalic.otf') format('opentype'); font-weight:300; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-RegularItalic.otf') format('opentype'); font-weight:400; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-MediumItalic.otf') format('opentype'); font-weight:500; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Semibold.otf') format('opentype'); font-weight:600; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-SemiboldItalic.otf') format('opentype'); font-weight:600; font-style:italic; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-Bold.otf') format('opentype'); font-weight:700; font-style:normal; font-display:swap; }
+        @font-face { font-family:'TestFoundersGrotesk'; src:url('../../Brand Guide/TestFoundersGrotesk-BoldItalic.otf') format('opentype'); font-weight:700; font-style:italic; font-display:swap; }
+    </style>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --brand-deep-blue: #173d47;
+            --brand-cloud-blue: #ebfcf5;
+            --brand-black: #000000;
+            --brand-white: #ffffff;
+            --brand-red: #ab5770;
+            --brand-purple: #6a5770;
+            --neutral-300: #d8ecee;
+            --neutral-400: #b8d1d6;
+            --neutral-600: #3d6b78;
+            --text-primary: #173d47;
+            --text-secondary: #3d6b78;
+            --border-subtle: rgba(23, 61, 71, 0.13);
+            --error: var(--brand-red);
+            --error-bg: rgba(171, 87, 112, 0.10);
+            --shadow-card: 0 2px 12px rgba(23, 61, 71, 0.07);
+            --font-display: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --font-body: 'TestFoundersGrotesk', 'Oakes Grotesk', sans-serif;
+            --warning: #b8a030;
+            --brand-yellow: #ffffab;
+            --gradient-primary: var(--brand-deep-blue);
+            --op-nav: var(--brand-black);
+            --op-accent: var(--brand-purple);
+            --surface-operator: color-mix(in srgb, var(--brand-purple) 10%, var(--brand-white));
+            --op-icon-well: color-mix(in srgb, var(--brand-purple) 16%, var(--brand-white));
+            --surface-error-soft: color-mix(in srgb, var(--brand-red) 10%, var(--brand-white));
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--surface-operator);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0);
+            white-space: nowrap; border: 0;
+        }
+        .skip-link { position: absolute; top: -40px; left: 0; background: var(--brand-deep-blue); color: var(--brand-white); padding: 8px 16px; text-decoration: none; z-index: 10000; font-weight: 600; font-size: 0.875rem; }
+        .skip-link:focus { top: 0; outline: 3px solid var(--brand-cloud-blue); outline-offset: 0; }
+        .auth-header-bar { background: var(--op-nav); height: 64px; display: flex; align-items: center; padding: 0 2rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .nav-brand { display: flex; align-items: center; gap: 0.625rem; text-decoration: none; }
+        .nav-brand:focus-visible { outline: 3px solid var(--brand-cloud-blue); outline-offset: 4px; border-radius: 4px; }
+        .nav-logo-img {
+            height: 24px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+        .op-pill { background: var(--brand-cloud-blue); color: var(--brand-deep-blue); font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; padding: 0.125rem 0.5rem; border-radius: 980px; text-transform: uppercase; }
+        .auth-body { min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.5rem 3rem; }
+        .auth-flow-stack {
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .page-heading-auth {
+            font-family: var(--font-display);
+            font-size: clamp(1.35rem, 4vw, 1.625rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.25rem;
+        }
+        .login-card {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            padding: 2.75rem 2.5rem;
+            max-width: 440px;
+            width: 100%;
+            margin: 0 auto;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 8px 32px rgba(23, 61, 71, 0.09), 0 2px 8px rgba(23, 61, 71, 0.05);
+        }
+        .auth-header { text-align: center; margin-bottom: 1.5rem; }
+        .auth-icon-badge { width: 64px; height: 64px; border-radius: 1.25rem; background: var(--brand-deep-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; color: var(--brand-white); }
+        .auth-title { font-family: var(--font-display); font-size: 1.625rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .auth-subtitle { font-size: 0.938rem; color: var(--text-secondary); line-height: 1.55; }
+        .otp-error {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--error);
+            margin: 0 0 0.75rem;
+            min-height: 1.25em;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            background: var(--surface-error-soft);
+            border: 1px solid color-mix(in srgb, var(--brand-red) 22%, transparent);
+        }
+        .otp-error[hidden] {
+            display: none !important;
+        }
+        fieldset.otp-fieldset { border: 0; margin: 0; padding: 0; min-inline-size: unset; }
+        .fieldset-legend {
+            position: absolute;
+            width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0);
+            white-space: nowrap; border: 0;
+        }
+        .code-input-group { display: flex; gap: 0.5rem; justify-content: center; margin: 1.5rem 0 1.75rem; flex-wrap: wrap; }
+        .code-digit {
+            width: 52px;
+            height: 60px;
+            min-width: 44px;
+            min-height: 48px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--brand-white);
+            outline: none;
+            caret-color: transparent;
+        }
+        .code-digit:focus { border-color: var(--brand-deep-blue); box-shadow: 0 0 0 3px rgba(23, 61, 71, 0.1); }
+        .code-digit:focus-visible {
+            outline: 2px solid var(--brand-deep-blue);
+            outline-offset: 2px;
+        }
+        .code-digit.filled { background: color-mix(in srgb, var(--brand-deep-blue) 5%, white); }
+        .code-digit.error {
+            border-color: var(--error);
+            background: color-mix(in srgb, var(--brand-red) 6%, var(--brand-white));
+        }
+        .btn-primary { width: 100%; min-height: 46px; padding: 0.75rem 1.5rem; background: var(--op-accent); color: var(--brand-white); border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; font-family: var(--font-body); cursor: pointer; }
+        .btn-primary:hover { filter: brightness(0.92); }
+        .btn-primary:focus-visible { outline: 2px solid var(--op-accent); outline-offset: 3px; }
+        .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+        .btn-secondary { width: 100%; min-height: 46px; margin-top: 0.75rem; background: transparent; color: var(--text-secondary); border: 2px solid var(--border-subtle); border-radius: 0.75rem; font-weight: 600; font-family: var(--font-body); cursor: pointer; }
+        .btn-secondary:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .help-section { margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
+        .text-link { color: var(--brand-deep-blue); font-weight: 600; text-decoration: none; border-radius: 4px; }
+        .text-link:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 10010; padding: 1rem; }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--brand-white);
+            border-radius: 1.25rem;
+            max-width: 440px;
+            width: min(440px, calc(100vw - 2rem));
+            padding: 1.5rem 1.5rem 1.25rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 24px 64px rgba(23, 61, 71, 0.15);
+        }
+        .modal h2 { font-size: 1.125rem; margin-bottom: 0.5rem; font-family: var(--font-display); color: var(--text-primary); }
+        .modal-intro { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5; }
+        .method-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.25rem; }
+        .btn-method {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            width: 100%;
+            min-height: 48px;
+            padding: 0.75rem 1rem;
+            background: var(--brand-white);
+            color: var(--text-primary);
+            border: 2px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.25;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+        .btn-method:hover {
+            border-color: var(--op-accent);
+            background: color-mix(in srgb, var(--brand-purple) 6%, var(--brand-white));
+        }
+        .btn-method:focus-visible { outline: 2px solid var(--brand-deep-blue); outline-offset: 2px; }
+        .method-row-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.625rem;
+            background: var(--op-icon-well);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-deep-blue);
+        }
+        .method-row-icon svg { display: block; }
+        .method-row-text { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 0.125rem; text-align: left; }
+        .method-row-title { font-weight: 600; color: var(--text-primary); line-height: 1.25; }
+        .method-row-hint { font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary); line-height: 1.35; }
+        .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.75rem; }
+        .modal-actions .btn-secondary { width: auto; min-width: 6rem; margin-top: 0; }
+        @media (max-width: 768px) {
+            .login-card { padding: 1.75rem 1.5rem 2.25rem; }
+            .code-digit { font-size: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .login-card { padding: 2rem 1.5rem; }
+            .code-digit { width: 44px; height: 52px; min-height: 48px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="auth-header-bar" role="banner">
+        <a href="../index.html" class="nav-brand" aria-label="UNERA home">
+            <img src="../NewLogo/Unera White Text Nav.svg" alt="UNERA" class="nav-logo-img" height="24">
+            <span class="op-pill" aria-label="Admin portal">ADMIN</span>
+        </a>
+    </header>
+    <main id="main-content" class="auth-body" tabindex="-1">
+        <p id="formAnnouncement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+        <div class="auth-flow-stack">
+            <h1 class="page-heading-auth">Verify sign-in</h1>
+            <div class="login-card" role="region" aria-label="Verify sign-in">
+                <div class="auth-header">
+                    <div class="auth-icon-badge" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                            <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm296.5-223.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/>
+                        </svg>
+                    </div>
+                    <h2 class="auth-title">Verify it's you</h2>
+                    <p class="auth-subtitle" id="verifyDesc">Enter the 6-digit code from your authenticator app.</p>
+                </div>
+                <p id="otpError" class="otp-error" role="alert" hidden></p>
+                <fieldset class="otp-fieldset" aria-describedby="verifyDesc">
+                    <legend><span class="fieldset-legend">One-time authenticator code</span></legend>
+                    <div class="code-input-group">
+                        <input type="text" maxlength="1" class="code-digit" id="digit1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" aria-required="true">
+                        <input type="text" maxlength="1" class="code-digit" id="digit2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-required="true">
+                        <input type="text" maxlength="1" class="code-digit" id="digit3" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-required="true">
+                        <input type="text" maxlength="1" class="code-digit" id="digit4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-required="true">
+                        <input type="text" maxlength="1" class="code-digit" id="digit5" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-required="true">
+                        <input type="text" maxlength="1" class="code-digit" id="digit6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-required="true">
+                    </div>
+                </fieldset>
+                <button type="button" class="btn-primary" id="verifyBtn">Verify and continue</button>
+                <button type="button" class="btn-secondary" id="altMethodBtn">Try another method</button>
+                <div class="help-section">
+                    <a href="#" class="text-link" id="backLogin">Back to sign in</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="modal-overlay" id="altModal" role="dialog" aria-modal="true" aria-labelledby="altTitle" aria-describedby="altDesc">
+        <div class="modal">
+            <h2 id="altTitle">Choose how to verify</h2>
+            <p id="altDesc" class="modal-intro">This demo switches where you pretend to get the code. Production would send an email or SMS, or only show authenticator.</p>
+            <div class="method-list" role="group" aria-labelledby="altTitle">
+                <button type="button" class="btn-method" id="methodAuthenticator" data-verify-method="authenticator">
+                    <span class="method-row-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h400q33 0 56.5 23.5T760-840v720q0 33-23.5 56.5T680-40H280Zm0-200v120h400v-120H280Zm200 100q17 0 28.5-11.5T520-180q0-17-11.5-28.5T480-220q-17 0-28.5 11.5T440-180q0 17 11.5 28.5T480-140ZM280-320h400v-400H280v400Zm0-480h400v-40H280v40Z"/></svg>
+                    </span>
+                    <span class="method-row-text">
+                        <span class="method-row-title">Authenticator app</span>
+                        <span class="method-row-hint">Time-based code from an app on this device</span>
+                    </span>
+                </button>
+                <button type="button" class="btn-method" id="methodEmail" data-verify-method="email">
+                    <span class="method-row-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280 320-200v-80L480-520 160-720v80l320 200Zm0-80Z"/></svg>
+                    </span>
+                    <span class="method-row-text">
+                        <span class="method-row-title">Email</span>
+                        <span class="method-row-hint">Code sent to your registered email (demo)</span>
+                    </span>
+                </button>
+                <button type="button" class="btn-method" id="methodBackup" data-verify-method="backup">
+                    <span class="method-row-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M400-200v80h400v-80H400Zm0-240v80h400v-80H400Zm0-240v80h400v-80H400ZM160-360q-33 0-56.5-23.5T80-440q0-33 23.5-56.5T160-520q33 0 56.5 23.5T280-440q0 33-23.5 56.5T160-360Zm0 240q-33 0-56.5-23.5T80-200q0-33 23.5-56.5T160-280q33 0 56.5 23.5T280-200q0 33-23.5 56.5T160-120Zm0-480q0-33 23.5-56.5T160-760q33 0 56.5 23.5T280-680q0 33-23.5 56.5T160-600Z"/></svg>
+                    </span>
+                    <span class="method-row-text">
+                        <span class="method-row-title">Backup code</span>
+                        <span class="method-row-hint">One of the single-use codes you saved at setup</span>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="modalClose">Close</button>
+            </div>
+        </div>
+    </div>
+    <script src="operator-session.js"></script>
+    <script>
+        UneraAdminAuth.guardMfaVerifyPage();
+
+        var VERIFY_COPY = {
+            authenticator: 'Enter the 6-digit code from your authenticator app.',
+            email: 'Enter the 6-digit code sent to your email.',
+            backup: 'Enter a 6-digit code from your saved backup codes (demo format).'
+        };
+
+        var lastModalFocus = null;
+        var onModalKeydown = null;
+
+        function readOtp() {
+            var digits = document.querySelectorAll('.code-digit');
+            var s = '';
+            for (var i = 0; i < digits.length; i++) s += (digits[i].value || '');
+            return s;
+        }
+
+        function clearDigitErrors() {
+            document.querySelectorAll('.code-digit').forEach(function (el) {
+                el.classList.remove('error');
+            });
+        }
+
+        function markIncompleteDigits() {
+            document.querySelectorAll('.code-digit').forEach(function (el) {
+                if (!(el.value || '').length) el.classList.add('error');
+                else el.classList.remove('error');
+            });
+        }
+
+        function clearOtpError() {
+            var err = document.getElementById('otpError');
+            err.hidden = true;
+            err.textContent = '';
+            clearDigitErrors();
+        }
+
+        function showOtpError(message) {
+            var err = document.getElementById('otpError');
+            err.textContent = message;
+            err.hidden = false;
+        }
+
+        function updateVerifyButtonState() {
+            var btn = document.getElementById('verifyBtn');
+            btn.disabled = readOtp().length === 0;
+        }
+
+        function setVerifyMethod(mode) {
+            var desc = document.getElementById('verifyDesc');
+            var key = VERIFY_COPY[mode] ? mode : 'authenticator';
+            desc.textContent = VERIFY_COPY[key];
+            var ann = document.getElementById('formAnnouncement');
+            ann.textContent = 'Verification method updated. ' + VERIFY_COPY[key];
+        }
+
+        function getModalFocusables() {
+            var modal = document.querySelector('#altModal .modal');
+            if (!modal) return [];
+            var sel = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+            return Array.prototype.filter.call(modal.querySelectorAll(sel), function (el) {
+                return el.offsetWidth > 0 || el.offsetHeight > 0 || el === document.activeElement;
+            });
+        }
+
+        function closeAltModal() {
+            var overlay = document.getElementById('altModal');
+            overlay.classList.remove('active');
+            if (onModalKeydown) {
+                document.removeEventListener('keydown', onModalKeydown, true);
+                onModalKeydown = null;
+            }
+            var restore = lastModalFocus;
+            lastModalFocus = null;
+            if (restore && typeof restore.focus === 'function') {
+                restore.focus();
+            }
+        }
+
+        function openAltModal() {
+            var overlay = document.getElementById('altModal');
+            lastModalFocus = document.activeElement;
+            overlay.classList.add('active');
+            var focusables = getModalFocusables();
+            if (focusables.length) focusables[0].focus();
+
+            onModalKeydown = function (e) {
+                if (!document.getElementById('altModal').classList.contains('active')) return;
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeAltModal();
+                    return;
+                }
+                if (e.key !== 'Tab') return;
+                var list = getModalFocusables();
+                if (list.length === 0) return;
+                var first = list[0];
+                var last = list[list.length - 1];
+                if (e.shiftKey) {
+                    if (document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    }
+                } else {
+                    if (document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            };
+            document.addEventListener('keydown', onModalKeydown, true);
+        }
+
+        function tryComplete() {
+            var code = readOtp();
+            if (code.length !== 6) {
+                showOtpError('Enter all 6 digits.');
+                markIncompleteDigits();
+                return;
+            }
+            clearOtpError();
+            if (code === '123456' || /^\d{6}$/.test(code)) {
+                UneraAdminAuth.completeOperatorSession();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof initCodeInputs === 'function') initCodeInputs('.code-digit');
+
+            document.getElementById('verifyBtn').addEventListener('click', tryComplete);
+
+            document.querySelectorAll('.code-digit').forEach(function (el) {
+                el.addEventListener('input', function () {
+                    clearOtpError();
+                    updateVerifyButtonState();
+                    if (readOtp().length === 6) tryComplete();
+                });
+            });
+
+            updateVerifyButtonState();
+
+            document.getElementById('backLogin').addEventListener('click', function (e) {
+                e.preventDefault();
+                localStorage.removeItem('operatorMfaPending');
+                window.location.href = 'login.html';
+            });
+
+            document.getElementById('altMethodBtn').addEventListener('click', function () {
+                openAltModal();
+            });
+
+            document.getElementById('modalClose').addEventListener('click', closeAltModal);
+
+            document.getElementById('altModal').addEventListener('click', function (e) {
+                if (e.target === document.getElementById('altModal')) closeAltModal();
+            });
+
+            document.querySelectorAll('[data-verify-method]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var mode = btn.getAttribute('data-verify-method');
+                    setVerifyMethod(mode);
+                    closeAltModal();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

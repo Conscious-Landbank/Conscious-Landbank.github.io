@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="border:1px solid transparent; border-radius:12px; background:#fff; overflow:hidden; display:flex; flex-direction:column; min-width:0;">
+  <div style="overflow:auto; max-height:{{ maxH }};">
+    <table style="width:100%; border-collapse:separate; border-spacing:0; min-width:{{ minW }}; font-size:13px;">
+      <thead><tr>
+        <sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
+          <th aria-sort="{{ c.ariaSort }}" style="position:sticky; top:0; z-index:1; background:#fff; text-align:{{ c.align }}; padding:10px 12px; font-size:12px; color:#5b6b70; font-weight:500; border-bottom:1px solid rgba(23,61,71,0.10); white-space:nowrap; width:{{ c.w }};"><sc-if value="{{ c.canSort }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onSort }}" title="Sort by {{ c.label }}" style="font:inherit; color:{{ c.color }}; background:none; border:none; padding:0; margin:0; cursor:pointer; display:inline-flex; align-items:center; gap:4px; flex-direction:{{ c.dir }};" style-hover="color:#173d47">{{ c.label }}<svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:{{ c.arrowOp }}; transform:rotate({{ c.rot }}); transition:transform 150ms, opacity 150ms;"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button></sc-if><sc-if value="{{ c.noSort }}" hint-placeholder-val="{{ true }}">{{ c.label }}</sc-if></th>
+        </sc-for>
+      </tr></thead>
+      <tbody>
+        <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+          <tr onClick="{{ r.onClick }}" tabIndex="{{ r.tab }}" style="cursor:{{ r.cursor }}; background:{{ r.bg }}; outline:none; animation:uRowIn 260ms cubic-bezier(0.28,0.11,0.32,1) both; animation-delay:{{ r.delay }}; transition:background-color 120ms;" style-hover="background:#f3f6f7" style-focus="box-shadow:inset 0 0 0 2px #173d47">
+            <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="5">
+              <td style="padding:9px 12px; border-bottom:1px solid rgba(23,61,71,0.08); text-align:{{ c.align }}; vertical-align:{{ c.va }}; white-space:{{ c.ws }}; max-width:{{ c.maxW }}; min-width:{{ c.minW }}; overflow:hidden; text-overflow:ellipsis;">
+                <sc-if value="{{ c.isText }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-weight:{{ c.weight }}; color:{{ c.color }}; overflow:hidden; text-overflow:ellipsis;">{{ c.text }}</div>
+                  <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#5b6b70; margin-top:1px; overflow:hidden; text-overflow:ellipsis;">{{ c.sub }}</div></sc-if>
+                </sc-if>
+                <sc-if value="{{ c.isMono }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:inline-flex; align-items:center; gap:5px; max-width:100%;">
+                    <span style="font-family:ui-monospace, 'SF Mono', Menlo, monospace; font-size:12px; color:#1d1d1f; overflow:hidden; text-overflow:ellipsis;">{{ c.text }}</span>
+                    <button onClick="{{ c.copy }}" aria-label="Copy" title="Copy" data-r="tap" style="width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; border:none; background:transparent; color:#8a979b; border-radius:5px; cursor:pointer; padding:0; flex-shrink:0;" style-hover="background:#e9eef0; color:#173d47"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+                  </span>
+                  <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#5b6b70; margin-top:1px;">{{ c.sub }}</div></sc-if>
+                </sc-if>
+                <sc-if value="{{ c.isStatus }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:inline-flex; align-items:center; gap:6px; padding:0; font-size:13px; font-weight:500; color:{{ c.fg }}; white-space:nowrap; line-height:18px;"><span style="width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0;"></span>{{ c.text }}</span>
+                  <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#5b6b70; margin-top:2px;">{{ c.sub }}</div></sc-if>
+                </sc-if>
+                <sc-if value="{{ c.isNum }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-variant-numeric:tabular-nums; font-weight:500; color:{{ c.color }};">{{ c.text }}</div>
+                  <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#5b6b70; font-variant-numeric:tabular-nums; margin-top:1px;">{{ c.sub }}</div></sc-if>
+                </sc-if>
+                <sc-if value="{{ c.isAction }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ c.onClick }}" disabled="{{ c.disabled }}" title="{{ c.title }}" style="font:inherit; font-size:12px; font-weight:600; padding:5px 10px; border-radius:6px; border:1px solid {{ c.bd }}; background:#fff; color:{{ c.fg }}; cursor:{{ c.cursor }}; opacity:{{ c.opacity }}; white-space:nowrap;" style-hover="background:#f3f6f7">{{ c.text }}</button>
+                </sc-if>
+                <sc-if value="{{ c.isLink }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ c.onClick }}" style="font:inherit; font-size:13px; font-weight:500; padding:0; border:none; background:none; color:#173d47; cursor:pointer; text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(23,61,71,0.3);" style-hover="text-decoration-color:#173d47">{{ c.text }}</button>
+                  <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#5b6b70; margin-top:1px;">{{ c.sub }}</div></sc-if>
+                </sc-if>
+                <sc-if value="{{ c.isTags }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                    <sc-for list="{{ c.items }}" as="t" hint-placeholder-count="2"><span style="font-size:12px; font-weight:500; padding:1px 7px; border-radius:6px; background:#eef2f3; color:#2e4a53; white-space:nowrap;">{{ t }}</span></sc-for>
+                  </div>
+                </sc-if>
+              </td>
+            </sc-for>
+          </tr>
+        </sc-for>
+        </sc-if>
+        <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ skeleton }}" as="k" hint-placeholder-count="6">
+            <tr><sc-for list="{{ cols }}" as="c" hint-placeholder-count="5"><td style="padding:12px;"><div style="height:12px; width:{{ k.w }}; border-radius:4px; background:linear-gradient(90deg,#eef1f2 25%,#f7f9fa 50%,#eef1f2 75%); background-size:200% 100%; animation:uShimmer 1.4s linear infinite;"></div></td></sc-for></tr>
+          </sc-for>
+        </sc-if>
+      </tbody>
+    </table>
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:44px 20px; text-align:center;">
+        <div style="width:36px; height:36px; border-radius:50%; background:#eef2f3; color:#5b6b70; display:flex; align-items:center; justify-content:center; margin:0 auto 10px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></div>
+        <div style="font-size:14px; font-weight:600; color:#1d1d1f;">{{ emptyTitle }}</div>
+        <div style="font-size:13px; color:#5b6b70; margin-top:4px; max-width:360px; margin-left:auto; margin-right:auto; text-wrap:pretty;">{{ emptyBody }}</div>
+        <sc-if value="{{ hasEmptyAction }}" hint-placeholder-val="{{ false }}"><button onClick="{{ emptyAction.onClick }}" style="margin-top:14px; font:inherit; font-size:13px; font-weight:600; height:34px; padding:0 14px; border-radius:8px; border:1px solid #173d47; background:#fff; color:#173d47; cursor:pointer;" style-hover="background:#f3f6f7">{{ emptyAction.label }}</button></sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:36px 20px; text-align:center;">
+        <div style="width:36px; height:36px; border-radius:50%; background:#f6e7ec; color:#9c4a62; display:flex; align-items:center; justify-content:center; margin:0 auto 10px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg></div>
+        <div style="font-size:14px; font-weight:600; color:#1d1d1f;">We couldn't load this list</div>
+        <div style="font-size:13px; color:#5b6b70; margin-top:4px; max-width:400px; margin-left:auto; margin-right:auto; text-wrap:pretty;">The server didn't respond within 10 seconds. Your filters and page are kept, and nothing was changed.</div>
+        <div style="font-size:12px; color:#8a979b; margin-top:8px;">Reference <span style="font-family:ui-monospace, Menlo, monospace;">{{ errId }}</span></div>
+        <button onClick="{{ onRetry }}" style="margin-top:12px; font:inherit; font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:1px solid #173d47; background:#fff; color:#173d47; cursor:pointer;" style-hover="background:#f3f6f7">Try again</button>
+      </div>
+    </sc-if>
+  </div>
+  <sc-if value="{{ hasFooter }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Pagination" style="display:flex; align-items:center; justify-content:space-between; gap:8px 16px; flex-wrap:wrap; padding:10px 12px; border-top:1px solid rgba(23,61,71,0.08); background:#fff; font-size:13px; color:#5b6b70;">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span style="font-variant-numeric:tabular-nums; white-space:nowrap;" aria-live="polite">Showing <strong style="color:#1d1d1f; font-weight:600;">{{ pg.from }}–{{ pg.to }}</strong> of <strong style="color:#1d1d1f; font-weight:600;">{{ pg.total }}</strong></span>
+        <label style="display:inline-flex; align-items:center; gap:8px; white-space:nowrap;">Rows per page
+          <span style="position:relative; display:inline-flex;"><select onChange="{{ pg.onSize }}" value="{{ pg.size }}" aria-label="Rows per page" style="font:inherit; font-size:13px; height:32px; padding:0 34px 0 12px; border-radius:8px; border:1px solid rgba(23,61,71,0.24); background-color:#fff; color:#1d1d1f; font-variant-numeric:tabular-nums;"><sc-for list="{{ pg.sizes }}" as="o" hint-placeholder-count="4"><option value="{{ o }}">{{ o }}</option></sc-for></select><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5b6b70" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; right:12px; top:50%; margin-top:-6px; pointer-events:none;"><path d="m6 9 6 6 6-6"></path></svg></span>
+        </label>
+      </div>
+      <div style="display:flex; align-items:center; gap:4px;">
+        <button data-r="tap" onClick="{{ pg.first }}" disabled="{{ pg.atStart }}" aria-label="First page" title="First page" style="width:32px; height:32px; border-radius:8px; border:none; background:transparent; color:#1d1d1f; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; opacity:{{ pg.startOpacity }};" style-hover="background:#eef2f3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5M18 17l-5-5 5-5"></path></svg></button>
+        <button data-r="tap" onClick="{{ pg.prev }}" disabled="{{ pg.atStart }}" aria-label="Previous page" title="Previous page" style="width:32px; height:32px; border-radius:8px; border:none; background:transparent; color:#1d1d1f; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; opacity:{{ pg.startOpacity }};" style-hover="background:#eef2f3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+        <span data-r="pgnums" style="display:inline-flex; align-items:center; gap:2px;">
+          <sc-for list="{{ pg.items }}" as="it" hint-placeholder-count="3">
+            <sc-if value="{{ it.gap }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width:24px; text-align:center; color:#8a979b;">…</span></sc-if>
+            <sc-if value="{{ it.num }}" hint-placeholder-val="{{ true }}"><button data-r="tap" onClick="{{ it.go }}" aria-label="Page {{ it.n }}" aria-current="{{ it.current }}" style="min-width:32px; height:32px; padding:0 8px; border-radius:8px; border:none; background:{{ it.bg }}; color:{{ it.fg }}; font:inherit; font-size:13px; font-weight:{{ it.weight }}; font-variant-numeric:tabular-nums; cursor:pointer;" style-hover="background:{{ it.hover }}">{{ it.n }}</button></sc-if>
+          </sc-for>
+        </span>
+        <span data-r="pgcompact" style="padding:0 6px; font-variant-numeric:tabular-nums; white-space:nowrap; color:#1d1d1f;">Page {{ pg.page }} of {{ pg.pages }}</span>
+        <button data-r="tap" onClick="{{ pg.next }}" disabled="{{ pg.atEnd }}" aria-label="Next page" title="Next page" style="width:32px; height:32px; border-radius:8px; border:none; background:transparent; color:#1d1d1f; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; opacity:{{ pg.endOpacity }};" style-hover="background:#eef2f3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button data-r="tap" onClick="{{ pg.last }}" disabled="{{ pg.atEnd }}" aria-label="Last page" title="Last page" style="width:32px; height:32px; border-radius:8px; border:none; background:transparent; color:#1d1d1f; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; opacity:{{ pg.endOpacity }};" style-hover="background:#eef2f3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 17 5-5-5-5M6 17l5-5-5-5"></path></svg></button>
+      </div>
+    </nav>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:420},&quot;cols&quot;:{&quot;editor&quot;:null,&quot;default&quot;:[],&quot;tsType&quot;:&quot;{label:string,align?:string,w?:string}[]&quot;},&quot;rows&quot;:{&quot;editor&quot;:null,&quot;default&quot;:[],&quot;tsType&quot;:&quot;{key:string,cells:object[],onClick?:Function,selected?:boolean}[]&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;ready&quot;,&quot;options&quot;:[&quot;ready&quot;,&quot;loading&quot;,&quot;empty&quot;,&quot;error&quot;],&quot;tsType&quot;:&quot;'ready'|'loading'|'empty'|'error'&quot;},&quot;emptyTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Nothing matches these filters&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;emptyBody&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Try widening the date range or clearing a filter.&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onRetry&quot;:{&quot;editor&quot;:null,&quot;default&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;},&quot;maxH&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;minW&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;720px&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;pageSize&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;10&quot;,&quot;options&quot;:[&quot;10&quot;,&quot;25&quot;,&quot;50&quot;,&quot;100&quot;],&quot;tsType&quot;:&quot;number&quot;},&quot;paginate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { page:1, size:null, sortIdx:null, sortDir:1 };
+  componentDidUpdate(prev) {
+    const a = prev.rows || [], b = this.props.rows || [];
+    if (a.length !== b.length || (a[0] && b[0] && a[0].key !== b[0].key)) { if (this.state.page !== 1) this.setState({ page:1 }); }
+  }
+  renderVals() {
+    const p = this.props;
+    const s = p.state || 'ready';
+    let all = p.rows || [];
+    const key = (c) => { if (!c) return ''; if (c.sortVal != null) return c.sortVal; const tx = String(c.text == null ? '' : c.text).trim(); const sb = String(c.sub || ''); const both = tx + ' ' + sb; if (/\b\d{1,2} [A-Z][a-z]{2} \d{4}\b/.test(both)) { const dm = /(\d{1,2}) ([A-Z][a-z]{2}) (\d{4})/.exec(both); const tm = /(\d{2}):(\d{2})/.exec(both); const v = Date.parse(dm[2] + ' ' + dm[1] + ' ' + dm[3] + ' ' + (tm ? tm[1] + ':' + tm[2] : '00:00') + ' UTC'); if (!isNaN(v)) return v; } const norm = tx.replace(/[−–]/g, '-'); const m = /^[+-]?\d[\d,]*(\.\d+)?/.exec(norm); if (m) return Number(m[0].replace(/,/g, '')); return tx.toLowerCase(); };
+    const si = this.state.sortIdx;
+    if (si != null) { const dir = this.state.sortDir; all = all.slice().sort((a, b) => { const x = key(a.cells && a.cells[si]), y = key(b.cells && b.cells[si]); if (x === y) return 0; if (typeof x === 'number' && typeof y === 'number') return (x - y) * dir; return String(x).localeCompare(String(y), undefined, { numeric:true }) * dir; }); }
+    // Product rule: every table paginates once it holds more rows than the smallest page size (10).
+    const sizes = [10, 25, 50, 100];
+    const size = this.state.size || Number(p.pageSize) || 10;
+    const total = all.length;
+    const pages = Math.max(1, Math.ceil(total / size));
+    const page = Math.min(this.state.page, pages);
+    const paginate = p.paginate !== false && total > sizes[0];
+    const slice = paginate ? all.slice((page - 1) * size, page * size) : all;
+    const rows = slice.map((r, i) => Object.assign({}, r, {
+      cursor: r.onClick ? 'pointer' : 'default',
+      tab: r.onClick ? 0 : -1,
+      bg: r.selected ? '#eef4f5' : (r.bg || 'transparent'),
+      cells: (r.cells || []).map(c => Object.assign({ ws:'nowrap', va:'middle', minW:'0' }, c)),
+      delay: Math.min(i, 12) * 22 + 'ms',
+    }));
+    const go = (n) => () => { this.setState({ page:Math.max(1, Math.min(pages, n)) }); };
+    const nums = [];
+    const win = new Set([1, pages, page - 1, page, page + 1].filter(n => n >= 1 && n <= pages));
+    if (page <= 3) [2, 3, 4].forEach(n => n <= pages && win.add(n));
+    if (page >= pages - 2) [pages - 3, pages - 2, pages - 1].forEach(n => n >= 1 && win.add(n));
+    const list = [...win].sort((x, y) => x - y);
+    list.forEach((n, i) => { if (i && n - list[i - 1] > 1) nums.push({ gap:true, num:false, key:'g' + n }); const cur = n === page; nums.push({ gap:false, num:true, n, go:go(n), current:cur ? 'page' : undefined, bg:cur ? '#173d47' : 'transparent', fg:cur ? '#fff' : '#1d1d1f', weight:cur ? 600 : 500, hover:cur ? '#173d47' : '#eef2f3' }); });
+    const sizeOpts = sizes.filter((x, i) => i === 0 || sizes[i - 1] < total).map(String);
+    if (!sizeOpts.includes(String(size))) sizeOpts.push(String(size));
+    return {
+      cols: (p.cols || []).map((c, i) => { const can = !!c.label && c.sortable !== false && (p.rows || []).length > 1; const on = si === i; return Object.assign({}, c, { canSort:can, noSort:!can, onSort:() => this.setState(s => ({ sortIdx:i, sortDir:s.sortIdx === i ? -s.sortDir : 1, page:1 })), ariaSort:on ? (this.state.sortDir === 1 ? 'ascending' : 'descending') : undefined, arrowOp:on ? 1 : 0.25, rot:on && this.state.sortDir === -1 ? '180deg' : '0deg', color:on ? '#173d47' : 'inherit', dir:c.align === 'right' ? 'row-reverse' : 'row' }); }), rows,
+      isReady: s === 'ready' && rows.length > 0,
+      isLoading: s === 'loading',
+      isEmpty: s === 'empty' || (s === 'ready' && total === 0),
+      isError: s === 'error',
+      skeleton: [{w:'70%'},{w:'45%'},{w:'60%'},{w:'38%'},{w:'66%'},{w:'52%'}],
+      emptyTitle: p.emptyTitle || 'Nothing matches these filters',
+      emptyBody: p.emptyBody || 'Try widening the date range or clearing a filter.',
+      hasEmptyAction: !!(p.emptyAction && p.emptyAction.onClick), emptyAction: p.emptyAction || { label:'', onClick(){} }, errId: 'corr_' + String(total * 7919 + 4421).slice(-6),
+      onRetry: p.onRetry || (() => {}),
+      maxH: p.maxH || 'none', minW: p.minW || '720px',
+      hasFooter: paginate && s === 'ready',
+      pg: { from:((page - 1) * size + 1).toLocaleString(), to:Math.min(total, page * size).toLocaleString(), total:total.toLocaleString(), page, pages, size:String(size), sizes:sizeOpts,
+        onSize:(e) => this.setState({ size:Number(e.target.value), page:1 }), first:go(1), prev:go(page - 1), next:go(page + 1), last:go(pages),
+        atStart:page === 1, atEnd:page === pages, startOpacity:page === 1 ? 0.35 : 1, endOpacity:page === pages ? 0.35 : 1, items:nums },
+    };
+  }
+}
+</script>
+</body>
+</html>
