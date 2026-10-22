@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>HC responsive audit</title>
+<style>body{font-family:ui-monospace,monospace;font-size:12px;padding:12px}iframe{border:1px solid #ccc;display:block;margin-bottom:8px}#log{white-space:pre-wrap}</style></head>
+<body><div id="log">running…</div><div id="stage"></div>
+<script>
+/* Kevin matrix (Slack 27 Aug): phones 360/375/390/393/402/414, tablet+desktop 768/834/1024/1280.
+   Checks per page/state: JS errors, horizontal overflow, tap targets under 44px. */
+const WIDTHS=(new URLSearchParams(location.search).get('w')||'360,375,390,393,402,414,768,834,1024,1280').split(',').map(Number);
+const logEl=document.getElementById('log');const out=[];
+function say(s){out.push(s);console.log('[AUDIT] '+s);logEl.textContent=out.join('\n');}
+function path(el){let p=el.tagName.toLowerCase();if(el.id)p+='#'+el.id;else if(el.classList.length)p+='.'+[...el.classList].slice(0,2).join('.');return p;}
+function vis(win,el){const cs=win.getComputedStyle(el);if(cs.display==='none'||cs.visibility==='hidden')return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0;}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function audit(f,w,scope){const d=f.contentDocument,win=f.contentWindow,de=d.documentElement;const sw=Math.max(de.scrollWidth,d.body.scrollWidth);const res={};
+ if(sw>w+2){const off=[];d.querySelectorAll('body *').forEach(el=>{const r=el.getBoundingClientRect();if(r.right>w+2&&r.width>8&&vis(win,el))off.push(path(el)+' r='+Math.round(r.right));});res.overflow='sw='+sw+' '+[...new Set(off)].slice(0,4).join(' | ');}
+ const root=scope?d.querySelector(scope):d.body;if(root){const small=[];root.querySelectorAll('button,a.btn,a.back-link,a.hc2-prog-link,a.hc2-src,a.hc2-net,.hc2-links a,[role="button"],[role="tab"]').forEach(el=>{if(!vis(win,el))return;if(el.closest('.flow-demo-bar,nav,.mobile-drawer,.demo-btns'))return;const r=el.getBoundingClientRect();if(r.height<43.5&&!el.classList.contains('fee-info-btn'))small.push(path(el)+' h='+Math.round(r.height));});if(small.length)res.targets=[...new Set(small)].slice(0,4).join(' | ');}
+ if(win.__errs&&win.__errs.length)res.errors=win.__errs.slice(0,2).join(' | ');
+ return res;}
+const click=(d,sel)=>{const e=d.querySelector(sel);if(e)e.click();return !!e;};
+const pill=(d,grp,v)=>{const b=[...d.querySelectorAll(grp+' .demo-btn')].find(b=>(b.dataset.cs||b.dataset.ustate||b.textContent.trim())===v||b.getAttribute('onclick')==="setDirState('"+v+"')");if(b)b.click();};
+const PAGES=[
+ ['explore-centres.html','dir',d=>{},'#main-content'],
+ ['explore-centres.html','dir-paused',d=>pill(d,'#dirStatePills','paused'),'#main-content'],
+ ['explore-centres.html','dir-loading',d=>pill(d,'#dirStatePills','loading'),'#main-content'],
+ ['explore-centres.html','dir-empty',d=>pill(d,'#dirStatePills','empty'),'#main-content'],
+ ['explore-centres.html','dir-unavailable',d=>pill(d,'#dirStatePills','unavailable'),'#main-content'],
+ ['explore-centres.html','dir-public-login',d=>{pill(d,'#userStatePills','public');click(d,'.hc-card .btn-primary');},'#main-content'],
+ ['centre-detail.html?hc=hc-circles','detail-circles',d=>{},'#main-content'],
+ ['centre-detail.html?hc=hc-circles','detail-circles-allprog',d=>click(d,'#progMoreBtn'),'#main-content'],
+ ['centre-detail.html?hc=hc-circles','detail-paused',d=>pill(d,'#centreStatePills','pause'),'#main-content'],
+ ['centre-detail.html?hc=hc-circles','detail-suspended',d=>pill(d,'#centreStatePills','suspended'),'#main-content'],
+ ['centre-detail.html?hc=hc-circles','detail-public-login',d=>{pill(d,'#userStatePills','public');click(d,'#donateCta');},'#main-content'],
+ ['centre-detail.html?hc=hc-bethlehem','detail-bethlehem',d=>{},'#main-content'],
+ ['centre-detail.html?hc=hc-surrey','detail-surrey',d=>{},'#main-content'],
+ ['donate.html?hc=hc-circles&step=2','donate-step2',d=>{},null],
+ ['dashboard-enhanced.html','dashboard',d=>{},null],
+ ['donations.html','donations',d=>{},null],
+ ['huma-points.html','hp-rewards',d=>{},'#main-content'],
+ ['huma-points.html','hp-about',d=>click(d,'#tabBtnAbout'),'#tabAbout']
+];
+async function run(){const stage=document.getElementById('stage');let fails=0,n=0;
+ for(const w of WIDTHS){for(const [pg,name,fn,scope] of PAGES){n++;
+  const f=document.createElement('iframe');f.width=w;f.height=1100;
+  f.src=pg+(pg.includes('?')?'&':'?')+'_a='+Date.now();
+  stage.innerHTML='';stage.appendChild(f);
+  const errs=[];const hook=setInterval(()=>{try{const w=f.contentWindow;if(w&&!w.__hooked){w.__hooked=true;w.__errs=errs;w.addEventListener('error',e=>errs.push(e.message));}}catch(e){}},5);
+  await new Promise(r=>{f.onload=r;setTimeout(r,6000);});
+  clearInterval(hook);try{f.contentWindow.__errs=errs;}catch(e){}
+  await wait(350);
+  try{await fn(f.contentDocument);}catch(e){say(w+' '+name+' STATE-ERR '+e.message);fails++;}
+  await wait(350);
+  let res;try{res=audit(f,w,scope);}catch(e){say(w+' '+name+' AUDIT-ERR '+e.message);fails++;continue;}
+  if(res.overflow||res.targets||res.errors){fails++;say('FAIL '+w+' '+name+(res.overflow?'\n  OVERFLOW '+res.overflow:'')+(res.targets?'\n  TARGETS '+res.targets:'')+(res.errors?'\n  JS '+res.errors:''));}
+ }}
+ say('DONE '+n+' combos, '+fails+' failing');
+}
+run();
+</script></body></html>
